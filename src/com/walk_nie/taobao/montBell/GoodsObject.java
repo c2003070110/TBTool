@@ -1,0 +1,61 @@
+package com.walk_nie.taobao.montBell;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class GoodsObject {
+	public CategoryObject cateogryObj ;
+	public String goodTitleOrg;
+	public String goodTitle;
+	public String genderOrg;
+	public String gender;
+	public String price;
+	public String priceOrg;
+	public String productId;
+	public String brand;
+	public String weightOrg;
+	public String weight;
+	public String detailDisp;
+	public List<String> sizeTips = new ArrayList<String>();
+	public List<String> sizeList = new ArrayList<String>();
+	public List<String> colorList = new ArrayList<String>();
+	public List<String> pictureNameList = new ArrayList<String>();
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("\"");
+		sb.append(cateogryObj.rootCategory.categoryId + "|");
+		sb.append(cateogryObj.rootCategory.categoryName + "|");
+		sb.append(cateogryObj.p02Category.categoryId + "|");
+		sb.append(cateogryObj.p02Category.categoryName + "|");
+		sb.append(goodTitle + "|");
+		sb.append(price + "|");
+		sb.append(productId + "|");
+		sb.append(brand + "|");
+		sb.append(weight + "|");
+		
+		String sizeS = "";
+		if(!sizeList.isEmpty()){
+			for(String str :sizeList){
+				sizeS = sizeS +" " + str;
+			}
+		}else{
+			sizeS = "-";
+		}
+		sb.append(sizeS + "|");
+		
+		String colorS = "";
+		if(!colorList.isEmpty()){
+			for(String str :colorList){
+				colorS = colorS +" " + str;
+			}
+		}else{
+			colorS = "-";
+		}
+		sb.append(colorS + "|");
+		
+		sb.append("\"");
+		return sb.toString();
+	}
+}

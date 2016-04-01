@@ -1,0 +1,13 @@
+#panisonic
+#http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=65&pdf_Spec002=1
+#http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=65&pdf_pg=2&pdf_Spec002=1
+#BRAUN
+#http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=240&pdf_Spec002=1
+#http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=240&pdf_Spec002=1&pdf_pg=2
+#PHILIPS
+http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=241&pdf_Spec002=1
+http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=241&pdf_Spec002=1&pdf_pg=2
+#HITACHI
+#http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=33&pdf_Spec002=1
+#hitachi
+#http://kakaku.com/kaden/shaver/itemlist.aspx?pdf_ma=33
