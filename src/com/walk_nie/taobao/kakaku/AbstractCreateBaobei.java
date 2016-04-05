@@ -33,7 +33,7 @@ public abstract class AbstractCreateBaobei {
 	protected List<String> publishedItems = Lists.newArrayList();
 	protected BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
 	
-	private String outputFileName = "";
+	protected String outputPicFolder = "";
 
 	protected abstract boolean isAllowToBaobei(KakakuObject obj);
 
@@ -84,7 +84,7 @@ public abstract class AbstractCreateBaobei {
 					.formatDate(Calendar.getInstance().getTime(),
 							"yyyy_MM_dd_HH_mm_ss"));
 			File csvFile = new File(outFilePathPrice);
-			outputFileName = csvFile.getName().replace(".csv", "");
+			outputPicFolder = TaobaoUtil.getPictureFolder(csvFile);;
 			priceBw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(csvFile), "UTF-16"));
 
@@ -258,11 +258,11 @@ public abstract class AbstractCreateBaobei {
 			for (KakakuObject color : obj.colorList) {
 				System.out.println("[downloading picture]"
 						+ String.format(pictureUrlFmt, color.id));
-				TaobaoUtil.downloadPicture(outputFileName,
+				TaobaoUtil.downloadPicture(outputPicFolder,
 						String.format(pictureUrlFmt, color.id), color.id);
 			}
 		} else {
-			TaobaoUtil.downloadPicture(outputFileName,
+			TaobaoUtil.downloadPicture(outputPicFolder,
 					String.format(pictureUrlFmt, obj.id), obj.id);
 		}
 		try {

@@ -13,13 +13,12 @@ public class MontbellBaobeiCreator  {
 		String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_baobei_%s.csv";
 		String publishedBaobeiFile = "";
-		String scanCategoryId = "8800";
 
 		MontbellClothesBaobeiProducer db = new MontbellClothesBaobeiProducer();
 		db.setMiaoshuTemplateFile(miaoshuTemplateFile)
 				.setOutputFile(outputFile)
 				.setTaobeiTemplateFile(taobeiTemplateFile)
-				.setScanCategory(scanCategoryId)
+				.addScanCategory("8800") //
 				.setPublishedBaobeiFile(publishedBaobeiFile).process();
 
 		System.exit(0);

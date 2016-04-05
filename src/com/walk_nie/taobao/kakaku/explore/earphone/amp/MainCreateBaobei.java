@@ -146,7 +146,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		for(Element element:picSelect){
 			String picUrl = element.attr("src");
 			// http://www.audio-technica.co.jp/
-			TaobaoUtil.downloadPicture(obj.itemType, picUrl, obj.id +"_" +idx);
+			TaobaoUtil.downloadPicture(outputPicFolder, picUrl, obj.id +"_" +idx);
 			idx++;
 		}
 	}
@@ -156,7 +156,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		int idx = 1;
 		for (Element element : picSelect) {
 			String picUrl = element.attr("data-image");
-			TaobaoUtil.downloadPicture(obj.itemType, picUrl, obj.id + "_" + idx);
+			TaobaoUtil.downloadPicture(outputPicFolder, picUrl, obj.id + "_" + idx);
 			idx++;
 		}
 	}

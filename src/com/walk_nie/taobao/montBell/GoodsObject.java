@@ -10,17 +10,20 @@ public class GoodsObject {
 	public String goodTitle;
 	public String genderOrg;
 	public String gender;
-	public String price;
+	public String priceJPY;
+	public String priceCNY;
 	public String priceOrg;
 	public String productId;
 	public String brand;
 	public String weightOrg;
-	public String weight;
+	public int weight;
 	public String detailDisp;
 	public List<String> sizeTips = new ArrayList<String>();
 	public List<String> sizeList = new ArrayList<String>();
 	public List<String> colorList = new ArrayList<String>();
 	public List<String> pictureNameList = new ArrayList<String>();
+    //public List<String> pictureUrlList = new ArrayList<String>();
+    //public List<String> pictureLocalList = new ArrayList<String>();
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -30,7 +33,7 @@ public class GoodsObject {
 		sb.append(cateogryObj.p02Category.categoryId + "|");
 		sb.append(cateogryObj.p02Category.categoryName + "|");
 		sb.append(goodTitle + "|");
-		sb.append(price + "|");
+		//sb.append(price + "|");
 		sb.append(productId + "|");
 		sb.append(brand + "|");
 		sb.append(weight + "|");

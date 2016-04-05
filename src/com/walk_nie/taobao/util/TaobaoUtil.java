@@ -537,11 +537,11 @@ public class TaobaoUtil extends com.walk_nie.taobao.kakaku.KakakuUtil{
 		return obj;
 	}
 
-	public static void downloadPicture(String itemType, String pictureUrl,
+	public static void downloadPicture(String pathName, String pictureUrl,
 			String picName) throws ClientProtocolException, IOException {
 
-		String photoName = "out/" + itemType;
-		File path = new File(photoName);
+		//String photoName = "out/" + itemType;
+		File path = new File(pathName);
 		if (!path.exists()) {
 			path.mkdirs();
 		}
@@ -909,4 +909,8 @@ public class TaobaoUtil extends com.walk_nie.taobao.kakaku.KakakuUtil{
 		}
 		return 999999999;
 	}
+
+    public static String getPictureFolder(File csvFile) {
+        return csvFile.getParentFile().getAbsolutePath() + csvFile.getName().replace(".csv", "");
+    }
 }

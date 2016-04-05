@@ -41,9 +41,9 @@ public class MangazenkanBaobeiProducer {
 					new FileOutputStream(csvFile), "UTF-16"));
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-
+			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
 			for (MangazenkanGoodsObject obj : itemIdList) {
-				downloadPicture(obj, csvFile.getName().replace(".csv", ""));
+				downloadPicture(obj, picFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");

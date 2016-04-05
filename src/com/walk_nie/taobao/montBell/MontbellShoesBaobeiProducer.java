@@ -54,7 +54,7 @@ public class MontbellShoesBaobeiProducer extends MontbellBaseBaobeiProducer {
 			// 宝贝属性格式  1627207:28320;
 			cateProps +="1627207:"+taobaoColors.get(i)+";";
 			// 销售属性组合格式 价格:数量:SKU:1627207:28320;
-			skuProps += item.price +":9999"+":"+":1627207"+":"+taobaoColors.get(i)+";20549:44911;";
+			skuProps += item.priceCNY +":9999"+":"+":1627207"+":"+taobaoColors.get(i)+";20549:44911;";
 			// 销售属性别名格式 1627207:28320:颜色1;
 			//propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
 			propAlias += "1627207:" + taobaoColors.get(i) + ":" + color + ";";

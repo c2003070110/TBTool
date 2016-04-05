@@ -41,9 +41,9 @@ public abstract class MontbellBaseBaobeiProducer {
 					new FileOutputStream(csvFile), "UTF-16"));
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-
+			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
 			for (GoodsObject obj : itemIdList) {
-				downloadPicture(obj, csvFile.getName().replace(".csv", ""));
+				downloadPicture(obj, picFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -108,7 +108,7 @@ public abstract class MontbellBaseBaobeiProducer {
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
 		// 宝贝价格
-		obj.price = item.price;
+		obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
 		// FIXME 宝贝描述

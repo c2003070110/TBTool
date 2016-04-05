@@ -24,17 +24,17 @@ public class MontbellClothesBaobeiProducer {
 	private String publishedBaobeiFile = "";
 	private String miaoshuTemplateFile = "";
 	private String outputFile = "";
-	private String scanCategoryId = "";
+	private List<String> scanCategoryIds = Lists.newArrayList();
 	
 	public void process() {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
 			List<GoodsObject> itemIdList = null;
-			if(StringUtil.isBlank(scanCategoryId)){
+			if(scanCategoryIds.isEmpty()){
 				itemIdList = new MontbellProductParser().scanItem();
 			}else{
-				itemIdList = new MontbellProductParser().scanItem(scanCategoryId);	
+				itemIdList = new MontbellProductParser().scanItem(scanCategoryIds);	
 			}
 			if (itemIdList.isEmpty())
 				return;
@@ -46,9 +46,9 @@ public class MontbellClothesBaobeiProducer {
 					new FileOutputStream(csvFile), "UTF-16"));
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-
+			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, csvFile.getName().replace(".csv", ""));
+				MontBellUtil.downloadPicture(obj, picFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -93,7 +93,7 @@ public class MontbellClothesBaobeiProducer {
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
 		// 宝贝价格
-		obj.price = item.price;
+		obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
 		// 省
@@ -183,7 +183,7 @@ public class MontbellClothesBaobeiProducer {
 			// 
 			cateProps +="1627207:"+taobaoColors.get(i)+";";
 			// 销售属性组合格式 价格:数量:SKU:1627207:28320;
-			skuProps += item.price +":9999"+":"+":1627207"+":"+taobaoColors.get(i)+";20549:44911;";
+			skuProps += item.priceCNY +":9999"+":"+":1627207"+":"+taobaoColors.get(i)+";20549:44911;";
 			// 销售属性别名格式 1627207:28320:颜色1;
 			//propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
 			propAlias += "1627207:" + taobaoColors.get(i) + ":" + color + ";";
@@ -262,9 +262,9 @@ public class MontbellClothesBaobeiProducer {
 		return this;
 	}
 
-	public MontbellClothesBaobeiProducer setScanCategory(String scanCategoryId) {
+	public MontbellClothesBaobeiProducer addScanCategory(String scanCategoryId) {
 
-		this.scanCategoryId = scanCategoryId;
+		this.scanCategoryIds.add(scanCategoryId);
 		return this;
 	}
 

@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.client.utils.DateUtils;
+import org.eclipse.jetty.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
@@ -83,24 +84,26 @@ public class MontbellBaobeiUpdator {
 
 	protected BaobeiPublishObject updateBaobei(BaobeiPublishObject baobei) throws IOException {
 		String productId = baobei.outer_id.replace("\"", "");
-		GoodsObject item = new MontbellProductParser().scanSingleItem(productId);
-		if(item == null){
+		GoodsObject goodsObj = new GoodsObject();
+		goodsObj.productId = productId;
+		new MontbellProductParser().scanSingleItem(goodsObj);
+		if(StringUtil.isBlank(goodsObj.priceOrg)){
 			return null;
 		}
 
-		MontBellUtil.downloadPicture(item, csvFile.getName().replace(".csv", ""));
+		MontBellUtil.downloadPicture(goodsObj, csvFile.getName().replace(".csv", ""));
 		
 		// 用户输入名-值对
-		baobei.inputValues="\"montbell,*,"+item.productId + "\"";
+		baobei.inputValues="\"montbell,*,"+goodsObj.productId + "\"";
 		// 宝贝描述
-		baobei.description = composeBaobeiMiaoshu(item);
+		baobei.description = composeBaobeiMiaoshu(goodsObj);
 		// Array[0]:宝贝属性;1:销售属性组合;2:销售属性别名;
-		String[] props = composeBaobeiPropColor(item);
+		String[] props = composeBaobeiPropColor(goodsObj);
 		baobei.cateProps = props[0];
 		baobei.skuProps = props[1];
 		baobei.propAlias = props[2];
 
-		String[] picProp = composeBaobeiPropPicture(item);
+		String[] picProp = composeBaobeiPropPicture(goodsObj);
 		// 图片状态
 		baobei.picture_status = picProp[0];
 		// 新图片
@@ -148,7 +151,7 @@ public class MontbellBaobeiUpdator {
 			for(int j=0 ;j<item.colorList.size();j++){
 				if(i>=taobaoColors.size())break;
 				// 销售属性组合格式 价格:数量:SKU:1627207:28320;
-				skuProps += item.price +":9999"+":"+":1627207"+":"+taobaoColors.get(j)+";20549:"+clothesSizes.get(i)+";";
+				skuProps += item.priceCNY +":9999"+":"+":1627207"+":"+taobaoColors.get(j)+";20549:"+clothesSizes.get(i)+";";
 				j++;
 			}
 			i++;
