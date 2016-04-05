@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
+import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
@@ -30,7 +31,7 @@ public abstract class MontbellBaseBaobeiProducer {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
-			List<GoodsObject> itemIdList = new MontbellProductParser().scanItem();
+			List<GoodsObject> itemIdList = Lists.newArrayList();
 			if (itemIdList.isEmpty())
 				return;
 			String outFilePathPrice = String.format(outputFile, DateUtils
@@ -111,7 +112,7 @@ public abstract class MontbellBaseBaobeiProducer {
 		obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
-		// FIXME 宝贝描述
+		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
 		
 		// Array[0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片
@@ -174,7 +175,7 @@ public abstract class MontbellBaseBaobeiProducer {
 			if (br != null)
 				br.close();
 		}
-		String productInfo = item.detailDisp;
+		String productInfo = item.detailScreenShotPicFile;
 		if(productInfo == null){
 			productInfo = "";
 		}

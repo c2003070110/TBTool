@@ -7,7 +7,8 @@ import java.util.List;
 public class GoodsObject {
 	public CategoryObject cateogryObj ;
 	public String goodTitleOrg;
-	public String goodTitle;
+	//public String goodTitle;
+    public String goodTitleCN;
 	public String genderOrg;
 	public String gender;
 	public String priceJPY;
@@ -17,8 +18,9 @@ public class GoodsObject {
 	public String brand;
 	public String weightOrg;
 	public int weight;
-	public String detailDisp;
-	public List<String> sizeTips = new ArrayList<String>();
+    public int weightExtra;
+	public String detailScreenShotPicFile;
+	public List<String> sizeTipPics = new ArrayList<String>();
 	public List<String> sizeList = new ArrayList<String>();
 	public List<String> colorList = new ArrayList<String>();
 	public List<String> pictureNameList = new ArrayList<String>();
@@ -32,7 +34,7 @@ public class GoodsObject {
 		sb.append(cateogryObj.rootCategory.categoryName + "|");
 		sb.append(cateogryObj.p02Category.categoryId + "|");
 		sb.append(cateogryObj.p02Category.categoryName + "|");
-		sb.append(goodTitle + "|");
+		sb.append(goodTitleCN + "|");
 		//sb.append(price + "|");
 		sb.append(productId + "|");
 		sb.append(brand + "|");

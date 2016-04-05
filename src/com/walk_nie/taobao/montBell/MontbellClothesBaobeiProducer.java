@@ -30,9 +30,9 @@ public class MontbellClothesBaobeiProducer {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
-			List<GoodsObject> itemIdList = null;
+			List<GoodsObject> itemIdList = Lists.newArrayList();
 			if(scanCategoryIds.isEmpty()){
-				itemIdList = new MontbellProductParser().scanItem();
+				
 			}else{
 				itemIdList = new MontbellProductParser().scanItem(scanCategoryIds);	
 			}
@@ -99,13 +99,12 @@ public class MontbellClothesBaobeiProducer {
 		// 省
 		obj.location_state = "日本";
 		
-		// TODO 
 		// 用户输入ID串;
 		obj.inputPids = "\"20000,13021751,6103476\"";
 		// 用户输入名-值对
 		obj.inputValues = "\"montbell,"+item.productId+",*\"";
 		
-		// FIXME 宝贝描述
+		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
 		
 		// Array[0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片
@@ -152,7 +151,7 @@ public class MontbellClothesBaobeiProducer {
 			title += " " + item.gender;
 		}
 		title += " mont-bell #" + item.productId;
-		title += " " + item.goodTitle;
+		title += " " + item.goodTitleCN;
 //		String suffix = "/包邮";
 //		if (title.length() + suffix.length() < 60) {
 //			title += suffix;
@@ -217,19 +216,19 @@ public class MontbellClothesBaobeiProducer {
 		}
 		
 		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailDisp;
-		if(!StringUtil.isBlank(item.detailDisp)){
+		String productInfo = item.detailScreenShotPicFile;
+		if(!StringUtil.isBlank(item.detailScreenShotPicFile)){
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
 			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + productInfo + "\"/></p>");
 			detailSB.append("</div>");
 		}
 		StringBuffer sizeTips = new StringBuffer();
-		if(!item.sizeTips.isEmpty()){
+		if(!item.sizeTipPics.isEmpty()){
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
 			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for(String sizeTip:item.sizeTips){
+			for(String sizeTip:item.sizeTipPics){
 				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + sizeTip + "\"/></p>");	
 			}
 			detailSB.append("</div>");

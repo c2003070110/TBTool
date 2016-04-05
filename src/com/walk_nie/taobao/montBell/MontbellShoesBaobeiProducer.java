@@ -23,7 +23,7 @@ public class MontbellShoesBaobeiProducer extends MontbellBaseBaobeiProducer {
 			title += " " + item.gender;
 		}
 		title += " mont-bell #" + item.productId;
-		title += " " + item.goodTitle;
+		title += " " + item.goodTitleCN;
 //		String suffix = "/包邮";
 //		if (title.length() + suffix.length() < 60) {
 //			title += suffix;
@@ -87,7 +87,7 @@ public class MontbellShoesBaobeiProducer extends MontbellBaseBaobeiProducer {
 			if (br != null)
 				br.close();
 		}
-		String productInfo = item.detailDisp;
+		String productInfo ="";
 		if(productInfo == null){
 			productInfo = "";
 		}

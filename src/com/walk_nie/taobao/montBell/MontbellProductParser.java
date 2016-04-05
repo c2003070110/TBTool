@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
+import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -18,7 +18,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
 import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Maps;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MontbellProductParser {
@@ -27,7 +26,7 @@ public class MontbellProductParser {
     double rate = 0.065;
 
     private final static double benefitRate = 0.1;
-
+    String rootPathName = "out/MontBell/";
 
     String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
 
@@ -36,15 +35,21 @@ public class MontbellProductParser {
     String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
 
     String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
-
-    private List<String> sizePictureList = Lists.newArrayList();
-
-    private Map<String, String> sizePictureMap = Maps.newHashMap();
-
+ 
     FirefoxProfile profile = new FirefoxProfile(new File(
             "C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/nu29zmti.default"));
 
-    WebDriver driver = new FirefoxDriver(profile);
+    private WebDriver driver = null;
+    private WebDriver getWebDriver(String url){
+        if(driver == null){
+            driver = new FirefoxDriver(profile);
+        }
+        if(!url.equals(driver.getCurrentUrl())){
+            driver.get(url);
+            return driver;
+        }
+        return driver;
+    }
 
     public void scanSingleItem(GoodsObject goodsObj) throws IOException {
         String productId = goodsObj.productId;
@@ -56,11 +61,7 @@ public class MontbellProductParser {
             return ;
         }
         Element mainRightEle = doc.select("div.rightCont").get(0);
-        String priceOrg = mainRightEle.select("p.price").text();
-        //goodsObj.weight = "900";
-        goodsObj.priceOrg = priceOrg;
-        scanItemForPriceJPY(goodsObj); 
-        
+
         Elements sizes = mainRightEle.select("div.sizeChoice").select("select").select("option");
         for (int i = 1; i < sizes.size(); i++) {
             String zie = sizes.get(i).text();
@@ -72,54 +73,99 @@ public class MontbellProductParser {
         for (int i = 0; i < colors.size(); i++) {
             String color = colors.get(i).text().toLowerCase();
             goodsObj.colorList.add(color);
-//            String picUrl = String.format(MontBellUtil.pictureUrlFmt, productId,color);
-//            goodsObj.pictureUrlList.add(picUrl);
-//            picUrl = String.format(MontBellUtil.pictureUrlFmt1, productId,color);
-//            goodsObj.pictureUrlList.add(picUrl);
-//            String picName = productId + "_" + color;
-//            goodsObj.pictureLocalList.add(picName);
         }
-
-        Elements eles = doc.select("div.type01");
-        if (eles.size() > 2) {
-            String disp0 = eles.get(0).outerHtml();
-            String disp1 = eles.get(1).outerHtml();
-            disp1 = disp1.replaceAll("カラー", "颜色");
-            disp1 = disp1.replaceAll("サイズ", "鞋码/尺寸");
-            goodsObj.detailDisp = disp0 + disp1;
-        }
+        
+        //screenshotProductDetailDesp(goodsObj);
+        //processProductSizeTable(goodsObj,mainRightEle);
     }
 
-    public List<GoodsObject> scanItem() throws IOException {
-        List<CategoryObject> categoryList = MontBellUtil.readCategoryList();
-
-        List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
-        for (CategoryObject category : categoryList) {
-            if (!this.isAllowCategory(category)) {
-                continue;
+    protected void screenshotProductDetailDesp(GoodsObject goodsObj) throws ClientProtocolException,
+            IOException {
+        String fileNameFmt = "detail_%s.png";
+        String fileName = String.format(fileNameFmt, goodsObj.productId);
+        File despFile = new File(rootPathName, fileName);
+        if (!despFile.exists()) {
+            String url = productUrlPrefix + goodsObj.productId;
+            WebDriver web = getWebDriver(url);
+            List<WebElement> ele = web.findElements(By.className("ttlType02"));
+            if (!ele.isEmpty()) {
+                TaobaoUtil.screenShot(driver, ele, despFile.getAbsolutePath());
             }
-            if (this.isSkipCategory(category)) {
-                continue;
-            }
-            scanItemByCategory(goodsList, category);
         }
-        return goodsList;
+        goodsObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+    }
+
+    protected void processProductSizeTable(GoodsObject goodsObj, Element rootEl)
+            throws ClientProtocolException, IOException {
+        File rootPath = new File(rootPathName);
+        String fileNameFmt = "sizeTable_%s_%d.jpg";
+        try {
+            Elements aboutSize = rootEl.select("p.aboutSize").select("select").select("option");
+            Elements sizeA = aboutSize.select("a");
+            if (sizeA == null || sizeA.isEmpty()) {
+                return ;
+            }
+            String sizeUrl = productSizeUrlPrefix + goodsObj.productId;
+            Document docSize = TaobaoUtil.urlToDocumentByUTF8(sizeUrl);
+            Elements sizePics = docSize.select("div.innerCont").select("img");
+            int i= 0;
+            for (Element sizePic : sizePics) {
+                String src = sizePic.attr("src");
+                String picName = String.format(fileNameFmt, goodsObj.productId, i++);
+                
+                File picFile = new File(rootPath, picName);
+                if (!picFile.exists()) {
+                    TaobaoUtil.downloadPicture(rootPath.getAbsolutePath(),
+                            MontBellUtil.urlPrefix + src, picName);
+                }
+                goodsObj.sizeTipPics.add(picFile.getAbsolutePath());
+            }
+        } catch (Exception ex) {
+
+        }
     }
 
     public List<GoodsObject> scanItem(List<String> categoryIds) throws IOException {
         List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
         for (String categoryId : categoryIds) {
+            if(StringUtil.isBlank(categoryId)) continue;
             CategoryObject categoryObj = new CategoryObject();
             categoryObj.categoryId = categoryId;
             scanItemByCategory(goodsList, categoryObj);
         }
         
-        for(GoodsObject goodsObj :goodsList){
+        for (GoodsObject goodsObj : goodsList) {
             scanSingleItem(goodsObj);
         }
+
+        List<GoodsObject> filteredProdList = filter(goodsList);
+        
+        translate(filteredProdList);
         
         return goodsList;
     }
+    
+    private List<GoodsObject> filter(List<GoodsObject> prodList) {
+        List<GoodsObject> filterdList = Lists.newArrayList();
+        List<String> productId = Lists.newArrayList();
+        for(GoodsObject prod :prodList){
+            if(!productId.contains(prod.productId)){
+                productId.add(prod.productId);
+                filterdList.add(prod);
+            }
+        }
+        return filterdList;
+    }
+
+    private void translate(List<GoodsObject> prodList) {
+        for(GoodsObject prod :prodList){
+            prod.goodTitleCN = translateTitle(prod);
+
+            // (price + emsfee)*rate + benefit
+            prod.priceCNY = convertToCNY(prod);
+        }
+    }
+    
 
     public void scanItemByCategory(List<GoodsObject> goodsList, CategoryObject category) throws IOException {
         String cateogryUrl = categoryUrlPrefix + category.categoryId;
@@ -152,7 +198,7 @@ public class MontbellProductParser {
 
             Elements ttl = goodsElement.select(".ttlType03");
             goodsObj.goodTitleOrg = ttl.text();
-            goodsObj.goodTitle = translateTitle(goodsObj, ttl.text());
+            //goodsObj.goodTitleCN = translateTitle(goodsObj, ttl.text());
 
             String gender = ttl.select("img").attr("alt");
             goodsObj.genderOrg = gender;
@@ -160,9 +206,6 @@ public class MontbellProductParser {
 
             Elements desp = goodsElement.select(".description").select("p");
             goodsObj.priceOrg = desp.get(0).text();
-            // goodsObj.price = goodsObj.priceOrg.replace("価格 ¥", "")
-            // .replace(" +税", "").replace("アウトレット", "").replaceAll(",", "");
-
             scanItemForPriceJPY(goodsObj);
             
             goodsObj.productId = desp.get(1).text().replace("品番#", "");
@@ -179,88 +222,32 @@ public class MontbellProductParser {
 
             scanItemForColor(goodsObj, goodsElement);
 
-            // (price + emsfee)*rate + benefit
-            // goodsObj.price = convertToCNY(goodsObj);
-
             if (isScanReadyProduct(goodsList, goodsObj)) {
                 appendProduct(goodsList, goodsObj);
             } else {
-                // TODO
-                // processItemForDetailDisp(goodsObj);
                 addProduct(goodsList, goodsObj);
             }
         }
     }
 
-    protected void processItemForDetailDisp(GoodsObject goodsObj) throws ClientProtocolException,
-            IOException {
-        String url = productUrlPrefix + goodsObj.productId;
-        String picRootPath = "out/MontBell/detail_";
-        File rootFile = new File("out/MontBell");
-        String saveTo = picRootPath + goodsObj.productId + ".png";
-        File despFile = new File(saveTo);
-        // if (despFile.exists()) return;
-
-        driver.get(url);
-
-        List<WebElement> ele = driver.findElements(By.className("ttlType02"));
-        if (!ele.isEmpty()) {
-            TaobaoUtil.screenShot(driver, ele, saveTo);
-            goodsObj.detailDisp = despFile.getAbsolutePath();
-        }
-        // Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
-        // Elements eles = doc.select("div.type01");
-        // if(eles.size() > 2){
-        // String disp0 = eles.get(0).outerHtml();
-        // String disp1 = eles.get(1).outerHtml();
-        // disp1 = disp1.replaceAll("カラー", "颜色");
-        // disp1 = disp1.replaceAll("サイズ", "鞋码/尺寸");
-        // goodsObj.detailDisp = disp0 + disp1;
-        // }
-
-        try {
-            WebElement aboutSize = driver.findElement(By.cssSelector("p.aboutSize"));
-            WebElement sizeA = aboutSize.findElement(By.cssSelector("a"));
-            if (sizeA != null) {
-                String sizeUrl = productSizeUrlPrefix + goodsObj.productId;
-                Document docSize = TaobaoUtil.urlToDocumentByUTF8(sizeUrl);
-                Elements sizePics = docSize.select("div.innerCont").select("img");
-                for (Element sizePic : sizePics) {
-                    String src = sizePic.attr("src");
-                    String picName = "sizeTable_" + goodsObj.productId + ".jpg";
-                    if (!sizePictureList.contains(src)) {
-                        sizePictureList.add(src);
-                        TaobaoUtil.downloadPicture("MontBell", MontBellUtil.urlPrefix + src, picName);
-                        sizePictureMap.put(src, picName);
-                        goodsObj.sizeTips.add(new File(rootFile, picName).getAbsolutePath());
-                    } else {
-                        goodsObj.sizeTips.add(new File(rootFile, sizePictureMap.get(src))
-                                .getAbsolutePath());
-                    }
-                }
-            }
-        } catch (Exception ex) {
-
-        }
-        // driver.close();
-    }
-
-    private String translateTitle(GoodsObject goodsObj, String goodTitle) {
+    private String translateTitle(GoodsObject goodsObj) {
         String categoryId = goodsObj.cateogryObj.categoryId;
-        // newTitle = newTitle.replace("", "");
-        // newTitle = newTitle.replace("", "");
-        // newTitle = newTitle.replace("", "");
-        // newTitle = newTitle.replace("", "");
+        String goodTitle = goodsObj.goodTitleOrg;
+        goodTitle = goodTitle.replace("Women's", "");
+        goodTitle = goodTitle.replace("Men's", "");
         if ("241000".equals(categoryId)) {
             String title = "防水透气防滑户外雪地登山鞋";
+            goodsObj.weightExtra = 250;
             return title;
         }
         if ("241100".equals(categoryId) || "241200".equals(categoryId)) {
             String title = "防水透气防滑户外徒步鞋";
+            goodsObj.weightExtra = 250;
             return title;
         }
         if ("241500".equals(categoryId) || "241600".equals(categoryId)) {
             String title = "透气防滑休闲鞋";
+            goodsObj.weightExtra = 250;
             return title;
         }
         if ("261000".equals(categoryId) || "262000".equals(categoryId)
@@ -269,18 +256,46 @@ public class MontbellProductParser {
             String newTitle = goodTitle;
             newTitle = newTitle.replace("Women's", "");
             newTitle = newTitle.replace("トレッキングパック", "");
-            newTitle = newTitle.replace("", "");
-            newTitle = newTitle.replace("", "");
             newTitle = newTitle.replace(" ", "");
+            goodsObj.weightExtra = 250;
             return "户外背包 " + newTitle;
         }
         if ("131000".equals(categoryId) || "137000".equals(categoryId)) {
             // ダウンジャケット
+            goodsObj.weightExtra = 150;
             return "户外羽绒衣";
         }
         if ("136000".equals(categoryId)) {
             // コート（中綿入り）
+            goodsObj.weightExtra = 150;
             return "羽绒风衣";
+        }
+        if ("22000".equals(categoryId) || "25000".equals(categoryId)) {
+            // ソフトシェルジャケット
+        }
+        if ("22500".equals(categoryId) || "23000".equals(categoryId)) {
+            // ソフトシェルパンツ
+        }
+        if ("11500".equals(categoryId) || "11000".equals(categoryId)) {
+            // ウインドブレーカー
+        }
+        if ("141000".equals(categoryId) || "142000".equals(categoryId)) {
+            // ハードシェル>ジャケット
+        }
+        if ("145000".equals(categoryId) || "146000".equals(categoryId)) {
+            // ハードシェル>パンツ
+        }
+        if ("44000".equals(categoryId) || "45500".equals(categoryId)) {
+            // Tシャツ（半袖/長袖）
+        }
+        if ("97000".equals(categoryId) || "91000".equals(categoryId) || "93000".equals(categoryId)) {
+            // ソックス
+        }
+        if ("122000".equals(categoryId) || "121000".equals(categoryId) || "126000".equals(categoryId)|| "124000".equals(categoryId)) {
+            // フリース
+        }
+        if ("123000".equals(categoryId)) {
+            // フリースパンツ
         }
         return "";
     }
@@ -306,19 +321,7 @@ public class MontbellProductParser {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
-            int emsFee = 0;
-            int weight = item.weight;
-            if (weight < 1000) {
-                emsFee = 1800;
-            } else if (weight < 2000) {
-                emsFee = 3000;
-            } else if (weight < 3000) {
-                emsFee = 4000;
-            } else if (weight < 4000) {
-                emsFee = 5000;
-            } else {
-                emsFee = 6000;
-            }
+            int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
             double priceCNY = (price + emsFee) * rate;
             priceCNY = priceCNY + priceCNY * benefitRate;
             return String.valueOf(Math.round(priceCNY));
@@ -384,6 +387,7 @@ public class MontbellProductParser {
             weight = weight.replace(",", "");
         }
         goodsObj.weight = Integer.parseInt(weight) * doubleFl;
+        goodsObj.weightExtra = 100;
     }
 
     private void scanItemForPriceJPY(GoodsObject goodsObj) {
@@ -436,122 +440,6 @@ public class MontbellProductParser {
             }
         }
         goodsObj.colorList = rslt;
-    }
-
-    protected boolean isSkipCategory(CategoryObject category) {
-        if (category.p02Category != null) {
-            if (skipP02Category.contains(category.p02Category.categoryId)) {
-                return true;
-            }
-        }
-        return skipCategory.contains(category.categoryId);
-    }
-
-    protected boolean isAllowCategory(CategoryObject category) {
-        if (category.p02Category != null) {
-            if (allowP02Category.contains(category.p02Category.categoryId)) {
-                return true;
-            }
-        }
-        return allowCategory.contains(category.categoryId);
-    }
-
-    private List<String> allowP02Category = new ArrayList<String>();
-    {
-        // allowP02Category.add("33");
-    }
-
-    private List<String> allowCategory = new ArrayList<String>();
-    {
-        // TODO
-        // allowCategory.add("241000");// 登山靴（アルパイン）
-        // allowCategory.add("241100");// 登山靴（トレッキング）
-        // allowCategory.add("241200");// 登山靴（ハイキング）
-        // allowCategory.add("241500");// ウォーキング＆ランニング
-        // allowCategory.add("241600");// トラベル＆タウン
-
-        // allowCategory.add("261000");// 大型ザック（50～120L）
-        // allowCategory.add("262000");// 中型ザック（30～45L）
-        // allowCategory.add("263000");// 小型ザック（5～25L）
-
-        // allowCategory.add("131000"); // ダウンジャケット
-        // allowCategory.add("137000"); // ダウンジャケット（軽量シリーズ）
-
-        // allowCategory.add("136000"); // コート（中綿入り）
-
-        allowCategory.add(""); //
-        allowCategory.add(""); //
-        allowCategory.add(""); //
-    }
-
-    private List<String> skipP02Category = new ArrayList<String>();
-    {
-        skipP02Category.add("37"); // バッグ
-        skipP02Category.add("51"); // スノーギア
-        skipP02Category.add("39"); // クッカー/バーナー/ボトル/食品
-        skipP02Category.add("38"); // アクセサリー
-        skipP02Category.add("46"); // 自転車
-        skipP02Category.add("48"); // キャンプ・ファニチャー
-        skipP02Category.add("53"); // 照明器具（ライト）/チャージャー
-        skipP02Category.add("44"); // 防災用品
-        skipP02Category.add("34"); // ストック
-        skipP02Category.add("54"); // サングラス/ゴーグル
-        skipP02Category.add("41"); // 犬用
-        skipP02Category.add("50"); // ハイドレーション
-        skipP02Category.add("49"); // ヘルメット
-        skipP02Category.add("52"); // メンテナンス/リペア
-        skipP02Category.add("35"); // カヌー・カヤック・SUP（本体）/パドル
-        skipP02Category.add("47"); // 水遊び
-        skipP02Category.add("42"); // エコプロダクツ
-        skipP02Category.add("64"); // 書籍・CD・DVD
-        skipP02Category.add("89"); // 社会貢献プロダクツ
-
-        skipP02Category.add("1"); // 雨具
-        skipP02Category.add("4"); // シャツ/ポロシャツ/スウェット
-        skipP02Category.add("9"); // 手袋
-        skipP02Category.add("10"); // ソックス
-        skipP02Category.add("11"); // 帽子
-        skipP02Category.add("21"); // マフラー/ネックゲーター
-        skipP02Category.add("15"); // キッズ
-        skipP02Category.add("16"); // ベビー
-        skipP02Category.add("28"); // 特集一覧
-        skipP02Category.add("62"); // USモデル（クロージング）
-        skipP02Category.add("19"); // 水遊び
-        skipP02Category.add("88"); // 社会貢献プロダクツ
-        skipP02Category.add(""); //
-    }
-
-    private List<String> skipCategory = new ArrayList<String>();
-    {
-        skipCategory.add("242000"); // サンダル
-        skipCategory.add("243000"); // スパッツ
-        skipCategory.add("241400"); // アイゼン
-        skipCategory.add("245000"); // メンテナンス/リペア
-        skipCategory.add("246000"); // 靴ひも/その他
-
-        skipCategory.add("263500"); // ザック（ポケッタブル）
-        skipCategory.add("266500"); // 女性用ザック
-        skipCategory.add("266000"); // 子供用ザック
-        skipCategory.add("265000"); // キャメルバック
-        skipCategory.add("269000"); // ベビーキャリア
-        skipCategory.add("269500"); // その他ザック
-        skipCategory.add("264000"); // ザックカバー
-        skipCategory.add("268000"); // ザックアクセサリー
-
-        skipCategory.add("206000"); // シェルター
-        skipCategory.add("207000"); // ツェルト
-        skipCategory.add("204000"); // ジュピタードーム
-        skipCategory.add("205000"); // ヘリオスドーム
-        skipCategory.add("208000"); // タープ
-        skipCategory.add("208600"); // 常設用テント（グランピング）
-        skipCategory.add("209000"); // テントリペア
-        skipCategory.add("212000"); // テントオプション
-
-        skipCategory.add("1802000"); // 自転車用手袋/小物
-        skipCategory.add(""); //
-        skipCategory.add(""); //
-        skipCategory.add(""); //
-        skipCategory.add(""); //
     }
 
 }

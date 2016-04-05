@@ -176,7 +176,7 @@ public class MontbellBaobeiUpdator {
 			if (br != null)
 				br.close();
 		}
-		String productInfo = item.detailDisp;
+		String productInfo = item.detailScreenShotPicFile;
 		if (productInfo == null) {
 			productInfo = "";
 		}
