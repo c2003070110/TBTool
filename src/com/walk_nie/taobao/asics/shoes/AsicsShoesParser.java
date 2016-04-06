@@ -1,20 +1,29 @@
 package com.walk_nie.taobao.asics.shoes;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.http.client.ClientProtocolException;
 import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
-
+import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class AsicsShoesParser {
     
     private String urlPrefix = "http://www.asics.com/";
+    
+    private String rootPathName = "out/asicsShoes/";
 
-    public List<AsicsShoesObject> parse(){
+    public List<AsicsShoesObject> parse() throws ClientProtocolException, IOException{
         List<AsicsShoesObject> prodList = Lists.newArrayList();
         String url = "";
         parseCategory(prodList,url);
@@ -27,8 +36,8 @@ public class AsicsShoesParser {
         
         return prodList;
     }
-    private void parseCategory(List<AsicsShoesObject> prodList, String url) {
-        Document doc = getDocument(url);
+    protected void parseCategory(List<AsicsShoesObject> prodList, String url) throws ClientProtocolException, IOException {
+        Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
         Elements prodEls = doc.select("div.container").select("div.product-list").select("div.gridProduct");
         for(Element rootEl :prodEls){
             AsicsShoesObject prodObj = new AsicsShoesObject();
@@ -43,14 +52,14 @@ public class AsicsShoesParser {
             prodList.add(prodObj);
         }
     }
-    private void parseProducts(List<AsicsShoesObject> prodList) {
+    protected void parseProducts(List<AsicsShoesObject> prodList) throws ClientProtocolException, IOException {
         for(AsicsShoesObject prod :prodList){
             parseProduct(prod);
         }
     }
     
-    private void parseProduct(AsicsShoesObject prodObj) {
-        Document doc = getDocument(urlPrefix + prodObj.prodUrl);
+    protected void parseProduct(AsicsShoesObject prodObj) throws ClientProtocolException, IOException {
+        Document doc = TaobaoUtil.urlToDocumentByUTF8(urlPrefix + prodObj.prodUrl);
         Element headerEl = doc.select("div.container").select("div.nm").get(0);
         
         Elements picEls = headerEl.select("div.rsContainer").select("div.rsSlide").select("img");
@@ -92,9 +101,28 @@ public class AsicsShoesParser {
                 prodObj.colorList.add(colorObj);
             }
         }
+        
+        screenshotProductDetailDesp(prodObj);
     }
 
-    private List<AsicsShoesObject> filter(List<AsicsShoesObject> prodList) {
+    protected void screenshotProductDetailDesp(AsicsShoesObject prodObj) throws ClientProtocolException, IOException {
+        String fileNameFmt = "detail_%s.png";
+        String fileName = String.format(fileNameFmt, prodObj.kataban);
+        File despFile = new File(rootPathName, fileName);
+        if (!despFile.exists()) {
+            String url = urlPrefix + prodObj.prodUrl;
+            WebDriver webDriver = WebDriverUtil.getWebDriver(url);
+            
+            List<WebElement> ele = webDriver.findElements(By.className("tabInfoChildContent"));
+            
+            if (!ele.isEmpty()) {
+                WebDriverUtil.screenShot(webDriver, ele, despFile.getAbsolutePath());
+            }
+        }
+        prodObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+    }
+
+    protected List<AsicsShoesObject> filter(List<AsicsShoesObject> prodList) {
         List<AsicsShoesObject> filterdList = Lists.newArrayList();
         List<String> urls = Lists.newArrayList();
         for(AsicsShoesObject prod :prodList){
@@ -106,20 +134,16 @@ public class AsicsShoesParser {
         return filterdList;
     }
 
-    private void translate(List<AsicsShoesObject> prodList) {
+    protected void translate(List<AsicsShoesObject> prodList) {
         for(AsicsShoesObject prod :prodList){
             translateTitle(prod);
         }
     }
     
-    private void translateTitle(AsicsShoesObject prod) {
+    protected void translateTitle(AsicsShoesObject prod) {
         String title = prod.titleOrg;
         // TODO 
         title = title.replaceAll("", "");
-        prod.title = title;
+        prod.titleCN = title;
     }
-    private Document getDocument(String url){
-        return null;
-    }
-    
 }

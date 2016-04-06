@@ -14,6 +14,7 @@ import com.walk_nie.taobao.kakaku.AbstractCreateBaobei;
 import com.walk_nie.taobao.kakaku.KakakuObject;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MainCreateBaobei extends AbstractCreateBaobei  {
 	
@@ -317,7 +318,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 	}
 
 	private void parsePictureFromDenon(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
-		Document doc = TaobaoUtil.urlToDocumentByWebDriver(specUrl);
+		Document doc = WebDriverUtil.urlToDocumentByWebDriver(specUrl);
 		Elements picSelect = doc.select("div").select(".prodNav").select("li");
 		int idx = 1;
 		for (Element element : picSelect) {
@@ -328,7 +329,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 	}
 
 	private void parsePictureFromYamaha(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
-		Document doc = TaobaoUtil.urlToDocumentByWebDriver(specUrl);
+		Document doc = WebDriverUtil.urlToDocumentByWebDriver(specUrl);
 		Elements picSelect = doc.select("div").select("#picturesBox").select("li").select("img");
 		int idx = 1;
 		for(Element element:picSelect){
@@ -343,7 +344,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 	}
 
 	private void parsePictureFromAudioTechnica(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
-		Document doc = TaobaoUtil.urlToDocumentByWebDriver(specUrl);
+		Document doc = WebDriverUtil.urlToDocumentByWebDriver(specUrl);
 		Elements picSelect = doc.select("table").select("#photo_selecter").select("img");
 		int idx = 1;
 		for(Element element:picSelect){

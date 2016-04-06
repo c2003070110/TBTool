@@ -6,9 +6,8 @@ import java.util.List;
 
 public class GoodsObject {
 	public CategoryObject cateogryObj ;
-	public String goodTitleOrg;
-	//public String goodTitle;
-    public String goodTitleCN;
+	public String titleOrg;
+    public String titleCN;
 	public String genderOrg;
 	public String gender;
 	public String priceJPY;
@@ -34,7 +33,7 @@ public class GoodsObject {
 		sb.append(cateogryObj.rootCategory.categoryName + "|");
 		sb.append(cateogryObj.p02Category.categoryId + "|");
 		sb.append(cateogryObj.p02Category.categoryName + "|");
-		sb.append(goodTitleCN + "|");
+		sb.append(titleCN + "|");
 		//sb.append(price + "|");
 		sb.append(productId + "|");
 		sb.append(brand + "|");

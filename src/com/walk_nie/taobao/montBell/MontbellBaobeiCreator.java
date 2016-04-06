@@ -14,13 +14,18 @@ public class MontbellBaobeiCreator  {
 		String outputFile = "out/montBell_baobei_%s.csv";
 		String publishedBaobeiFile = "";
 
-		MontbellClothesBaobeiProducer db = new MontbellClothesBaobeiProducer();
+		MontbellBaobeiProducer db = new MontbellBaobeiProducer();
 		db.setMiaoshuTemplateFile(miaoshuTemplateFile)
 				.setOutputFile(outputFile)
 				.setTaobeiTemplateFile(taobeiTemplateFile)
-				.addScanCategory("22000") //ソフトシェルジャケット soft shell jacket
-                .addScanCategory("25000") //ライトシェルジャケット/ベスト
-                .addScanCategory("22500") //ソフトシェルパンツ
+                .setPublishedBaobeiFile(publishedBaobeiFile)
+                .addScanCategory("1000") // レインウェア
+                .addScanCategory("8800") // レインウェア（ゴアテックス製）
+                .addScanCategory("8000") // レインウェア（自転車用）
+           
+				.addScanCategory("22000") // ソフトシェルジャケット soft shell jacket
+                .addScanCategory("25000") // ライトシェルジャケット/ベスト
+                .addScanCategory("22500") // ソフトシェルパンツ
                 .addScanCategory("23000") // ライトシェルパンツ
                 
                 .addScanCategory("11500") // 超軽量ウインドブレーカー
@@ -33,6 +38,7 @@ public class MontbellBaobeiCreator  {
                 
                 .addScanCategory("44000") // Tシャツ（半袖/長袖）>機能素材<ウイックロンクール>
                 .addScanCategory("45500") // Tシャツ（半袖/長袖）>機能素材<ウイックロンZEO>
+                .addScanCategory("46500") // Tシャツ（半袖/長袖）>天然素材<メリノウールプラス>
                 
                 .addScanCategory("97000") // アルパインソックス
                 .addScanCategory("91000") // トレッキングソックス
@@ -45,7 +51,8 @@ public class MontbellBaobeiCreator  {
                 .addScanCategory("123000") // フリースパンツ
                 .addScanCategory("") // 
                 .addScanCategory("") // 
-				.setPublishedBaobeiFile(publishedBaobeiFile).process();
+              
+                .process();
 
 		System.exit(0);
 	}

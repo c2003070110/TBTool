@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.asics.shoes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,7 +18,7 @@ import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class MontbellClothesBaobeiProducer {
+public class AsicsShoesBaobeiProducer {
 	
 	private String taobeiTemplateFile = "";
 	private String publishedBaobeiFile = "";
@@ -30,11 +30,11 @@ public class MontbellClothesBaobeiProducer {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
-			List<GoodsObject> itemIdList = Lists.newArrayList();
+			List<AsicsShoesObject> itemIdList = Lists.newArrayList();
 			if(scanCategoryIds.isEmpty()){
 				
 			}else{
-				itemIdList = new MontbellProductParser().scanItem(scanCategoryIds);	
+				itemIdList = new AsicsShoesParser().parse();	
 			}
 			if (itemIdList.isEmpty())
 				return;
@@ -47,8 +47,8 @@ public class MontbellClothesBaobeiProducer {
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
-			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, picFolder);
+			for (AsicsShoesObject obj : itemIdList) {
+				AsicsShoesUtil.downloadPicture(obj, picFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -64,7 +64,7 @@ public class MontbellClothesBaobeiProducer {
 		}
 	}
 	
-	protected void writeOut(BufferedWriter priceBw, GoodsObject item)
+	protected void writeOut(BufferedWriter priceBw, AsicsShoesObject item)
 			throws Exception {
 		BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
 		
@@ -87,11 +87,15 @@ public class MontbellClothesBaobeiProducer {
 		priceBw.write(composeBaobeiLine(item, baobeiTemplate));
 		priceBw.flush();
 	}
-	protected String composeBaobeiLine(GoodsObject item,BaobeiPublishObject baobeiTemplate) throws Exception {
+	protected String composeBaobeiLine(AsicsShoesObject item,BaobeiPublishObject baobeiTemplate) throws Exception {
 		BaobeiPublishObject obj = TaobaoUtil.copyTaobaoTemplate(baobeiTemplate);
 
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
+        // 宝贝类目
+        obj.cid = composeBaobeiTaobaoCategory(item,baobeiTemplate);
+        // 店铺类目
+        obj.seller_cids = composeBaobeiMyCategory(item,baobeiTemplate);
 		// 宝贝价格
 		obj.price = item.priceCNY;
 		// 宝贝数量
@@ -102,7 +106,7 @@ public class MontbellClothesBaobeiProducer {
 		// 用户输入ID串;
 		obj.inputPids = "\"20000,13021751,6103476\"";
 		// 用户输入名-值对
-		obj.inputValues = "\"montbell,"+item.productId+",*\"";
+		obj.inputValues = "\"montbell,"+item.kataban+",*\"";
 		
 		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
@@ -122,7 +126,7 @@ public class MontbellClothesBaobeiProducer {
 		}
 		obj.skuProps = props[1];
 		// 商家编码
-		obj.outer_id = item.productId;
+		obj.outer_id = item.kataban;
 		// 销售属性别名
 		if("\"\"".equals(baobeiTemplate.skuProps)){
 			obj.propAlias = props[2];
@@ -142,16 +146,30 @@ public class MontbellClothesBaobeiProducer {
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
 
-	private String composeBaobeiSubtitle(GoodsObject item) {
-		return "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.goodTitleOrg + "\"";
+	private String composeBaobeiTaobaoCategory(AsicsShoesObject item,
+            BaobeiPublishObject baobeiTemplate) {
+	    String categoryId = baobeiTemplate.cid;
+        return categoryId;
+    }
+
+    private String composeBaobeiMyCategory(AsicsShoesObject item,
+            BaobeiPublishObject baobeiTemplate) {
+
+        // TODO
+        String categoryId = baobeiTemplate.cid;
+        return categoryId;
+    }
+
+    private String composeBaobeiSubtitle(AsicsShoesObject item) {
+		return "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleOrg + "\"";
 	}
-	private String composeBaobeiTitle(GoodsObject item) {
+	private String composeBaobeiTitle(AsicsShoesObject item) {
 		String title = "\"日本直邮";
+        title += " " + item.titleCN;
+        title += " mont-bell #" + item.kataban;
 		if(item.gender != null && !item.gender.equals("")){
 			title += " " + item.gender;
 		}
-		title += " mont-bell #" + item.productId;
-		title += " " + item.goodTitleCN;
 //		String suffix = "/包邮";
 //		if (title.length() + suffix.length() < 60) {
 //			title += suffix;
@@ -159,7 +177,7 @@ public class MontbellClothesBaobeiProducer {
 		return title + "\"";
 	}
 	
-	private String[] composeBaobeiPropColor(GoodsObject item,
+	private String[] composeBaobeiPropColor(AsicsShoesObject item,
 			BaobeiPublishObject baobeiTemplate) {
 		List<String> taobaoColors = Lists.newArrayList();
 		taobaoColors.add("28320");taobaoColors.add("28340");taobaoColors.add("3232479");
@@ -170,13 +188,13 @@ public class MontbellClothesBaobeiProducer {
 		// 宝贝属性 -销售属性组合- 销售属性别名
 		String cateProps = "";String skuProps = "";String propAlias = "";
 		String picStatus = "";String skuPropPic = "";
-		for(int i=0;i<item.pictureNameList.size();i++){
+		for(int i=0;i<item.picLocalFileNameList.size();i++){
 			if(i==5) break;
-			skuPropPic += item.pictureNameList.get(i) + ":1:" + i +":|;";
+			skuPropPic += item.picLocalFileNameList.get(i) + ":1:" + i +":|;";
 			picStatus +="2;";
 		}
 		int i = 0;
-		for(String color :item.colorList){
+		for(String color :item.colorNameList){
 			if(i>=taobaoColors.size())break;
 			// 宝贝属性格式  1627207=color; 20509=衣服大小; 20549=鞋码
 			// 
@@ -186,8 +204,8 @@ public class MontbellClothesBaobeiProducer {
 			// 销售属性别名格式 1627207:28320:颜色1;
 			//propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
 			propAlias += "1627207:" + taobaoColors.get(i) + ":" + color + ";";
-			if(item.pictureNameList.size() == item.colorList.size()){
-				skuPropPic += item.pictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
+			if(item.picNameList.size() == item.colorList.size()){
+				skuPropPic += item.picNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
 				picStatus +="2;";
 			}
 			i++;
@@ -199,7 +217,7 @@ public class MontbellClothesBaobeiProducer {
 				,"\""+picStatus+"\"" ,"\""+skuPropPic+"\"" };
 	}
 	
-	private  String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
+	private  String composeBaobeiMiaoshu(AsicsShoesObject item) throws IOException {
 		StringBuffer sb = new StringBuffer();
 		BufferedReader br = null;
 		try {
@@ -217,36 +235,44 @@ public class MontbellClothesBaobeiProducer {
 		
 		StringBuffer detailSB = new StringBuffer();
 		String productInfo = item.detailScreenShotPicFile;
-		if(!StringUtil.isBlank(item.detailScreenShotPicFile)){
+		if(!StringUtil.isBlank(productInfo)){
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
 			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + productInfo + "\"/></p>");
 			detailSB.append("</div>");
 		}
-		StringBuffer sizeTips = new StringBuffer();
-		if(!item.sizeTipPics.isEmpty()){
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for(String sizeTip:item.sizeTipPics){
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + sizeTip + "\"/></p>");	
-			}
-			detailSB.append("</div>");
+		if(item.picUrlList.size()>5){
+	        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
+	        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+            for (int i = 5; i < item.picUrlList.size(); i++) {
+	            detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"" + item.picLocalFileNameList.get(i) + "\"/></p>");
+	        }
+	        detailSB.append("</div>");
 		}
+		
+		StringBuffer sizeTips = new StringBuffer();
+		// TODO
+		String sizeTip = "";
+		detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
+		detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+		detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
+		detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"" + sizeTip + "\"/></p>");	
+		detailSB.append("</div>");
+	 
 		return "\"" + detailSB.toString() +sizeTips.toString()+ sb.toString() + "\"";
 	}
 	
-	public MontbellClothesBaobeiProducer setTaobeiTemplateFile(String taobeiTemplateFile) {
+	public AsicsShoesBaobeiProducer setTaobeiTemplateFile(String taobeiTemplateFile) {
 		this.taobeiTemplateFile = taobeiTemplateFile;
 		return this;
 	}
 
-	public MontbellClothesBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
+	public AsicsShoesBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
 		this.publishedBaobeiFile = publishedBaobeiFile;
 		return this;
 	}
 
-	public MontbellClothesBaobeiProducer setMiaoshuTemplateFile(
+	public AsicsShoesBaobeiProducer setMiaoshuTemplateFile(
 			String miaoshuTemplateFile) {
 		this.miaoshuTemplateFile = miaoshuTemplateFile;
 		return this;
@@ -256,12 +282,12 @@ public class MontbellClothesBaobeiProducer {
 		return this.miaoshuTemplateFile;
 	}
 
-	public MontbellClothesBaobeiProducer setOutputFile(String outputFile) {
+	public AsicsShoesBaobeiProducer setOutputFile(String outputFile) {
 		this.outputFile = outputFile;
 		return this;
 	}
 
-	public MontbellClothesBaobeiProducer addScanCategory(String scanCategoryId) {
+	public AsicsShoesBaobeiProducer addScanCategory(String scanCategoryId) {
 
 		this.scanCategoryIds.add(scanCategoryId);
 		return this;

@@ -28,6 +28,7 @@ public class MontBellUtil {
 	public static void downloadPicture(GoodsObject goods,String outFilePathPrice) {
 		
 		for(String color : goods.colorList){
+		    color = color.replaceAll("/", "-");
 			String picUrl = String.format(pictureUrlFmt, goods.productId,color);
 			String picName = goods.productId + "_" + color;
 			try {
@@ -127,5 +128,134 @@ public class MontBellUtil {
     public static String findCategoryId(String href) {
         String queryS = href.substring(href.indexOf("?") + 1, href.length());
         return queryS.split("=")[1];
+    }
+    
+    public static boolean isCateogryRainClothes(String categoryId) {
+        if ("1000".equals(categoryId) || "8800".equals(categoryId)|| "8000".equals(categoryId)) {
+            // レインウェア 户外雨衣
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogrySoftShell1(String categoryId) {
+        if ("22000".equals(categoryId) || "25000".equals(categoryId)) {
+            // ソフトシェルジャケット
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogrySoftShell2(String categoryId) {
+        if ("22500".equals(categoryId) || "23000".equals(categoryId)) {
+            // ソフトシェルパンツ
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryWindBreaker(String categoryId) {
+        if ("11500".equals(categoryId) || "11000".equals(categoryId)) {
+            // ウインドブレーカー
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryHardShell1(String categoryId) {
+        if ("141000".equals(categoryId) || "142000".equals(categoryId)) {
+            // ハードシェル>ジャケット
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryHardShell2(String categoryId) {
+        if ("145000".equals(categoryId) || "146000".equals(categoryId)) {
+            // ハードシェル>パンツ
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryFreece1(String categoryId) {
+        if ("122000".equals(categoryId) || "121000".equals(categoryId) || "126000".equals(categoryId)|| "124000".equals(categoryId)) {
+            // フリース 抓绒衣
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryFreece2(String categoryId) {
+        if ("123000".equals(categoryId)) {
+            // フリースパンツ 抓毛裤
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryTShirt(String categoryId) {
+        if ("44000".equals(categoryId) || "45500".equals(categoryId)) {
+            // Tシャツ（半袖/長袖）
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryWoolTShirt(String categoryId) {
+        if ("46500".equals(categoryId)) {
+            // Tシャツ（半袖/長袖）
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogrySocks(String categoryId) {
+        if ("97000".equals(categoryId) || "91000".equals(categoryId) || "93000".equals(categoryId)) {
+            // ソックス
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryPack(String categoryId) {
+        if ("261000".equals(categoryId) || "262000".equals(categoryId)
+                || "263000".equals(categoryId)) {
+            // 大型ザック
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryFeatherCloth(String categoryId) {
+        if ("131000".equals(categoryId) || "137000".equals(categoryId)||"136000".equals(categoryId)) {
+            // ダウンジャケット
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogrySnowShoes(String categoryId) {
+        if ("241000".equals(categoryId)) {
+            // 登山靴（アルパイン）
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryClimbShoes(String categoryId) {
+        if ("241100".equals(categoryId) || "241200".equals(categoryId)) {
+            // 登山靴（トレッキング + ハイキング）
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isCateogryRuningShoes(String categoryId) {
+        if ("241500".equals(categoryId) || "241600".equals(categoryId)) {
+            // ウォーキング＆ランニング
+            return true;
+        }
+        return false;
     }
 }

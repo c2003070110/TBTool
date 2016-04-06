@@ -8,87 +8,89 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 
-
-
-public class TaobaoUtil extends com.walk_nie.taobao.kakaku.KakakuUtil{
-	// TODO change it to fix your pc
-	public final static String chromeDriverPath = "C:/Users/niehp/Google ドライブ/tool/chromedriver.exe";
-
-	public static void screenShot(WebDriver driver,List<WebElement> elements,String saveTo) throws ClientProtocolException, IOException {
-		   
-		//Get entire page screenshot
-		File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		
-		BufferedImage  fullImg = ImageIO.read(screenshot);
-		//Get the location of element on the page
-		Point point1 = elements.get(0).getLocation();
-		Point point2 = null;
-		if (elements.size() > 3) {
-			point2 = elements.get(2).getLocation();
-		} else {
-			point2 = elements.get(elements.size() - 1).getLocation();
-		}
-		
-		//Get width and height of the element
-		int eleWidth = elements.get(0).getSize().getWidth() ;
-		int eleHeight = point2.getY() - point1.getY();
-		
-		//Crop the entire page screenshot to get only element screenshot
-		BufferedImage eleScreenshot= fullImg.getSubimage(point1.getX(), point1.getY(), eleWidth,
-		    eleHeight);
-		String picSuffix = "png";
-		ImageIO.write(eleScreenshot, picSuffix, screenshot);
-		//Copy the element screenshot to disk
-		FileUtils.copyFile(screenshot, new File(saveTo));
-	}
-	public static Document urlToDocumentByWebDriver(String url)  {
-
-		System.out.println("[START]parse URL =" + url);
-		// WebDriver chromeDriver = new ChromeDriver();
-
-		System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-		WebDriver chromeDriver = new ChromeDriver();
-		chromeDriver.get(url);
-		String src = chromeDriver.getPageSource();
-		chromeDriver.close();
-		// chromeDriver.close();
-		Document doc = Jsoup.parse(src);
-
-		// System.out.println("[END]parse URL =" + url);
-		return doc;
-	}
+public class TaobaoUtil {
+    public static String FILE_NAME_SEPERATOR =";;;";
+    
 	public static Document urlToDocumentByUTF8(String url)
 			throws ClientProtocolException, IOException {
 		return TaobaoUtil.urlToDocument(url, "UTF-8");
 	}
 
-	public static Document urlToDocument(String url,String charset)
+	@SuppressWarnings("deprecation")
+    public static Document urlToDocument(String url,String charset)
 			throws ClientProtocolException, IOException {
 
 		System.out.println("[START]parse URL = " + url);
-		CloseableHttpClient client = HttpClientBuilder.create().build();
+		
+//        String PROXY = "172.16.200.2:8080";
+//        org.openqa.selenium.Proxy proxy = new org.openqa.selenium.Proxy();
+//        proxy.setHttpProxy(PROXY)
+//             .setFtpProxy(PROXY)
+//             .setSslProxy(PROXY);
+//        DesiredCapabilities cap = new DesiredCapabilities();
+//        cap.setCapability(CapabilityType.PROXY, proxy);
+//        
+//        WebDriver web = new HtmlUnitDriver(cap) {
+//
+//            protected WebClient modifyWebClient(WebClient client) {
+//                String PROXY_USER = "546736om";
+//                String PROXY_PASS = "nie1234";
+//                String PROXY_HOST = "172.16.200.2";
+//                int PROXY_PORT = 8080;
+//                String  workstation = System.getenv("COMPUTERNAME");
+//                DefaultCredentialsProvider creds = new DefaultCredentialsProvider();
+//                creds.addNTLMCredentials(PROXY_USER, PROXY_PASS, PROXY_HOST, PROXY_PORT, workstation, null);
+//                AuthScope authscope = new AuthScope(PROXY_HOST,PROXY_PORT);
+//                UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(PROXY_USER,PROXY_PASS);
+//                creds.setCredentials(authscope, credentials );
+//          
+//                creds.addCredentials(PROXY_USER, PROXY_PASS, PROXY_HOST, PROXY_PORT, workstation);
+//                client.setCredentialsProvider(creds);
+//                
+//                return client;
+//            }
+//        };
+//        web.get(url);
+//        Document doc = Jsoup.parse(web.getPageSource());
+		String PROXY_HOST = "172.16.200.2";
+		int PROXY_PORT = 8080;
+		String PROXY_USER = "546736om";
+		String PROXY_PASS = "nie1234";
+	  HttpHost proxy = new HttpHost(PROXY_HOST, PROXY_PORT);
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new AuthScope(proxy),
+                new UsernamePasswordCredentials(PROXY_USER, PROXY_PASS));
+        RequestConfig config = RequestConfig.custom()
+                .setProxy(proxy)
+                .build();
+        HttpClient client = HttpClients.custom()
+                .setDefaultCredentialsProvider(credsProvider)
+                .setDefaultRequestConfig(config)
+                .build();
+		//CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpUriRequest req = new HttpGet(url);
 		HttpResponse res = client.execute(req);
 		BufferedReader rd = new BufferedReader(new InputStreamReader(res
@@ -99,7 +101,8 @@ public class TaobaoUtil extends com.walk_nie.taobao.kakaku.KakakuUtil{
 			sbHtml.append(line);
 			sbHtml.append("\n");
 		}
-		client.close();
+		
+		//client.close();
 		Document doc = Jsoup.parse(sbHtml.toString());
 		// System.out.println("[END]parse URL =" + url);
 		return doc;
@@ -537,7 +540,7 @@ public class TaobaoUtil extends com.walk_nie.taobao.kakaku.KakakuUtil{
 		return obj;
 	}
 
-	public static void downloadPicture(String pathName, String pictureUrl,
+	public static File downloadPicture(String pathName, String pictureUrl,
 			String picName) throws ClientProtocolException, IOException {
 
 		//String photoName = "out/" + itemType;
@@ -565,6 +568,7 @@ public class TaobaoUtil extends com.walk_nie.taobao.kakaku.KakakuUtil{
 				Image.SCALE_AREA_AVERAGING), 0, 0, originalW, originalH, null);
 		g.dispose();
 		ImageIO.write(resizedImage, "jpg", downloadFile);
+		return downloadFile;
 	}
     
 	public static String composeTaobaoHeaderLine() {

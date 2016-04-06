@@ -3,6 +3,9 @@ package com.walk_nie.taobao;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
+
+import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class FileExtensionConverter {
 
@@ -30,9 +33,27 @@ public class FileExtensionConverter {
 				return false;
 			}
 		});
+		Arrays.sort(files);
+		String prevName = "";
+		int count = 0;
 		for(File file:files){
+            String fileName = file.getName();
+            int idx = fileName.indexOf(TaobaoUtil.FILE_NAME_SEPERATOR);
+            if (idx != -1) {
+                String keyName = fileName.substring(0, idx);
+                if (keyName.equals(prevName)) {
+                    count++;
+                    if (count > 4) {
+                        continue;
+                    }
+                } else {
+                    count = 0;
+                    prevName = keyName;
+                }
+            }
 			String trueFrom = doReversa?extensionTo:extensionFrom;
 			String trueTo = doReversa?extensionFrom:extensionTo;
+			
 			String newFileName = file.getName().replace(trueFrom, "") + trueTo;
 			File newFile = new File(file.getParent(),newFileName);
 			file.renameTo(newFile);

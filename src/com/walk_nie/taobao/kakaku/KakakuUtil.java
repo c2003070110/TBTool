@@ -19,6 +19,7 @@ import org.jsoup.select.Elements;
 
 import com.walk_nie.taobao.kakaku.taobao.KakakuTaobaoPriceObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 
 public class KakakuUtil {
@@ -398,7 +399,7 @@ public class KakakuUtil {
 		if(item.itemMaker.indexOf("/")>0){
 			itemMaker = item.itemMaker.substring(0,item.itemMaker.indexOf("/"));
 		}
-		Document doc = TaobaoUtil.urlToDocumentByWebDriver(String.format(taobaoUrl, itemMaker+" "+item.itemType));
+		Document doc = WebDriverUtil.urlToDocumentByWebDriver(String.format(taobaoUrl, itemMaker+" "+item.itemType));
 		Elements noquery = doc.select("div").select(".combobar-noquery");
 		if (!noquery.isEmpty())
 			return;
