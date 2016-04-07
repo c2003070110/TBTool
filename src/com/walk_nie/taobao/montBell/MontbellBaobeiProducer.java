@@ -1,12 +1,9 @@
 package com.walk_nie.taobao.montBell;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.List;
@@ -16,13 +13,13 @@ import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MontbellBaobeiProducer {
 	
-	private String taobeiTemplateFile = "";
 	private String publishedBaobeiFile = "";
-	private String miaoshuTemplateFile = "";
+	//private String miaoshuTemplateFile = "";
 	private String outputFile = "";
 	private List<String> scanCategoryIds = Lists.newArrayList();
 	
@@ -67,42 +64,24 @@ public class MontbellBaobeiProducer {
 	
 	protected void writeOut(BufferedWriter priceBw, GoodsObject item)
 			throws Exception {
-		BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
 		
-		BufferedReader br = null;
-		try {
-			File file = new File(taobeiTemplateFile);
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					file), "UTF-16"));
-			String str = null;
-			while ((str = br.readLine()) != null) {
-				if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
-					baobeiTemplate = TaobaoUtil.readBaobeiIn(str);
-				}
-			}
-		} finally {
-			if (br != null)
-				br.close();
-		}
-		
-		priceBw.write(composeBaobeiLine(item, baobeiTemplate));
+		priceBw.write(composeBaobeiLine(item));
 		priceBw.flush();
 	}
-	protected String composeBaobeiLine(GoodsObject item,BaobeiPublishObject baobeiTemplate) throws Exception {
-		BaobeiPublishObject obj = TaobaoUtil.copyTaobaoTemplate(baobeiTemplate);
+	protected String composeBaobeiLine(GoodsObject item) throws Exception {
+		BaobeiPublishObject obj = new BaobeiPublishObject();
+		BaobeiUtil.setBaobeiCommonInfo(obj);
 
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
         // 宝贝类目
-        obj.cid = composeBaobeiTaobaoCategory(item,baobeiTemplate);
+        obj.cid = composeBaobeiTaobaoCategory(item,obj);
         // 店铺类目
-        obj.seller_cids = composeBaobeiMyCategory(item,baobeiTemplate);
+        obj.seller_cids = composeBaobeiMyCategory(item,obj);
 		// 宝贝价格
 		obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
-		// 省
-		obj.location_state = "日本";
 		
 		// 用户输入ID串;
 		obj.inputPids = "\"20000,13021751,6103476\"";
@@ -113,26 +92,26 @@ public class MontbellBaobeiProducer {
 		obj.description = composeBaobeiMiaoshu(item);
 		
 		// Array[0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片
-		String[] props = composeBaobeiPropColor(item,baobeiTemplate);
+		String[] props = composeBaobeiPropColor(item,obj);
 		// 宝贝属性
-		String str = baobeiTemplate.cateProps + props[0];
+		String str = obj.cateProps + props[0];
 		str = str.replaceAll("\"\"", "");
 		str = props[0];
 		obj.cateProps = str;
 		// 销售属性组合
-		if("\"\"".equals(baobeiTemplate.skuProps)){
+		if("\"\"".equals(obj.skuProps)){
 			obj.skuProps = props[1];
 		}else{
-			obj.skuProps = baobeiTemplate.skuProps + props[1];
+			obj.skuProps = obj.skuProps + props[1];
 		}
 		obj.skuProps = props[1];
 		// 商家编码
 		obj.outer_id = item.productId;
 		// 销售属性别名
-		if("\"\"".equals(baobeiTemplate.skuProps)){
+		if("\"\"".equals(obj.skuProps)){
 			obj.propAlias = props[2];
 		}else{
-			obj.propAlias = baobeiTemplate.propAlias + props[2];
+			obj.propAlias = obj.propAlias + props[2];
 		}
 		obj.propAlias = props[2];
 		// 商品条形码
@@ -274,20 +253,6 @@ public class MontbellBaobeiProducer {
 	}
 	
 	private  String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
-		StringBuffer sb = new StringBuffer();
-		BufferedReader br = null;
-		try {
-			File file = new File(getMiaoshuTemplateFile());
-			String str = null;
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					file), "UTF-8"));
-			while ((str = br.readLine()) != null) {
-				sb.append(str);
-			}
-		} finally {
-			if (br != null)
-				br.close();
-		}
 		
 		StringBuffer detailSB = new StringBuffer();
 		String productInfo = item.detailScreenShotPicFile;
@@ -307,27 +272,14 @@ public class MontbellBaobeiProducer {
 			}
 			detailSB.append("</div>");
 		}
-		return "\"" + detailSB.toString() +sizeTips.toString()+ sb.toString() + "\"";
-	}
-	
-	public MontbellBaobeiProducer setTaobeiTemplateFile(String taobeiTemplateFile) {
-		this.taobeiTemplateFile = taobeiTemplateFile;
-		return this;
+		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
+        String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
+		return "\"" + detailSB.toString() +sizeTips.toString()+ extraMiaoshu +extraMiaoshu1+ "\"";
 	}
 
 	public MontbellBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
 		this.publishedBaobeiFile = publishedBaobeiFile;
 		return this;
-	}
-
-	public MontbellBaobeiProducer setMiaoshuTemplateFile(
-			String miaoshuTemplateFile) {
-		this.miaoshuTemplateFile = miaoshuTemplateFile;
-		return this;
-	}
-
-	public String getMiaoshuTemplateFile() {
-		return this.miaoshuTemplateFile;
 	}
 
 	public MontbellBaobeiProducer setOutputFile(String outputFile) {

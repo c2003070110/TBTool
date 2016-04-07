@@ -9,15 +9,13 @@ public class MontbellBaobeiCreator  {
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
 
-		String taobeiTemplateFile = "in/montBell_baobeiTemplate.csv";
-		String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
+		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_baobei_%s.csv";
 		String publishedBaobeiFile = "";
 
 		MontbellBaobeiProducer db = new MontbellBaobeiProducer();
-		db.setMiaoshuTemplateFile(miaoshuTemplateFile)
+		db 
 				.setOutputFile(outputFile)
-				.setTaobeiTemplateFile(taobeiTemplateFile)
                 .setPublishedBaobeiFile(publishedBaobeiFile)
                 .addScanCategory("1000") // レインウェア
                 .addScanCategory("8800") // レインウェア（ゴアテックス製）

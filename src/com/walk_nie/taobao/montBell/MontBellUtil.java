@@ -45,89 +45,16 @@ public class MontBellUtil {
 			}
 		}
 	}
-
-	public static List<CategoryObject> readCategoryList() throws IOException {
-
-        List<CategoryObject> categoryList = new ArrayList<CategoryObject>();
-        BufferedReader br = null;
-        String categoryFile = "C:/Users/niehp/Google ドライブ/taobao-niehtjp/montbell/category_edit.txt";
-        CategoryObject rootCategory = null;
-        CategoryObject p02Category = null;
-        try {
-            File file = new File(categoryFile);
-            String str = null;
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            while ((str = br.readLine()) != null) {
-                if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
-                    if (str.startsWith("        ")) {
-                        CategoryObject category = new CategoryObject();
-                        category.rootCategory = rootCategory;
-                        category.p02Category = p02Category;
-                        String[] tmp = str.replace("        ", "").split(":");
-                        category.categoryId = tmp[1];
-                        category.categoryName = tmp[0];
-                        categoryList.add(category);
-                    } else if (str.startsWith("    ")) {
-                        p02Category = new CategoryObject();
-                        String[] tmp = str.replace("    ", "").split(":");
-                        p02Category.categoryId = tmp[1];
-                        p02Category.categoryName = tmp[0];
-                    } else {
-                        rootCategory = new CategoryObject();
-                        String[] tmp = str.split(":");
-                        rootCategory.categoryId = tmp[1];
-                        rootCategory.categoryName = tmp[0];
-                    }
-                }
-            }
-        } finally {
-            if (br != null)
-                br.close();
-        }
-        return categoryList;
-    }
-
-    protected void scanCategory() throws ClientProtocolException, IOException {
-        List<String> categoryList = new ArrayList<String>();
-        String rootCategoryUrl = "http://webshop.montbell.jp/goods/?c=1";
-        categoryList.add("ギア:1");
-        scanCategory(categoryList, rootCategoryUrl);
-        rootCategoryUrl = "http://webshop.montbell.jp/goods/?c=2";
-        categoryList.add("クロージング:2");
-        scanCategory(categoryList, rootCategoryUrl);
-        for (String str : categoryList) {
-            System.out.println(str);
-        }
-    }
-
-    public static void scanCategory(List<String> categoryList, String parantCategoryUrl)
-            throws ClientProtocolException, IOException {
-        Document doc = TaobaoUtil.urlToDocumentByUTF8(parantCategoryUrl);
-        Elements elements03 = doc.select("ul").select("li.level03Off");
-        if (!elements03.isEmpty()) {
-            for (Element elment : elements03) {
-                Element a = elment.select("a").get(0);
-                String href = a.attr("href");
-                String cateName = a.attr("title");
-                categoryList.add("        " + cateName + ":" + findCategoryId(href));
-            }
-            return;
-        }
-        Elements elements02 = doc.select("ul").select("li.level02Off");
-        if (!elements02.isEmpty()) {
-            for (Element elment : elements02) {
-                Element a = elment.select("a").get(0);
-                String href = a.attr("href");
-                String cateName = a.attr("title");
-                categoryList.add("    " + cateName + ":" + findCategoryId(href));
-                scanCategory(categoryList, urlPrefix + href);
-            }
-        }
-    }
-
-    public static String findCategoryId(String href) {
-        String queryS = href.substring(href.indexOf("?") + 1, href.length());
-        return queryS.split("=")[1];
+    public static String getExtraMiaoshu() {
+        StringBuffer miaoshu = new StringBuffer();
+        miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！直播加微信 (东京太郎 tokyoson)</h3>");
+        miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+        miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i2/2498620403/TB2.eGxkXXXXXXJXpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
+        miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2SLKFkXXXXXc9XXXXXXXXXXXX_!!2498620403.jpg\" /></p>");
+        miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2WvGSkXXXXXbuXXXXXXXXXXXX_!!2498620403.jpg\" /></p>");
+        miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2AtmtkXXXXXX1XpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
+        miaoshu.append("</div>");
+        return miaoshu.toString();
     }
     
     public static boolean isCateogryRainClothes(String categoryId) {
@@ -257,5 +184,89 @@ public class MontBellUtil {
             return true;
         }
         return false;
+    }
+
+    public static List<CategoryObject> readCategoryList() throws IOException {
+
+        List<CategoryObject> categoryList = new ArrayList<CategoryObject>();
+        BufferedReader br = null;
+        String categoryFile = "C:/Users/niehp/Google ドライブ/taobao-niehtjp/montbell/category_edit.txt";
+        CategoryObject rootCategory = null;
+        CategoryObject p02Category = null;
+        try {
+            File file = new File(categoryFile);
+            String str = null;
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            while ((str = br.readLine()) != null) {
+                if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
+                    if (str.startsWith("        ")) {
+                        CategoryObject category = new CategoryObject();
+                        category.rootCategory = rootCategory;
+                        category.p02Category = p02Category;
+                        String[] tmp = str.replace("        ", "").split(":");
+                        category.categoryId = tmp[1];
+                        category.categoryName = tmp[0];
+                        categoryList.add(category);
+                    } else if (str.startsWith("    ")) {
+                        p02Category = new CategoryObject();
+                        String[] tmp = str.replace("    ", "").split(":");
+                        p02Category.categoryId = tmp[1];
+                        p02Category.categoryName = tmp[0];
+                    } else {
+                        rootCategory = new CategoryObject();
+                        String[] tmp = str.split(":");
+                        rootCategory.categoryId = tmp[1];
+                        rootCategory.categoryName = tmp[0];
+                    }
+                }
+            }
+        } finally {
+            if (br != null)
+                br.close();
+        }
+        return categoryList;
+    }
+
+    protected void scanCategory() throws ClientProtocolException, IOException {
+        List<String> categoryList = new ArrayList<String>();
+        String rootCategoryUrl = "http://webshop.montbell.jp/goods/?c=1";
+        categoryList.add("ギア:1");
+        scanCategory(categoryList, rootCategoryUrl);
+        rootCategoryUrl = "http://webshop.montbell.jp/goods/?c=2";
+        categoryList.add("クロージング:2");
+        scanCategory(categoryList, rootCategoryUrl);
+        for (String str : categoryList) {
+            System.out.println(str);
+        }
+    }
+
+    public static void scanCategory(List<String> categoryList, String parantCategoryUrl)
+            throws ClientProtocolException, IOException {
+        Document doc = TaobaoUtil.urlToDocumentByUTF8(parantCategoryUrl);
+        Elements elements03 = doc.select("ul").select("li.level03Off");
+        if (!elements03.isEmpty()) {
+            for (Element elment : elements03) {
+                Element a = elment.select("a").get(0);
+                String href = a.attr("href");
+                String cateName = a.attr("title");
+                categoryList.add("        " + cateName + ":" + findCategoryId(href));
+            }
+            return;
+        }
+        Elements elements02 = doc.select("ul").select("li.level02Off");
+        if (!elements02.isEmpty()) {
+            for (Element elment : elements02) {
+                Element a = elment.select("a").get(0);
+                String href = a.attr("href");
+                String cateName = a.attr("title");
+                categoryList.add("    " + cateName + ":" + findCategoryId(href));
+                scanCategory(categoryList, urlPrefix + href);
+            }
+        }
+    }
+
+    public static String findCategoryId(String href) {
+        String queryS = href.substring(href.indexOf("?") + 1, href.length());
+        return queryS.split("=")[1];
     }
 }
