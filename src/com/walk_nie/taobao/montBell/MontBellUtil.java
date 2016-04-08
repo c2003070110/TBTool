@@ -56,6 +56,26 @@ public class MontBellUtil {
         miaoshu.append("</div>");
         return miaoshu.toString();
     }
+    public static boolean isCateogryClothes(String categoryId) {
+        return isCateogryRainClothes(categoryId)
+                || isCateogrySoftShell1(categoryId)
+                || isCateogrySoftShell2(categoryId)
+                || isCateogryWindBreaker(categoryId)
+                || isCateogryHardShell1(categoryId)
+                || isCateogryHardShell2(categoryId)
+                || isCateogryFreece1(categoryId)
+                || isCateogryFreece2(categoryId)
+                || isCateogryTShirt(categoryId)
+                || isCateogryWoolTShirt(categoryId)
+                || isCateogrySocks(categoryId)
+                || isCateogryFeatherCloth(categoryId);
+    }
+    
+    public static boolean isCateogryShoes(String categoryId) {
+        return isCateogrySnowShoes(categoryId)
+                || isCateogryClimbShoes(categoryId)
+                || isCateogryRuningShoes(categoryId);
+    }
     
     public static boolean isCateogryRainClothes(String categoryId) {
         if ("1000".equals(categoryId) || "8800".equals(categoryId)|| "8000".equals(categoryId)) {

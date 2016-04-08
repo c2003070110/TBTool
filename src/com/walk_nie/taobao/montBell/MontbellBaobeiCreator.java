@@ -14,9 +14,16 @@ public class MontbellBaobeiCreator  {
 		String publishedBaobeiFile = "";
 
 		MontbellBaobeiProducer db = new MontbellBaobeiProducer();
-		db 
-				.setOutputFile(outputFile)
+		db.setOutputFile(outputFile)
                 .setPublishedBaobeiFile(publishedBaobeiFile)
+                .addScanCategory("241000") // 登山靴（アルパイン）
+                .addScanCategory("241100") // 登山靴（トレッキング）
+                .addScanCategory("241200") // 登山靴（ハイキング）
+                
+                .addScanCategory("261000") // 大型ザック（50～120L）
+                .addScanCategory("262000") // 中型ザック（30～45L）
+                .addScanCategory("263000") // 小型ザック（5～25L）
+                
                 .addScanCategory("1000") // レインウェア
                 .addScanCategory("8800") // レインウェア（ゴアテックス製）
                 .addScanCategory("8000") // レインウェア（自転車用）

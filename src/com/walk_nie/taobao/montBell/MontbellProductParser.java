@@ -22,9 +22,9 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 public class MontbellProductParser {
 
     // change me!!
-    double rate = 0.0589 + 0.004;
-
-    private final static double benefitRate = 0.085;
+    double rate = 5.99 + 0.45;
+    private final static double benefitRate = 0.086;
+    
     String rootPathName = "out/MontBell/";
 
     String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
@@ -341,7 +341,7 @@ public class MontbellProductParser {
             int price = Integer.parseInt(priceStr);
             long priceTax  = Math.round(price*1.08);
             int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
-            double priceCNY = (priceTax + emsFee) * rate;
+            double priceCNY = ((priceTax + emsFee) * rate) / 100;
             priceCNY = priceCNY + priceCNY * benefitRate;
             return String.valueOf(Math.round(priceCNY));
         } catch (Exception ex) {

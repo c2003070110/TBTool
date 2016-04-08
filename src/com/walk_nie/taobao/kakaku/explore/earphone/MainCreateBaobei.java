@@ -264,13 +264,13 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 	@Override
 	protected boolean isAllowToBaobei(KakakuObject obj) {
  
-//		if(obj.priceYodobashi == null){
-//			return false;
-//		}
-//		double d = (obj.priceYodobashi.price - obj.priceYodobashi.price * 0.1);
-//		if(d >  obj.priceMin.price){
-//			return false;
-//		}
+		if(obj.priceYodobashi == null){
+			return false;
+		}
+		double d = (obj.priceYodobashi.price - obj.priceYodobashi.price * 0.1);
+		if(d >  obj.priceMin.price){
+			return false;
+		}
 //		if(obj.priceYodobashi.price < 1500){
 //			return false;
 //		}	

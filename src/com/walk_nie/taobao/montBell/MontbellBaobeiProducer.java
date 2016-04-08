@@ -214,15 +214,25 @@ public class MontbellBaobeiProducer {
 	
 	private String[] composeBaobeiPropColor(GoodsObject item,
 			BaobeiPublishObject baobeiTemplate) {
+	    // Return Value [0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片
+        // 宝贝属性例:
+        // 销售属性组合例:
+        // 销售属性别名例:
+        // 宝贝主图例:
+        // 销售属性图片例:
 		List<String> taobaoColors = Lists.newArrayList();
 		taobaoColors.add("28320");taobaoColors.add("28340");taobaoColors.add("3232479");
 		taobaoColors.add("3232478");taobaoColors.add("3232482");taobaoColors.add("60092");
 		taobaoColors.add("30156");taobaoColors.add("28332");taobaoColors.add("90554");
 		taobaoColors.add("3232481");taobaoColors.add("3232484");taobaoColors.add("3232483");
+
+        List<String> taobaoSizesForClothes = Lists.newArrayList();
+        List<String> taobaoSizesForShoes = Lists.newArrayList();
 		// 颜色值:28320 28324 28326 28327 28329 28332 28340 28338 28335
 		// 宝贝属性 -销售属性组合- 销售属性别名
 		String cateProps = "";String skuProps = "";String propAlias = "";
 		String picStatus = "";String skuPropPic = "";
+		// main picture
 		for(int i=0;i<item.pictureNameList.size();i++){
 			if(i==5) break;
 			skuPropPic += item.pictureNameList.get(i) + ":1:" + i +":|;";
@@ -231,22 +241,25 @@ public class MontbellBaobeiProducer {
 		int i = 0;
 		for(String color :item.colorList){
 			if(i>=taobaoColors.size())break;
-			// 宝贝属性格式  1627207=color; 20509=衣服大小; 20549=鞋码
+			// 宝贝属性格式: 1627207=color; 20509=衣服大小; 20549=鞋码
 			// 
 			cateProps +="1627207:"+taobaoColors.get(i)+";";
-			// 销售属性组合格式 价格:数量:SKU:1627207:28320;
+			// 销售属性组合格式: 价格:数量:SKU:1627207:28320;
 			skuProps += item.priceCNY +":9999"+":"+":1627207"+":"+taobaoColors.get(i)+";20549:44911;";
-			// 销售属性别名格式 1627207:28320:颜色1;
-			//propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
+			// 销售属性别名格式:1627207:28320:颜色1;
+			// 颜色别名
 			propAlias += "1627207:" + taobaoColors.get(i) + ":" + color + ";";
 			if(item.pictureNameList.size() == item.colorList.size()){
+			    // color picture
 				skuPropPic += item.pictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
 				picStatus +="2;";
 			}
 			i++;
 		}
-		
-		propAlias += "20549:44911:请留言;";
+        for(String size :item.sizeList){
+            // TODO size别名 
+            propAlias += "20549:44911:" + size + ";";
+        }
 		return new String[]{
 				"\""+cateProps+"\"","\""+skuProps+"\"" ,"\""+propAlias+"\"" 
 				,"\""+picStatus+"\"" ,"\""+skuPropPic+"\"" };
