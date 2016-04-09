@@ -68,7 +68,7 @@ public class BaobeiUtil {
         // 宝贝属性;
         obj.cateProps = "";
         // 邮费模版ID;
-        obj.postage_id = "1780373930";
+        obj.postage_id = "5327378310";
         // 会员打折
         obj.has_discount = "0";
         // 修改时间
