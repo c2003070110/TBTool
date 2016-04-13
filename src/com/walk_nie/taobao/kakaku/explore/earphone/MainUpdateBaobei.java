@@ -208,14 +208,26 @@ public class MainUpdateBaobei {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(
 					file), "UTF-16"));
 			String str = null;
+	        List<String> strList = new ArrayList<String>();
 			while ((str = br.readLine()) != null) {
 				if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
-					BaobeiPublishObject obj = TaobaoUtil.readBaobeiIn(str);
-					if(obj != null){
-						baobeiList.add(obj);
-					}
+
+		            if(str.startsWith("\"")){
+		                strList.add(str);
+		            }else{
+		                int pos = strList.size()-1;
+		                String newStr = strList.get(pos) + str;
+		                strList.set(pos, newStr);
+		            }
+		            
 				}
 			}
+	        for (String temp : strList) {
+                BaobeiPublishObject obj = TaobaoUtil.readBaobeiIn(temp);
+                if(obj != null){
+                    baobeiList.add(obj);
+                }
+	        }
 		} finally {
 			if (br != null)
 				br.close();
