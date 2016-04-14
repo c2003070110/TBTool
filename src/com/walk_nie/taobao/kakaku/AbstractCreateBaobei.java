@@ -26,6 +26,8 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 public abstract class AbstractCreateBaobei {
 
 	private String scanUrlsFile = "";
+	private List<BaobeiPublishObject> toUpdatebaobeiList;
+	
 	private String taobeiTemplateFile = "";
 	private String publishedBaobeiFile = "";
 	private String miaoshuTemplateFile = "";
@@ -75,8 +77,8 @@ public abstract class AbstractCreateBaobei {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
-
-			List<KakakuObject> itemIdList = readIn();
+			    
+			List<KakakuObject> itemIdList = Lists.newArrayList();
 			if (itemIdList.isEmpty())
 				return;
 
@@ -107,7 +109,8 @@ public abstract class AbstractCreateBaobei {
 		}
 	}
 
-	private void writeOut(BufferedWriter priceBw, KakakuObject item)
+
+    private void writeOut(BufferedWriter priceBw, KakakuObject item)
 			throws Exception {
 		try {
 			// TODO !
@@ -148,37 +151,46 @@ public abstract class AbstractCreateBaobei {
 					br.close();
 			}
 		}
-		List<KakakuObject> itemList = new ArrayList<KakakuObject>();
-
-		try {
-			File file = new File(scanUrlsFile);
-			String str = null;
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					file), "UTF-8"));
-			List<KakakuObject> list = new ArrayList<KakakuObject>();
-			while ((str = br.readLine()) != null) {
-				if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
-					List<KakakuObject> rslt = KakakuUtil.parseCategoryUrl(str);
-					for (KakakuObject obj : rslt) {
-						if (!isPublished(obj)) {
-							list.add(obj);
-						}
-					}
-				}
-			}
-			for (KakakuObject obj : list) {
-				KakakuObject objTemp = readItemIn(obj);
-				if (isAllowToBaobei(objTemp)) {
-					itemList.add(objTemp);
-				}
-			}
-		} finally {
-			if (br != null)
-				br.close();
-		}
-		return itemList;
+		return null;
 	}
-	private boolean isPublished(KakakuObject kakakuObj) {
+	private List<KakakuObject> readTaobaoList(List<BaobeiPublishObject> toUpdatebaobeiList2) {
+        List<KakakuObject> list = new ArrayList<KakakuObject>();
+        for(BaobeiPublishObject baobei:toUpdatebaobeiList2){
+            KakakuObject obj = new KakakuObject();
+            obj.id = baobei.outer_id;
+            list.add(obj);
+        }
+        return list;
+    }
+
+    private List<KakakuObject> readFromUrl(String scanUrlsFile2) throws IOException, Exception {
+
+        List<KakakuObject> list = new ArrayList<KakakuObject>();
+
+        BufferedReader br = null;
+	    try {
+            File file = new File(scanUrlsFile2);
+            String str = null;
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    file), "UTF-8"));
+            while ((str = br.readLine()) != null) {
+                if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
+                    List<KakakuObject> rslt = KakakuUtil.parseCategoryUrl(str);
+                    for (KakakuObject obj : rslt) {
+                        if (!isPublished(obj)) {
+                            list.add(obj);
+                        }
+                    }
+                }
+            }
+        } finally {
+            if (br != null)
+                br.close();
+        }
+	    return list;
+    }
+
+    private boolean isPublished(KakakuObject kakakuObj) {
 		for(String baobei :publishedItems){
 			if(kakakuObj.id.equals(baobei)){
 				return true;
@@ -283,5 +295,10 @@ public abstract class AbstractCreateBaobei {
 
 	protected abstract void parsePictureFromMaker(KakakuObject obj)
 			throws ClientProtocolException, IOException;
+	
+    protected void setToUpdateBaobeiList(List<BaobeiPublishObject> baobeiList){
+        toUpdatebaobeiList = baobeiList;
+    }
+
 
 }

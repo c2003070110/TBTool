@@ -1,8 +1,55 @@
 package com.walk_nie.taobao.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoup.helper.StringUtil;
+
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 
 public class BaobeiUtil {
+    
+    public static List<BaobeiPublishObject> readInPublishedBaobei(File publishedBaobeiFile) throws IOException {
+        List<BaobeiPublishObject> baobeiList = new ArrayList<BaobeiPublishObject>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(
+                    publishedBaobeiFile), "UTF-16"));
+            String strLine = null;
+            List<String> strList = new ArrayList<String>();
+            while ((strLine = br.readLine()) != null) {
+                if (!StringUtil.isBlank(strLine) && !strLine.startsWith("#")) {
+
+                    if(strLine.startsWith("\"")){
+                        strList.add(strLine);
+                    }else{
+                        if(strList.isEmpty())continue;
+                        int pos = strList.size()-1;
+                        String newStr = strList.get(pos) + strLine;
+                        strList.set(pos, newStr);
+                    }
+                    
+                }
+            }
+            for (String str : strList) {
+                BaobeiPublishObject obj = TaobaoUtil.readBaobeiIn(str);
+                if(obj != null){
+                    baobeiList.add(obj);
+                }
+            }
+        } finally {
+            if (br != null)
+                br.close();
+        }
+
+        return baobeiList;
+        
+    }
     public static String getExtraMiaoshu() {
         StringBuffer miaoshu = new StringBuffer();
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">购物须知</h3>");
