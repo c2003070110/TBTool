@@ -6,6 +6,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import com.walk_nie.taobao.kakaku.AbstractMainListItemId;
 import com.walk_nie.taobao.kakaku.KakakuObject;
+import com.walk_nie.taobao.kakaku.KakakuUtil;
 import com.walk_nie.taobao.kakaku.explore.earphone.EarphoneUtil;
 
 public class MainListItemId extends AbstractMainListItemId {
@@ -27,7 +28,7 @@ public class MainListItemId extends AbstractMainListItemId {
 
 	@Override
 	protected String translateMaker(String maker) {
-		return EarphoneUtil.translateMaker(maker);
+		return KakakuUtil.translateMaker(maker);
 	}
 
 	@Override

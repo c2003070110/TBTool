@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.jsoup.nodes.Document;
 
+import com.walk_nie.taobao.kakaku.KakakuUtil;
+
 public class MainTest {
 	private String itemUrlPrefix = "http://kakaku.com/item/";
 
@@ -29,7 +31,7 @@ public class MainTest {
 		try {
 			
 			String itemUrl = "http://kakaku.com/item/J0000000399/";
-			Document doc = EarphoneUtil.urlToDocumentKakaku(itemUrl);
+			Document doc = KakakuUtil.urlToDocumentKakaku(itemUrl);
 			downloadPicture(doc);
 
 		} catch (Exception ex) {

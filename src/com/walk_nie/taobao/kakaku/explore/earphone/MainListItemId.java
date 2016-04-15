@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 
 import com.walk_nie.taobao.kakaku.AbstractMainListItemId;
 import com.walk_nie.taobao.kakaku.KakakuObject;
+import com.walk_nie.taobao.kakaku.KakakuUtil;
 
 public class MainListItemId  extends AbstractMainListItemId {
 
@@ -31,14 +32,14 @@ public class MainListItemId  extends AbstractMainListItemId {
 
 	@Override
 	protected String translateMaker(String maker) {
-		return EarphoneUtil.translateMaker(maker);
+		return KakakuUtil.translateMaker(maker);
 	}
 	
 	@Override
 	protected boolean isAllowToParse(KakakuObject obj) throws ClientProtocolException, IOException {
-		String itemUrl = EarphoneUtil.kakakuUrlPrefix + obj.id;
-		Document doc = EarphoneUtil.urlToDocumentKakaku(itemUrl);
-		EarphoneUtil.parseItemPrice(doc, obj);
+		String itemUrl = KakakuUtil.kakakuUrlPrefix + obj.id;
+		Document doc = KakakuUtil.urlToDocumentKakaku(itemUrl);
+		KakakuUtil.parseItemPrice(doc, obj);
 		if(obj.priceYodobashi == null){
 			return false;
 		}

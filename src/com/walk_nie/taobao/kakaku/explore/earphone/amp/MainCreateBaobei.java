@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import com.walk_nie.taobao.kakaku.AbstractCreateBaobei;
 import com.walk_nie.taobao.kakaku.KakakuObject;
+import com.walk_nie.taobao.kakaku.KakakuUtil;
 import com.walk_nie.taobao.kakaku.explore.earphone.EarphoneUtil;
 import com.walk_nie.taobao.kakaku.explore.earphone.SpecObject;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
@@ -39,7 +40,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
 		// 宝贝价格
-		obj.price = EarphoneUtil.convertToCNY(item);
+		obj.price = EarphoneUtil.convertToCNY(item,0.065,0.1);
 		// 宝贝数量
 		obj.num = "9999";
 		// 宝贝描述
@@ -98,7 +99,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		
 		super.parseItemBasicSpec(doc,  obj);
 		
-		Document docSpecDetail = EarphoneUtil.urlToDocumentKakaku(itemUrl + "/spec");
+		Document docSpecDetail = KakakuUtil.urlToDocumentKakaku(itemUrl + "/spec");
 		Elements specDetail = docSpecDetail.select("div").select("#mainLeft")
 				.select("table").select("tr");
 		for (Element spec : specDetail) {
@@ -140,7 +141,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 	}
 
 	private void parsePictureFromAudioTechnica(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
-		Document doc = EarphoneUtil.urlToDocumentKakaku(specUrl);
+		Document doc = KakakuUtil.urlToDocumentKakaku(specUrl);
 		Elements picSelect = doc.select("table").select("#photo_selecter").select("img");
 		int idx = 1;
 		for(Element element:picSelect){
@@ -151,7 +152,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		}
 	}
 	private void parsePictureFromDenon(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
-		Document doc = EarphoneUtil.urlToDocumentKakaku(specUrl);
+		Document doc = KakakuUtil.urlToDocumentKakaku(specUrl);
 		Elements picSelect = doc.select("div").select(".prodNav").select("li");
 		int idx = 1;
 		for (Element element : picSelect) {

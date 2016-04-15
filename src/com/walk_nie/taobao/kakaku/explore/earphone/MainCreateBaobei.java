@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.kakaku.AbstractCreateBaobei;
 import com.walk_nie.taobao.kakaku.KakakuObject;
+import com.walk_nie.taobao.kakaku.KakakuUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
@@ -40,7 +41,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
 		// 宝贝价格
-		obj.price = EarphoneUtil.convertToCNY(item);
+		obj.price = EarphoneUtil.convertToCNY(item,0.06,0.1);
 		// 宝贝数量
 		obj.num = "9999";
 		// 宝贝描述
@@ -158,10 +159,10 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 			// 宝贝属性格式  1627207:28320;
 			cateProps +="1627207:"+taobaoColors.get(i)+";";
 			// 销售属性组合格式 价格:数量:SKU:1627207:28320;
-			skuProps += EarphoneUtil.convertToCNY(colorObj) +":9999:"+colorObj.sku+":1627207:"+taobaoColors.get(i)+";";
+			skuProps += EarphoneUtil.convertToCNY(colorObj,0.065,0.1) +":9999:"+colorObj.sku+":1627207:"+taobaoColors.get(i)+";";
 			// 销售属性别名格式 1627207:28320:颜色1;
 			//propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
-			propAlias +="1627207:"+taobaoColors.get(i)+":" +EarphoneUtil.convertColor(colorObj.colorName)+ "[K"+colorObj.id+"8]"+";";
+			propAlias +="1627207:"+taobaoColors.get(i)+":" +KakakuUtil.convertColor(colorObj.colorName)+ "[K"+colorObj.id+"8]"+";";
 			i++;
 			
 		}
@@ -246,7 +247,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei  {
 		
 		super.parseItemBasicSpec(doc,  obj);
 		
-		Document docSpecDetail = EarphoneUtil.urlToDocumentKakaku(itemUrl + "/spec");
+		Document docSpecDetail = KakakuUtil.urlToDocumentKakaku(itemUrl + "/spec");
 		Elements specDetail = docSpecDetail.select("div").select("#mainLeft")
 				.select("table").select("tr");
 		for (Element spec : specDetail) {

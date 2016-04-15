@@ -24,27 +24,27 @@ public class MontBellUtil {
     public static String pictureUrlFmt = "http://webshop.montbell.jp/common/images/product/prod_k/m_k_%s_%s.jpg";
     public static String pictureUrlFmt1 = "http://webshop.montbell.jp/common/images/product/prod_k/k_%s_%s.jpg";
 
-	
-	public static void downloadPicture(GoodsObject goods,String outFilePathPrice) {
-		
-		for(String color : goods.colorList){
-		    color = color.replaceAll("/", "-");
-			String picUrl = String.format(pictureUrlFmt, goods.productId,color);
-			String picName = goods.productId + "_" + color;
-			try {
-				TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
-				goods.pictureNameList.add(picName);
-			} catch (Exception ex) {
-				picUrl = String.format(pictureUrlFmt1, goods.productId, color);
-				try {
-					TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
-					goods.pictureNameList.add(picName);
-				} catch (Exception ex1) {
+    
+    public static void downloadPicture(GoodsObject goods,String outFilePathPrice) {
+        
+        for(String color : goods.colorList){
+            color = color.replaceAll("/", "-");
+            String picUrl = String.format(pictureUrlFmt, goods.productId,color);
+            String picName = goods.productId + "_" + color;
+            try {
+                TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+                goods.pictureNameList.add(picName);
+            } catch (Exception ex) {
+                picUrl = String.format(pictureUrlFmt1, goods.productId, color);
+                try {
+                    TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+                    goods.pictureNameList.add(picName);
+                } catch (Exception ex1) {
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
     public static String getExtraMiaoshu() {
         StringBuffer miaoshu = new StringBuffer();
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！直播加微信 (东京太郎 tokyoson)</h3>");
@@ -55,6 +55,21 @@ public class MontBellUtil {
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2AtmtkXXXXXX1XpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
         miaoshu.append("</div>");
         return miaoshu.toString();
+    }
+
+    public static String convertToCNY(GoodsObject item,double rate,double benefitRate) {
+        String priceStr = item.priceJPY;
+        try {
+            int price = Integer.parseInt(priceStr);
+            long priceTax  = Math.round(price*1.08);
+            int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
+            double priceCNY = ((priceTax + emsFee) * rate) / 100;
+            priceCNY = priceCNY + priceCNY * benefitRate;
+            return String.valueOf(Math.round(priceCNY));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "XXXXXX";
+        }
     }
     public static boolean isCateogryClothes(String categoryId) {
         return isCateogryRainClothes(categoryId)

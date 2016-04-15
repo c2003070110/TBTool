@@ -38,6 +38,10 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         List<KakakuObject> filterItemList = new ArrayList<KakakuObject>();
         for (KakakuObject obj : itemList) {
             KakakuObject objTemp = parseDetail(obj);
+            if(objTemp == null){
+                System.out.println("404 Page.Id=" + obj.id);
+                continue;
+            }
             if (isAllowToBaobei(objTemp)) {
                 filterItemList.add(objTemp);
             }
@@ -47,8 +51,13 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
 
     private List<KakakuObject> parseItemIdFromTaobaoList(List<BaobeiPublishObject> toUpdatebaobeiList2) {
         List<KakakuObject> list = new ArrayList<KakakuObject>();
+//        String prefix = "KKKU-";
         for (BaobeiPublishObject baobei : toUpdatebaobeiList2) {
             KakakuObject obj = new KakakuObject();
+//            if(!baobei.outer_id.startsWith(prefix)){
+//                continue;
+//            }
+//            obj.id = baobei.outer_id.substring(prefix.length()+1);
             obj.id = baobei.outer_id;
             list.add(obj);
         }
@@ -86,6 +95,9 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         obj.id = objT.id;
         String itemUrl = KakakuUtil.kakakuUrlPrefix + objT.id;
         Document doc = KakakuUtil.urlToDocumentKakaku(itemUrl);
+        if(is404(doc)){
+            return null;
+        }
         KakakuUtil.parseItemMaker(doc, obj);
 
         KakakuUtil.parseItemPrice(doc, obj);
@@ -97,8 +109,19 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         parseItemVariation(doc, obj);
 
         obj.sku = KakakuUtil.findItemSku(doc);
+        
+        parseMakerSite(obj);
+        
         return obj;
     }
+
+    private boolean is404(Document doc) {
+        Elements els = doc.select("dvi#forbidden-msg");
+        if (!els.isEmpty())
+            return true;
+        return false;
+    }
+
     private boolean isPublished(KakakuObject kakakuObj) {
         // TODO
         List<String> publishedItems = Lists.newArrayList();
@@ -159,4 +182,5 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
             KakakuObject obj) throws ClientProtocolException, IOException;
     
     protected abstract boolean isAllowToBaobei(KakakuObject kakakuObj);
+    protected abstract void parseMakerSite(KakakuObject kakakuObj)throws ClientProtocolException, IOException;
 }

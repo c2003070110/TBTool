@@ -13,6 +13,9 @@ public abstract class BaseBaobeiProducer {
 	protected boolean updateOutIdFlag = false;
 	protected boolean updateDescriptionFlag = false;
 	protected List<BaobeiPublishObject> toUpdatebaobeiList = null;
+
+    protected double currencyRate;
+    protected double benefitRate;
     
     public BaseBaobeiProducer enablePriceUpdate(){
         this.updatePriceFlag = true;
@@ -34,6 +37,19 @@ public abstract class BaseBaobeiProducer {
     public BaseBaobeiProducer setToUpdateBaobeiList(List<BaobeiPublishObject> baobeiList){
         toUpdatebaobeiList = baobeiList;
         return this;
+    }
+    
+    public BaseBaobeiProducer setCurrencyRate(double currencyRate) {
+        this.currencyRate = currencyRate;
+        return this;
+    }
+    
+    public BaseBaobeiProducer setBenefitRate(double benefitRate) {
+        this.benefitRate = benefitRate;
+        return this;
+    }
+    protected boolean isUpdateMode(){
+        return (toUpdatebaobeiList!=null && !toUpdatebaobeiList.isEmpty());
     }
     public abstract void process() ;
     public abstract BaseBaobeiParser getParser();

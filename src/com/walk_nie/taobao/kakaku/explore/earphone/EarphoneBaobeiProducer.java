@@ -7,8 +7,10 @@ import org.jsoup.helper.StringUtil;
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.kakaku.KakakuBaobeiProceducer;
 import com.walk_nie.taobao.kakaku.KakakuObject;
+import com.walk_nie.taobao.kakaku.KakakuUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
+import com.walk_nie.taobao.util.BaobeiUtil;
 
 public class EarphoneBaobeiProducer extends KakakuBaobeiProceducer  {
 
@@ -37,11 +39,32 @@ public class EarphoneBaobeiProducer extends KakakuBaobeiProceducer  {
 
     protected void composeBaobeiPrice(BaobeiPublishObject baobeiObj, KakakuObject kakakuObj){
         // 宝贝价格
-        baobeiObj.price = EarphoneUtil.convertToCNY(kakakuObj);
+        baobeiObj.price = EarphoneUtil.convertToCNY(kakakuObj,this.currencyRate,this.benefitRate);
     }
     
     protected void composeBaobeiMiaoshu(BaobeiPublishObject baobeiObj, KakakuObject kakakuObj){
         // 宝贝描述
+        StringBuffer detailSB = new StringBuffer();
+        String productInfo = kakakuObj.detailScreenShotPicFile;
+        if(!StringUtil.isBlank(kakakuObj.detailScreenShotPicFile)){
+            detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
+            detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+            detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + productInfo + "\"/></p>");
+            detailSB.append("</div>");
+        }
+        StringBuffer sizeTips = new StringBuffer();
+//        if(!itemkakakuObj.sizeTipPics.isEmpty()){
+//            detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
+//            detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+//            detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
+//            for(String sizeTip:item.sizeTipPics){
+//                detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + sizeTip + "\"/></p>");    
+//            }
+//            detailSB.append("</div>");
+//        }
+        String extraMiaoshu = EarphoneUtil.getExtraMiaoshu();
+        String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
+        baobeiObj.description = "\"" + detailSB.toString() +sizeTips.toString()+ extraMiaoshu +extraMiaoshu1+ "\"";
     }
     
     protected void composeBaobeiCateProps(BaobeiPublishObject baobeiObj, KakakuObject kakakuObj){
@@ -58,7 +81,7 @@ public class EarphoneBaobeiProducer extends KakakuBaobeiProceducer  {
     
     protected void composeBaobeiOutId(BaobeiPublishObject baobeiObj, KakakuObject kakakuObj){
         // 商家编码
-        baobeiObj.barcode = "KKKU_" + kakakuObj.id;
+        baobeiObj.barcode = "KKKU-" + kakakuObj.id;
     }
     
     protected void composeBaobeiPropAlias(BaobeiPublishObject baobeiObj, KakakuObject kakakuObj){
@@ -118,15 +141,15 @@ public class EarphoneBaobeiProducer extends KakakuBaobeiProceducer  {
         cateProps += getBaobeiCategory(kakakuObj);
         for(KakakuObject colorObj :kakakuObj.colorList){
             if(i>=taobaoColors.size())break;
+            String price = EarphoneUtil.convertToCNY(colorObj,this.currencyRate,this.benefitRate);
             // 宝贝属性格式  1627207:28320;
             cateProps +="1627207:"+taobaoColors.get(i)+";";
             // 销售属性组合格式 价格:数量:SKU:1627207:28320;
-            skuProps += EarphoneUtil.convertToCNY(colorObj) +":9999:"+colorObj.sku+":1627207:"+taobaoColors.get(i)+";";
+            skuProps += price +":9999:"+colorObj.sku+":1627207:"+taobaoColors.get(i)+";";
             // 销售属性别名格式 1627207:28320:颜色1;
             //propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
-            propAlias +="1627207:"+taobaoColors.get(i)+":" +EarphoneUtil.convertColor(colorObj.colorName)+ "[K"+colorObj.id+"8]"+";";
+            propAlias +="1627207:"+taobaoColors.get(i)+":" +KakakuUtil.convertColor(colorObj.colorName)+ "[K"+colorObj.id+"8]"+";";
             i++;
-            
         }
         return new String[]{"\""+cateProps+"\"","\""+skuProps+"\"" ,"\""+propAlias+"\"" };
     }

@@ -1,15 +1,10 @@
 package com.walk_nie.taobao.kakaku.explore.earphone;
 
 import com.walk_nie.taobao.kakaku.KakakuObject;
+import com.walk_nie.taobao.kakaku.KakakuUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class EarphoneUtil extends com.walk_nie.taobao.kakaku.KakakuUtil {
-
-	// FIXME change me!!
-	public final static double currencyRate = 0.065;
-	private final static double benefitRate = 0.08;
-	private final static double benefitRateSony = benefitRate - 0.02;
-
+public class EarphoneUtil {
 
 	public static String translateType(String type) {
 		int idx  = type.indexOf("[");
@@ -96,7 +91,7 @@ public class EarphoneUtil extends com.walk_nie.taobao.kakaku.KakakuUtil {
 		}
 	}
 
-	public static String convertToCNY(KakakuObject item) {
+	public static String convertToCNY(KakakuObject item,double currencyRate,double benefitRate) {
 		int price = 0;
 		double extraFee = 0;
 		if(item.priceYodobashi != null){
@@ -106,15 +101,15 @@ public class EarphoneUtil extends com.walk_nie.taobao.kakaku.KakakuUtil {
 			if(colorY != null){
 				price = colorY.priceYodobashi.price;
 			}else if(item.priceAmazon != null && item.priceAmazon.isStock){
-				price = getPriceForOther(item.priceAmazon);
+				price = KakakuUtil.getPriceForOther(item.priceAmazon);
 			}else if(item.priceBiccamera != null && item.priceBiccamera.isStock){
-				price = getPriceForOther(item.priceBiccamera);
+				price = KakakuUtil.getPriceForOther(item.priceBiccamera);
 			}else if(item.priceYamada != null && item.priceYamada.isStock){
-				price = getPriceForOther(item.priceYamada);
+				price = KakakuUtil.getPriceForOther(item.priceYamada);
 			}else if(item.priceEEarPhone != null && item.priceEEarPhone.isStock){
-				price = getPriceForOther(item.priceEEarPhone);
+				price = KakakuUtil.getPriceForOther(item.priceEEarPhone);
 			}else if(item.priceMin !=null){
-				price = getPriceForOther(item.priceMin);
+				price = KakakuUtil.getPriceForOther(item.priceMin);
 			}
 			extraFee = price * 0.1;
 		}
@@ -128,7 +123,7 @@ public class EarphoneUtil extends com.walk_nie.taobao.kakaku.KakakuUtil {
 		}
 		double priceCNY = (price + extraFee + emsFee) * currencyRate;
 		if(item.itemMaker.toLowerCase().indexOf("sony") > 0){
-			priceCNY = priceCNY + priceCNY * benefitRateSony;
+			priceCNY = priceCNY + priceCNY * (benefitRate*0.8);
 		}else{
 			priceCNY = priceCNY + priceCNY * benefitRate;
 		}
@@ -194,4 +189,26 @@ public class EarphoneUtil extends com.walk_nie.taobao.kakaku.KakakuUtil {
 		}
 		return "";
 	}
+
+    public static String getExtraMiaoshu() {
+        StringBuffer miaoshu = new StringBuffer();
+        miaoshu.append("<H3 style=\"FONT-SIZE: large; BORDER-TOP: #e19d63 1px solid; HEIGHT: 26px; BORDER-RIGHT: #e19d63 1px solid; BACKGROUND: #ff8f2d repeat-x 0px 0px; BORDER-BOTTOM: #d07428 1px solid; COLOR: #ffffff; PADDING-BOTTOM: 0px; PADDING-TOP: 3px; PADDING-LEFT: 10px; BORDER-LEFT: #e19d63 1px solid; PADDING-RIGHT: 0px\">关于耳机推荐</H3>");
+        miaoshu.append("<DIV style=\"FONT-SIZE: large; BORDER-TOP: #b0bec7 1px solid; BORDER-RIGHT: #b0bec7 1px solid; BACKGROUND: #f8f9fb repeat-x 50% top; BORDER-BOTTOM: #b0bec7 1px solid; PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; BORDER-LEFT: #b0bec7 1px solid; PADDING-RIGHT: 10px\">");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\">耳机产品中琳琅满目，如何挑选满意的耳机，是困难的事。</P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\">根据个人爱好（重低音，无线），预算，音质等平衡下，挑选适合您自己的耳机。</P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\">所以，本店不推荐耳机！不回答 哪款耳机好 等问题。</P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\">推荐亲们,性能，请看官方参数和评测报告！试听，请移步实体店！</P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\"><SPAN style=\"FONT-WEIGHT: bold; COLOR: red\">本店为您代购100%真品的耳机！而且价格合适！</SPAN></P>");
+        miaoshu.append("</DIV>");
+        miaoshu.append("<H3 style=\"FONT-SIZE: large; BORDER-TOP: #e19d63 1px solid; HEIGHT: 26px; BORDER-RIGHT: #e19d63 1px solid; BACKGROUND: #ff8f2d repeat-x 0px 0px; BORDER-BOTTOM: #d07428 1px solid; COLOR: #ffffff; PADDING-BOTTOM: 0px; PADDING-TOP: 3px; PADDING-LEFT: 10px; BORDER-LEFT: #e19d63 1px solid; PADDING-RIGHT: 0px\">好评如潮！</H3>");
+        miaoshu.append("<DIV style=\"FONT-SIZE: large; BORDER-TOP: #b0bec7 1px solid; BORDER-RIGHT: #b0bec7 1px solid; BACKGROUND: #f8f9fb repeat-x 50% top; BORDER-BOTTOM: #b0bec7 1px solid; PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; BORDER-LEFT: #b0bec7 1px solid; PADDING-RIGHT: 10px\">");
+        miaoshu.append("<p style=\"PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px\">宝贝采购于日本知名电器量贩店！可提供购物小票。 </p>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\"><IMG style=\"PADDING-BOTTOM: 2px; PADDING-TOP: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px\" src=\"https://img.alicdn.com/imgextra/i4/2498620403/TB2Du41epXXXXaSXXXXXXXXXXXX_!!2498620403.jpg_620x10000.jpg\"></P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\"><IMG style=\"PADDING-BOTTOM: 2px; PADDING-TOP: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px\" src=\"https://img.alicdn.com/imgextra/i3/2498620403/TB2tOB4epXXXXaNXXXXXXXXXXXX_!!2498620403.jpg_620x10000.jpg\"></P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\"><IMG style=\"PADDING-BOTTOM: 2px; PADDING-TOP: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px\" src=\"https://img.alicdn.com/imgextra/i4/2498620403/TB2C_0_epXXXXXFXXXXXXXXXXXX_!!2498620403.jpg_620x10000.jpg\"></P>");
+        miaoshu.append("<P style=\"TEXT-INDENT: 2em\"><IMG style=\"PADDING-BOTTOM: 2px; PADDING-TOP: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px\" src=\"https://img.alicdn.com/imgextra/i3/2498620403/TB2x0R3epXXXXa4XXXXXXXXXXXX_!!2498620403.jpg_620x10000.jpg\"></P>");
+        miaoshu.append("</DIV>");
+        
+        return miaoshu.toString();
+    }
 }

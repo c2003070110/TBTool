@@ -16,14 +16,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
-public class MontbellProductParser {
-
-    // change me!!
-    double rate = 5.99 + 0.45;
-    private final static double benefitRate = 0.086;
+public class MontbellProductParser extends BaseBaobeiParser {
     
     String rootPathName = "out/MontBell/";
 
@@ -158,7 +155,7 @@ public class MontbellProductParser {
             prod.titleCN = translateTitle(prod);
 
             // (price + emsfee)*rate + benefit
-            prod.priceCNY = convertToCNY(prod);
+            //prod.priceCNY = convertToCNY(prod);
             System.out.println(""+prod.titleCN +":" + prod.titleOrg);
             
         }
@@ -332,21 +329,6 @@ public class MontbellProductParser {
             return "小孩";
         } else {
             return "";
-        }
-    }
-
-    private String convertToCNY(GoodsObject item) {
-        String priceStr = item.priceJPY;
-        try {
-            int price = Integer.parseInt(priceStr);
-            long priceTax  = Math.round(price*1.08);
-            int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
-            double priceCNY = ((priceTax + emsFee) * rate) / 100;
-            priceCNY = priceCNY + priceCNY * benefitRate;
-            return String.valueOf(Math.round(priceCNY));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return "XXXXXX";
         }
     }
 

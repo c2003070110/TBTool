@@ -20,11 +20,13 @@ public class BaobeiUpdator {
 	}
 	
 	private static void updateEarphone() throws IOException{
-        String toUpdateFile = "in/updateBaobei.csv";
+	    double currencyRate = 0.065;
+	    double benefitRate = 0.1;
+        String toUpdateFile = "res/updateBaobei.csv";
         List<BaobeiPublishObject> baobeiList = BaobeiUtil.readInPublishedBaobei(new File(toUpdateFile));
 
         String publishedBaobeiFile = "in/publishedBaobeiFile.csv";
-        String outputFile = "out/earphone_baobei_%s.csv";
+        String outputFile = "res/updateBaobei-upd_%s.csv";
         
         EarphoneBaobeiProducer producer = new EarphoneBaobeiProducer();
         producer
@@ -33,6 +35,8 @@ public class BaobeiUpdator {
             .setToUpdateBaobeiList(baobeiList)
             .enablePriceUpdate()
             .enableOutIdUpdate()
+            .setBenefitRate(benefitRate)
+            .setCurrencyRate(currencyRate)
             .process();
         
 	}

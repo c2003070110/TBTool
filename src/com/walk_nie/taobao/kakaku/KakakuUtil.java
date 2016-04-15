@@ -223,12 +223,14 @@ public class KakakuUtil {
 
 	public static void parseItemPicture(Document doc, KakakuObject obj) {
 		String urlFmt1 = "http://img1.kakaku.k-img.com/images/productimage/fullscale/%s.jpg";
-		obj.pictureList.add(String.format(urlFmt1, obj.id));
+		obj.pictureUrlList.add(String.format(urlFmt1, obj.id));
+		obj.pictureNameList.add(obj.id+"-0");
 		String urlFmt2 = "http://img1.kakaku.k-img.com/images/productimage/fullscale/%s_%04d.jpg";
 		Elements elements = doc.select("div").select("#imgBox").select("img");
-		for (int i = 1; i < elements.size(); i++) {
-			obj.pictureList.add(String.format(urlFmt2, obj.id, i));
-		}
+        for (int i = 1; i < elements.size(); i++) {
+            obj.pictureUrlList.add(String.format(urlFmt2, obj.id, i));
+            obj.pictureNameList.add(obj.id + "-" + i);
+        }
 	}
 
 	public static String readInBaobeiMiaoshuTemplate(KakakuObject item,String miaoshuTemplateFile) throws IOException {

@@ -549,6 +549,9 @@ public class TaobaoUtil {
 			path.mkdirs();
 		}
 		File downloadFile = new File(path, picName + ".jpg");
+		if(downloadFile.exists()){
+		    return downloadFile;
+		}
 		//File downloadFile = new File(path, picName + ".tbi");
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpUriRequest req = new HttpGet(pictureUrl);

@@ -28,8 +28,11 @@ public class KakakuObject {
 
 	public List<KakakuObject> colorList = Lists.newArrayList();
 	public String colorName = "";
+	
+    public String detailScreenShotPicFile = "";
 
-	public List<String> pictureList = new ArrayList<String>();
+    public List<String> pictureUrlList = Lists.newArrayList();
+	public List<String> pictureNameList = Lists.newArrayList();
 
 	public List<KakakuTaobaoPriceObject> taobaoList = new ArrayList<KakakuTaobaoPriceObject>();
 
