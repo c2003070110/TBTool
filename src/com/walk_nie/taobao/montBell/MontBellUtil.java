@@ -19,6 +19,10 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 
 public class MontBellUtil {
+
+    public static String rootPathName = "out/MontBell/";
+    public static String sizeTipFileName = "sizeTipList.txt";
+    
     public static String urlPrefix = "http://webshop.montbell.jp";
     
     public static String pictureUrlFmt = "http://webshop.montbell.jp/common/images/product/prod_k/m_k_%s_%s.jpg";
@@ -57,13 +61,13 @@ public class MontBellUtil {
         return miaoshu.toString();
     }
 
-    public static String convertToCNY(GoodsObject item,double rate,double benefitRate) {
+    public static String convertToCNY(GoodsObject item,double curencyRate,double benefitRate) {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
             long priceTax  = Math.round(price*1.08);
             int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
-            double priceCNY = ((priceTax + emsFee) * rate) / 100;
+            double priceCNY = (priceTax + emsFee) * curencyRate;
             priceCNY = priceCNY + priceCNY * benefitRate;
             return String.valueOf(Math.round(priceCNY));
         } catch (Exception ex) {

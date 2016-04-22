@@ -9,6 +9,7 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 
 public class AsicsShoesUtil {
+    public static String rootPathName = "out/Asics/";
 
     public static void downloadPicture(AsicsShoesObject goods, String outFilePathPrice)
             throws ClientProtocolException, IOException {

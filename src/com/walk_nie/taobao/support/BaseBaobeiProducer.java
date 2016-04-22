@@ -12,7 +12,12 @@ public abstract class BaseBaobeiProducer {
 	protected boolean updateTitleFlag = false;
 	protected boolean updateOutIdFlag = false;
 	protected boolean updateDescriptionFlag = false;
+
+	// for update
 	protected List<BaobeiPublishObject> toUpdatebaobeiList = null;
+	
+	protected String outputFile = "";
+	protected String publishedBaobeiFile = "";
 
     protected double currencyRate;
     protected double benefitRate;
@@ -50,6 +55,16 @@ public abstract class BaseBaobeiProducer {
     }
     protected boolean isUpdateMode(){
         return (toUpdatebaobeiList!=null && !toUpdatebaobeiList.isEmpty());
+    }
+
+    public BaseBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
+        this.publishedBaobeiFile = publishedBaobeiFile;
+        return this;
+    }
+
+    public BaseBaobeiProducer setOutputFile(String outputFile) {
+        this.outputFile = outputFile;
+        return this;
     }
     public abstract void process() ;
     public abstract BaseBaobeiParser getParser();

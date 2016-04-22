@@ -14,8 +14,7 @@ public class MontbellBaobeiCreator  {
 		String publishedBaobeiFile = "";
 
 		MontbellBaobeiProducer db = new MontbellBaobeiProducer();
-		db.setOutputFile(outputFile)
-                .setPublishedBaobeiFile(publishedBaobeiFile)
+		db
                 .addScanCategory("241000") // 登山靴（アルパイン）
                 .addScanCategory("241100") // 登山靴（トレッキング）
                 .addScanCategory("241200") // 登山靴（ハイキング）
@@ -55,8 +54,10 @@ public class MontbellBaobeiCreator  {
                 .addScanCategory("124000") // フリースベスト
                 .addScanCategory("123000") // フリースパンツ
                 .addScanCategory("") // 
-                .addScanCategory("") // 
-              
+                .addScanCategory("") //
+                
+                .setOutputFile(outputFile)
+                .setPublishedBaobeiFile(publishedBaobeiFile)
                 .process();
 
 		System.exit(0);

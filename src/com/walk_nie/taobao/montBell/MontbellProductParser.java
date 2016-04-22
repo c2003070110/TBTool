@@ -1,9 +1,15 @@
 package com.walk_nie.taobao.montBell;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
@@ -16,13 +22,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MontbellProductParser extends BaseBaobeiParser {
-    
-    String rootPathName = "out/MontBell/";
 
     String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
 
@@ -33,6 +38,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
     String productUrlPrefix_fo = "http://webshop.montbell.jp/goods/disp_fo.php?product_id=";
 
     String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
+    
+    List<SizeTipObject> sizeTipList = null;
   
     public void scanSingleItem(GoodsObject goodsObj) throws IOException {
 
@@ -67,16 +74,15 @@ public class MontbellProductParser extends BaseBaobeiParser {
             }
         }
 
-        // TODO
-        //screenshotProductDetailDesp(goodsObj);
-        //processProductSizeTable(goodsObj,mainRightEle);
+        screenshotProductDetailDesp(goodsObj);
+        processProductSizeTable(goodsObj,mainRightEle);
     }
 
     protected void screenshotProductDetailDesp(GoodsObject goodsObj) throws ClientProtocolException,
             IOException {
         String fileNameFmt = "detail_%s.png";
         String fileName = String.format(fileNameFmt, goodsObj.productId);
-        File despFile = new File(rootPathName, fileName);
+        File despFile = new File(MontBellUtil.rootPathName, fileName);
         if (!despFile.exists()) {
             String url = productUrlPrefix + goodsObj.productId;
             WebDriver webDriver = WebDriverUtil.getWebDriver(url);
@@ -88,10 +94,41 @@ public class MontbellProductParser extends BaseBaobeiParser {
         goodsObj.detailScreenShotPicFile = despFile.getAbsolutePath();
     }
 
+
+    private List<SizeTipObject> getExistedSizeTips(GoodsObject goodsObj) throws IOException {
+        if(sizeTipList == null){
+            sizeTipList = Lists.newArrayList();
+            File file = new File(MontBellUtil.rootPathName,MontBellUtil.sizeTipFileName);
+            if(!file.exists()) return null;
+            List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
+            for(String line :lines){
+                String[] splits = line.split("\t");
+                SizeTipObject obj = new SizeTipObject();
+                obj.productId = splits[0];
+                obj.pictureFileName = splits[1];
+                obj.pictureUrl = splits[2];
+                sizeTipList.add(obj);
+            }
+        }
+        List<SizeTipObject> rtnList = Lists.newArrayList();
+        for(SizeTipObject tip :sizeTipList){
+            if(tip.productId.equals(goodsObj.productId)){
+                rtnList.add(tip);
+            }
+        }
+        return rtnList;
+    }
     protected void processProductSizeTable(GoodsObject goodsObj, Element rootEl)
             throws ClientProtocolException, IOException {
-        File rootPath = new File(rootPathName);
-        String fileNameFmt = "sizeTable_%s_%d.jpg";
+        List<SizeTipObject> sizeTips = getExistedSizeTips(goodsObj);
+        if(sizeTips != null && !sizeTips.isEmpty()){
+            for(SizeTipObject sizeTip:sizeTips){
+                goodsObj.sizeTipPics.add(sizeTip.pictureFileName);
+            }
+            return;
+        }
+        File rootPath = new File(MontBellUtil.rootPathName);
+        String fileNameFmt = "sizeTable_%s_%d";
         try {
             Elements aboutSize = rootEl.select("p.aboutSize").select("select").select("option");
             Elements sizeA = aboutSize.select("a");
@@ -103,15 +140,20 @@ public class MontbellProductParser extends BaseBaobeiParser {
             Elements sizePics = docSize.select("div.innerCont").select("img");
             int i= 0;
             for (Element sizePic : sizePics) {
-                String src = sizePic.attr("src");
+                String url = MontBellUtil.urlPrefix + sizePic.attr("src");
                 String picName = String.format(fileNameFmt, goodsObj.productId, i++);
                 
                 File picFile = new File(rootPath, picName);
                 if (!picFile.exists()) {
-                    TaobaoUtil.downloadPicture(rootPath.getAbsolutePath(),
-                            MontBellUtil.urlPrefix + src, picName);
+                    TaobaoUtil.downloadPicture(rootPath.getAbsolutePath(), url, picName);
                 }
                 goodsObj.sizeTipPics.add(picFile.getAbsolutePath());
+                
+                SizeTipObject obj = new SizeTipObject();
+                obj.productId = goodsObj.productId;
+                obj.pictureFileName = picFile.getAbsolutePath();
+                obj.pictureUrl = url;
+                sizeTipList.add(obj);
             }
         } catch (Exception ex) {
 
@@ -134,10 +176,45 @@ public class MontbellProductParser extends BaseBaobeiParser {
         List<GoodsObject> filteredProdList = filter(goodsList);
         
         translate(filteredProdList);
+
+        saveSizeTip(filteredProdList);
         
         return filteredProdList;
     }
-    
+
+    private void saveSizeTip(List<GoodsObject> filteredProdList) throws IOException {
+        if (sizeTipList == null) {
+            return;
+        }
+        Collections.sort(sizeTipList, new Comparator<SizeTipObject>() {
+
+            @Override
+            public int compare(SizeTipObject o1, SizeTipObject o2) {
+                return o1.productId.compareTo(o2.productId);
+            }
+        });
+        BufferedWriter priceBw = null;
+        try {
+            File file = new File(MontBellUtil.rootPathName, MontBellUtil.sizeTipFileName);
+            priceBw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),
+                    "UTF-8"));
+            for (SizeTipObject obj : sizeTipList) {
+                String line = obj.productId + "\t" + obj.pictureFileName + "\t" + obj.pictureUrl + "\n";
+                priceBw.write(line);
+            }
+            priceBw.flush();
+        } finally {
+            
+            if (priceBw != null) {
+                try {
+                    priceBw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private List<GoodsObject> filter(List<GoodsObject> prodList) {
         List<GoodsObject> filterdList = Lists.newArrayList();
         List<String> productId = Lists.newArrayList();
@@ -391,48 +468,48 @@ public class MontbellProductParser extends BaseBaobeiParser {
         goodsObj.priceJPY = price;
     }
 
-    private void scanItemForSize(GoodsObject goodsObj, Element good) {
+//    private void scanItemForSize(GoodsObject goodsObj, Element good) {
+//
+//        List<String> rslt = new ArrayList<String>();
+//        Elements size = good.select(".spec").select(".size").select("p");
+//        if (size.isEmpty() || size.size() == 1) {
+//            rslt.add("-");
+//            goodsObj.sizeList = rslt;
+//            return;
+//        }
+//        String sizeS = size.get(1).text();
+//        String tmp[] = sizeS.split(" ");
+//        for (String str : tmp) {
+//            str = str.replace("/", "");
+//            str = str.replace(" ", "");
+//            rslt.add(str);
+//        }
+//        goodsObj.sizeList = rslt;
+//    }
 
-        List<String> rslt = new ArrayList<String>();
-        Elements size = good.select(".spec").select(".size").select("p");
-        if (size.isEmpty() || size.size() == 1) {
-            rslt.add("-");
-            goodsObj.sizeList = rslt;
-            return;
-        }
-        String sizeS = size.get(1).text();
-        String tmp[] = sizeS.split(" ");
-        for (String str : tmp) {
-            str = str.replace("/", "");
-            str = str.replace(" ", "");
-            rslt.add(str);
-        }
-        goodsObj.sizeList = rslt;
-    }
-
-    private void scanItemForColor(GoodsObject goodsObj, Element good) {
-
-        List<String> rslt = new ArrayList<String>();
-        Elements color = good.select(".spec").select(".color").select("p");
-        if (color.isEmpty() || color.size() == 1) {
-            rslt.add("-");
-            goodsObj.colorList = rslt;
-            return;
-        }
-
-        String itemId = goodsObj.productId;
-        for (int i = 1; i < color.size(); i++) {
-            String tcolorS = color.get(i).select("a").attr("onclick");
-            if (tcolorS.indexOf("s_" + itemId) > 0) {
-                String tc = tcolorS.substring(tcolorS.indexOf("s_" + itemId)
-                        + ("s_" + itemId).length() + 1);
-                String trueS = tc.substring(0, tc.indexOf("."));
-                rslt.add(trueS);
-            } else {
-                rslt.add("-");
-            }
-        }
-        goodsObj.colorList = rslt;
-    }
+//    private void scanItemForColor(GoodsObject goodsObj, Element good) {
+//
+//        List<String> rslt = new ArrayList<String>();
+//        Elements color = good.select(".spec").select(".color").select("p");
+//        if (color.isEmpty() || color.size() == 1) {
+//            rslt.add("-");
+//            goodsObj.colorList = rslt;
+//            return;
+//        }
+//
+//        String itemId = goodsObj.productId;
+//        for (int i = 1; i < color.size(); i++) {
+//            String tcolorS = color.get(i).select("a").attr("onclick");
+//            if (tcolorS.indexOf("s_" + itemId) > 0) {
+//                String tc = tcolorS.substring(tcolorS.indexOf("s_" + itemId)
+//                        + ("s_" + itemId).length() + 1);
+//                String trueS = tc.substring(0, tc.indexOf("."));
+//                rslt.add(trueS);
+//            } else {
+//                rslt.add("-");
+//            }
+//        }
+//        goodsObj.colorList = rslt;
+//    }
 
 }

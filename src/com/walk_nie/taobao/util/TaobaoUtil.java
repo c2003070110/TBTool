@@ -8,26 +8,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 
 public class TaobaoUtil {
@@ -38,59 +32,28 @@ public class TaobaoUtil {
 		return TaobaoUtil.urlToDocument(url, "UTF-8");
 	}
 
-	@SuppressWarnings("deprecation")
-    public static Document urlToDocument(String url,String charset)
+	public static Document urlToDocument(String url,String charset)
 			throws ClientProtocolException, IOException {
 
 		System.out.println("[START]parse URL = " + url);
 		
-//        String PROXY = "172.16.200.2:8080";
-//        org.openqa.selenium.Proxy proxy = new org.openqa.selenium.Proxy();
-//        proxy.setHttpProxy(PROXY)
-//             .setFtpProxy(PROXY)
-//             .setSslProxy(PROXY);
-//        DesiredCapabilities cap = new DesiredCapabilities();
-//        cap.setCapability(CapabilityType.PROXY, proxy);
-//        
-//        WebDriver web = new HtmlUnitDriver(cap) {
-//
-//            protected WebClient modifyWebClient(WebClient client) {
-//                String PROXY_USER = "546736om";
-//                String PROXY_PASS = "nie1234";
-//                String PROXY_HOST = "172.16.200.2";
-//                int PROXY_PORT = 8080;
-//                String  workstation = System.getenv("COMPUTERNAME");
-//                DefaultCredentialsProvider creds = new DefaultCredentialsProvider();
-//                creds.addNTLMCredentials(PROXY_USER, PROXY_PASS, PROXY_HOST, PROXY_PORT, workstation, null);
-//                AuthScope authscope = new AuthScope(PROXY_HOST,PROXY_PORT);
-//                UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(PROXY_USER,PROXY_PASS);
-//                creds.setCredentials(authscope, credentials );
-//          
-//                creds.addCredentials(PROXY_USER, PROXY_PASS, PROXY_HOST, PROXY_PORT, workstation);
-//                client.setCredentialsProvider(creds);
-//                
-//                return client;
-//            }
-//        };
-//        web.get(url);
-//        Document doc = Jsoup.parse(web.getPageSource());
-		String PROXY_HOST = "172.16.200.2";
-		int PROXY_PORT = 8080;
-		String PROXY_USER = "546736om";
-		String PROXY_PASS = "nie1234";
-	  HttpHost proxy = new HttpHost(PROXY_HOST, PROXY_PORT);
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                new AuthScope(proxy),
-                new UsernamePasswordCredentials(PROXY_USER, PROXY_PASS));
-        RequestConfig config = RequestConfig.custom()
-                .setProxy(proxy)
-                .build();
-        HttpClient client = HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider)
-                .setDefaultRequestConfig(config)
-                .build();
-		//CloseableHttpClient client = HttpClientBuilder.create().build();
+//		String PROXY_HOST = "172.16.200.2";
+//		int PROXY_PORT = 8080;
+//		String PROXY_USER = "546736om";
+//		String PROXY_PASS = "nie1234";
+//	  HttpHost proxy = new HttpHost(PROXY_HOST, PROXY_PORT);
+//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//        credsProvider.setCredentials(
+//                new AuthScope(proxy),
+//                new UsernamePasswordCredentials(PROXY_USER, PROXY_PASS));
+//        RequestConfig config = RequestConfig.custom()
+//                .setProxy(proxy)
+//                .build();
+//        HttpClient client = HttpClients.custom()
+//                .setDefaultCredentialsProvider(credsProvider)
+//                .setDefaultRequestConfig(config)
+//                .build();
+		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpUriRequest req = new HttpGet(url);
 		HttpResponse res = client.execute(req);
 		BufferedReader rd = new BufferedReader(new InputStreamReader(res
@@ -586,7 +549,7 @@ public class TaobaoUtil {
 	}
 
 	public static int getSeaFee(int weight) {
-		int base = 1500;int crt = 250;
+		int base = 1600;int crt = 300;
 		if(weight <=1000){
 			return base + crt * 0;
 		}
@@ -617,7 +580,7 @@ public class TaobaoUtil {
 		if (weight <= 10000) {
 			return base + crt * 9;
 		}
-		base = 3750;crt = 200;
+		base = 4300;crt = 250;
 		if (weight <= 11000) {
 			return base + crt * 1;
 		}
@@ -780,28 +743,29 @@ public class TaobaoUtil {
 	} 
 
 	public static int getEmsFee(int weight) {
-		if(weight <=300){
-			return 900;
-		}
+	    int inc = 300;
+//		if(weight <=300){
+//			return 900;
+//		}
 		if(weight <=500){
-			return 1100;
+			return 1100 + inc;
 		}
 		if(weight <=600){
-			return 1240;
+			return 1240 + inc;
 		}
 		if(weight <=700){
-			return 1380;
+			return 1380 + inc;
 		}
 		if(weight <=800){
-			return 1520;
+			return 1520 + inc;
 		}
 		if(weight <=900){
-			return 1660;
+			return 1660 + inc;
 		}
 		if(weight <=1000){
-			return 1800;
+			return 1800 + inc;
 		}
-		int base = 1800;int crt = 300;
+		int base = 2100;int crt = 300;
 		if(weight <=1250){
 			return base + crt * 1;
 		}
@@ -815,7 +779,7 @@ public class TaobaoUtil {
 			return base + crt * 4;
 		}
 		
-		base = 3000; crt = 500;
+		base = 3300; crt = 500;
 		if(weight <=2500){
 			return base + crt * 1;
 		}
@@ -841,7 +805,7 @@ public class TaobaoUtil {
 			return base + crt * 8;
 		}
 		
-		base = 7000; crt = 800;
+		base = 7300; crt = 800;
 		if(weight <=7000){
 			return base + crt * 1;
 		}
@@ -918,6 +882,20 @@ public class TaobaoUtil {
 	}
 
     public static String getPictureFolder(File csvFile) {
-        return csvFile.getParentFile().getAbsolutePath() + csvFile.getName().replace(".csv", "");
+        String fileName = csvFile.getParentFile().getAbsolutePath() + csvFile.getName().replace(".csv", "");
+        File file = new File(fileName);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        return file.getAbsolutePath();
+    }
+    
+    public static void copyFiles(List<String> pictureNameList,String fromFolder, String toFolder)
+            throws IOException {
+        for (String name : pictureNameList) {
+            File from = new File(fromFolder, name);
+            File to = new File(toFolder, name);
+            Files.copy(from, to);
+        }
     }
 }

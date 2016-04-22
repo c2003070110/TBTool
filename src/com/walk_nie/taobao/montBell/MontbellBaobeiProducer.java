@@ -20,9 +20,6 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MontbellBaobeiProducer extends BaseBaobeiProducer{
     
-    private String publishedBaobeiFile = "";
-    //private String miaoshuTemplateFile = "";
-    private String outputFile = "";
     private List<String> scanCategoryIds = Lists.newArrayList();
     
     public void process() {
@@ -45,10 +42,13 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
                     new FileOutputStream(csvFile), "UTF-16"));
 
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-            String picFolder = TaobaoUtil.getPictureFolder(csvFile);
+            
             for (GoodsObject obj : itemIdList) {
-                // TODO
-                //MontBellUtil.downloadPicture(obj, picFolder);
+                MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+            }
+            String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
+            for (GoodsObject obj : itemIdList) {
+                TaobaoUtil.copyFiles(obj.pictureNameList,MontBellUtil.rootPathName, taobaoPicFolder);
                 writeOut(priceBw, obj);
             }
             System.out.println("-------- FINISH--------");
@@ -63,7 +63,7 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
                 }
         }
     }
-    
+
     protected void writeOut(BufferedWriter priceBw, GoodsObject item)
             throws Exception {
         
@@ -326,16 +326,6 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
         return "\"" + detailSB.toString() +sizeTips.toString()+ extraMiaoshu +extraMiaoshu1+ "\"";
-    }
-
-    public MontbellBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-        this.publishedBaobeiFile = publishedBaobeiFile;
-        return this;
-    }
-
-    public MontbellBaobeiProducer setOutputFile(String outputFile) {
-        this.outputFile = outputFile;
-        return this;
     }
 
     public MontbellBaobeiProducer addScanCategory(String scanCategoryId) {

@@ -12,22 +12,20 @@ import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class AsicsShoesBaobeiProducer {
-	
-	//private String taobeiTemplateFile = "";
-	private String publishedBaobeiFile = "";
-	//private String miaoshuTemplateFile = "";
-	private String outputFile = ""; 
+public class AsicsShoesBaobeiProducer  extends BaseBaobeiProducer{
+    private List<String> urls = Lists.newArrayList();
 	
 	public void process() {
 		BufferedWriter priceBw = null;
 		try {
             System.out.println("-------- START --------");
-            List<AsicsShoesObject> itemIdList = new AsicsShoesParser().parse();
+            List<AsicsShoesObject> itemIdList = getParser().parse(urls);
 			 
 			if (itemIdList.isEmpty())
 				return;
@@ -39,11 +37,17 @@ public class AsicsShoesBaobeiProducer {
 					new FileOutputStream(csvFile), "UTF-16"));
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
+            for (AsicsShoesObject obj : itemIdList) {
+                AsicsShoesUtil.downloadPicture(obj,  AsicsShoesUtil.rootPathName);
+            }
+            
 			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
+			
 			for (AsicsShoesObject obj : itemIdList) {
-				AsicsShoesUtil.downloadPicture(obj, picFolder);
+                TaobaoUtil.copyFiles(obj.picNameList,MontBellUtil.rootPathName, picFolder);
 				writeOut(priceBw, obj);
 			}
+			
 			System.out.println("-------- FINISH--------");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -220,14 +224,14 @@ public class AsicsShoesBaobeiProducer {
 		return "\"" + detailSB.toString() +sizeTips.toString()+ extraMiaoshu1 + "\"";
 	}
 
-	public AsicsShoesBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-		this.publishedBaobeiFile = publishedBaobeiFile;
-		return this;
-	}
- 
-	public AsicsShoesBaobeiProducer setOutputFile(String outputFile) {
-		this.outputFile = outputFile;
-		return this;
-	}
+    @Override
+    public AsicsShoesParser getParser() {
+        return new AsicsShoesParser();
+    }
+    
+    public AsicsShoesBaobeiProducer addParseUrl(String url){
+        urls.add(url);
+        return this;
+    }
 
 }

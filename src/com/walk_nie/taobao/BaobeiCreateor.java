@@ -2,6 +2,7 @@ package com.walk_nie.taobao;
 
 import java.io.IOException;
 
+import com.walk_nie.taobao.asics.shoes.AsicsShoesBaobeiProducer;
 import com.walk_nie.taobao.kakaku.explore.earphone.EarphoneBaobeiProducer;
 import com.walk_nie.taobao.montBell.MontbellBaobeiProducer;
 
@@ -15,14 +16,15 @@ public class BaobeiCreateor {
 	public static void main(String[] args) throws IOException {
 	    createEarphone();
 	    createMontbellCloth();
+        createAsicsShoes();
 	}
-	
-	private static void createEarphone() throws IOException{
-        double currencyRate = 0.065;
+
+    private static void createEarphone() throws IOException{
+        double currencyRate = 0.0595 + 0.002;
         double benefitRate = 0.1;
         String scanUrlsFile = "in/earphone_scan_urls.txt";
         String publishedBaobeiFile = "in/publishedBaobeiFile.csv";
-        String outputFile = "out/montBell_baobei_%s.csv";
+        String outputFile = "out/earphone_baobei_%s.csv";
         EarphoneBaobeiProducer producer = new EarphoneBaobeiProducer();
         producer.setScanUrlsFile(scanUrlsFile)
                 .setOutputFile(outputFile)
@@ -32,16 +34,14 @@ public class BaobeiCreateor {
                 .process();
 	}
     private static void createMontbellCloth() throws IOException{
-        double currencyRate = 0.062;
-        double benefitRate = 0.12;
+        double currencyRate = 0.0595 + 0.002;
+        double benefitRate = 0.1;
 
         String outputFile = "out/montBell_baobei_%s.csv";
         String publishedBaobeiFile = "in/publishedBaobeiFile.csv";
 
         MontbellBaobeiProducer db = new MontbellBaobeiProducer();
-        db.setOutputFile(outputFile)
-                .setPublishedBaobeiFile(publishedBaobeiFile)
-                
+        db
                 .addScanCategory("1000") // レインウェア
                 .addScanCategory("8800") // レインウェア（ゴアテックス製）
                 .addScanCategory("8000") // レインウェア（自転車用）
@@ -75,7 +75,18 @@ public class BaobeiCreateor {
                 
                 .setBenefitRate(benefitRate)
                 .setCurrencyRate(currencyRate)
-              
+                
+                .setOutputFile(outputFile)
+                .setPublishedBaobeiFile(publishedBaobeiFile)
+                .process();
+    }
+    
+    private static void createAsicsShoes() {
+        String outputFile = "out/asicsShoes_baobei_%s.csv";
+        AsicsShoesBaobeiProducer db = new AsicsShoesBaobeiProducer();
+        db
+                .addParseUrl("")
+                .setOutputFile(outputFile)
                 .process();
     }
 	 

@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 
-import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
@@ -21,13 +20,9 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
 
     private String scanUrlsFile = "";
 
-    private String publishedBaobeiFile = "";
+    //protected List<String> publishedItems = Lists.newArrayList();
 
-    private String outputFile = "";
-
-    protected List<String> publishedItems = Lists.newArrayList();
-
-    protected BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
+    //protected BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
 
     protected String outputPicFolder = "out/kakaku/";
 
@@ -177,16 +172,6 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
 
     public KakakuBaobeiProceducer setScanUrlsFile(String scanUrlsFile) {
         this.scanUrlsFile = scanUrlsFile;
-        return this;
-    }
-
-    public KakakuBaobeiProceducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-        this.publishedBaobeiFile = publishedBaobeiFile;
-        return this;
-    }
-
-    public KakakuBaobeiProceducer setOutputFile(String outputFile) {
-        this.outputFile = outputFile;
         return this;
     }
 

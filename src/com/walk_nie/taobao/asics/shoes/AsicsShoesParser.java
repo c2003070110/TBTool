@@ -14,22 +14,24 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
-public class AsicsShoesParser {
+public class AsicsShoesParser  extends BaseBaobeiParser{
     
     private String urlPrefix = "http://www.asics.com/";
     
     private String rootPathName = "out/asicsShoes/";
 
-    public List<AsicsShoesObject> parse() throws ClientProtocolException, IOException{
+    public List<AsicsShoesObject> parse(List<String> urls) throws ClientProtocolException, IOException{
         List<AsicsShoesObject> prodList = Lists.newArrayList();
-        String url = "";
-        parseCategory(prodList,url);
-        
-        parseProducts(prodList);
-        
+
+        for (String url : urls) {
+            parseCategory(prodList, url);
+            parseProducts(prodList);
+        }
+
         List<AsicsShoesObject> filteredProdList = filter(prodList);
         
         translate(filteredProdList);
