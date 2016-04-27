@@ -52,7 +52,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
     public void scanSingleItem(GoodsObject goodsObj,String url) throws IOException {
         Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
         if (doc.select("div.rightCont").size() == 0) {
-            System.err.println("[ERROR] This is NOT product URL" + url);
+            System.err.println("[ERROR] This is NOT product URL." + url);
             return ;
         }
         Element mainRightEle = doc.select("div.rightCont").get(0);

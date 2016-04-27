@@ -142,25 +142,25 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         // TODO
         if (MontBellUtil.isCateogryRainClothes(prodCId) ) {
             // レインウェア 户外雨衣
-            categoryId = "";
+            categoryId = "124208012";
         }
         if (MontBellUtil.isCateogrySoftShell1(prodCId)
                 || MontBellUtil.isCateogryHardShell1(prodCId)) {
             // ソフトシェルジャケット + ハードシェル>ジャケット 冲锋衣
-            categoryId = "";
+            categoryId = "50014785";
         }
         if (MontBellUtil.isCateogrySoftShell2(prodCId)
                 || MontBellUtil.isCateogryHardShell2(prodCId)) {
             // ソフトシェルパンツ + ハードシェル>パンツ 冲锋裤
-            categoryId = "";
+            categoryId = "50014785";
         }
         if (MontBellUtil.isCateogryFreece1(prodCId) ) {
             // フリース 抓绒衣 抓绒衣
-            categoryId = "";
+            categoryId = "50014787";
         }
         if (MontBellUtil.isCateogryFreece2(prodCId) ) {
             // フリースパンツ 抓绒裤 
-            categoryId = "";
+            categoryId = "50014787";
         } 
         if (MontBellUtil.isCateogryPack(prodCId) ) {
             // 大型ザック
@@ -177,25 +177,25 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         // TODO
         if (MontBellUtil.isCateogryRainClothes(prodCId) ) {
             // レインウェア 户外雨衣
-            categoryId = "";
+            categoryId = "1184361988";
         }
         if (MontBellUtil.isCateogrySoftShell1(prodCId)
                 || MontBellUtil.isCateogryHardShell1(prodCId)) {
             // ソフトシェルジャケット + ハードシェル>ジャケット 冲锋衣
-            categoryId = "";
+            categoryId = "1184361987";
         }
         if (MontBellUtil.isCateogrySoftShell2(prodCId)
                 || MontBellUtil.isCateogryHardShell2(prodCId)) {
             // ソフトシェルパンツ + ハードシェル>パンツ 冲锋裤
-            categoryId = "";
+            categoryId = "1184361987";
         }
         if (MontBellUtil.isCateogryFreece1(prodCId) ) {
             // フリース 抓绒衣 抓绒衣
-            categoryId = "";
+            categoryId = "1184361987";
         }
         if (MontBellUtil.isCateogryFreece2(prodCId) ) {
             // フリースパンツ 抓绒裤 
-            categoryId = "";
+            categoryId = "1184361987";
         } 
         if (MontBellUtil.isCateogryPack(prodCId) ) {
             // 大型ザック
@@ -222,8 +222,8 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         baobei.title =  title + "\"";
     }
     
-    private String[] composeBaobeiPropColor(GoodsObject item,
-            BaobeiPublishObject baobeiTemplate) {
+	private String[] composeBaobeiPropColor(GoodsObject item,
+			BaobeiPublishObject obj) {
         // Return Value [0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片;5:自定义属性值;
 
 /*
@@ -249,7 +249,8 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
 
         // 颜色值:28320 28324 28326 28327 28329 28332 28340 28338 28335
         // 宝贝属性 -销售属性组合- 销售属性别名
-        String cateProps = "";String skuProps = "";String propAlias = "";
+        String cateProps = "20021:20213;122216816:20213;122216608:29923;";
+        String skuProps = "";String propAlias = "";
         String picStatus = "";String skuPropPic = "";String inputCustomCpv="";
         
         // 宝贝属性
@@ -258,7 +259,7 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
             cateProps +="1627207:"+taobaoColors.get(i)+";";
         }
         for(int i =0;i<item.sizeList.size();i++){
-            if(i>=taobaoColors.size())break;
+            if(i>=taobaoSizes.size())break;
             cateProps +="20509:"+taobaoSizes.get(i)+";";
         }
         //销售属性组合
@@ -266,13 +267,13 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
             if(i>=taobaoColors.size())break;
             for (int j = 0; j < item.sizeList.size(); j++) {
                 if(j>=taobaoSizes.size())break;
-                skuProps += item.priceCNY + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
+                skuProps += obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
                         + ";20509:" + taobaoSizes.get(j) + ";";
             }
         }
         // 销售属性别名
         for(int i =0;i<item.sizeList.size();i++){
-            if(i>=taobaoColors.size())break;
+            if(i>=taobaoSizes.size())break;
             propAlias +="20509:"+taobaoSizes.get(i)+":" +item.sizeList.get(i)+";";
         }
         // 宝贝主图 main picture

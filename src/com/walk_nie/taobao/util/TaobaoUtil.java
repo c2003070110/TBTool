@@ -882,7 +882,7 @@ public class TaobaoUtil {
 	}
 
     public static String getPictureFolder(File csvFile) {
-        String fileName = csvFile.getParentFile().getAbsolutePath() + csvFile.getName().replace(".csv", "");
+        String fileName = csvFile.getParentFile().getAbsolutePath() +"/"+ csvFile.getName().replace(".csv", "");
         File file = new File(fileName);
         if(!file.exists()){
             file.mkdirs();
@@ -892,9 +892,9 @@ public class TaobaoUtil {
     
     public static void copyFiles(List<String> pictureNameList,String fromFolder, String toFolder)
             throws IOException {
-        for (String name : pictureNameList) {
-            File from = new File(fromFolder, name);
-            File to = new File(toFolder, name);
+		for (String name : pictureNameList) {
+			File from = new File(fromFolder, name + ".jpg");
+			File to = new File(toFolder, name + ".jpg");
             Files.copy(from, to);
         }
     }
