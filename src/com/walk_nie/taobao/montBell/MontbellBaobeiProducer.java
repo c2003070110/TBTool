@@ -21,6 +21,19 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 public class MontbellBaobeiProducer extends BaseBaobeiProducer{
     
     private List<String> scanCategoryIds = Lists.newArrayList();
+    private List<String> taobaoColors = Lists.newArrayList();
+    {
+        taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");
+        taobaoColors.add("-1004");taobaoColors.add("-1005");taobaoColors.add("-1006");
+        taobaoColors.add("-1007");taobaoColors.add("-1008");taobaoColors.add("-1009");
+        taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
+    }
+    private List<String> taobaoSizes = Lists.newArrayList();
+    {
+        taobaoSizes.add("28381");taobaoSizes.add("28313");taobaoSizes.add("28314");
+        taobaoSizes.add("28315");taobaoSizes.add("28316");taobaoSizes.add("28317");
+        taobaoSizes.add("28319");
+    }
     
     public void process() {
         BufferedWriter priceBw = null;
@@ -79,9 +92,9 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝类目
         composeBaobeiTaobaoCategory(item,obj);
         // 店铺类目
-        composeBaobeiMyCategory(item,obj);
+        composeBaobeiMyCategory(item, obj);
         // 宝贝价格
-        composeBaobeiPrice(item,obj);
+        obj.price = MontBellUtil.convertToCNY(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
         obj.num = "9999";
@@ -93,46 +106,126 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         
         // 宝贝描述
         obj.description = composeBaobeiMiaoshu(item);
-        
-        // Array[0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片
-        String[] props = composeBaobeiPropColor(item,obj);
+
         // 宝贝属性
-        String str = obj.cateProps + props[0];
-        str = str.replaceAll("\"\"", "");
-        str = props[0];
-        obj.cateProps = str;
+        composeBaobeiCateProps(item, obj);
         // 销售属性组合
-        if("\"\"".equals(obj.skuProps)){
-            obj.skuProps = props[1];
-        }else{
-            obj.skuProps = obj.skuProps + props[1];
-        }
-        obj.skuProps = props[1];
+        composeBaobeiSkuProps(item, obj);
         // 商家编码
         obj.outer_id = "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
         // 销售属性别名
-        if("\"\"".equals(obj.skuProps)){
-            obj.propAlias = props[2];
-        }else{
-            obj.propAlias = obj.propAlias + props[2];
-        }
-        obj.propAlias = props[2];
+        composeBaobeiPropAlias(item, obj);
         // 商品条形码
         //obj.barcode = item.sku;
         // 图片状态
-        obj.picture_status = props[3];
+        composeBaobeiPictureStatus(item, obj);
         // 新图片
-        obj.picture = props[4];
+        composeBaobeiPicture(item, obj);
         // 自定义属性值
-        obj.input_custom_cpv = props[5];
+        composeBaobeiInputCustomCpv(item, obj);
         // 宝贝卖点
-        obj.subtitle = composeBaobeiSubtitle(item);
+        composeBaobeiSubtitle(item, obj);
 
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
-    private void composeBaobeiPrice(GoodsObject item, BaobeiPublishObject obj) {
-        obj.price = MontBellUtil.convertToCNY(item,this.currencyRate,this.benefitRate);
+    private void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
+        // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
+        String prodCId = item.cateogryObj.categoryId;
+        String cateProps = "";
+        if (MontBellUtil.isCateogrySoftShell1(prodCId)
+                || MontBellUtil.isCateogryHardShell1(prodCId)
+                || MontBellUtil.isCateogrySoftShell2(prodCId)
+                || MontBellUtil.isCateogryHardShell2(prodCId)) {
+            // 冲锋衣 冲锋裤
+            cateProps += "20021:20213;122216816:20213;";
+        }
+        cateProps += "122216608:29923;";
+        // 宝贝属性
+        for(int i =0;i<item.colorList.size();i++){
+            if(i>=taobaoColors.size())break;
+            cateProps +="1627207:"+taobaoColors.get(i)+";";
+        }
+        for(int i =0;i<item.sizeList.size();i++){
+            if(i>=taobaoSizes.size())break;
+            cateProps +="20509:"+taobaoSizes.get(i)+";";
+        }
+        obj.cateProps =cateProps;
+    }
+
+    private void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
+        // skuProps　销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
+        String skuProps = "";
+        for (int i = 0; i < item.colorList.size(); i++) {
+            if(i>=taobaoColors.size())break;
+            for (int j = 0; j < item.sizeList.size(); j++) {
+                if(j>=taobaoSizes.size())break;
+                skuProps += obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
+                        + ";20509:" + taobaoSizes.get(j) + ";";
+            }
+        }
+        obj.skuProps =skuProps;
+    }
+
+    private void composeBaobeiPropAlias(GoodsObject item, BaobeiPublishObject obj) {
+        // propAlias　销售属性别名：20509:28381:size1;20509:28313:size2;20509:28314:size3;20509:28315:size4;20509:28316:size5;20509:28317:size6;20509:28319:size7
+        String propAlias = "";
+        // 销售属性别名
+        for(int i =0;i<item.sizeList.size();i++){
+            if(i>=taobaoSizes.size())break;
+            propAlias +="20509:"+taobaoSizes.get(i)+":" +item.sizeList.get(i)+";";
+        }
+        obj.propAlias =propAlias;
+    }
+
+    private void composeBaobeiPictureStatus(GoodsObject item, BaobeiPublishObject obj) {
+        String picStatus = "";
+        // picture_status 图片状态：2;2;2;2;2;2;2;2;2;2;
+        // 宝贝主图 main picture
+        for(int i=0;i<item.pictureNameList.size();i++){
+            if(i==5) break;
+            picStatus +="2;";
+        }
+        // 销售属性图片
+        for (int i = 0; i < item.colorList.size(); i++) {
+            if(i>=taobaoColors.size())break;
+            if(item.pictureNameList.size() == item.colorList.size()){
+                // color picture
+                picStatus +="2;";
+            }
+        }
+        obj.picture_status =picStatus;
+    }
+
+    private void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj) {
+        String picture = "";
+        // picture　新图片：1128533_dkfs:1:0:|;1128533_mst:1:1:|;1128533_scl:1:2:|;1128533_tq:1:3:|;1128533_umr:1:4:|;1128533_dkfs:2:0:1627207:28320|;1128533_mst:2:0:1627207:28340|;1128533_scl:2:0:1627207:3232479|;1128533_tq:2:0:1627207:3232478|;1128533_umr:2:0:1627207:3232482|;
+        // 宝贝主图 main picture
+        for(int i=0;i<item.pictureNameList.size();i++){
+            if(i==5) break;
+            picture += item.pictureNameList.get(i) + ":1:" + i +":|;";
+        }
+        // 销售属性图片
+        for (int i = 0; i < item.colorList.size(); i++) {
+            if(i>=taobaoColors.size())break;
+            if(item.pictureNameList.size() == item.colorList.size()){
+                // color picture
+                picture += item.pictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
+            }
+        }
+
+        obj.picture = picture;
+    }
+
+    private void composeBaobeiInputCustomCpv(GoodsObject item, BaobeiPublishObject obj) {
+        String inputCustomCpv="";
+        // 自定义属性值
+        for(int i =0;i<item.colorList.size();i++){
+            if(i>=taobaoColors.size())break;
+            //1627207:-1001:color1;
+            inputCustomCpv += "1627207:" + taobaoColors.get(i)  +":"+item.colorList.get(i)+";"; 
+        }
+        obj.input_custom_cpv =inputCustomCpv;
     }
 
     private void composeBaobeiTaobaoCategory(GoodsObject item,
@@ -161,6 +254,10 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         if (MontBellUtil.isCateogryFreece2(prodCId) ) {
             // フリースパンツ 抓绒裤 
             categoryId = "50014787";
+        } 
+        if (MontBellUtil.isCateogryTShirt(prodCId) ) {
+            // Tシャツ（半袖/長袖）
+            categoryId = "50013932";
         } 
         if (MontBellUtil.isCateogryPack(prodCId) ) {
             // 大型ザック
@@ -197,6 +294,10 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
             // フリースパンツ 抓绒裤 
             categoryId = "1184361987";
         } 
+        if (MontBellUtil.isCateogryTShirt(prodCId) ) {
+            // Tシャツ（半袖/長袖）
+            categoryId = "1184361987";
+        } 
         if (MontBellUtil.isCateogryPack(prodCId) ) {
             // 大型ザック
             categoryId = "";
@@ -204,8 +305,8 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         baobei.seller_cids =  categoryId;
     }
 
-    private String composeBaobeiSubtitle(GoodsObject item) {
-        return "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleOrg + "\"";
+    private void composeBaobeiSubtitle(GoodsObject item,BaobeiPublishObject baobei) {
+        baobei.subtitle =  "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleOrg + "\"";
     }
     private void composeBaobeiTitle(GoodsObject item,
             BaobeiPublishObject baobei) {
@@ -220,88 +321,6 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
 //            title += suffix;
 //        }
         baobei.title =  title + "\"";
-    }
-    
-	private String[] composeBaobeiPropColor(GoodsObject item,
-			BaobeiPublishObject obj) {
-        // Return Value [0]:宝贝属性;1:销售属性组合;2:销售属性别名;3:宝贝主图;4:销售属性图片;5:自定义属性值;
-
-/*
- * 例 size1..7 X color1..7
- * [0]cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
- * [1]skuProps　销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
- * [2]propAlias　销售属性别名：20509:28381:size1;20509:28313:size2;20509:28314:size3;20509:28315:size4;20509:28316:size5;20509:28317:size6;20509:28319:size7
- * [3]input_custom_cpv　自定义属性值：1627207:-1001:color1;1627207:-1002:color2;1627207:-1003:color3;1627207:-1004:color4;1627207:-1005:color5;1627207:-1006:color6;1627207:-1007:color7;1627207:-1008:color8;1627207:-1009:color9
- * [4]picture_status 图片状态：2;2;2;2;2;2;2;2;2;2;
- * [5]picture　新图片：1128533_dkfs:1:0:|;1128533_mst:1:1:|;1128533_scl:1:2:|;1128533_tq:1:3:|;1128533_umr:1:4:|;1128533_dkfs:2:0:1627207:28320|;1128533_mst:2:0:1627207:28340|;1128533_scl:2:0:1627207:3232479|;1128533_tq:2:0:1627207:3232478|;1128533_umr:2:0:1627207:3232482|;
- */
- 
-        List<String> taobaoColors = Lists.newArrayList();
-        taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");
-        taobaoColors.add("-1004");taobaoColors.add("-1005");taobaoColors.add("-1006");
-        taobaoColors.add("-1007");taobaoColors.add("-1008");taobaoColors.add("-1009");
-        taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
-        
-        List<String> taobaoSizes = Lists.newArrayList();
-        taobaoSizes.add("28381");taobaoSizes.add("28313");taobaoSizes.add("28314");
-        taobaoSizes.add("28315");taobaoSizes.add("28316");taobaoSizes.add("28317");
-        taobaoSizes.add("28319");
-
-        // 颜色值:28320 28324 28326 28327 28329 28332 28340 28338 28335
-        // 宝贝属性 -销售属性组合- 销售属性别名
-        String cateProps = "20021:20213;122216816:20213;122216608:29923;";
-        String skuProps = "";String propAlias = "";
-        String picStatus = "";String skuPropPic = "";String inputCustomCpv="";
-        
-        // 宝贝属性
-        for(int i =0;i<item.colorList.size();i++){
-            if(i>=taobaoColors.size())break;
-            cateProps +="1627207:"+taobaoColors.get(i)+";";
-        }
-        for(int i =0;i<item.sizeList.size();i++){
-            if(i>=taobaoSizes.size())break;
-            cateProps +="20509:"+taobaoSizes.get(i)+";";
-        }
-        //销售属性组合
-        for (int i = 0; i < item.colorList.size(); i++) {
-            if(i>=taobaoColors.size())break;
-            for (int j = 0; j < item.sizeList.size(); j++) {
-                if(j>=taobaoSizes.size())break;
-                skuProps += obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
-                        + ";20509:" + taobaoSizes.get(j) + ";";
-            }
-        }
-        // 销售属性别名
-        for(int i =0;i<item.sizeList.size();i++){
-            if(i>=taobaoSizes.size())break;
-            propAlias +="20509:"+taobaoSizes.get(i)+":" +item.sizeList.get(i)+";";
-        }
-        // 宝贝主图 main picture
-        for(int i=0;i<item.pictureNameList.size();i++){
-            if(i==5) break;
-            skuPropPic += item.pictureNameList.get(i) + ":1:" + i +":|;";
-            picStatus +="2;";
-        }
-        // 销售属性图片
-        for (int i = 0; i < item.colorList.size(); i++) {
-            if(i>=taobaoColors.size())break;
-            if(item.pictureNameList.size() == item.colorList.size()){
-                // color picture
-                skuPropPic += item.pictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
-                picStatus +="2;";
-            }
-        }
-        
-        // 自定义属性值
-        for(int i =0;i<item.colorList.size();i++){
-            if(i>=taobaoColors.size())break;
-            //627207:-1001:color1;
-            inputCustomCpv += "627207:" + taobaoColors.get(i)  +":"+item.colorList.get(i)+";"; 
-        }
-        
-        return new String[]{
-                "\""+cateProps+"\"","\""+skuProps+"\"" ,"\""+propAlias+"\"" 
-                ,"\""+picStatus+"\"" ,"\""+skuPropPic+"\"","\""+inputCustomCpv+"\""  };
     }
     
     private  String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
