@@ -13,8 +13,9 @@ public class PrintInfoObject {
     public String receiverName;
     public String receiverAddress1;
     public String receiverAddress2;
+    public String receiverAddress3;
     public String receiverZipCode;
     public String receiverTel;
-    
+    public String receiverWWID;
 
 }

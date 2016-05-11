@@ -81,6 +81,7 @@ public class PrintMain {
     }
     
     protected static void  printEMS1(){
+    	// EMS width = 27cm height=14cm
         PrinterJob pj = PrinterJob.getPrinterJob();
         if (pj.printDialog()) {
             
@@ -91,7 +92,8 @@ public class PrintMain {
                     - margin * 2);
             pf.setPaper(paper);
             //System.out.println("PageFormat-" + ": width = " + pf.getWidth() + "; height = " + pf.getHeight());
-            //System.out.println("paper-" + ": width = " + paper.getWidth() + "; height = " + paper.getHeight());
+            System.out.println("paper-" + ": width = " + paper.getWidth() + "; height = " + paper.getHeight());
+            System.out.println("ems-" + ": width = " + PrintUtil.fromCMToPPI(27) + "; height = " + PrintUtil.fromCMToPPI(14));
             pj.setPrintable(new EMS1Printable(getPrintInfoList()), pf);
             try {
                 pj.print();
@@ -111,7 +113,8 @@ public class PrintMain {
             obj.receiverAddress1="住所１－" + i;
             obj.receiverAddress2="住所２－" + i;
             obj.receiverZipCode="";
-            obj.receiverTel="０８０－１２３４－５６７８";
+            obj.receiverTel="13681515191";
+            obj.receiverWWID="ID_" + i;
             toPrintList.add(obj);
         }
         return toPrintList;

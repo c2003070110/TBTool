@@ -32,15 +32,18 @@ public class EMS1Printable implements Printable {
         g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();
         
-        int h = PrintUtil.fromCMToPPI_i(1.5);
-        g2d.drawString(printInfo.receiverName, PrintUtil.fromCMToPPI_i(11), h);
+        int h = PrintUtil.fromCMToPPI_i(0.7);
+        g2d.drawString(printInfo.receiverWWID, PrintUtil.fromCMToPPI_i(21.5), h);
+        
+        h = PrintUtil.fromCMToPPI_i(4.4);
+        g2d.drawString(printInfo.receiverName, PrintUtil.fromCMToPPI_i(13), h);
         h += fm.getHeight();
-        g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(9), h);
+        g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(10.2), h);
         h += fm.getHeight();
-        g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(9), h);
-        h += fm.getHeight();
-        g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(9), h);
-        g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(12), h);
+        g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(10.2), h);
+        h = PrintUtil.fromCMToPPI_i(7.7);
+        g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11), h);
+        g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(15.2), h);
         
         return PAGE_EXISTS;
     }
