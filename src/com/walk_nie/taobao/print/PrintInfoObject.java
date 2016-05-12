@@ -1,5 +1,9 @@
 package com.walk_nie.taobao.print;
 
+import java.util.List;
+
+import com.beust.jcommander.internal.Lists;
+
 
 public class PrintInfoObject {
 
@@ -17,5 +21,8 @@ public class PrintInfoObject {
     public String receiverZipCode;
     public String receiverTel;
     public String receiverWWID;
+    public String orderNo;
+
+    public List<String> orderNos = Lists.newArrayList();
 
 }

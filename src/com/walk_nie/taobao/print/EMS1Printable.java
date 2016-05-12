@@ -41,6 +41,7 @@ public class EMS1Printable implements Printable {
         g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(10.2), h);
         h += fm.getHeight();
         g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(10.2), h);
+        
         h = PrintUtil.fromCMToPPI_i(7.7);
         g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11), h);
         g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(15.2), h);

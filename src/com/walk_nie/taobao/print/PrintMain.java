@@ -4,6 +4,11 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,15 +29,182 @@ import javax.print.attribute.standard.MediaSize;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 
+import org.apache.commons.io.FileUtils;
+
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 
 
 public class PrintMain {
-
-    public static void main(String[] args) {
+    public static String rootPathName = "./print";
+    public static String toPrintFileName = "toPrint.csv";
+    public static String printedOrderNosFileName = "printedOrderNos.txt";
+    public static void main(String[] args) throws PrinterException, IOException {
         //listMediaSize();
         printEMS1();
         //print2();
+    }
+    
+    protected static void  printEMS1() throws PrinterException, IOException{
+    	// EMS width = 27cm height=14cm
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        if (pj.printDialog()) {
+            
+            PageFormat pf = pj.defaultPage();
+            Paper paper = pf.getPaper();   
+            double margin = 0; 
+            paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight()
+                    - margin * 2);
+            pf.setPaper(paper);
+            //System.out.println("PageFormat-" + ": width = " + pf.getWidth() + "; height = " + pf.getHeight());
+            System.out.println("paper-" + ": width = " + paper.getWidth() + "; height = " + paper.getHeight());
+            System.out.println("ems-" + ": width = " + PrintUtil.fromCMToPPI(27) + "; height = " + PrintUtil.fromCMToPPI(14));
+            
+            List<PrintInfoObject> toPrintList = getPrintInfoList();
+            pj.setPrintable(new EMS1Printable(toPrintList), pf);
+            pj.print();
+            
+            savePrintedOrderNos(toPrintList);
+        }
+    }
+    private static void savePrintedOrderNos(List<PrintInfoObject> printedList) throws IOException {
+        File file = new File(rootPathName, printedOrderNosFileName);
+        StringBuffer sb = new StringBuffer();
+        for(PrintInfoObject obj:printedList){
+            for(String orderNo:obj.orderNos){
+                sb.append(orderNo).append("\n");
+            }
+        }
+        if (!file.exists()) {
+            Files.write(sb.toString(), file, Charset.forName("UTF-8"));
+        }else{
+            Files.append(sb.toString(), file, Charset.forName("UTF-8"));   
+        }
+    }
+
+    protected static List<PrintInfoObject> getPrintInfoList1() throws IOException{
+        List<PrintInfoObject> printList = Lists.newArrayList();
+        File file = new File(rootPathName,toPrintFileName);
+        List<String> list = FileUtils.readLines(file,"UTF-8");
+        List<String> printedOrderNos = readPrintedOrderNos();
+        for(String str:list){
+            if(str.equals(""))continue;
+            String[] splited = str.split(",");
+            if(splited.length != 11)continue;
+
+            String orderNo =splited[0];
+            if(printedOrderNos.contains(orderNo))continue;
+            
+            PrintInfoObject obj = new PrintInfoObject();
+            obj.senderName="";
+            obj.senderAddress1="";
+            obj.senderAddress2="";
+            obj.senderZipCode="123-0845";
+            obj.senderZipTel="080-4200-1314";
+            
+            obj.receiverCountry="CHINA";
+            
+            obj.orderNo =orderNo;
+            obj.receiverWWID =splited[0];
+            obj.receiverName =splited[0];
+            obj.receiverTel =splited[0];
+            setAddress(obj,splited[0]);
+        }
+        Collections.sort(printList,new Comparator<PrintInfoObject>(){
+            @Override
+            public int compare(PrintInfoObject o1, PrintInfoObject o2) {
+                return o1.receiverName.compareTo(o2.receiverName);
+            }
+        });
+        
+        List<PrintInfoObject> toPrintList = Lists.newArrayList();
+        String name ="";
+        PrintInfoObject tempObj = null;
+        for(PrintInfoObject obj:printList){
+            if(name.equals(obj.receiverName)){
+                tempObj.orderNos.add(obj.orderNo);
+            }else{
+                name = obj.receiverName;
+                tempObj = obj;
+                tempObj.orderNos.add(obj.orderNo);
+                toPrintList.add(tempObj);
+            }
+        }
+        
+        return toPrintList;
+    }
+    
+    protected static List<String> readPrintedOrderNos() throws IOException {
+        File file = new File(rootPathName, printedOrderNosFileName);
+        if (!file.exists()) return Lists.newArrayList();
+        List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
+        return lines;
+    }
+
+    protected static void setAddress(PrintInfoObject obj, String address) {
+        String[] splied = address.split(" ");
+        if(splied.length>3){
+            obj.receiverAddress1=splied[0] + " " + splied[1] + " " + splied[2] ;
+            String newAdd = "";
+            for(int j=3;j<splied.length;j++){
+                newAdd += splied[j]; 
+            }
+            if(newAdd.length()>10){
+                obj.receiverAddress2=newAdd.substring(0,10);
+                obj.receiverAddress3=newAdd.substring(11);
+            }else{
+                obj.receiverAddress2=newAdd;
+            }
+        }else{
+            if(address.length()>10){
+                obj.receiverAddress1=address.substring(0,10);
+                String newAdd =address.substring(11);
+                if(newAdd.length()>10){
+                    obj.receiverAddress2=newAdd.substring(0,10);
+                    obj.receiverAddress3=newAdd.substring(11);
+                }else{
+                    obj.receiverAddress2=newAdd;
+                }
+            }else{
+                obj.receiverAddress1=address;
+            }
+        }
+    }
+
+    protected static List<PrintInfoObject> getPrintInfoList(){
+        List<PrintInfoObject> toPrintList = Lists.newArrayList();
+        for(int i=0;i<10;i++){
+            PrintInfoObject obj = new 
+                    PrintInfoObject();
+            obj.receiverCountry="CHINA";
+            obj.receiverName="名称" + i;
+            obj.receiverZipCode="";
+            obj.receiverTel="13681515191";
+            obj.receiverWWID="ID_" + i;
+            String address ="";
+            setAddress(obj,address);
+            toPrintList.add(obj);
+        }
+        return toPrintList;
+    }
+    protected static void listMediaSize(){
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        if (pj.printDialog()) {
+        PrintService printService = pj.getPrintService();
+      
+        Media[] res = (Media[]) printService.getSupportedAttributeValues(Media.class, null, null);
+        for (Media media : res) {
+            if (media instanceof MediaSizeName) {
+                MediaSizeName msn = (MediaSizeName) media;
+                MediaSize ms = MediaSize.getMediaSizeForName(msn);
+                float width = ms.getX(MediaSize.MM);
+                float height = ms.getY(MediaSize.MM);
+                System.out.println(media + ": width = " + width + "; height = " + height);
+            }else{
+                System.out.println(media  );
+            }
+        }
+        }
     }
 
     protected static void print2() {
@@ -77,65 +249,6 @@ public class PrintMain {
             } catch (PrintException e) {
                 e.printStackTrace();
             }
-        }
-    }
-    
-    protected static void  printEMS1(){
-    	// EMS width = 27cm height=14cm
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        if (pj.printDialog()) {
-            
-            PageFormat pf = pj.defaultPage();
-            Paper paper = pf.getPaper();   
-            double margin = 0; 
-            paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight()
-                    - margin * 2);
-            pf.setPaper(paper);
-            //System.out.println("PageFormat-" + ": width = " + pf.getWidth() + "; height = " + pf.getHeight());
-            System.out.println("paper-" + ": width = " + paper.getWidth() + "; height = " + paper.getHeight());
-            System.out.println("ems-" + ": width = " + PrintUtil.fromCMToPPI(27) + "; height = " + PrintUtil.fromCMToPPI(14));
-            pj.setPrintable(new EMS1Printable(getPrintInfoList()), pf);
-            try {
-                pj.print();
-            } catch (PrinterException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-    
-    protected static List<PrintInfoObject> getPrintInfoList(){
-        List<PrintInfoObject> toPrintList = Lists.newArrayList();
-        for(int i=0;i<10;i++){
-            PrintInfoObject obj = new 
-                    PrintInfoObject();
-            obj.receiverCountry="CHINA";
-            obj.receiverName="名称" + i;
-            obj.receiverAddress1="住所１－" + i;
-            obj.receiverAddress2="住所２－" + i;
-            obj.receiverZipCode="";
-            obj.receiverTel="13681515191";
-            obj.receiverWWID="ID_" + i;
-            toPrintList.add(obj);
-        }
-        return toPrintList;
-    }
-    protected static void listMediaSize(){
-        PrinterJob pj = PrinterJob.getPrinterJob();
-        if (pj.printDialog()) {
-        PrintService printService = pj.getPrintService();
-      
-        Media[] res = (Media[]) printService.getSupportedAttributeValues(Media.class, null, null);
-        for (Media media : res) {
-            if (media instanceof MediaSizeName) {
-                MediaSizeName msn = (MediaSizeName) media;
-                MediaSize ms = MediaSize.getMediaSizeForName(msn);
-                float width = ms.getX(MediaSize.MM);
-                float height = ms.getY(MediaSize.MM);
-                System.out.println(media + ": width = " + width + "; height = " + height);
-            }else{
-                System.out.println(media  );
-            }
-        }
         }
     }
 }
