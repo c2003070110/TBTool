@@ -6,10 +6,11 @@ import com.beust.jcommander.internal.Lists;
 
 
 public class PrintInfoObject {
-
+    
     public String senderName;
     public String senderAddress1;
     public String senderAddress2;
+    public String senderAddress3;
     public String senderZipCode;
     public String senderZipTel;
 
