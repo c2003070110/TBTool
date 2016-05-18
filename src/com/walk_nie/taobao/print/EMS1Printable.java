@@ -7,9 +7,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.jetty.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 
 public class EMS1Printable implements Printable {
 
@@ -23,7 +24,15 @@ public class EMS1Printable implements Printable {
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
 
-        if (toPrintList == null || pageIndex >= toPrintList.size()) {
+        if (toPrintList == null) {
+            return NO_SUCH_PAGE;
+        }
+        if (pageIndex >= toPrintList.size()) {
+        	try {
+				PrintUtil.savePrintedOrderNos(toPrintList);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
             return NO_SUCH_PAGE;
         }
         PrintInfoObject printInfo = toPrintList.get(pageIndex);
@@ -39,8 +48,8 @@ public class EMS1Printable implements Printable {
         FontMetrics fm = g2d.getFontMetrics();
 
         int h = PrintUtil.fromCMToPPI_i(0.7);
-        if (StringUtil.isNotBlank(printInfo.receiverWWID)) {
-            g2d.drawString(printInfo.receiverWWID, PrintUtil.fromCMToPPI_i(21.5), h);
+        if (StringUtils.isNotEmpty(printInfo.receiverWWID)) {
+            g2d.drawString(printInfo.receiverWWID, PrintUtil.fromCMToPPI_i(19.8), h);
         }
 
         h = PrintUtil.fromCMToPPI_i(4.4);
@@ -49,10 +58,27 @@ public class EMS1Printable implements Printable {
         g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(10.2), h);
         h += fm.getHeight();
         g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(10.2), h);
-
-        h = PrintUtil.fromCMToPPI_i(7.7);
+		if (StringUtils.isNotEmpty(printInfo.receiverAddress3)) {
+			h += fm.getHeight();
+			g2d.drawString(printInfo.receiverAddress3,
+					PrintUtil.fromCMToPPI_i(10.2), h);
+		}
+        
+        h = PrintUtil.fromCMToPPI_i(8.0);
         g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11), h);
         g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(15.2), h);
+
+        h = PrintUtil.fromCMToPPI_i(10);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(15.5), h);
+
+        h = PrintUtil.fromCMToPPI_i(12.3);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(2.2), h);
+
+        h = PrintUtil.fromCMToPPI_i(13.2);
+        g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(3.4), h);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(7.8), h);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(8.9), h);
+        
 
         return PAGE_EXISTS;
     }

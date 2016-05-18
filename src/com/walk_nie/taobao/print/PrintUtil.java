@@ -2,9 +2,33 @@ package com.walk_nie.taobao.print;
 
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+
+import com.google.common.io.Files;
 
 
 public class PrintUtil {
+    public static String rootPathName = "./print";
+
+    public static String printedOrderNosFileName = "printedOrderNos.txt";
+  
+    public static void savePrintedOrderNos(List<PrintInfoObject> printedList) throws IOException {
+        File file = new File(rootPathName, printedOrderNosFileName);
+        StringBuffer sb = new StringBuffer();
+        for (PrintInfoObject obj : printedList) {
+            for (String orderNo : obj.orderNos) {
+                sb.append(orderNo).append("\n");
+            }
+        }
+        if (!file.exists()) {
+            Files.write(sb.toString(), file, Charset.forName("UTF-8"));
+        } else {
+            Files.append(sb.toString(), file, Charset.forName("UTF-8"));
+        }
+    }
 
     public static int fromCMToPPI_i(double cm) {            
         return new Long(Math.round(toPPI(cm * 0.393700787))).intValue();            
