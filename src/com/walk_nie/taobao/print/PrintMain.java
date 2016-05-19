@@ -36,9 +36,6 @@ import com.google.common.io.Files;
 
 
 public class PrintMain {
-    public static String rootPathName = "./print";
-    public static String toPrintFileName = "toPrint.csv";
-    public static String printedOrderNosFileName = "printedOrderNos.txt";
     public static void main(String[] args) throws PrinterException, IOException {
         //listMediaSize();
         printEMS1();
@@ -61,14 +58,14 @@ public class PrintMain {
             System.out.println("ems-" + ": width = " + PrintUtil.fromCMToPPI(27) + "; height = " + PrintUtil.fromCMToPPI(14));
             
             List<PrintInfoObject> toPrintList = getPrintInfoList();
-            pj.setPrintable(new EMS1Printable(toPrintList), pf);
+            pj.setPrintable(new EMS2Printable(toPrintList), pf);
             pj.print();
             
             savePrintedOrderNos(toPrintList);
         }
     }
     private static void savePrintedOrderNos(List<PrintInfoObject> printedList) throws IOException {
-        File file = new File(rootPathName, printedOrderNosFileName);
+        File file = new File(PrintUtil.rootPathName, PrintUtil.printedOrderNosFileName);
         StringBuffer sb = new StringBuffer();
         for(PrintInfoObject obj:printedList){
             for(String orderNo:obj.orderNos){
@@ -84,7 +81,7 @@ public class PrintMain {
 
     protected static List<PrintInfoObject> getPrintInfoList1() throws IOException{
         List<PrintInfoObject> printList = Lists.newArrayList();
-        File file = new File(rootPathName,toPrintFileName);
+        File file = new File(PrintUtil.rootPathName,PrintUtil.toPrintFileName);
         List<String> list = FileUtils.readLines(file,"UTF-8");
         List<String> printedOrderNos = readPrintedOrderNos();
         for(String str:list){
@@ -135,7 +132,7 @@ public class PrintMain {
     }
     
     protected static List<String> readPrintedOrderNos() throws IOException {
-        File file = new File(rootPathName, printedOrderNosFileName);
+        File file = new File(PrintUtil.rootPathName, PrintUtil.printedOrderNosFileName);
         if (!file.exists()) return Lists.newArrayList();
         List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
         return lines;
@@ -241,7 +238,7 @@ public class PrintMain {
 
         if (service != null){
             DocPrintJob job = service.createPrintJob(); //印刷ジョブの生成
-            EMS1Printable clsPrintable = new EMS1Printable(getPrintInfoList());
+            EMS2Printable clsPrintable = new EMS2Printable(getPrintInfoList());
             SimpleDoc doc = new SimpleDoc(clsPrintable, flavor, null);
             //ジョブに印刷を依頼する
             try {

@@ -7,15 +7,16 @@ import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class PostalParcelPrintable implements Printable {
+public class PostalParcel2Printable implements Printable {
 
     public List<PrintInfoObject> toPrintList = null;
 
-    public PostalParcelPrintable(List<PrintInfoObject> printInfo) {
+    public PostalParcel2Printable(List<PrintInfoObject> printInfo) {
         this.toPrintList = printInfo;
     }
 
@@ -23,7 +24,15 @@ public class PostalParcelPrintable implements Printable {
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
 
-        if (toPrintList == null || pageIndex >= toPrintList.size()) {
+        if (toPrintList == null) {
+            return NO_SUCH_PAGE;
+        }
+        if (pageIndex >= toPrintList.size()) {
+            try {
+                PrintUtil.savePrintedOrderNos(toPrintList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return NO_SUCH_PAGE;
         }
         PrintInfoObject printInfo = toPrintList.get(pageIndex);

@@ -1,5 +1,5 @@
-ems,20160001,ww001,name1,13681515191,province city district jiedao lu 1
-sal,20160002,ww002,name2,13681515192,province city district jiedao lu 2
-ems,20160003,ww003,name3,13681515193,province city district jiedao lu 3
-sal,20160004,ww004,name4,13681515194,province city district jiedao lu 4
-ems,20160005,ww005,name5,13681515195,province city district jiedao lu 4
+ems	20160001	ww001	name1	province city district jiedao lu 1	13681515191
+sal	20160002	ww002	name2	province city district jiedao lu 2	13681515192
+ems	20160003	ww003	name3	province city district jiedao lu 3	13681515193
+sal	20160004	ww004	name4	province city district jiedao lu 4	13681515194
+ems	20160005	ww005	name5	province city district jiedao lu 4	13681515195

@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,28 +15,17 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import com.beust.jcommander.internal.Lists;
-import com.google.common.io.Files;
 
 public class PrintMain2 {
-
-
-    public static String toPrintFileName = "toPrint.txt";
-
-    public static String splitor = "\t";
-
-    public static String commonUseAddFileName = "commonUseAddress.txt";
-
-    public static int LABEL_TYPE_EMS = 0;
-
-    public static int LABEL_TYPE_POSTAL = 1;
+    public static BufferedReader stdReader = null;
 
     public static void main(String[] args) throws PrinterException, IOException {
         try {
+           stdReader = new BufferedReader(new InputStreamReader(System.in));
         	printTaobao();
 //            System.out.print("Type of Print : ");
 //            System.out.println("1:common use address;2:taobao");
 
-//            BufferedReader stdReader = new BufferedReader(new InputStreamReader(System.in));
 //            while (true) {
 //                String line = stdReader.readLine();
 //                if ("1".equals(line.trim())) {
@@ -50,7 +38,7 @@ public class PrintMain2 {
 //                    System.out.println("Listed number only!");
 //                }
 //            }
-//            stdReader.close();
+            stdReader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,7 +52,6 @@ public class PrintMain2 {
             System.out.println(idx + ":" + adressList.get(idx));
         }
         List<String> selectedLines = Lists.newArrayList();
-        BufferedReader stdReader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             String line = stdReader.readLine();
             int idx = line.indexOf(",");
@@ -106,16 +93,15 @@ public class PrintMain2 {
             }
         }
 
-        stdReader.close();
         List<PrintInfoObject> toPrintList = Lists.newArrayList();
         for (String toPrintLine : selectedLines) {
-            String[] splited = toPrintLine.split(splitor);
+            String[] splited = toPrintLine.split(PrintUtil.splitor);
             PrintInfoObject obj = new PrintInfoObject();
 
             obj.receiverCountry = "CHINA";
             obj.receiverName = splited[0];
             obj.receiverTel = splited[1];
-            setAddress(obj, splited[2]);
+            PrintUtil.setAddress(obj, splited[2]);
             toPrintList.add(obj);
         }
         printOut(toPrintList, labelType);
@@ -142,8 +128,7 @@ public class PrintMain2 {
 		if (!toPrintList.isEmpty()) {
 			System.out.println("Ready for EMS printing ? 0 for ready");
 			if (isReady()) {
-				printOut(toPrintList, LABEL_TYPE_EMS);
-				//savePrintedOrderNos(toPrintList);
+				printOut(toPrintList, PrintUtil.LABEL_TYPE_EMS);
 			}
 		}else{
 			break;
@@ -153,8 +138,7 @@ public class PrintMain2 {
 		if (!toPrintList.isEmpty()) {
 			System.out.println("Ready for SAL printing ? 0 for ready");
 			if (isReady()) {
-				printOut(toPrintList, LABEL_TYPE_POSTAL);
-				//savePrintedOrderNos(toPrintList);
+				printOut(toPrintList, PrintUtil.LABEL_TYPE_POSTAL);
 			}
 		}
 	}
@@ -190,11 +174,11 @@ public class PrintMain2 {
             for(PrintInfoObject obj:toPrintList){
             	List<PrintInfoObject> newList = Lists.newArrayList();
             	newList.add(obj);
-            if (labelType == LABEL_TYPE_EMS) {
+            if (labelType == PrintUtil.LABEL_TYPE_EMS) {
                 // EMS width = 27cm height=14cm
-                pj.setPrintable(new EMS1Printable(newList), pf);
-            } else if (labelType == LABEL_TYPE_POSTAL) {
-                pj.setPrintable(new PostalParcelPrintable(newList), pf);
+                pj.setPrintable(new EMS2Printable(newList), pf);
+            } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
+                pj.setPrintable(new PostalParcel2Printable(newList), pf);
             }
             }
             pj.print();
@@ -202,38 +186,38 @@ public class PrintMain2 {
     }
 
     private static List<String> getCommonUseAddress() throws IOException {
-        File file = new File(PrintUtil.rootPathName, commonUseAddFileName);
+        File file = new File(PrintUtil.rootPathName, PrintUtil.commonUseAddFileName);
         return FileUtils.readLines(file, "UTF-8");
     }
 
     protected static List<PrintInfoObject> getPrintInfoListEMS() throws IOException {
-        return  getPrintInfoList(LABEL_TYPE_EMS);
+        return  getPrintInfoList(PrintUtil.LABEL_TYPE_EMS);
     }
 
     protected static List<PrintInfoObject> getPrintInfoListPostal() throws IOException {
-        return  getPrintInfoList(LABEL_TYPE_POSTAL);
+        return  getPrintInfoList(PrintUtil.LABEL_TYPE_POSTAL);
     }
     
     protected static List<PrintInfoObject> getPrintInfoList(int labelType) throws IOException {
         List<PrintInfoObject> printList = Lists.newArrayList();
-        File file = new File(PrintUtil.rootPathName, toPrintFileName);
+        File file = new File(PrintUtil.rootPathName, PrintUtil.toPrintFileName);
         List<String> list = FileUtils.readLines(file, "UTF-8");
-        List<String> printedOrderNos = readPrintedOrderNos();
+        List<PrintInfoObject> printedInfos = PrintUtil.readPrintedInfoList();
         for (String str : list) {
             if (str.equals(""))
                 continue;
-            String[] splited = str.split(splitor);
+            String[] splited = str.split(PrintUtil.splitor);
             //if (splited.length != 11)
             //    continue;
 
             String labelTypeStr = splited[0];
-            if((labelType==LABEL_TYPE_EMS && !"ems".equalsIgnoreCase(labelTypeStr))
-                    || (labelType==LABEL_TYPE_POSTAL && !"sal".equalsIgnoreCase(labelTypeStr))){
+            if((labelType==PrintUtil.LABEL_TYPE_EMS && !"ems".equalsIgnoreCase(labelTypeStr))
+                    || (labelType==PrintUtil.LABEL_TYPE_POSTAL && !"sal".equalsIgnoreCase(labelTypeStr))){
                 continue;
             }
 
             String orderNo = splited[1];
-            if (printedOrderNos.contains(orderNo))
+            if (PrintUtil.isPrintedInfo(printedInfos,orderNo))
                 continue;
             PrintInfoObject obj = new PrintInfoObject();
 
@@ -242,7 +226,7 @@ public class PrintMain2 {
             obj.orderNo = orderNo;
             obj.receiverWWID = splited[2];
             obj.receiverName = splited[3];
-            setAddress(obj, splited[4]);
+            PrintUtil.setAddress(obj, splited[4]);
             obj.receiverTel = splited[5];
             
             printList.add(obj);
@@ -270,66 +254,21 @@ public class PrintMain2 {
         }
 
         return toPrintList;
-    }
-
-    protected static List<String> readPrintedOrderNos() throws IOException {
-        File file = new File(PrintUtil.rootPathName, PrintUtil.printedOrderNosFileName);
-        if (!file.exists())
-            return Lists.newArrayList();
-        List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
-        return lines;
-    }
-
-    protected static void setAddress(PrintInfoObject obj, String address) {
-        String[] splied = address.split(" ");
-        int splitIdx = 18;
-        if (splied.length > 3) {
-            obj.receiverAddress1 = splied[0] + " " + splied[1] + " " + splied[2];
-            String newAdd = "";
-            for (int j = 3; j < splied.length; j++) {
-                newAdd += splied[j];
-            }
-            if (newAdd.length() > splitIdx) {
-                obj.receiverAddress2 = newAdd.substring(0, splitIdx);
-                obj.receiverAddress3 = newAdd.substring(splitIdx);
-            } else {
-                obj.receiverAddress2 = newAdd;
-            }
-        } else {
-            if (address.length() > splitIdx) {
-                obj.receiverAddress1 = address.substring(0, splitIdx);
-                String newAdd = address.substring(splitIdx);
-                if (newAdd.length() > splitIdx) {
-                    obj.receiverAddress2 = newAdd.substring(0, splitIdx);
-                    obj.receiverAddress3 = newAdd.substring(splitIdx);
-                } else {
-                    obj.receiverAddress2 = newAdd;
-                }
-            } else {
-                obj.receiverAddress1 = address;
-            }
-        }
-    }
+    } 
 
     private static boolean isReady() throws IOException {
-        BufferedReader stdReader = new BufferedReader(new InputStreamReader(System.in));
         while(true){
             String line = stdReader.readLine();
             if(line.equals("0")){
                 break;
             }
         }
-        //stdReader.close();
         return true;
     }
 
     private static void setSenderInfo(List<PrintInfoObject> toPrintList) {
         for (PrintInfoObject obj : toPrintList) {
-            obj.senderName="";
-            obj.senderAddress1="";
-            obj.senderAddress2="";
-            obj.senderZipCode="123-0845";
-            obj.senderZipTel="080-4200-1314";
+            PrintUtil.setSenderInfo(obj);
         }
     }
 }
