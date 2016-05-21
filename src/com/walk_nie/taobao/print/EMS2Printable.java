@@ -3,7 +3,6 @@ package com.walk_nie.taobao.print;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -44,7 +43,7 @@ public class EMS2Printable implements Printable {
         double width = pageFormat.getImageableWidth();
         double height = pageFormat.getImageableHeight();
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
-        g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
+        //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();
 
         int h = PrintUtil.fromCMToPPI_i(0.7);

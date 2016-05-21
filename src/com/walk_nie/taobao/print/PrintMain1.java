@@ -1,6 +1,7 @@
 package com.walk_nie.taobao.print;
 
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
@@ -12,8 +13,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-
-import sun.print.RasterPrinterJob;
 
 import com.beust.jcommander.internal.Lists;
 
@@ -170,16 +169,16 @@ public class PrintMain1 {
         PrintUtil.setSenderInfo(toPrintInfo);
 
         PrinterJob pj = getPrinterJob();
-        if(pj instanceof RasterPrinterJob){
-            ((RasterPrinterJob)pj).debugPrint = true;
-        }
+//        if(pj instanceof RasterPrinterJob){
+//            ((RasterPrinterJob)pj).debugPrint = true;
+//        }
         PageFormat pf = getPageFormat();
         
         if (labelType == PrintUtil.LABEL_TYPE_EMS) {
             // EMS width = 27cm height=14cm
-            pj.setPrintable(new EMS1Printable(toPrintInfo));
+            pj.setPrintable(new EMS1Printable(toPrintInfo),pf);
         } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            pj.setPrintable(new PostalParcel1Printable(toPrintInfo));
+            pj.setPrintable(new PostalParcel1Printable(toPrintInfo),pf);
         }
         pj.print();
     }
@@ -204,12 +203,12 @@ public class PrintMain1 {
         PageFormat pf = getPrinterJob().defaultPage();
         System.out.println("Imageable(default)(cm)-" + ": width = " + PrintUtil.fromPPIToCM(pf.getImageableWidth()) + "; height = " + PrintUtil.fromPPIToCM(pf.getImageableHeight()));
         
-//        Paper paper = pf.getPaper();
-//        double margin = PrintUtil.fromCMToPPI(0.2);
-//        paper.setImageableArea(margin, margin, 
-//                paper.getWidth() - margin * 2, 
-//                paper.getHeight() - margin * 2);
-//        pf.setPaper(paper);
+        Paper paper = pf.getPaper();
+        double margin = PrintUtil.fromCMToPPI(0.2);
+        paper.setImageableArea(margin, margin, 
+                paper.getWidth() - margin * 2, 
+                paper.getHeight() - margin * 2);
+        pf.setPaper(paper);
         pageFormat = getPrinterJob().pageDialog(pf);
         System.out.println("Imageable(set)(cm)-" + ": width = " + PrintUtil.fromPPIToCM(pageFormat.getImageableWidth()) + "; height = " + PrintUtil.fromPPIToCM(pageFormat.getImageableHeight()));
         return pageFormat;
