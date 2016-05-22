@@ -22,7 +22,7 @@ public class PrintMain1 {
 
     public static void main(String[] args) throws PrinterException, IOException {
         try {
-        	//printTaobao();
+        	//颜宁, 13438327357, 四川省, 成都市, 金堂县, 三星镇金堂大道9号四川师范大学文理学院, 610401
             System.out.print("Type of Print : ");
             System.out.println("0:common use address;1:taobao");
 

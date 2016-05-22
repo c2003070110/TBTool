@@ -41,7 +41,7 @@ public class EMS1Printable implements Printable {
         double width = pageFormat.getImageableWidth();
         double height = pageFormat.getImageableHeight();
         
-        System.out.println("Imageable(Printable)(cm)-" + ": width = " + PrintUtil.fromPPIToCM(width) + "; height = " + PrintUtil.fromPPIToCM(height));
+        //System.out.println("Imageable(Printable)(cm)-" + ": width = " + PrintUtil.fromPPIToCM(width) + "; height = " + PrintUtil.fromPPIToCM(height));
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
         //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();
