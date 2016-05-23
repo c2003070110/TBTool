@@ -45,35 +45,35 @@ public class EMSPrintableForMultiPage implements Printable {
 
         int h = PrintUtil.fromCMToPPI_i(0.7);
         if (StringUtils.isNotEmpty(printInfo.receiverWWID)) {
-            g2d.drawString(printInfo.receiverWWID, PrintUtil.fromCMToPPI_i(19.8), h);
+            g2d.drawString(printInfo.receiverWWID, PrintUtil.fromCMToPPI_i(21), h);
         }
 
-        h = PrintUtil.fromCMToPPI_i(4.4);
+        h = PrintUtil.fromCMToPPI_i(4.6);
         g2d.drawString(printInfo.receiverName, PrintUtil.fromCMToPPI_i(13), h);
         h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.2);
-        g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(10.2), h);
+        g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(11.2), h);
         h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.2);
-        g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(10.2), h);
+        g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(11.2), h);
 		if (StringUtils.isNotEmpty(printInfo.receiverAddress3)) {
 			h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.2);
 			g2d.drawString(printInfo.receiverAddress3,
-					PrintUtil.fromCMToPPI_i(10.2), h);
+					PrintUtil.fromCMToPPI_i(11.2), h);
 		}
         
-        h = PrintUtil.fromCMToPPI_i(8.0);
+        h = PrintUtil.fromCMToPPI_i(8.17);
         g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11), h);
-        g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(15.2), h);
+        g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(16.2), h);
 
-        h = PrintUtil.fromCMToPPI_i(10);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(15.5), h);
+        h = PrintUtil.fromCMToPPI_i(10.07);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(16.5), h);
 
-        h = PrintUtil.fromCMToPPI_i(12.3);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(2.2), h);
+        h = PrintUtil.fromCMToPPI_i(12.37);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(3.2), h);
 
-        h = PrintUtil.fromCMToPPI_i(13.2);
+        h = PrintUtil.fromCMToPPI_i(13.3);
         g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(3.4), h);
-        g2d.drawString("1", PrintUtil.fromCMToPPI_i(7.8), h);
-        g2d.drawString("1", PrintUtil.fromCMToPPI_i(8.9), h);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(8.8), h);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(9.9), h);
         
 
         return PAGE_EXISTS;
