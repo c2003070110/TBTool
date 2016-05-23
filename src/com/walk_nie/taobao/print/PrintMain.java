@@ -81,7 +81,7 @@ public class PrintMain {
 
     protected static List<PrintInfoObject> getPrintInfoList1() throws IOException{
         List<PrintInfoObject> printList = Lists.newArrayList();
-        File file = new File(PrintUtil.rootPathName,PrintUtil.toPrintFileName);
+        File file = new File(PrintUtil.rootPathName,PrintUtil.toPrintFileName1EMS);
         List<String> list = FileUtils.readLines(file,"UTF-8");
         List<String> printedOrderNos = readPrintedOrderNos();
         for(String str:list){

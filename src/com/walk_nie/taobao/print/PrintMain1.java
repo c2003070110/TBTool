@@ -5,14 +5,9 @@ import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
 
 import com.beust.jcommander.internal.Lists;
 
@@ -22,18 +17,20 @@ public class PrintMain1 {
 
     public static void main(String[] args) throws PrinterException, IOException {
         try {
-        	//颜宁, 13438327357, 四川省, 成都市, 金堂县, 三星镇金堂大道9号四川师范大学文理学院, 610401
             System.out.print("Type of Print : ");
-            System.out.println("0:common use address;1:taobao");
+            System.out.println("0:taobao export;1:taobao copy;2:common use address;");
 
             stdReader = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
                 String line = stdReader.readLine();
                 if ("0".equals(line.trim())) {
-                    printCommonUseAddress();
+                    printTaobaoExport();
                     break;
                 } else if ("1".equals(line.trim())) {
-                    printTaobao();
+                    printTaobaoCopy();
+                    break;
+                } else if ("2".equals(line.trim())) {
+                    printCommonUseAddress();
                     break;
                 } else {
                     System.out.println("Listed number only!");
@@ -46,7 +43,7 @@ public class PrintMain1 {
     }
 
     private static void printCommonUseAddress() throws PrinterException, IOException {
-        List<String> adressList = getCommonUseAddress();
+        List<String> adressList = PrintUtil.getCommonUseAddress();
         
         System.out.println("which address?");
         for (int idx = 0; idx < adressList.size(); idx++) {
@@ -133,8 +130,8 @@ public class PrintMain1 {
         }
     }
 
-    private static void printTaobao() throws IOException, PrinterException {
-        List<PrintInfoObject> toPrintList = getPrintInfoListEMS();
+    private static void printTaobaoCopy() throws IOException, PrinterException {
+        List<PrintInfoObject> toPrintList = PrintUtil.getPrintInfoList2EMS();
         if (!toPrintList.isEmpty()) {
             for (PrintInfoObject obj : toPrintList) {
                 while (true) {
@@ -149,7 +146,38 @@ public class PrintMain1 {
 
         resetPrintJob();
 
-        toPrintList = getPrintInfoListPostal();
+        toPrintList = PrintUtil.getPrintInfoList2Postal();
+        if (!toPrintList.isEmpty()) {
+            for (PrintInfoObject obj : toPrintList) {
+                System.out.println("Ready for SAL printing ? 0 for ready");
+                while (true) {
+                if (isReady()) {
+                    printOut(obj, PrintUtil.LABEL_TYPE_POSTAL);
+                    break;
+                }
+                }
+            }
+        }
+        
+    }
+
+    private static void printTaobaoExport() throws IOException, PrinterException {
+        List<PrintInfoObject> toPrintList = PrintUtil.getPrintInfoList1EMS();
+        if (!toPrintList.isEmpty()) {
+            for (PrintInfoObject obj : toPrintList) {
+                while (true) {
+                    System.out.println("Ready for EMS printing ? 0 for ready");
+                    if (isReady()) {
+                        printOut(obj, PrintUtil.LABEL_TYPE_EMS);
+                        break;
+                    }
+                }
+            }
+        }
+
+        resetPrintJob();
+
+        toPrintList = PrintUtil.getPrintInfoList1Postal();
         if (!toPrintList.isEmpty()) {
             for (PrintInfoObject obj : toPrintList) {
                 System.out.println("Ready for SAL printing ? 0 for ready");
@@ -212,77 +240,6 @@ public class PrintMain1 {
         pageFormat = getPrinterJob().pageDialog(pf);
         System.out.println("Imageable(set)(cm)-" + ": width = " + PrintUtil.fromPPIToCM(pageFormat.getImageableWidth()) + "; height = " + PrintUtil.fromPPIToCM(pageFormat.getImageableHeight()));
         return pageFormat;
-    }
-    
-    private static List<String> getCommonUseAddress() throws IOException {
-        File file = new File(PrintUtil.rootPathName, PrintUtil.commonUseAddFileName);
-        return FileUtils.readLines(file, "UTF-8");
-    }
-
-    protected static List<PrintInfoObject> getPrintInfoListEMS() throws IOException {
-        return  getPrintInfoList(PrintUtil.LABEL_TYPE_EMS);
-    }
-
-    protected static List<PrintInfoObject> getPrintInfoListPostal() throws IOException {
-        return  getPrintInfoList(PrintUtil.LABEL_TYPE_POSTAL);
-    }
-    
-    protected static List<PrintInfoObject> getPrintInfoList(int labelType) throws IOException {
-        List<PrintInfoObject> printList = Lists.newArrayList();
-        File file = new File(PrintUtil.rootPathName, PrintUtil.toPrintFileName);
-        List<String> list = FileUtils.readLines(file, "UTF-8");
-        List<PrintInfoObject> printedInfos = PrintUtil.readPrintedInfoList();
-        for (String str : list) {
-            if (str.equals(""))
-                continue;
-            String[] splited = str.split(PrintUtil.splitor);
-            //if (splited.length != 11)
-            //    continue;
-
-            String labelTypeStr = splited[0];
-            if((labelType==PrintUtil.LABEL_TYPE_EMS && !"ems".equalsIgnoreCase(labelTypeStr))
-                    || (labelType==PrintUtil.LABEL_TYPE_POSTAL && !"sal".equalsIgnoreCase(labelTypeStr))){
-                continue;
-            }
-
-            String orderNo = splited[1];
-            if (PrintUtil.isPrintedInfo(printedInfos,orderNo))
-                continue;
-            PrintInfoObject obj = new PrintInfoObject();
-
-            obj.receiverCountry = "中国";
-
-            obj.orderNo = orderNo;
-            obj.receiverWWID = splited[2];
-            obj.receiverName = splited[3];
-            PrintUtil.setAddress(obj, splited[4]);
-            obj.receiverTel = splited[5];
-            
-            printList.add(obj);
-        }
-        Collections.sort(printList, new Comparator<PrintInfoObject>() {
-
-            @Override
-            public int compare(PrintInfoObject o1, PrintInfoObject o2) {
-                return o1.receiverName.compareTo(o2.receiverName);
-            }
-        });
-
-        List<PrintInfoObject> toPrintList = Lists.newArrayList();
-        String name = "";
-        PrintInfoObject tempObj = null;
-        for (PrintInfoObject obj : printList) {
-            if (name.equals(obj.receiverName)) {
-                tempObj.orderNos.add(obj.orderNo);
-            } else {
-                name = obj.receiverName;
-                tempObj = obj;
-                tempObj.orderNos.add(obj.orderNo);
-                toPrintList.add(tempObj);
-            }
-        }
-
-        return toPrintList;
     }
 
     private static boolean isReady() throws IOException {
