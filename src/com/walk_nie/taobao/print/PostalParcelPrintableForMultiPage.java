@@ -10,11 +10,11 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class PostalParcel1Printable implements Printable {
+public class PostalParcelPrintableForMultiPage implements Printable {
 
     public PrintInfoObject toPrintInfo = null;
 
-    public PostalParcel1Printable(PrintInfoObject printInfo) {
+    public PostalParcelPrintableForMultiPage(PrintInfoObject printInfo) {
         this.toPrintInfo = printInfo;
     }
 
@@ -25,13 +25,10 @@ public class PostalParcel1Printable implements Printable {
         if (toPrintInfo == null) {
             return NO_SUCH_PAGE;
         }
-        if (pageIndex >= 1) {
-            try {
-                PrintUtil.savePrintedOrderNos(toPrintInfo);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return NO_SUCH_PAGE;
+        try {
+            PrintUtil.savePrintedOrderNos(toPrintInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         System.out.println("[Printing]" + toPrintInfo.receiverName + " " + toPrintInfo.receiverAddress1

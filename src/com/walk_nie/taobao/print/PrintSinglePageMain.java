@@ -11,7 +11,7 @@ import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
 
-public class PrintMain1 {
+public class PrintSinglePageMain {
     
     public static BufferedReader stdReader = null;
 
@@ -205,9 +205,9 @@ public class PrintMain1 {
         
         if (labelType == PrintUtil.LABEL_TYPE_EMS) {
             // EMS width = 27cm height=14cm
-            pj.setPrintable(new EMS1Printable(toPrintInfo),pf);
+            pj.setPrintable(new EMSPrintableForSinglePage(toPrintInfo),pf);
         } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            pj.setPrintable(new PostalParcel1Printable(toPrintInfo),pf);
+            pj.setPrintable(new PostalParcelPrintableForSinglePage(toPrintInfo),pf);
         }
         pj.print();
     }
