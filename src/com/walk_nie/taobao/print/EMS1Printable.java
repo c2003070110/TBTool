@@ -3,6 +3,7 @@ package com.walk_nie.taobao.print;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -25,14 +26,11 @@ public class EMS1Printable implements Printable {
         if (printInfo == null) {
             return NO_SUCH_PAGE;
         }
-        if (pageIndex >= 1) {
-        	try {
-				PrintUtil.savePrintedOrderNos(printInfo);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            return NO_SUCH_PAGE;
-        }
+    	try {
+			PrintUtil.savePrintedOrderNos(printInfo);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         
         System.out.println("[Printing]" + printInfo.receiverName + " " + printInfo.receiverAddress1
                 + printInfo.receiverAddress2 + printInfo.receiverAddress3);
@@ -43,7 +41,7 @@ public class EMS1Printable implements Printable {
         
         //System.out.println("Imageable(Printable)(cm)-" + ": width = " + PrintUtil.fromPPIToCM(width) + "; height = " + PrintUtil.fromPPIToCM(height));
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
-        //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
+        g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();
 
         int h = PrintUtil.fromCMToPPI_i(0.7);

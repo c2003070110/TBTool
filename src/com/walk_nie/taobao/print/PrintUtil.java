@@ -31,6 +31,11 @@ public class PrintUtil {
     public static int LABEL_TYPE_EMS = 0;
 
     public static int LABEL_TYPE_POSTAL = 1;
+    public static void setSenderInfo(List<PrintInfoObject> list) {
+        for(PrintInfoObject obj:list){
+            setSenderInfo(obj);
+        }
+    }
 
     public static void setSenderInfo(PrintInfoObject obj) {
         obj.senderName="";
@@ -212,7 +217,7 @@ public class PrintUtil {
                 }
                 sb.append(splitor);
                 sb.append(obj.receiverTel);
-                sb.append("\n");
+                sb.append("\r\n");
             }
         }
         if (!file.exists()) {
