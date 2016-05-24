@@ -35,7 +35,7 @@ public class ShipmentMain  {
     public static BufferedReader stdReader = null;
  
     private File picSrcFolder = null;
-    private File saledInfoFile = null;
+    private String toShipmengFile = ".shipment/toShipment.txt";
 
     public static void main(String[] args)   {
         new ShipmentMain().execute();
@@ -76,26 +76,26 @@ public class ShipmentMain  {
     }
 
     private void init() throws IOException {
-        picSrcFolder = new File("C:\\tmp");
-        saledInfoFile = new File("C:\\Log\\1.txt");
+       
         stdReader = new BufferedReader(new InputStreamReader(System.in));
-//        System.out.print("Folder for rename : ");
-//        while (true) {
-//            String line = stdReader.readLine().trim();
-//            picSrcFolder = new File(line);
-//
-//            if (!picSrcFolder.exists()) {
-//                System.out.print("[ERROR]Folder NOT exists. " + picSrcFolder.getCanonicalPath());
-//                System.out.print("type in again.");
-//                continue;
-//            }
-//            if (!picSrcFolder.isDirectory()) {
-//                System.out.print("[ERROR] is NOT Folder " + picSrcFolder.getCanonicalPath());
-//                System.out.print("type in again.");
-//                continue;
-//            }
-//            break;
-//        }
+        System.out.print("Folder for rename : ");
+        while (true) {
+            String line = stdReader.readLine().trim();
+            picSrcFolder = new File(line);
+
+            if (!picSrcFolder.exists()) {
+                System.out.print("[ERROR]Folder NOT exists. " + picSrcFolder.getCanonicalPath());
+                System.out.print("type in again.");
+                continue;
+            }
+            if (!picSrcFolder.isDirectory()) {
+                System.out.print("[ERROR] is NOT Folder " + picSrcFolder.getCanonicalPath());
+                System.out.print("type in again.");
+                continue;
+            }
+            break;
+        }
+         
 //        System.out.print("file path for shipment(*.csv) : ");
 //        while (true) {
 //            String line = stdReader.readLine().trim();
@@ -218,7 +218,7 @@ public class ShipmentMain  {
     }
 
     private List<TaobaoSaledObject> getTobeShipmentInfo() throws IOException{
-
+        File saledInfoFile = new File(toShipmengFile);
         List<String> list = FileUtils.readLines(saledInfoFile, "UTF-8");
         List<TaobaoSaledObject> objList = Lists.newArrayList();
         for (String str : list) {
