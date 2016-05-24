@@ -18,61 +18,73 @@ public class LabelHelper {
         //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();
 
-        // TODO adjust width and height
-        int h = fm.getAscent();
-        // name
-        if (StringUtils.isNotEmpty(toPrintInfo.senderName)) {
-            g2d.drawString(toPrintInfo.senderName, PrintUtil.fromCMToPPI_i(3), h);
-        }
-        g2d.drawString(toPrintInfo.receiverName, PrintUtil.fromCMToPPI_i(11), h);
-        h=PrintUtil.fromCMToPPI_i(2.56);
-        h += fm.getHeight();
+        // TODO adjust width and heightsenderLeft
+        int h=PrintUtil.fromCMToPPI_i(2.3);
+        double receiverLeft = 11.1;double senderLeft=2.7;
+        g2d.drawString(toPrintInfo.receiverName, PrintUtil.fromCMToPPI_i(receiverLeft), h);
         
-        // address
-        if (StringUtils.isNotEmpty(toPrintInfo.senderAddress1)) {
-            g2d.drawString(toPrintInfo.senderAddress1, PrintUtil.fromCMToPPI_i(1), h);
+        h += fm.getHeight();
+        if (StringUtils.isNotEmpty(toPrintInfo.senderName)) {
+            g2d.drawString(toPrintInfo.senderName, PrintUtil.fromCMToPPI_i(senderLeft), h);
         }
-        g2d.drawString(toPrintInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(9.35), h);
+        if (StringUtils.isNotEmpty(toPrintInfo.senderAddress1)) {
+            g2d.drawString(toPrintInfo.senderAddress1, PrintUtil.fromCMToPPI_i(receiverLeft), h);
+        }
+        
+        h += fm.getHeight();
+        if (StringUtils.isNotEmpty(toPrintInfo.senderAddress1)) {
+            g2d.drawString(toPrintInfo.senderAddress1, PrintUtil.fromCMToPPI_i(senderLeft), h);
+        }
+        if (StringUtils.isNotEmpty(toPrintInfo.senderAddress2)) {
+            g2d.drawString(toPrintInfo.senderAddress2, PrintUtil.fromCMToPPI_i(receiverLeft), h);
+        }
         
         h += fm.getHeight();
         if (StringUtils.isNotEmpty(toPrintInfo.senderAddress2)) {
-            g2d.drawString(toPrintInfo.senderAddress2, PrintUtil.fromCMToPPI_i(1), h);
+            g2d.drawString(toPrintInfo.senderAddress2, PrintUtil.fromCMToPPI_i(senderLeft), h);
         }
-        g2d.drawString(toPrintInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(9.35), h);
+        if (StringUtils.isNotEmpty(toPrintInfo.senderAddress3)) {
+            g2d.drawString(toPrintInfo.senderAddress3, PrintUtil.fromCMToPPI_i(receiverLeft), h);
+        }
         
         h += fm.getHeight();
         if (StringUtils.isNotEmpty(toPrintInfo.senderAddress3)) {
-            g2d.drawString(toPrintInfo.senderAddress3, PrintUtil.fromCMToPPI_i(1), h);
+            g2d.drawString(toPrintInfo.senderAddress3, PrintUtil.fromCMToPPI_i(senderLeft), h);
         }
-        if (StringUtils.isNotEmpty(toPrintInfo.senderAddress3)) {
-            g2d.drawString(toPrintInfo.senderAddress3, PrintUtil.fromCMToPPI_i(1), h);
-        }
-
-        h += fm.getHeight();
-        // receiver post
         if (StringUtils.isNotEmpty(toPrintInfo.receiverZipCode)) {
-            g2d.drawString(toPrintInfo.receiverZipCode, PrintUtil.fromCMToPPI_i(9.35), h);
+            g2d.drawString(toPrintInfo.receiverZipCode, PrintUtil.fromCMToPPI_i(receiverLeft), h);
         }
-        g2d.drawString(toPrintInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(19.35), h);
+        if (StringUtils.isNotEmpty(toPrintInfo.receiverAddress1)) {
+            g2d.drawString(toPrintInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(14.4), h);
+        }
         
-        h += fm.getHeight();
-        g2d.drawString(toPrintInfo.senderZipCode, PrintUtil.fromCMToPPI_i(2.35), h);
-        g2d.drawString(toPrintInfo.senderTel, PrintUtil.fromCMToPPI_i(12.35), h);
 
-        g2d.drawString(toPrintInfo.receiverTel, PrintUtil.fromCMToPPI_i(20.35), h);
-        g2d.drawString(toPrintInfo.receiverCountry, PrintUtil.fromCMToPPI_i(22.35), h);
-        
-        h = PrintUtil.fromCMToPPI_i(20.34);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(22.35), h);
+        h=PrintUtil.fromCMToPPI_i(5.5);
+        if (StringUtils.isNotEmpty(toPrintInfo.senderZipCode)) {
+            g2d.drawString(toPrintInfo.senderZipCode, PrintUtil.fromCMToPPI_i(2.8), h);
+        }
+        if (StringUtils.isNotEmpty(toPrintInfo.senderTel)) {
+            g2d.drawString(toPrintInfo.senderTel, PrintUtil.fromCMToPPI_i(7.5), h);
+        }
+        if (StringUtils.isNotEmpty(toPrintInfo.receiverTel)) {
+            g2d.drawString(toPrintInfo.receiverTel, PrintUtil.fromCMToPPI_i(10.3), h);
+        }
+        if (StringUtils.isNotEmpty(toPrintInfo.receiverCountry)) {
+            g2d.drawString(toPrintInfo.receiverCountry, PrintUtil.fromCMToPPI_i(13.8), h);
+        }
 
-        h = PrintUtil.fromCMToPPI_i(22.34);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.35), h);
-        g2d.drawString("1", PrintUtil.fromCMToPPI_i(21.35), h);
-        g2d.drawString("1", PrintUtil.fromCMToPPI_i(22.35), h);
+        h=PrintUtil.fromCMToPPI_i(6.6);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(15.5), h);
         
+        h=PrintUtil.fromCMToPPI_i(8.9);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.2), h);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(16.3), h);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(18.1), h);
+
+        
+        h = PrintUtil.fromCMToPPI_i(10.3);
         List<String> dateList = PrintUtil.parseDateToString();
-        h = PrintUtil.fromCMToPPI_i(22.34);
-        int idx = 0;double intr=0.1;double startPos = 22.35;
+        int idx = 0;double intr=0.52;double startPos = 9.9;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
@@ -89,14 +101,17 @@ public class LabelHelper {
         idx++;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
-        g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(22.35), h);
-
-        h = PrintUtil.fromCMToPPI_i(23.34);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.35), h);
-        g2d.drawString("30", PrintUtil.fromCMToPPI_i(6.35), h);
+        g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(13.8), h);
         
-        h = PrintUtil.fromCMToPPI_i(24.34);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.35), h);
+        
+
+        h=PrintUtil.fromCMToPPI_i(12.2);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.2), h);
+        g2d.drawString("30", PrintUtil.fromCMToPPI_i(6.8), h);
+        
+        h=PrintUtil.fromCMToPPI_i(12.9);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(10.9), h);
+        
     }
 
     public static void setInfoForEMSLabel(PageFormat pageFormat, Graphics2D g2d, int pageIndex,
@@ -117,7 +132,6 @@ public class LabelHelper {
         
         h = PrintUtil.fromCMToPPI_i(2.56);
         List<String> dateList = PrintUtil.parseDateToString();
-        // TODO adjust intr and startPos
         int idx = 0;double intr=0.52;double startPos = 6.72;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
