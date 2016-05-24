@@ -23,7 +23,7 @@ public class PrintUtil {
 
     public static String printedOrderNosFileName = "printedOrderNos.txt";
     
-    public static String toPrintFileName1EMS = "toPrint1_ems.txt";
+    public static String toPrintFileName1EMS = "toPrint1_ems.csv";
     public static String toPrintFileName1SAL = "toPrint1_sal.txt";
     public static String toPrintFileName2EMS = "toPrint2_ems.txt";
     public static String toPrintFileName2SAL = "toPrint2_sal.txt";
@@ -42,9 +42,9 @@ public class PrintUtil {
     }
 
     public static void setSenderInfo(PrintInfoObject obj) {
-        obj.senderName="";
-        obj.senderAddress1="";
-        obj.senderAddress2="";
+        obj.senderName="邓祎";
+        obj.senderAddress1="東京都足立区";
+        obj.senderAddress2="西新井本町５－２－６";
         obj.senderZipCode="123-0845";
         obj.senderTel="080-4200-1314";
         
@@ -75,8 +75,10 @@ public class PrintUtil {
     public static List<PrintInfoObject> getPrintInfoList(int labelType,int patternType) throws IOException {
         List<PrintInfoObject> printList = Lists.newArrayList();
         String fileName = null;
+        String charset = "UTF-8";
         if(labelType==PrintUtil.LABEL_TYPE_EMS && patternType == 1){
              fileName = PrintUtil.toPrintFileName1EMS;
+             charset = "GB2312";
         }else if(labelType==PrintUtil.LABEL_TYPE_POSTAL && patternType == 1){
             fileName = PrintUtil.toPrintFileName1SAL;
         }else if(labelType==PrintUtil.LABEL_TYPE_EMS && patternType == 2){
@@ -87,7 +89,7 @@ public class PrintUtil {
         File file = new File(PrintUtil.rootPathName, fileName);
         List<String> list = null;
         try {
-            list = FileUtils.readLines(file, "UTF-8");
+            list = FileUtils.readLines(file, charset);
         } catch (Exception e) {
             e.printStackTrace();
             return printList;
@@ -96,6 +98,7 @@ public class PrintUtil {
         for (String str : list) {
             if (str.equals("")) continue;
             if (str.startsWith("#")) continue;
+            if (str.startsWith("\"订单编号")) continue;
             int indx = 0;
             if(patternType == 1){
             	// 订单编号	买家会员名	买家支付宝账号	买家应付货款	买家应付邮费	买家支付积分	总金额	返点积分	买家实际支付金额	买家实际支付积分	订单状态	买家留言	收货人姓名	收货地址 	运送方式	联系电话 	联系手机	订单创建时间	订单付款时间 	宝贝标题 	宝贝种类 	物流单号 	物流公司	订单备注	宝贝总数量	店铺Id	店铺名称	订单关闭原因	卖家服务费	买家服务费	发票抬头	是否手机订单	分阶段订单信息	特权订金订单id	定金排名	修改后的sku	修改后的收货地址	异常信息	天猫卡券抵扣	集分宝抵扣	是否是O2O交易

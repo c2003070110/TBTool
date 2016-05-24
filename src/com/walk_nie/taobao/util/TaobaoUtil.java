@@ -518,89 +518,96 @@ public class TaobaoUtil {
         int idx = 0;
 
         // 订单编号
-        obj.orderNo = split[idx++];
+        obj.orderNo = remove(split[idx++]);
         // 买家会员名
-        obj.buyerId = split[idx++];
+        obj.buyerId = remove(split[idx++]);
         // 买家支付宝账号
-        obj.buyerZhifubaoId = split[idx++];
+        obj.buyerZhifubaoId = remove(split[idx++]);
         // 买家应付货款
-        obj.amount = split[idx++];
+        obj.amount = remove(split[idx++]);
         // 买家应付邮费
-        obj.logiFee = split[idx++];
+        obj.logiFee = remove(split[idx++]);
         // 买家支付积分
-        obj.amountForBuyerPaid = split[idx++];
+        obj.amountForBuyerPaid = remove(split[idx++]);
         // 总金额
-        obj.totalAmount = split[idx++];
+        obj.totalAmount = remove(split[idx++]);
         // 返点积分
-        obj.point = split[idx++];
+        obj.point = remove(split[idx++]);
         // 买家实际支付金额
-        obj.amountForBuyerPaid1 = split[idx++];
+        obj.amountForBuyerPaid1 = remove(split[idx++]);
         // 买家实际支付积分
-        obj.pointForBuyerPaid1 = split[idx++];
+        obj.pointForBuyerPaid1 = remove(split[idx++]);
         // 订单状态
-        obj.orderStatus = split[idx++];
+        obj.orderStatus = remove(split[idx++]);
         // 买家留言
-        obj.buyerNote = split[idx++];
+        obj.buyerNote = remove(split[idx++]);
         // 收货人姓名
-        obj.buyerName = split[idx++];
+        obj.buyerName = remove(split[idx++]);
         // 收货地址
-        obj.buyerAddress = split[idx++];
+        obj.buyerAddress = remove(split[idx++]);
         // 运送方式
-        obj.LogiType = split[idx++];
+        obj.LogiType = remove(split[idx++]);
         // 联系电话
-        obj.tel = split[idx++].replaceAll("'", "");
+        obj.tel = remove(split[idx++]).replaceAll("'", "");
         // 联系手机
-        obj.telMobile = split[idx++].replaceAll("'", "");
+        obj.telMobile = remove(split[idx++]).replaceAll("'", "");
         // 订单创建时间
-        obj.orderCreatedDateTime = split[idx++];
+        obj.orderCreatedDateTime = remove(split[idx++]);
         // 订单付款时间
-        obj.orderPaidDateTime = split[idx++];
+        obj.orderPaidDateTime = remove(split[idx++]);
         // 宝贝标题
-        obj.baobeiTitle = split[idx++];
+        obj.baobeiTitle = remove(split[idx++]);
         // 宝贝种类
-        obj.baobeiCategory = split[idx++];
+        obj.baobeiCategory = remove(split[idx++]);
         // 物流单号
-        obj.LogiNo = split[idx++];
+        obj.LogiNo = remove(split[idx++]);
         // 物流公司
-        obj.logiCompany = split[idx++];
+        obj.logiCompany = remove(split[idx++]);
         // 订单备注
-        obj.orderNote = split[idx++];
+        obj.orderNote = remove(split[idx++]);
         // 宝贝总数量
-        obj.baobeiNum = Integer.parseInt(split[idx++]);
+        obj.baobeiNum = Integer.parseInt(remove(split[idx++]));
         // 店铺Id
-        obj.storeId = split[idx++];
+        obj.storeId = remove(split[idx++]);
         // 店铺名称
-        obj.storeName = split[idx++];
+        obj.storeName = remove(split[idx++]);
         // 订单关闭原因
-        obj.reasonForClose = split[idx++];
+        obj.reasonForClose = remove(split[idx++]);
         // 卖家服务费
-        obj.feeForSaler = split[idx++];
+        obj.feeForSaler = remove(split[idx++]);
         // 买家服务费
-        obj.feeForBuyer = split[idx++];
+        obj.feeForBuyer = remove(split[idx++]);
         // 发票抬头
-        obj.recieptHeader = split[idx++];
+        obj.recieptHeader = remove(split[idx++]);
         // 是否手机订单
-        obj.isMobileOrder = split[idx++];
+        obj.isMobileOrder = remove(split[idx++]);
         // 分阶段订单信息
-        obj.orderInfoForSeg = split[idx++];
+        obj.orderInfoForSeg = remove(split[idx++]);
         // 特权订金订单id
-        obj.orderIdForPrepay = split[idx++];
+        obj.orderIdForPrepay = remove(split[idx++]);
         // 定金排名
-        obj.prePayRank = split[idx++];
+        obj.prePayRank = remove(split[idx++]);
         // 修改后的sku
-        obj.skuAdjust = split[idx++];
+        obj.skuAdjust = remove(split[idx++]);
         // 修改后的收货地址
-        obj.addressAdjust = split[idx++];
+        obj.addressAdjust = remove(split[idx++]);
         // 异常信息
-        obj.exceptionInfo = split[idx++];
+        obj.exceptionInfo = remove(split[idx++]);
         // 天猫卡券抵扣
-        obj.discountForTianmao = split[idx++];
+        obj.discountForTianmao = remove(split[idx++]);
         // 集分宝抵扣
-        obj.discountForJifenbao = split[idx++];
+        obj.discountForJifenbao = remove(split[idx++]);
         // 是否是O2O交易
-        obj.is020 = split[idx++];
+        obj.is020 = remove(split[idx++]);
         return obj;
     }
+
+	private static String remove(String str) {
+
+    	str = str.replaceAll("=\"", "");
+    	str = str.replaceAll("\"", "");
+		return str;
+	}
 
 	public static File downloadPicture(String pathName, String pictureUrl,
 			String picName) throws ClientProtocolException, IOException {

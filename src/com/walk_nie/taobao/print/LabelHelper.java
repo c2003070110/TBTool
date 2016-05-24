@@ -25,8 +25,9 @@ public class LabelHelper {
             g2d.drawString(toPrintInfo.senderName, PrintUtil.fromCMToPPI_i(3), h);
         }
         g2d.drawString(toPrintInfo.receiverName, PrintUtil.fromCMToPPI_i(11), h);
-        
+        h=PrintUtil.fromCMToPPI_i(2.56);
         h += fm.getHeight();
+        
         // address
         if (StringUtils.isNotEmpty(toPrintInfo.senderAddress1)) {
             g2d.drawString(toPrintInfo.senderAddress1, PrintUtil.fromCMToPPI_i(1), h);
@@ -114,10 +115,10 @@ public class LabelHelper {
             g2d.drawString(printInfo.receiverWWID, PrintUtil.fromCMToPPI_i(21), h);
         }
         
-        h = PrintUtil.fromCMToPPI_i(2.1);
+        h = PrintUtil.fromCMToPPI_i(2.56);
         List<String> dateList = PrintUtil.parseDateToString();
         // TODO adjust intr and startPos
-        int idx = 0;double intr=0.1;double startPos = 5.35;
+        int idx = 0;double intr=0.52;double startPos = 6.72;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
