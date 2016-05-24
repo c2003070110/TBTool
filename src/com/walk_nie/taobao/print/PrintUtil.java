@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Files;
@@ -42,7 +44,9 @@ public class PrintUtil {
         obj.senderAddress1="";
         obj.senderAddress2="";
         obj.senderZipCode="123-0845";
-        obj.senderZipTel="080-4200-1314";
+        obj.senderTel="080-4200-1314";
+        
+        obj.receiverCountry = "中国";
     }
     
     public static List<String> getCommonUseAddress() throws IOException {
@@ -94,41 +98,39 @@ public class PrintUtil {
                 continue;
             int indx = 0;
             if(patternType == 1){
-            	//订单编号	买家会员名	买家支付宝账号	买家应付货款	买家应付邮费	买家支付积分	总金额	返点积分	买家实际支付金额	买家实际支付积分	订单状态	买家留言	收货人姓名	收货地址 	运送方式	联系电话 	联系手机	订单创建时间	订单付款时间 	宝贝标题 	宝贝种类 	物流单号 	物流公司	订单备注	宝贝总数量	店铺Id	店铺名称	订单关闭原因	卖家服务费	买家服务费	发票抬头	是否手机订单	分阶段订单信息	特权订金订单id	定金排名	修改后的sku	修改后的收货地址	异常信息	天猫卡券抵扣	集分宝抵扣	是否是O2O交易
-//            	1930679858170647	幸福蔓岩1627	844677789@qq.com	598	0	0	598	0	598	0	买家已付款，等待卖家发货		马慧	吉林省 通化市 柳河县 柳河镇紫御府   七号楼    3单元   201室(135300)	快递		'18618486065	2016/5/23 22:02	2016/5/23 22:02	日本直邮mamakids洗面奶+化妆水+乳液护肤特惠套装mama&kids包邮	1				1	0	Funny宝贝快乐购	订单未关闭	0	0元		手机订单									
+            	// 订单编号	买家会员名	买家支付宝账号	买家应付货款	买家应付邮费	买家支付积分	总金额	返点积分	买家实际支付金额	买家实际支付积分	订单状态	买家留言	收货人姓名	收货地址 	运送方式	联系电话 	联系手机	订单创建时间	订单付款时间 	宝贝标题 	宝贝种类 	物流单号 	物流公司	订单备注	宝贝总数量	店铺Id	店铺名称	订单关闭原因	卖家服务费	买家服务费	发票抬头	是否手机订单	分阶段订单信息	特权订金订单id	定金排名	修改后的sku	修改后的收货地址	异常信息	天猫卡券抵扣	集分宝抵扣	是否是O2O交易
+                // 1930679858170647	幸福蔓岩1627	844677789@qq.com	598	0	0	598	0	598	0	买家已付款，等待卖家发货		马慧	吉林省 通化市 柳河县 柳河镇紫御府   七号楼    3单元   201室(135300)	快递		'18618486065	2016/5/23 22:02	2016/5/23 22:02	日本直邮mamakids洗面奶+化妆水+乳液护肤特惠套装mama&kids包邮	1				1	0	Funny宝贝快乐购	订单未关闭	0	0元		手机订单									
 
                 String[] splited = str.split(PrintUtil.splitor);
                 String orderNo = splited[indx++];
-                if (PrintUtil.isPrintedInfo(printedInfos,orderNo))
-                    continue;
+                if (PrintUtil.isPrintedInfo(printedInfos,orderNo)) continue;
+                indx = 10;// 订单状态
+                String sts = splited[indx++];
+                if(!sts.equals("买家已付款")) continue;
+                
                 PrintInfoObject obj = new PrintInfoObject();
     
-                obj.receiverCountry = "中国";
-    
                 obj.orderNo = orderNo;
+                indx = 1; //买家会员名
                 obj.receiverWWID = splited[indx++];
+                indx = 12; //收货人姓名
                 obj.receiverName = splited[indx++];
+                indx = 13; //收货地址 
                 PrintUtil.setAddress(obj, splited[indx++]);
-                obj.receiverTel = splited[indx++];
+                indx = 15; //联系电话  联系手机
+                String tel1 = splited[indx++].replaceAll("'", "");
+                String tel2 = splited[indx++].replaceAll("'", "");
+                obj.receiverTel = StringUtils.isNotEmpty(tel2)?tel2:tel1;
                 printList.add(obj);
             }else if(patternType == 2){
                 //颜宁, 13438327357, 四川省, 成都市, 金堂县, 三星镇金堂大道9号四川师范大学文理学院, 610401
                 String[] splited = str.split(",");
                 PrintInfoObject obj = new PrintInfoObject();
 
-                obj.receiverCountry = "中国";
-
                 obj.receiverName = splited[indx++];
                 obj.receiverTel = splited[indx++];
-                obj.receiverAddress1 = splited[indx++] +" " +splited[indx++] +" " +splited[indx++];
-                String addO = splited[indx++];
-                int splitIdx = 18;
-                if (addO.length() > splitIdx) {
-                    obj.receiverAddress2 = addO.substring(0, splitIdx);
-                    obj.receiverAddress3 = addO.substring(splitIdx);
-                }else{
-                    obj.receiverAddress2 = addO;
-                }
+                String newAddr = splited[indx++] +" " +splited[indx++] +" " +splited[indx++] +" " +splited[indx++];
+                setAddress(obj,newAddr);
                 obj.receiverZipCode = splited[indx++];
                 printList.add(obj);
             }
@@ -214,7 +216,7 @@ public class PrintUtil {
                 sb.append(receiverWWID).append(splitor);
                 sb.append(obj.receiverName).append(splitor);
                 
-                sb.append(obj.receiverAddress1).append(obj.receiverAddress1);
+                sb.append(obj.receiverAddress1).append(obj.receiverAddress2);
                 if(StringUtils.isNotEmpty(obj.receiverAddress3)){
                     sb.append(obj.receiverAddress3) ;
                 }
@@ -232,7 +234,7 @@ public class PrintUtil {
 
     public static void setAddress(PrintInfoObject obj, String address) {
         String[] splied = address.split(" ");
-        int splitIdx = 18;
+        int splitIdx = 22;
         if (splied.length > 3) {
             obj.receiverAddress1 = splied[0] + " " + splied[1] + " " + splied[2];
             String newAdd = "";
@@ -261,6 +263,21 @@ public class PrintUtil {
         }
     }
 
+    public static List<String> parseDateToString(){
+        List<String> dateList = Lists.newArrayList();
+        Date d = DateUtils.addDays(new Date(System.currentTimeMillis()), 1);
+        String s = org.apache.http.client.utils.DateUtils.formatDate(d, "yyyyMMdd");
+        int idx = 0;
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        dateList.add(s.substring(idx,++idx));
+        return dateList;
+    }
     public static int fromCMToPPI_i(double cm) {            
         return new Long(Math.round(toPPI(cm * 0.393700787))).intValue();            
     }
@@ -277,4 +294,5 @@ public class PrintUtil {
         return ppi/(0.393700787 * 72d);            
     }
 
+    
 }

@@ -207,7 +207,7 @@ public class PrintTest {
             // EMS width = 27cm height=14cm
             pj.setPrintable(new EMSPrintableForSinglePage(toPrintInfo),pf);
         } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            pj.setPrintable(new PostalParcelPrintableForSinglePage(toPrintInfo),pf);
+            pj.setPrintable(new SALPrintableForSinglePage(toPrintInfo),pf);
         }
         pj.print();
     }

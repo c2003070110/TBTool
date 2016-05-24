@@ -6,35 +6,36 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 
-public class EMSPrintableForSinglePage implements Printable {
+public class SALPrintableForSinglePage implements Printable {
 
-    public PrintInfoObject printInfo = null;
+    public PrintInfoObject toPrintInfo = null;
 
-    public EMSPrintableForSinglePage(PrintInfoObject printInfo) {
-        this.printInfo = printInfo;
+    public SALPrintableForSinglePage(PrintInfoObject printInfo) {
+        this.toPrintInfo = printInfo;
     }
 
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
 
-        if (printInfo == null) {
+        if (toPrintInfo == null) {
             return NO_SUCH_PAGE;
         }
 //        if (pageIndex >= 1) {
 //            try {
-//                PrintUtil.savePrintedOrderNos(printInfo);
+//                PrintUtil.savePrintedOrderNos(toPrintInfo);
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
 //            return NO_SUCH_PAGE;
 //        }
 //        
-//        System.out.println("[Printing]" + printInfo.receiverName + " " + printInfo.receiverAddress1
-//                + printInfo.receiverAddress2 + printInfo.receiverAddress3);
+//        System.out.println("[Printing]" + toPrintInfo.receiverName + " " + toPrintInfo.receiverAddress1
+//                + toPrintInfo.receiverAddress2 + toPrintInfo.receiverAddress3);
 //        
+
         Graphics2D g2d = (Graphics2D) graphics;
-        LabelHelper.setInfoForEMSLabel(pageFormat, g2d, pageIndex, printInfo);
+        LabelHelper.setInfoForSALLabel(pageFormat, g2d, pageIndex, toPrintInfo);
 
         return PAGE_EXISTS;
     }

@@ -197,14 +197,29 @@ public class PrintMultiPageMain implements Pageable {
     private void printOut(List<PrintInfoObject> toPrintList, int labelType) throws PrinterException {
 
         PrintUtil.setSenderInfo(toPrintList);
+        int interupt = 5;
+        int loopCnt = (int) Math.ceil(toPrintList.size() / interupt);
+        for (int i = 0; i <= loopCnt; i++) {
+            List<PrintInfoObject> newList = Lists.newArrayList();
+            for (int j = i * interupt; j < i * interupt + 5; j++) {
+                if(j>=toPrintList.size())break;
+                newList.add(toPrintList.get(j));
+            }
 
-        this.labelType = labelType;
-        this.toPrintList = toPrintList;
+            this.labelType = labelType;
+            this.toPrintList = newList;
 
-        PrinterJob pj = getPrinterJob();
-
-        pj.setPageable(this);
-        pj.print();
+            PrinterJob pj = getPrinterJob();
+            pj.setPageable(this);
+            pj.print();
+            
+            resetPrintJob();
+            try {
+                PrintUtil.savePrintedOrderNos(newList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -219,10 +234,14 @@ public class PrintMultiPageMain implements Pageable {
 
     @Override
     public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
+        PrintInfoObject printInfo = toPrintList.get(pageIndex);
+        System.out.println("[Printing]" + printInfo.receiverName + " " + printInfo.receiverAddress1
+                + printInfo.receiverAddress2 + printInfo.receiverAddress3)
+                ;
         if (labelType == PrintUtil.LABEL_TYPE_EMS) {
-            return new EMSPrintableForMultiPage(toPrintList.get(pageIndex));
+            return new EMSPrintableForMultiPage(printInfo);
         } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            return new PostalParcelPrintableForMultiPage(toPrintList.get(pageIndex));
+            return new SALPrintableForMultiPage(printInfo);
         } else {
             return null;
         }
@@ -255,13 +274,20 @@ public class PrintMultiPageMain implements Pageable {
         PageFormat pf = getPrinterJob().defaultPage();
         Paper paper = pf.getPaper();
         // double width = PrintUtil.fromCMToPPI(27);
-        // double height = PrintUtil.fromCMToPPI(15);
+        // double height = PrintUtil.fromCMToPPI(15.3);
         double width = paper.getWidth();
         double height = paper.getHeight();
         double margin = PrintUtil.fromCMToPPI(0.0);
         paper.setImageableArea(margin, margin, width - margin * 2, height - margin * 2);
         pf.setPaper(paper);
 
+        // TODO set the tray!
+        if (labelType == PrintUtil.LABEL_TYPE_EMS) {
+            // rare tray for EMS
+        } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
+            // front tray for SAL
+        }
+        
         pageFormat = getPrinterJob().pageDialog(pf);
         System.out.println("Imageable(set)(cm)-" + ": width = "
                 + PrintUtil.fromPPIToCM(pageFormat.getImageableWidth()) + "; height = "

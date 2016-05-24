@@ -12,7 +12,7 @@ public class PrintInfoObject {
     public String senderAddress2;
     public String senderAddress3;
     public String senderZipCode;
-    public String senderZipTel;
+    public String senderTel;
 
     public String receiverCountry;
     public String receiverName;
