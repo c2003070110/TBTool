@@ -23,6 +23,7 @@ import org.jsoup.nodes.Document;
 
 import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.object.TaobaoSaledObject;
 
 public class TaobaoUtil {
     public static String FILE_NAME_SEPERATOR =";;;";
@@ -347,7 +348,7 @@ public class TaobaoUtil {
 			while ((str = br.readLine()) != null) {
 				idx++;
 				if(idx == 4){
-					baobeiTemplate = TaobaoUtil.readBaobeiIn(str);
+					baobeiTemplate = readBaobeiIn(str);
 				}
 			}
 		} finally {
@@ -502,6 +503,104 @@ public class TaobaoUtil {
 		}
 		return obj;
 	}
+
+    public static TaobaoSaledObject readTaobaoSaledIn(String str) {
+        String[] split = str.split(",");
+        if (split.length == 1)
+            return null;
+        if (split[0].equals("title")) {
+            return null;
+        }
+        if (split[0].equals("宝贝名称")) {
+            return null;
+        }
+        TaobaoSaledObject obj = new TaobaoSaledObject();
+        int idx = 0;
+
+        // 订单编号
+        obj.orderNo = split[idx++];
+        // 买家会员名
+        obj.buyerId = split[idx++];
+        // 买家支付宝账号
+        obj.buyerZhifubaoId = split[idx++];
+        // 买家应付货款
+        obj.amount = split[idx++];
+        // 买家应付邮费
+        obj.logiFee = split[idx++];
+        // 买家支付积分
+        obj.amountForBuyerPaid = split[idx++];
+        // 总金额
+        obj.totalAmount = split[idx++];
+        // 返点积分
+        obj.point = split[idx++];
+        // 买家实际支付金额
+        obj.amountForBuyerPaid1 = split[idx++];
+        // 买家实际支付积分
+        obj.pointForBuyerPaid1 = split[idx++];
+        // 订单状态
+        obj.orderStatus = split[idx++];
+        // 买家留言
+        obj.buyerNote = split[idx++];
+        // 收货人姓名
+        obj.buyerName = split[idx++];
+        // 收货地址
+        obj.buyerAddress = split[idx++];
+        // 运送方式
+        obj.LogiType = split[idx++];
+        // 联系电话
+        obj.tel = split[idx++].replaceAll("'", "");
+        // 联系手机
+        obj.telMobile = split[idx++].replaceAll("'", "");
+        // 订单创建时间
+        obj.orderCreatedDateTime = split[idx++];
+        // 订单付款时间
+        obj.orderPaidDateTime = split[idx++];
+        // 宝贝标题
+        obj.baobeiTitle = split[idx++];
+        // 宝贝种类
+        obj.baobeiCategory = split[idx++];
+        // 物流单号
+        obj.LogiNo = split[idx++];
+        // 物流公司
+        obj.logiCompany = split[idx++];
+        // 订单备注
+        obj.orderNote = split[idx++];
+        // 宝贝总数量
+        obj.baobeiNum = Integer.parseInt(split[idx++]);
+        // 店铺Id
+        obj.storeId = split[idx++];
+        // 店铺名称
+        obj.storeName = split[idx++];
+        // 订单关闭原因
+        obj.reasonForClose = split[idx++];
+        // 卖家服务费
+        obj.feeForSaler = split[idx++];
+        // 买家服务费
+        obj.feeForBuyer = split[idx++];
+        // 发票抬头
+        obj.recieptHeader = split[idx++];
+        // 是否手机订单
+        obj.isMobileOrder = split[idx++];
+        // 分阶段订单信息
+        obj.orderInfoForSeg = split[idx++];
+        // 特权订金订单id
+        obj.orderIdForPrepay = split[idx++];
+        // 定金排名
+        obj.prePayRank = split[idx++];
+        // 修改后的sku
+        obj.skuAdjust = split[idx++];
+        // 修改后的收货地址
+        obj.addressAdjust = split[idx++];
+        // 异常信息
+        obj.exceptionInfo = split[idx++];
+        // 天猫卡券抵扣
+        obj.discountForTianmao = split[idx++];
+        // 集分宝抵扣
+        obj.discountForJifenbao = split[idx++];
+        // 是否是O2O交易
+        obj.is020 = split[idx++];
+        return obj;
+    }
 
 	public static File downloadPicture(String pathName, String pictureUrl,
 			String picName) throws ClientProtocolException, IOException {

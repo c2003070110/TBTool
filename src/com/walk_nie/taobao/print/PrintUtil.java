@@ -14,6 +14,8 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Files;
+import com.walk_nie.taobao.object.TaobaoSaledObject;
+import com.walk_nie.taobao.util.TaobaoUtil;
 
 
 public class PrintUtil {
@@ -92,34 +94,29 @@ public class PrintUtil {
         }
         List<PrintInfoObject> printedInfos = PrintUtil.readPrintedInfoList();
         for (String str : list) {
-            if (str.equals(""))
-                continue;
-            if (str.startsWith("#"))
-                continue;
+            if (str.equals("")) continue;
+            if (str.startsWith("#")) continue;
             int indx = 0;
             if(patternType == 1){
             	// 订单编号	买家会员名	买家支付宝账号	买家应付货款	买家应付邮费	买家支付积分	总金额	返点积分	买家实际支付金额	买家实际支付积分	订单状态	买家留言	收货人姓名	收货地址 	运送方式	联系电话 	联系手机	订单创建时间	订单付款时间 	宝贝标题 	宝贝种类 	物流单号 	物流公司	订单备注	宝贝总数量	店铺Id	店铺名称	订单关闭原因	卖家服务费	买家服务费	发票抬头	是否手机订单	分阶段订单信息	特权订金订单id	定金排名	修改后的sku	修改后的收货地址	异常信息	天猫卡券抵扣	集分宝抵扣	是否是O2O交易
                 // 1930679858170647	幸福蔓岩1627	844677789@qq.com	598	0	0	598	0	598	0	买家已付款，等待卖家发货		马慧	吉林省 通化市 柳河县 柳河镇紫御府   七号楼    3单元   201室(135300)	快递		'18618486065	2016/5/23 22:02	2016/5/23 22:02	日本直邮mamakids洗面奶+化妆水+乳液护肤特惠套装mama&kids包邮	1				1	0	Funny宝贝快乐购	订单未关闭	0	0元		手机订单									
-
-                String[] splited = str.split(PrintUtil.splitor);
-                String orderNo = splited[indx++];
+                TaobaoSaledObject saledObj = TaobaoUtil.readTaobaoSaledIn(str);
+                String orderNo = saledObj.orderNo;
                 if (PrintUtil.isPrintedInfo(printedInfos,orderNo)) continue;
-                indx = 10;// 订单状态
-                String sts = splited[indx++];
-                if(!sts.equals("买家已付款")) continue;
+                String sts = saledObj.orderStatus;// 订单状态
+                if(!sts.equals("买家已付款，等待卖家发货")) continue;
                 
                 PrintInfoObject obj = new PrintInfoObject();
-    
                 obj.orderNo = orderNo;
-                indx = 1; //买家会员名
-                obj.receiverWWID = splited[indx++];
-                indx = 12; //收货人姓名
-                obj.receiverName = splited[indx++];
-                indx = 13; //收货地址 
-                PrintUtil.setAddress(obj, splited[indx++]);
+                indx = 1; 
+                obj.receiverWWID = saledObj.buyerId;//买家会员名
+                indx = 12; 
+                obj.receiverName = saledObj.buyerName;//收货人姓名
+                indx = 13; 
+                PrintUtil.setAddress(obj, saledObj.buyerAddress);//收货地址 
                 indx = 15; //联系电话  联系手机
-                String tel1 = splited[indx++].replaceAll("'", "");
-                String tel2 = splited[indx++].replaceAll("'", "");
+                String tel1 = saledObj.tel;//联系电话
+                String tel2 = saledObj.telMobile;// 联系手机
                 obj.receiverTel = StringUtils.isNotEmpty(tel2)?tel2:tel1;
                 printList.add(obj);
             }else if(patternType == 2){
