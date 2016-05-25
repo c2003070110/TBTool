@@ -46,7 +46,7 @@ public class PrintUtil {
         obj.senderAddress1="東京都足立区";
         obj.senderAddress2="西新井本町５－２－６";
         obj.senderZipCode="123-0845";
-        obj.senderTel="080-4200-1314";
+        obj.senderTel="08042001314";
         
         obj.receiverCountry = "中国";
     }
