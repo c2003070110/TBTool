@@ -110,11 +110,13 @@ public class PrintMultiPageMain implements Pageable {
         for (String toPrintLine : selectedLines) {
             String[] splited = toPrintLine.split(PrintUtil.splitor);
             PrintInfoObject obj = new PrintInfoObject();
-
+            int indx = 0;
+            obj.receiverName = splited[indx++];
+            obj.receiverTel = splited[indx++];
+            String newAddr = splited[indx++] +" " +splited[indx++] +" " +splited[indx++] +" " +splited[indx++];
+            PrintUtil.setAddress(obj,newAddr);
+            obj.receiverZipCode = splited[indx++];
             obj.receiverCountry = "中国";
-            obj.receiverName = splited[0];
-            PrintUtil.setAddress(obj, splited[1]);
-            obj.receiverTel = splited[2];
             toPrintList.add(obj);
         }
         while (true) {
@@ -144,6 +146,7 @@ public class PrintMultiPageMain implements Pageable {
     private void printTaobaoCopy() throws IOException, PrinterException {
         List<PrintInfoObject> toPrintList = PrintUtil.getPrintInfoList2EMS();
         if (!toPrintList.isEmpty()) {
+            System.out.println("size of printing list  = " + toPrintList.size());
             while (true) {
                 System.out.println("Ready for EMS printing ? 0 for ready");
                 if (isReady()) {
@@ -157,8 +160,9 @@ public class PrintMultiPageMain implements Pageable {
 
         toPrintList = PrintUtil.getPrintInfoList2Postal();
         if (!toPrintList.isEmpty()) {
-            System.out.println("Ready for SAL printing ? 0 for ready");
+            System.out.println("size of printing list  = " + toPrintList.size());
             while (true) {
+                System.out.println("Ready for SAL printing ? 0 for ready");
                 if (isReady()) {
                     printOut(toPrintList, PrintUtil.LABEL_TYPE_POSTAL);
                     break;
@@ -171,6 +175,7 @@ public class PrintMultiPageMain implements Pageable {
     private void printTaobaoExport() throws IOException, PrinterException {
         List<PrintInfoObject> toPrintList = PrintUtil.getPrintInfoList1EMS();
         if (!toPrintList.isEmpty()) {
+            System.out.println("size of printing list  = " + toPrintList.size());
             while (true) {
                 System.out.println("Ready for EMS printing ? 0 for ready");
                 if (isReady()) {
@@ -184,8 +189,9 @@ public class PrintMultiPageMain implements Pageable {
 
         toPrintList = PrintUtil.getPrintInfoList1Postal();
         if (!toPrintList.isEmpty()) {
-            System.out.println("Ready for SAL printing ? 0 for ready");
+            System.out.println("size of printing list  = " + toPrintList.size());
             while (true) {
+                System.out.println("Ready for SAL printing ? 0 for ready");
                 if (isReady()) {
                     printOut(toPrintList, PrintUtil.LABEL_TYPE_POSTAL);
                     break;

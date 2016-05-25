@@ -23,7 +23,7 @@ public class PrintUtil {
 
     public static String printedOrderNosFileName = "printedOrderNos.txt";
     
-    public static String toPrintFileName1EMS = "toPrint1_ems.csv";
+    public static String toPrintFileName1EMS = "toPrint1_ems.txt";
     public static String toPrintFileName1SAL = "toPrint1_sal.txt";
     public static String toPrintFileName2EMS = "toPrint2_ems.txt";
     public static String toPrintFileName2SAL = "toPrint2_sal.txt";
@@ -53,7 +53,15 @@ public class PrintUtil {
     
     public static List<String> getCommonUseAddress() throws IOException {
         File file = new File(PrintUtil.rootPathName, PrintUtil.commonUseAddFileName);
-        return FileUtils.readLines(file, "UTF-8");
+        List<String> list = FileUtils.readLines(file, "UTF-8");
+        List<String> rtn = Lists.newArrayList();
+        for(String str:list){
+        	if(StringUtils.isEmpty(str) || str.startsWith("#")){
+        		continue;
+        	}
+        	rtn.add(str);
+        }
+        return rtn;
     }
 
     public static List<PrintInfoObject> getPrintInfoList1EMS() throws IOException {
@@ -107,7 +115,7 @@ public class PrintUtil {
                 String orderNo = saledObj.orderNo;
                 if (PrintUtil.isPrintedInfo(printedInfos,orderNo)) continue;
                 String sts = saledObj.orderStatus;// 订单状态
-                if(!sts.equals("买家已付款，等待卖家发货")) continue;
+                if(sts.equals("交易关闭")) continue;
                 
                 PrintInfoObject obj = new PrintInfoObject();
                 obj.orderNo = orderNo;
