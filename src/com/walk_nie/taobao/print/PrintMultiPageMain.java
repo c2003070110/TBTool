@@ -11,10 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.MediaTray;
-
 import com.beust.jcommander.internal.Lists;
 
 public class PrintMultiPageMain implements Pageable {
@@ -265,17 +261,17 @@ public class PrintMultiPageMain implements Pageable {
         }
 
         printJob = PrinterJob.getPrinterJob();
-        PrintRequestAttributeSet pas = new HashPrintRequestAttributeSet() ;
-        
-        if (labelType == PrintUtil.LABEL_TYPE_EMS) {
-            // rare tray for EMS
-            pas.add(MediaTray.SIDE);
-        } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            // front tray for SAL
-            pas.add(MediaTray.MANUAL);
-        }
+//        PrintRequestAttributeSet pas = new HashPrintRequestAttributeSet() ;
+//        
+//        if (labelType == PrintUtil.LABEL_TYPE_EMS) {
+//            // rare tray for EMS
+//            pas.add(MediaTray.SIDE);
+//        } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
+//            // front tray for SAL
+//            pas.add(MediaTray.MANUAL);
+//        }
 		
-        if (printJob.printDialog(pas)) {
+        if (printJob.printDialog()) {
             initPageFormat();
             return printJob;
         }
