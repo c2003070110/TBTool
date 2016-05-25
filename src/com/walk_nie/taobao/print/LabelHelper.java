@@ -12,13 +12,18 @@ import org.apache.commons.lang3.StringUtils;
 public class LabelHelper {
 
     public static void setInfoForSALLabel(PageFormat pageFormat, Graphics2D g2d,int pageIndex,PrintInfoObject toPrintInfo) {
-        //double width = pageFormat.getImageableWidth();
-        //double height = pageFormat.getImageableHeight();
+        // FIXME 
+    	toPrintInfo.senderName ="";
+    	toPrintInfo.senderAddress1 ="";
+    	toPrintInfo.senderAddress2 ="";
+    	toPrintInfo.senderAddress3 ="";
+    	toPrintInfo.senderZipCode ="";
+    	toPrintInfo.senderTel ="";
+    	
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
         //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();
 
-        // TODO adjust width and heightsenderLeft
         int h=PrintUtil.fromCMToPPI_i(2.3);
         double receiverLeft = 11.1;double senderLeft=2.7;
         g2d.drawString(toPrintInfo.receiverName, PrintUtil.fromCMToPPI_i(receiverLeft), h);
@@ -152,24 +157,24 @@ public class LabelHelper {
         
         h = PrintUtil.fromCMToPPI_i(4.6);
         g2d.drawString(printInfo.receiverName, PrintUtil.fromCMToPPI_i(13), h);
-        h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.2);
+        h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
         g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(11.2), h);
-        h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.2);
+        h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
         g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(11.2), h);
         if (StringUtils.isNotEmpty(printInfo.receiverAddress3)) {
-            h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.2);
+            h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
             g2d.drawString(printInfo.receiverAddress3, PrintUtil.fromCMToPPI_i(11.2), h);
         }
 
-        h = PrintUtil.fromCMToPPI_i(8.17);
+        h = PrintUtil.fromCMToPPI_i(8.12);
         g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11), h);
         g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(16.2), h);
 
-        h = PrintUtil.fromCMToPPI_i(10.07);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(16.5), h);
+        h = PrintUtil.fromCMToPPI_i(10.05);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(16.38), h);
 
-        h = PrintUtil.fromCMToPPI_i(12.37);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(3.2), h);
+        h = PrintUtil.fromCMToPPI_i(12.35);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(3.15), h);
 
         h = PrintUtil.fromCMToPPI_i(13.3);
         g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(3.4), h);

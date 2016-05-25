@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.MediaTray;
+
 import com.beust.jcommander.internal.Lists;
 
 public class PrintMultiPageMain implements Pageable {
@@ -211,7 +215,7 @@ public class PrintMultiPageMain implements Pageable {
                 if(j>=toPrintList.size())break;
                 newList.add(toPrintList.get(j));
             }
-
+            if(newList.isEmpty()) break;
             this.labelType = labelType;
             this.toPrintList = newList;
 
@@ -261,7 +265,17 @@ public class PrintMultiPageMain implements Pageable {
         }
 
         printJob = PrinterJob.getPrinterJob();
-        if (printJob.printDialog()) {
+        PrintRequestAttributeSet pas = new HashPrintRequestAttributeSet() ;
+        
+        if (labelType == PrintUtil.LABEL_TYPE_EMS) {
+            // rare tray for EMS
+            pas.add(MediaTray.SIDE);
+        } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
+            // front tray for SAL
+            pas.add(MediaTray.MANUAL);
+        }
+		
+        if (printJob.printDialog(pas)) {
             initPageFormat();
             return printJob;
         }
@@ -286,13 +300,7 @@ public class PrintMultiPageMain implements Pageable {
         double margin = PrintUtil.fromCMToPPI(0.0);
         paper.setImageableArea(margin, margin, width - margin * 2, height - margin * 2);
         pf.setPaper(paper);
-
-        // TODO set the tray!
-        if (labelType == PrintUtil.LABEL_TYPE_EMS) {
-            // rare tray for EMS
-        } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            // front tray for SAL
-        }
+        
         
         pageFormat = getPrinterJob().pageDialog(pf);
         System.out.println("Imageable(set)(cm)-" + ": width = "
