@@ -34,8 +34,8 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
             parser.setScanUrlsFile(this.scanUrlsFile);
             parser.setToUpdateBaobeiList(this.toUpdatebaobeiList);
 
-            List<KakakuObject> itemIdList = parser.parse();
-            if (itemIdList.isEmpty()) {
+            List<KakakuObject> itemList = parser.parse();
+            if (itemList.isEmpty()) {
                 System.out.println("-------- FINISH--------");
                 return;
             }
@@ -48,12 +48,12 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
                     "UTF-16"));
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
-            for (KakakuObject obj : itemIdList) {
+            for (KakakuObject obj : itemList) {
                 downloadPicture(obj, outputPicFolder);
                 writeOut(priceBw, obj);
             }
 
-            writeOutDelete(priceBw, itemIdList);
+            writeOutDelete(priceBw, itemList);
 
             System.out.println("-------- FINISH--------");
         } catch (Exception ex) {

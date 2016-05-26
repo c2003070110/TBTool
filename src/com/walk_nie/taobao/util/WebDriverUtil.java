@@ -70,7 +70,7 @@ public class WebDriverUtil  {
         int eleHeight = 0;
         if (elements.size() == 1) {
             eleHeight = elements.get(0).getRect().height;
-        } else if (elements.size() > 3) {
+        } else if (elements.size() == 3) {
             Point point2 = elements.get(2).getLocation();
             eleHeight = point2.getY() - point1.getY();
         } else {

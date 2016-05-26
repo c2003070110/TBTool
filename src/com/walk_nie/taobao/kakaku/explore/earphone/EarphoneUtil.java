@@ -123,7 +123,8 @@ public class EarphoneUtil {
 		}
 		double priceCNY = (price + extraFee + emsFee) * currencyRate;
 		if(item.itemMaker.toLowerCase().indexOf("sony") > 0){
-			priceCNY = priceCNY + priceCNY * (benefitRate*0.8);
+			//priceCNY = priceCNY + priceCNY * (benefitRate*0.8);
+            priceCNY = priceCNY + priceCNY * benefitRate;
 		}else{
 			priceCNY = priceCNY + priceCNY * benefitRate;
 		}

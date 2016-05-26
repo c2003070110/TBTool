@@ -52,15 +52,85 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
         String specUrl = !StringUtil.isBlank(kakakuObj.spec.productInfoUrl) ? kakakuObj.spec.productInfoUrl
                 : kakakuObj.spec.specInfoUrl;
         if (specUrl.indexOf("audio-technica.co.jp") > 1) {
-            parseAudioTechnica(kakakuObj, specUrl);
+            parseMakerForAudioTechnica(kakakuObj, specUrl);
+        } else if (specUrl.indexOf("jvckenwood.com") > 1) {
+            parseMakerForJVC(kakakuObj, specUrl);
+        } else if (specUrl.indexOf("pioneer-headphones.com") > 1) {
+            parseMakerForPioneer(kakakuObj, specUrl);
         } else if (specUrl.indexOf("yamaha.com") > 1) {
-            //parsePictureFromYamaha(obj, specUrl);
+            parseMakerForYamaha(kakakuObj, specUrl);
         } else if (specUrl.indexOf("denon.jp") > 1) {
-            //parsePictureFromDenon(obj, specUrl);
+            parseMakerForDenon(kakakuObj, specUrl);
         }
     }
 
-    private void parseAudioTechnica(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+    private void parseMakerForDenon(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+       String fileNameFmt = "detail_%s.png";
+        String fileName = String.format(fileNameFmt, kakakuObj.id);
+        File despFile = new File(rootPathName, fileName);
+        if (!despFile.exists()) {
+            WebDriver webDriver = WebDriverUtil.getWebDriver(specUrl);
+            List<WebElement> ele1 = webDriver.findElements(By.id("features"));
+            List<WebElement> ele2 = webDriver.findElements(By.id("specs"));
+            ele1.addAll(ele2);
+            if (!ele1.isEmpty()) {
+                WebDriverUtil.screenShot(webDriver, ele1, despFile.getAbsolutePath());
+            }
+        }
+        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+    }
+
+    private void parseMakerForYamaha(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+       String fileNameFmt = "detail_%s.png";
+        String fileName = String.format(fileNameFmt, kakakuObj.id);
+        File despFile = new File(rootPathName, fileName);
+        if (!despFile.exists()) {
+            WebDriver webDriver = WebDriverUtil.getWebDriver(specUrl);
+            webDriver.findElement(By.name("feature")).click();
+            List<WebElement> ele1 = webDriver.findElements(By.id("feature"));
+            webDriver.findElement(By.name("specs")).click();
+            List<WebElement> ele2 = webDriver.findElements(By.id("specs"));
+            ele1.addAll(ele2);
+            if (!ele1.isEmpty()) {
+                WebDriverUtil.screenShot(webDriver, ele1, despFile.getAbsolutePath());
+            }
+        }
+        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+    }
+
+    private void parseMakerForPioneer(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+        String fileNameFmt = "detail_%s.png";
+        String fileName = String.format(fileNameFmt, kakakuObj.id);
+        File despFile = new File(rootPathName, fileName);
+        if (!despFile.exists()) {
+            WebDriver webDriver = WebDriverUtil.getWebDriver(specUrl);
+            webDriver.findElement(By.cssSelector("acBtn")).click();
+            List<WebElement> ele = webDriver.findElements(By.id("productArea"));
+            if(ele.isEmpty()){
+                ele = webDriver.findElements(By.id("specArea"));
+            }
+            if (!ele.isEmpty()) {
+                WebDriverUtil.screenShot(webDriver, ele, despFile.getAbsolutePath());
+            }
+        }
+        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+    }
+
+    private void parseMakerForJVC(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+        String fileNameFmt = "detail_%s.png";
+        String fileName = String.format(fileNameFmt, kakakuObj.id);
+        File despFile = new File(rootPathName, fileName);
+        if (!despFile.exists()) {
+            WebDriver webDriver = WebDriverUtil.getWebDriver(specUrl);
+            List<WebElement> ele = webDriver.findElements(By.cssSelector("division"));
+            if (!ele.isEmpty()) {
+                WebDriverUtil.screenShot(webDriver, ele, despFile.getAbsolutePath());
+            }
+        }
+        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+    }
+
+    private void parseMakerForAudioTechnica(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
 
         Document doc = TaobaoUtil.urlToDocumentByUTF8(specUrl);
         Elements picSelect = doc.select("table#photo_selecter").select("img");
@@ -90,16 +160,16 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
         if(obj.priceYodobashi == null){
             return false;
         }
-        double d = (obj.priceYodobashi.price - obj.priceYodobashi.price * 0.1);
-        if(d >  obj.priceMin.price){
+//        double d = (obj.priceYodobashi.price - obj.priceYodobashi.price * 0.1);
+//        if(d >  obj.priceMin.price){
+//            return false;
+//        }
+        if (obj.priceYodobashi.price < 1500) {
             return false;
-        }
-//      if(obj.priceYodobashi.price < 1500){
-//          return false;
-//      }   
-        if(obj.priceMin.price < 1500){
-            return false;
-        }
+        } 
+//        if(obj.priceMin.price < 1500){
+//            return false;
+//        }
         return true;
         /*
         if(obj.priceYodobashi == null){
