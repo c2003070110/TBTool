@@ -79,7 +79,39 @@ public class PrintUtil {
     public static List<PrintInfoObject> getPrintInfoList2Postal() throws IOException {
         return  getPrintInfoList(PrintUtil.LABEL_TYPE_POSTAL,2);
     }
-    
+    public static PrintInfoObject parseToPrintInfoObjectByTab(String str){
+        // 1918806427484022 ningningtou0615 蒋依宁 上海 上海市 闵行区上海 上海市 闵行区201199) 13764337710
+        String[] splited = str.split(splitor);
+        if(splited.length != 5) {
+            System.out.println("[ERROR]NOT convert to print object for " + str + " by [TAB]");
+            return null;
+        }
+        PrintInfoObject obj = new PrintInfoObject();
+        int indx = 0;
+        obj.orderNo = splited[indx++];
+        obj.receiverWWID = splited[indx++];
+        obj.receiverName = splited[indx++];
+        setAddress(obj,splited[indx++]);
+        obj.receiverTel = splited[indx++];
+        return obj;
+    }
+    public static PrintInfoObject parseToPrintInfoObjectByComma(String str){
+        //format : 颜宁, 13438327357, 四川省, 成都市, 金堂县, 三星镇金堂大道9号四川师范大学文理学院, 610401
+        String[] splited = str.split(",");
+        if(splited.length != 7) {
+            System.out.println("[ERROR]NOT convert to print object for " + str + " by [,]");
+            return null;
+        }
+        PrintInfoObject obj = new PrintInfoObject();
+        int indx = 0;
+        obj.receiverName = splited[indx++];
+        obj.receiverTel = splited[indx++];
+        String newAddr = splited[indx++] +" " +splited[indx++] +" " +splited[indx++] +" " +splited[indx++];
+        setAddress(obj,newAddr);
+        obj.receiverZipCode = splited[indx++];
+        obj.receiverCountry = "中国";
+        return obj;
+    }
     public static List<PrintInfoObject> getPrintInfoList(int labelType,int patternType) throws IOException {
         List<PrintInfoObject> printList = Lists.newArrayList();
         String fileName = null;
@@ -132,14 +164,10 @@ public class PrintUtil {
                 printList.add(obj);
             }else if(patternType == 2){
                 //颜宁, 13438327357, 四川省, 成都市, 金堂县, 三星镇金堂大道9号四川师范大学文理学院, 610401
-                String[] splited = str.split(",");
-                PrintInfoObject obj = new PrintInfoObject();
-
-                obj.receiverName = splited[indx++];
-                obj.receiverTel = splited[indx++];
-                String newAddr = splited[indx++] +" " +splited[indx++] +" " +splited[indx++] +" " +splited[indx++];
-                setAddress(obj,newAddr);
-                obj.receiverZipCode = splited[indx++];
+                PrintInfoObject obj = parseToPrintInfoObjectByComma(str);
+                if(obj == null){
+                    continue;
+                }
                 printList.add(obj);
             }
         }

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 public class LabelHelper {
 
     public static void setInfoForSALLabel(PageFormat pageFormat, Graphics2D g2d,int pageIndex,PrintInfoObject toPrintInfo) {
+        // SAL label width = 27cm height=xx.xxcm
         // FIXME 
     	toPrintInfo.senderName ="";
     	toPrintInfo.senderAddress1 ="";
@@ -122,11 +123,8 @@ public class LabelHelper {
 
     public static void setInfoForEMSLabel(PageFormat pageFormat, Graphics2D g2d, int pageIndex,
             PrintInfoObject printInfo) {
-        // double width = pageFormat.getImageableWidth();
-        // double height = pageFormat.getImageableHeight();
-
-        // System.out.println("Imageable(Printable)(cm)-" + ": width = " +
-        // PrintUtil.fromPPIToCM(width) + "; height = " + PrintUtil.fromPPIToCM(height));
+        // EMS label width = 27cm height=15.32cm
+       
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
         // g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         FontMetrics fm = g2d.getFontMetrics();

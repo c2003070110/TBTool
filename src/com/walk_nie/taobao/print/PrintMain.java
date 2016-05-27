@@ -1,9 +1,7 @@
 package com.walk_nie.taobao.print;
 
 import java.awt.print.PageFormat;
-import java.awt.print.Pageable;
 import java.awt.print.Paper;
-import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
@@ -13,22 +11,18 @@ import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
 
-public class PrintMultiPageMain implements Pageable {
+public class PrintMain {
 
     public static BufferedReader stdReader = null;
 
-    int labelType = 0;
-
-    List<PrintInfoObject> toPrintList = null;
-
     public static void main(String[] args) throws PrinterException, IOException {
-        new PrintMultiPageMain().print();
+        new PrintMain().print();
     }
 
     protected void print() throws PrinterException, IOException {
         try {
             System.out.print("Type of Print : ");
-            System.out.println("0:taobao export;1:taobao copy;2:common use address;");
+            System.out.println("0:taobao export;1:taobao copy;2:common use address;3:type in directly;");
 
             stdReader = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
@@ -42,6 +36,9 @@ public class PrintMultiPageMain implements Pageable {
                 } else if ("2".equals(line.trim())) {
                     printCommonUseAddress();
                     break;
+                } else if ("3".equals(line.trim())) {
+                    printTypeInDirectly();
+                    break;
                 } else {
                     System.out.println("Listed number only!");
                 }
@@ -50,6 +47,38 @@ public class PrintMultiPageMain implements Pageable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void printTypeInDirectly() throws IOException, PrinterException {
+        List<PrintInfoObject> toPrintList = Lists.newArrayList();
+        while(true){
+            System.out.println("type the address for printing or 0 for printing");
+            String line = stdReader.readLine();
+            if("0".equals(line)){
+                break;
+            }
+            PrintInfoObject obj = PrintUtil.parseToPrintInfoObjectByTab(line);
+            if(obj == null) continue;
+            toPrintList.add(obj);
+        }
+
+        System.out.println("0:ems?1:sal?");
+        int labelType = 0;
+        while (true) {
+            String line = stdReader.readLine();
+            try {
+                int pos = Integer.parseInt(line);
+                if (pos == 0 || pos == 1) {
+                    labelType = pos;
+                    break;
+                } else {
+                    System.out.println("Listed number only!");
+                }
+            } catch (Exception e) {
+                System.out.println("number only!");
+            }
+        }
+        printOut(toPrintList, labelType);
     }
 
     private void printCommonUseAddress() throws PrinterException, IOException {
@@ -108,15 +137,10 @@ public class PrintMultiPageMain implements Pageable {
         // stdReader.close();
         List<PrintInfoObject> toPrintList = Lists.newArrayList();
         for (String toPrintLine : selectedLines) {
-            String[] splited = toPrintLine.split(PrintUtil.splitor);
-            PrintInfoObject obj = new PrintInfoObject();
-            int indx = 0;
-            obj.receiverName = splited[indx++];
-            obj.receiverTel = splited[indx++];
-            String newAddr = splited[indx++] +" " +splited[indx++] +" " +splited[indx++] +" " +splited[indx++];
-            PrintUtil.setAddress(obj,newAddr);
-            obj.receiverZipCode = splited[indx++];
-            obj.receiverCountry = "中国";
+            PrintInfoObject obj = PrintUtil.parseToPrintInfoObjectByComma(toPrintLine);
+            if(obj == null){
+                continue;
+            }
             toPrintList.add(obj);
         }
         while (true) {
@@ -208,15 +232,14 @@ public class PrintMultiPageMain implements Pageable {
         for (int i = 0; i <= loopCnt; i++) {
             List<PrintInfoObject> newList = Lists.newArrayList();
             for (int j = i * interupt; j < i * interupt + 5; j++) {
-                if(j>=toPrintList.size())break;
+                if(j>toPrintList.size())break;
                 newList.add(toPrintList.get(j));
             }
             if(newList.isEmpty()) break;
-            this.labelType = labelType;
-            this.toPrintList = newList;
 
             PrinterJob pj = getPrinterJob();
-            pj.setPageable(this);
+            
+            pj.setPageable(new MyPageable(newList,getPageFormat(),labelType));
             pj.print();
             
             resetPrintJob();
@@ -225,31 +248,6 @@ public class PrintMultiPageMain implements Pageable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    @Override
-    public int getNumberOfPages() {
-        return toPrintList.size();
-    }
-
-    @Override
-    public PageFormat getPageFormat(int pageIndex) throws IndexOutOfBoundsException {
-        return getPageFormat();
-    }
-
-    @Override
-    public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
-        PrintInfoObject printInfo = toPrintList.get(pageIndex);
-        System.out.println("[Printing]" + printInfo.receiverName + " " + printInfo.receiverAddress1
-                + printInfo.receiverAddress2 + printInfo.receiverAddress3)
-                ;
-        if (labelType == PrintUtil.LABEL_TYPE_EMS) {
-            return new EMSPrintableForMultiPage(printInfo);
-        } else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
-            return new SALPrintableForMultiPage(printInfo);
-        } else {
-            return null;
         }
     }
 
