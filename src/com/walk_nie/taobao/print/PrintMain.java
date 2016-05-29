@@ -232,7 +232,7 @@ public class PrintMain {
         for (int i = 0; i <= loopCnt; i++) {
             List<PrintInfoObject> newList = Lists.newArrayList();
             for (int j = i * interupt; j < i * interupt + 5; j++) {
-                if(j>toPrintList.size())break;
+                if(j>=toPrintList.size())break;
                 newList.add(toPrintList.get(j));
             }
             if(newList.isEmpty()) break;

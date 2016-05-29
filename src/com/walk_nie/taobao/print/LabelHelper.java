@@ -1,5 +1,6 @@
 package com.walk_nie.taobao.print;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
@@ -23,10 +24,15 @@ public class LabelHelper {
     	
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
         //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
+        //Font f = g2d.getFont();
+       
+        		
+        g2d.setFont(new Font("TimesRoman",Font.PLAIN,10));
         FontMetrics fm = g2d.getFontMetrics();
+        // TODO decrease the font size 
         
-        int h=PrintUtil.fromCMToPPI_i(2.42);
-        double receiverLeft = 11.32;double senderLeft=2.7;
+        int h=PrintUtil.fromCMToPPI_i(2.58);
+        double receiverLeft = 11.72;double senderLeft=2.7;
 
         g2d.drawString(toPrintInfo.receiverName, PrintUtil.fromCMToPPI_i(receiverLeft), h);
         
@@ -62,7 +68,7 @@ public class LabelHelper {
             g2d.drawString(toPrintInfo.receiverZipCode, PrintUtil.fromCMToPPI_i(receiverLeft), h);
         }
         if (StringUtils.isNotEmpty(toPrintInfo.receiverAddress1)) {
-            g2d.drawString(toPrintInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(14.58), h);
+            g2d.drawString(toPrintInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(15.58), h);
         }
         
 
@@ -81,17 +87,17 @@ public class LabelHelper {
         }
 
         h=PrintUtil.fromCMToPPI_i(6.6);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(15.62), h);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(15.82), h);
         
         h=PrintUtil.fromCMToPPI_i(8.9);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.62), h);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.82), h);
         g2d.drawString("1", PrintUtil.fromCMToPPI_i(16.3), h);
         g2d.drawString("1", PrintUtil.fromCMToPPI_i(18.1), h);
 
         
         h = PrintUtil.fromCMToPPI_i(10.54);
         List<String> dateList = PrintUtil.parseDateToString();
-        int idx = 0;double intr=0.34;double startPos = 10.48;
+        int idx = 0;double intr=0.34;double startPos = 10.54;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
@@ -108,16 +114,16 @@ public class LabelHelper {
         idx++;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
-        g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(13.8), h);
+        g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(14.8), h);
         
         
 
         h=PrintUtil.fromCMToPPI_i(12.2);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.62), h);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(1.82), h);
         g2d.drawString("30", PrintUtil.fromCMToPPI_i(7.2), h);
         
-        h=PrintUtil.fromCMToPPI_i(12.9);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(11.38), h);
+        h=PrintUtil.fromCMToPPI_i(13.19);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(11.32), h);
         
     }
 

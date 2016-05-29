@@ -26,4 +26,6 @@ public class PrintInfoObject {
 
     public List<String> orderNos = Lists.newArrayList();
 
+	// 订单创建时间
+	public String orderCreatedDateTime="";
 }
