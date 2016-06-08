@@ -66,16 +66,19 @@ public class WebDriverUtil  {
         //Get the location of element on the page
         Point point1 = elements.get(0).getLocation();
         //Get width and height of the element
-        int eleWidth = elements.get(0).getSize().getWidth() ;
+        int eleWidth = 0 ;
         int eleHeight = 0;
         if (elements.size() == 1) {
             eleHeight = elements.get(0).getRect().height;
+            eleWidth = elements.get(0).getSize().getWidth() ;
         } else if (elements.size() == 3) {
             Point point2 = elements.get(2).getLocation();
             eleHeight = point2.getY() - point1.getY();
+            eleWidth = elements.get(2).getSize().getWidth() ;
         } else {
             Point point2 = elements.get(elements.size() - 1).getLocation();
             eleHeight = point2.getY() - point1.getY();
+            eleWidth = elements.get(elements.size() - 1).getSize().getWidth() ;
         }
         
         //Crop the entire page screenshot to get only element screenshot

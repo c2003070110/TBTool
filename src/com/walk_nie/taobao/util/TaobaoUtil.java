@@ -372,45 +372,45 @@ public class TaobaoUtil {
 		int idx = 0;
 
 		// 宝贝名称
-		obj.title = split[idx++];
+		obj.title = remove(split[idx++]);
 		// 宝贝类目
-		obj.cid = split[idx++];
+		obj.cid = remove(split[idx++]);
 		// 店铺类目
-		obj.seller_cids = split[idx++];
+		obj.seller_cids = remove(split[idx++]);
 		// 新旧程度
-		obj.stuff_status = split[idx++];
+		obj.stuff_status = remove(split[idx++]);
 		// 省
-		obj.location_state = split[idx++];
+		obj.location_state = remove(split[idx++]);
 		// 城市
-		obj.location_city = split[idx++];
+		obj.location_city = remove(split[idx++]);
 		// 出售方式
-		obj.item_type = split[idx++];
+		obj.item_type = remove(split[idx++]);
 		// 宝贝价格
-		obj.price = split[idx++];
+		obj.price = remove(split[idx++]);
 		// 加价幅度
-		obj.auction_increment = split[idx++];
+		obj.auction_increment = remove(split[idx++]);
 		// 宝贝数量
-		obj.num = split[idx++];
+		obj.num = remove(split[idx++]);
 		// 有效期
-		obj.valid_thru = split[idx++];
+		obj.valid_thru = remove(split[idx++]);
 		// 运费承担
-		obj.freight_payer = split[idx++];
+		obj.freight_payer = remove(split[idx++]);
 		// 平邮
-		obj.post_fee = split[idx++];
+		obj.post_fee = remove(split[idx++]);
 		// EMS
-		obj.ems_fee = split[idx++];
+		obj.ems_fee = remove(split[idx++]);
 		// 快递
-		obj.express_fee = split[idx++];
+		obj.express_fee = remove(split[idx++]);
 		// 发票
-		obj.has_invoice = split[idx++];
+		obj.has_invoice = remove(split[idx++]);
 		// 保修
-		obj.has_warranty = split[idx++];
+		obj.has_warranty = remove(split[idx++]);
 		// 放入仓库
-		obj.approve_status = split[idx++];
+		obj.approve_status = remove(split[idx++]);
 		// 橱窗推荐
-		obj.has_showcase = split[idx++];
+		obj.has_showcase = remove(split[idx++]);
 		// 开始时间
-		obj.list_time = split[idx++];
+		obj.list_time = remove(split[idx++]);
 		// 宝贝描述
 		obj.description = split[idx++];
 		// 宝贝属性
@@ -438,7 +438,7 @@ public class TaobaoUtil {
 		// 用户输入名-值对
 		obj.inputValues = split[idx++];
 		// 商家编码
-		obj.outer_id = split[idx++];
+		obj.outer_id = remove(split[idx++]);
 		// 销售属性别名
 		obj.propAlias = split[idx++];
 		// 代充类型

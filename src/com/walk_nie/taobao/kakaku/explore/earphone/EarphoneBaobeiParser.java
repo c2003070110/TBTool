@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -77,26 +78,47 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
                 WebDriverUtil.screenShot(webDriver, ele1, despFile.getAbsolutePath());
             }
         }
-        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+		if (despFile.exists()) {
+			kakakuObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		}
     }
 
-    private void parseMakerForYamaha(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
-       String fileNameFmt = "detail_%s.png";
-        String fileName = String.format(fileNameFmt, kakakuObj.id);
-        File despFile = new File(rootPathName, fileName);
-        if (!despFile.exists()) {
-            WebDriver webDriver = WebDriverUtil.getWebDriver(specUrl);
-            webDriver.findElement(By.name("feature")).click();
-            List<WebElement> ele1 = webDriver.findElements(By.id("feature"));
-            webDriver.findElement(By.name("specs")).click();
-            List<WebElement> ele2 = webDriver.findElements(By.id("specs"));
-            ele1.addAll(ele2);
-            if (!ele1.isEmpty()) {
-                WebDriverUtil.screenShot(webDriver, ele1, despFile.getAbsolutePath());
-            }
-        }
-        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
-    }
+	private void parseMakerForYamaha(KakakuObject kakakuObj, String specUrl)
+			throws ClientProtocolException, IOException {
+		String fileNameFmt = "detail_%s_%d.png";
+		int i = 0;
+		String fileName = String.format(fileNameFmt, kakakuObj.id, i);
+		File despFile = new File(rootPathName, fileName);
+		WebDriver webDriver = WebDriverUtil.getWebDriver(specUrl);
+		if (!despFile.exists()) {
+			try {
+				webDriver.findElement(By.name("feature")).click();
+				List<WebElement> ele1 = webDriver
+						.findElements(By.id("feature"));
+				WebDriverUtil.screenShot(webDriver, ele1,
+						despFile.getAbsolutePath());
+				kakakuObj.detailScreenShotPicFile.add(despFile
+						.getAbsolutePath());
+			} catch (NoSuchElementException ex) {
+
+			}
+		}
+		i++;
+		fileName = String.format(fileNameFmt, kakakuObj.id, i);
+		despFile = new File(rootPathName, fileName);
+		if (!despFile.exists()) {
+			try {
+				webDriver.findElement(By.name("specs")).click();
+				List<WebElement> ele1 = webDriver.findElements(By.id("specs"));
+				WebDriverUtil.screenShot(webDriver, ele1,
+						despFile.getAbsolutePath());
+				kakakuObj.detailScreenShotPicFile.add(despFile
+						.getAbsolutePath());
+			} catch (NoSuchElementException ex) {
+
+			}
+		}
+	}
 
     private void parseMakerForPioneer(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
         String fileNameFmt = "detail_%s.png";
@@ -113,7 +135,9 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
                 WebDriverUtil.screenShot(webDriver, ele, despFile.getAbsolutePath());
             }
         }
-        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+		if (despFile.exists()) {
+			kakakuObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		}
     }
 
     private void parseMakerForJVC(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
@@ -127,7 +151,9 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
                 WebDriverUtil.screenShot(webDriver, ele, despFile.getAbsolutePath());
             }
         }
-        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+		if (despFile.exists()) {
+			kakakuObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		}
     }
 
     private void parseMakerForAudioTechnica(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
@@ -152,11 +178,16 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
                 WebDriverUtil.screenShot(webDriver, ele, despFile.getAbsolutePath());
             }
         }
-        kakakuObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+		if (despFile.exists()) {
+			kakakuObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		}
     }
 
     protected boolean isAllowToBaobei(KakakuObject obj) {
- 
+
+        if(obj.priceMin == null){
+            return false;
+        }
         if(obj.priceYodobashi == null){
             return false;
         }

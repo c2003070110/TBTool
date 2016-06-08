@@ -45,11 +45,13 @@ public class EarphoneBaobeiProducer extends KakakuBaobeiProceducer  {
     protected void composeBaobeiMiaoshu(BaobeiPublishObject baobeiObj, KakakuObject kakakuObj){
         // 宝贝描述
         StringBuffer detailSB = new StringBuffer();
-        String productInfo = kakakuObj.detailScreenShotPicFile;
-        if(!StringUtil.isBlank(kakakuObj.detailScreenShotPicFile)){
+        List<String> productInfo = kakakuObj.detailScreenShotPicFile;
+        if(productInfo != null && !productInfo.isEmpty()){
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-            detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + productInfo + "\"/></p>");
+            for(String str:productInfo){
+            	detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + str + "\"/></p>");
+            }
             detailSB.append("</div>");
         }
         StringBuffer sizeTips = new StringBuffer();

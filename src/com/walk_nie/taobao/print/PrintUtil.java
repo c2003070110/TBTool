@@ -147,7 +147,7 @@ public class PrintUtil {
                 String orderNo = saledObj.orderNo;
                 if (PrintUtil.isPrintedInfo(printedInfos,orderNo)) continue;
                 String sts = saledObj.orderStatus;// 订单状态
-                if(sts.equals("交易关闭")||sts.equals("卖家已发货")) continue;
+                if(sts.equals("交易关闭")||sts.equals("卖家已发货，等待买家确认")) continue;
                 
                 PrintInfoObject obj = new PrintInfoObject();
                 obj.orderNo = orderNo;

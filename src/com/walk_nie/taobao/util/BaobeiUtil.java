@@ -38,7 +38,7 @@ public class BaobeiUtil {
             }
             for (String str : strList) {
                 BaobeiPublishObject obj = TaobaoUtil.readBaobeiIn(str);
-                if(obj != null){
+                if(obj != null && !StringUtil.isBlank(obj.outer_id) && !obj.outer_id.startsWith("<")){
                     baobeiList.add(obj);
                 }
             }
@@ -46,6 +46,9 @@ public class BaobeiUtil {
             if (br != null)
                 br.close();
         }
+//        for(BaobeiPublishObject obj :baobeiList){
+//        	System.out.println(obj.title+"\t"+obj.outer_id);
+//        }
 
         return baobeiList;
         

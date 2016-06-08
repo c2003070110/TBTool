@@ -43,6 +43,7 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
                 continue;
             }
             if (isAllowToBaobei(objTemp)) {
+                parseMakerSite(objTemp);
                 filterItemList.add(objTemp);
             }
         }
@@ -109,8 +110,6 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         parseItemVariation(doc, obj);
 
         obj.sku = KakakuUtil.findItemSku(doc);
-        
-        parseMakerSite(obj);
         
         return obj;
     }
