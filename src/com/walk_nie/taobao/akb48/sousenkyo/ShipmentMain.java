@@ -48,7 +48,7 @@ public class ShipmentMain  {
 
     private String picSrcPath = "E:\\temp\\akb48";
     private File picSrcFolder = new File(picSrcPath);
-    private String toShipmentFile = "C:\\Users\\niehp\\Downloads\\ExportOrderList201606082116.csv";
+    private String toShipmentFile = "C:\\Users\\niehp\\Downloads\\ExportOrderList201606132128.csv";
     //private String toShipmentFile = "./shipment/toShipment.txt";
     private String shipmentedFile = "./shipment/shipmented.txt";
     private String shipmentingFile = "./shipment/shipmenting.txt";
@@ -59,11 +59,11 @@ public class ShipmentMain  {
 
 		// main.preOperate();
 		//main.countSales();
-		//main.remind();
+		 main.remind();
 
-		main.assign();
-		//main.addTextToPicture();
-		//main.shipment();
+		// main.assign();
+		// main.addTextToPicture();
+		// main.shipment();
 	}
     protected  void addTextToPicture() throws IOException {
     	File fol = picSrcFolder;
@@ -181,8 +181,9 @@ public class ShipmentMain  {
         List<String> buyerIdList = Lists.newArrayList();
         for (TaobaoSaledObject obj : objList) {
         	if(obj.orderStatus.equals("卖家已发货，等待买家确认")){
-        		if(!buyerIdList.contains(obj.buyerId)){
-        			buyerIdList.add(obj.buyerId);
+        		String key = obj.buyerId + "\t" + obj.orderCreatedDateTime;
+        		if(!buyerIdList.contains(key)){
+        			buyerIdList.add(key);
         		}
         	}
         }
@@ -405,11 +406,12 @@ public class ShipmentMain  {
         }
         
         File shipmenting = new File(shipmentingFile);
-        //shipmenting.deleteOnExit();
+        StringBuffer sb = new StringBuffer();
         for (TaobaoSaledObject saledObj : toShipmentList) {
         	String line = String.format("%s\t%s\t%d",saledObj.orderNo,saledObj.buyerId,saledObj.baobeiNum);
-			Files.append(line+ "\r\n", shipmenting, Charset.forName("UTF-8"));
+        	sb.append(line+ "\r\n");
         }
+        Files.write(sb, shipmenting, Charset.forName("UTF-8"));
         
     }
 

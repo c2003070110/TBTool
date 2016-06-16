@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -229,6 +230,7 @@ public class PrintUtil {
         List<PrintInfoObject> list = Lists.newArrayList();
         List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
         for(String line:lines){
+        	if(line.startsWith("#"))continue;
             String[] split = line.split(splitor);
             if(split.length != 5)continue;
             PrintInfoObject obj = new PrintInfoObject();
@@ -251,6 +253,12 @@ public class PrintUtil {
     public static void savePrintedOrderNos(List<PrintInfoObject> printedList) throws IOException {
         File file = new File(rootPathName, printedOrderNosFileName);
         StringBuffer sb = new StringBuffer();
+        if(!printedList.isEmpty()){
+        	Calendar cal = Calendar.getInstance();
+        	cal.setTimeInMillis(System.currentTimeMillis());
+        	sb.append("#" + org.apache.http.client.utils.DateUtils.formatDate(cal.getTime(), "yyyy/MM/dd"));
+            sb.append("\r\n");
+        }
         for (PrintInfoObject obj : printedList) {
             for (String orderNo : obj.orderNos) {
                 if(StringUtils.isEmpty(orderNo)){

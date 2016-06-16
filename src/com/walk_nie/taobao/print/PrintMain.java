@@ -224,32 +224,42 @@ public class PrintMain {
         }
     }
 
-    private void printOut(List<PrintInfoObject> toPrintList, int labelType) throws PrinterException {
+	private void printOut(List<PrintInfoObject> toPrintList, int labelType)
+			throws PrinterException {
 
-        PrintUtil.setSenderInfo(toPrintList);
-        int interupt = 5;
-        int loopCnt = (int) Math.ceil(toPrintList.size() / interupt);
-        for (int i = 0; i <= loopCnt; i++) {
-            List<PrintInfoObject> newList = Lists.newArrayList();
-            for (int j = i * interupt; j < i * interupt + 5; j++) {
-                if(j>=toPrintList.size())break;
-                newList.add(toPrintList.get(j));
-            }
-            if(newList.isEmpty()) break;
+		PrintUtil.setSenderInfo(toPrintList);
+		PrinterJob pj = getPrinterJob();
 
-            PrinterJob pj = getPrinterJob();
-            
-            pj.setPageable(new MyPageable(newList,getPageFormat(),labelType));
-            pj.print();
-            
-            resetPrintJob();
-            try {
-                PrintUtil.savePrintedOrderNos(newList);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+		pj.setPageable(new MyPageable(toPrintList, getPageFormat(), labelType));
+		pj.print();
+		try {
+			PrintUtil.savePrintedOrderNos(toPrintList);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// int interupt = 5;
+		// int loopCnt = (int) Math.ceil(toPrintList.size() / interupt);
+		// for (int i = 0; i <= loopCnt; i++) {
+		// List<PrintInfoObject> newList = Lists.newArrayList();
+		// for (int j = i * interupt; j < i * interupt + 5; j++) {
+		// if(j>=toPrintList.size())break;
+		// newList.add(toPrintList.get(j));
+		// }
+		// if(newList.isEmpty()) break;
+		//
+		// PrinterJob pj = getPrinterJob();
+		//
+		// pj.setPageable(new MyPageable(newList,getPageFormat(),labelType));
+		// pj.print();
+		//
+		// resetPrintJob();
+		// try {
+		// PrintUtil.savePrintedOrderNos(newList);
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// }
+	}
 
     protected PrinterJob printJob = null;
 
