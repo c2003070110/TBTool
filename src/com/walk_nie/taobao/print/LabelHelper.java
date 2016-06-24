@@ -22,14 +22,18 @@ public class LabelHelper {
     	toPrintInfo.senderZipCode ="";
     	toPrintInfo.senderTel ="";
     	
+        Font font1 = new Font("Arial", Font.PLAIN, 12);
+        g2d.setFont(font1);
+    	
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
         //g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));
         //Font f = g2d.getFont();
-       
         		
-        g2d.setFont(new Font("TimesRoman",Font.PLAIN,10));
         FontMetrics fm = g2d.getFontMetrics();
         // TODO decrease the font size 
+
+        font1 = new Font("Arial", Font.PLAIN, 12);
+        g2d.setFont(font1);
         
         int h=PrintUtil.fromCMToPPI_i(2.58);
         double receiverLeft = 11.72;double senderLeft=2.7;
@@ -159,7 +163,9 @@ public class LabelHelper {
         idx++;
         g2d.drawString(dateList.get(idx), PrintUtil.fromCMToPPI_i(startPos + idx * intr), h);
         idx++;
-        
+
+        Font font = new Font("KaiTi", Font.PLAIN, 12);
+        g2d.setFont(font);
         h = PrintUtil.fromCMToPPI_i(4.6);
         g2d.drawString(printInfo.receiverName, PrintUtil.fromCMToPPI_i(13), h);
         h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
@@ -171,18 +177,22 @@ public class LabelHelper {
             g2d.drawString(printInfo.receiverAddress3, PrintUtil.fromCMToPPI_i(11.2), h);
         }
 
-        h = PrintUtil.fromCMToPPI_i(8.12);
-        g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11), h);
+        font = new Font("KaiTi", Font.PLAIN, 18);
+        g2d.setFont(font);
+        h = PrintUtil.fromCMToPPI_i(8.04);
+        g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(12.5), h);
         g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(16.2), h);
 
         h = PrintUtil.fromCMToPPI_i(10.05);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(16.38), h);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(16.34), h);
 
         h = PrintUtil.fromCMToPPI_i(12.35);
-        g2d.drawString("×", PrintUtil.fromCMToPPI_i(3.15), h);
+        g2d.drawString("×", PrintUtil.fromCMToPPI_i(3.02), h);
 
         h = PrintUtil.fromCMToPPI_i(13.3);
-        g2d.drawString("邓祎", PrintUtil.fromCMToPPI_i(3.4), h);
-        g2d.drawString("1", PrintUtil.fromCMToPPI_i(8.8), h);
+        g2d.drawString("邓 祎", PrintUtil.fromCMToPPI_i(3.4), h);
+        
+        h = PrintUtil.fromCMToPPI_i(12.8);
+        g2d.drawString("1", PrintUtil.fromCMToPPI_i(8.4), h);
         g2d.drawString("1", PrintUtil.fromCMToPPI_i(9.9), h);
     }}

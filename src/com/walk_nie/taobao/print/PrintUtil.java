@@ -50,7 +50,7 @@ public class PrintUtil {
         obj.senderZipCode="123-0845";
         obj.senderTel="08042001314";
         
-        obj.receiverCountry = "中国";
+        obj.receiverCountry = "中 国";
     }
     
     public static List<String> getCommonUseAddress() throws IOException {
@@ -111,7 +111,7 @@ public class PrintUtil {
         String newAddr = splited[indx++].trim() +" " +splited[indx++].trim() +" " +splited[indx++].trim() +" " +splited[indx++].trim();
         setAddress(obj,newAddr);
         obj.receiverZipCode = splited[indx++];
-        obj.receiverCountry = "中国";
+        obj.receiverCountry = "中 国";
         return obj;
     }
     public static List<PrintInfoObject> getPrintInfoList(int labelType,int patternType) throws IOException {
@@ -290,7 +290,7 @@ public class PrintUtil {
 
     public static void setAddress(PrintInfoObject obj, String address) {
         String[] splied = address.split(" ");
-        int splitIdx = 22;
+        int splitIdx = 24;
         if (splied.length > 3) {
             obj.receiverAddress1 = splied[0] + " " + splied[1] + " " + splied[2];
             String newAdd = "";
