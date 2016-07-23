@@ -50,7 +50,7 @@ public class PrintUtil {
         obj.senderZipCode="123-0845";
         obj.senderTel="08042001314";
         
-        obj.receiverCountry = "中 国";
+        obj.receiverCountry = "中国 CHINA";
     }
     
     public static List<String> getCommonUseAddress() throws IOException {
@@ -111,7 +111,7 @@ public class PrintUtil {
         String newAddr = splited[indx++].trim() +" " +splited[indx++].trim() +" " +splited[indx++].trim() +" " +splited[indx++].trim();
         setAddress(obj,newAddr);
         obj.receiverZipCode = splited[indx++];
-        obj.receiverCountry = "中 国";
+        obj.receiverCountry = "中国 CHINA";
         return obj;
     }
     public static List<PrintInfoObject> getPrintInfoList(int labelType,int patternType) throws IOException {
@@ -148,7 +148,10 @@ public class PrintUtil {
                 String orderNo = saledObj.orderNo;
                 if (PrintUtil.isPrintedInfo(printedInfos,orderNo)) continue;
                 String sts = saledObj.orderStatus;// 订单状态
-                if(sts.equals("交易关闭")||sts.equals("卖家已发货，等待买家确认")) continue;
+                if(sts.equals("交易关闭")||sts.equals("交易成功")
+                		||sts.equals("卖家已发货，等待买家确认")) continue;
+                if(StringUtils.isEmpty(saledObj.baobeiTitle)
+                		|| saledObj.baobeiTitle.contains("现货")) continue;
                 
                 PrintInfoObject obj = new PrintInfoObject();
                 obj.orderNo = orderNo;

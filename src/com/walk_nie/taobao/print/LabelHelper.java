@@ -180,7 +180,7 @@ public class LabelHelper {
         font = new Font("KaiTi", Font.PLAIN, 18);
         g2d.setFont(font);
         h = PrintUtil.fromCMToPPI_i(8.04);
-        g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(12.5), h);
+        g2d.drawString(printInfo.receiverCountry, PrintUtil.fromCMToPPI_i(11.7), h);
         g2d.drawString(printInfo.receiverTel, PrintUtil.fromCMToPPI_i(16.2), h);
 
         h = PrintUtil.fromCMToPPI_i(10.05);
@@ -195,4 +195,7 @@ public class LabelHelper {
         h = PrintUtil.fromCMToPPI_i(12.8);
         g2d.drawString("1", PrintUtil.fromCMToPPI_i(8.4), h);
         g2d.drawString("1", PrintUtil.fromCMToPPI_i(9.9), h);
-    }}
+    }
+
+}
+
