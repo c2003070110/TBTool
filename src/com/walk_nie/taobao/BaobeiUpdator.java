@@ -7,6 +7,7 @@ import java.util.List;
 import com.walk_nie.taobao.kakaku.explore.earphone.EarphoneBaobeiProducer;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
+import com.walk_nie.taobao.yonex.badminton.YonexBadBaobeiProducer;
 
 
 public class BaobeiUpdator {
@@ -16,10 +17,11 @@ public class BaobeiUpdator {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-	    updateEarphone();
+	    //updateEarphone();
+	    updateYonex();
 	}
 	
-	private static void updateEarphone() throws IOException{
+	protected static void updateEarphone() throws IOException{
         double currencyRate = 0.0605 + 0.003;
 	    double benefitRate = 0.1;
         String toUpdateFile = "res/updateBaobei.csv";
@@ -38,6 +40,24 @@ public class BaobeiUpdator {
             .setOutputFile(outputFile)
             .process();
         
+	}
+	protected static void updateYonex() throws IOException{
+       
+        String toUpdateFile = "res/updateBaobei-Yonex.csv";
+        List<BaobeiPublishObject> baobeiList = BaobeiUtil.readInPublishedBaobei(new File(toUpdateFile));
+
+        String outputFile = "out/yonex_baobei-upd_%s.csv";
+        
+        YonexBadBaobeiProducer producer = new YonexBadBaobeiProducer();
+        producer
+            .setToUpdateBaobeiList(baobeiList)
+            
+            .enablePriceUpdate()
+            .enableOutIdUpdate()
+            .enableDescriptionUpdate()
+            .setOutputFile(outputFile)
+            .process();
+		
 	}
 
 	 

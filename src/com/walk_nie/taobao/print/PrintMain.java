@@ -22,7 +22,10 @@ public class PrintMain {
     protected void print() throws PrinterException, IOException {
         try {
             System.out.print("Type of Print : ");
-            System.out.println("0:taobao export;1:taobao copy;2:common use address;3:type in directly;");
+            System.out.println("0:taobao export;\n" +
+            		           "1:taobao copy;\n" +
+            		           "2:common use address;\n" +
+            		           "3:type in directly;");
 
             stdReader = new BufferedReader(new InputStreamReader(System.in));
             while (true) {

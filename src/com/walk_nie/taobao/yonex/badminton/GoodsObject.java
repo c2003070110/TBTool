@@ -5,6 +5,11 @@ import java.util.List;
 
 
 public class GoodsObject {
+	public boolean isUpdate = false;
+	// 1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
+	public int categoryType = -1;
+	public boolean isOut = false;
+	
 	public String title;
 	public String titleJP;
 	public String titleEN;

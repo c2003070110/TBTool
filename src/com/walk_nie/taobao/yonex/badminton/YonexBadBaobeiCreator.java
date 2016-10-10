@@ -12,13 +12,12 @@ public class YonexBadBaobeiCreator  {
 		String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
 		String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
 		String outputFile = "out/yonex_badmin_baobei_%s.csv";
-		String publishedBaobeiFile = "";
 
 		YonexBadBaobeiProducer db = new YonexBadBaobeiProducer();
 		db.setMiaoshuTemplateFile(miaoshuTemplateFile)
 				.setOutputFile(outputFile)
 				.setTaobeiTemplateFile(taobeiTemplateFile)
-				.setPublishedBaobeiFile(publishedBaobeiFile).process();
+				.process();
 
 		System.exit(0);
 	}

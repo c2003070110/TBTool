@@ -12,12 +12,10 @@ public class AsicsShoesBaobeiCreator  {
 		//String taobeiTemplateFile = "in/asicsShoes_baobeiTemplate.csv";
 		//String miaoshuTemplateFile = "in/asicsShoes_miaoshu_template.html";
 		String outputFile = "out/asicsShoes_baobei_%s.csv";
-		String publishedBaobeiFile = "";
 
 		AsicsShoesBaobeiProducer db = new AsicsShoesBaobeiProducer();
 		db
 				.setOutputFile(outputFile)
-                .setPublishedBaobeiFile(publishedBaobeiFile)              
                 .process();
 
 		System.exit(0);

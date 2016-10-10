@@ -11,7 +11,7 @@ public class MontbellBaobeiCreator  {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_baobei_%s.csv";
-		String publishedBaobeiFile = "";
+		//String publishedBaobeiFile = "";
 
 		MontbellBaobeiProducer db = new MontbellBaobeiProducer();
 		db
@@ -57,7 +57,7 @@ public class MontbellBaobeiCreator  {
                 .addScanCategory("") //
                 
                 .setOutputFile(outputFile)
-                .setPublishedBaobeiFile(publishedBaobeiFile)
+                //.setPublishedBaobeiFile(publishedBaobeiFile)
                 .process();
 
 		System.exit(0);

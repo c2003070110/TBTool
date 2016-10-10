@@ -134,6 +134,7 @@ public class LabelHelper {
     public static void setInfoForEMSLabel(PageFormat pageFormat, Graphics2D g2d, int pageIndex,
             PrintInfoObject printInfo) {
         // EMS label width = 27cm height=15.32cm
+        // EMS label width = 23cm height=15.20cm -- taobao
        
         g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
         // g2d.draw(new Rectangle2D.Double(1, 1, width - 1, height - 1));

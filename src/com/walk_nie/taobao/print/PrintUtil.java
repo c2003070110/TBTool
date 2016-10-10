@@ -116,26 +116,50 @@ public class PrintUtil {
     }
     public static List<PrintInfoObject> getPrintInfoList(int labelType,int patternType) throws IOException {
         List<PrintInfoObject> printList = Lists.newArrayList();
-        String fileName = null;
         String charset = "UTF-8";
-        if(labelType==PrintUtil.LABEL_TYPE_EMS && patternType == 1){
-             fileName = PrintUtil.toPrintFileName1EMS;
-             charset = "GB2312";
-        }else if(labelType==PrintUtil.LABEL_TYPE_POSTAL && patternType == 1){
-            fileName = PrintUtil.toPrintFileName1SAL;
-        }else if(labelType==PrintUtil.LABEL_TYPE_EMS && patternType == 2){
-            fileName = PrintUtil.toPrintFileName2EMS;
-        }else if(labelType==PrintUtil.LABEL_TYPE_POSTAL && patternType == 2){
-            fileName = PrintUtil.toPrintFileName2SAL;
-        }
-        File file = new File(PrintUtil.rootPathName, fileName);
-        List<String> list = null;
-        try {
-            list = FileUtils.readLines(file, charset);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return printList;
-        }
+        List<String> list = Lists.newArrayList();
+        if(patternType == 1){
+        	// taobao export
+        	String fold = "";
+        	if(labelType==PrintUtil.LABEL_TYPE_EMS){
+        		fold = "ems";
+        	}
+        	if(labelType==PrintUtil.LABEL_TYPE_POSTAL){
+        		fold = "sal";
+        	}
+            File file1 = new File(PrintUtil.rootPathName, fold);
+            charset = "GB2312";
+            File[] files = file1.listFiles();
+            if(files.length == 0){
+            	return printList;
+            }
+            for(File f : files){
+                try {
+                    List<String> l = FileUtils.readLines(f, charset);
+                    list.addAll(l);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return printList;
+                }
+            }
+		} else {
+			// other...
+			String fileName = null;
+			if (labelType == PrintUtil.LABEL_TYPE_EMS) {
+				fileName = PrintUtil.toPrintFileName2EMS;
+			} else if (labelType == PrintUtil.LABEL_TYPE_POSTAL) {
+				fileName = PrintUtil.toPrintFileName2SAL;
+			}
+			try {
+		        File file = new File(PrintUtil.rootPathName, fileName);
+				List<String> l = FileUtils.readLines(file, charset);
+				list.addAll(l);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return printList;
+			}
+		} 
+        
         List<PrintInfoObject> printedInfos = PrintUtil.readPrintedInfoList();
         for (String str : list) {
             if (str.equals("")) continue;

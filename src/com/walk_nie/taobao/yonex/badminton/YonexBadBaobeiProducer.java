@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
@@ -15,21 +16,28 @@ import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.support.BaseBaobeiParser;
+import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class YonexBadBaobeiProducer {
+public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
+
+	private String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
+	private String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
 	
-	private String taobeiTemplateFile = "";
-	private String publishedBaobeiFile = "";
-	private String miaoshuTemplateFile = "";
-	private String outputFile = "";
+	private File priceFile =  new File("res/YonexCNYPrice.txt");
+	private List<String> priceList = Lists.newArrayList();
 	
 	public void process() {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
-			List<GoodsObject> itemIdList = new YonexBadProductParser().scanItem();
+			if(priceFile.exists()){
+				priceList = Files.readLines(priceFile, Charset.forName("UTF-8"));
+			}
+			List<GoodsObject> itemIdList = ((YonexBadProductParser)getParser()).scanItem();
 			if (itemIdList.isEmpty())
 				return;
 			String outFilePathPrice = String.format(outputFile, DateUtils
@@ -41,10 +49,20 @@ public class YonexBadBaobeiProducer {
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
+			StringBuffer sbProduct = new StringBuffer();
 			for (GoodsObject obj : itemIdList) {
-				downloadPicture(obj, picFolder);
+				for (BaobeiPublishObject taobao : this.toUpdatebaobeiList) {
+					if (taobao.outer_id.equals(obj.kataban)) {
+						obj.isUpdate = true;
+					}
+				}
+				sbProduct.append(obj.title + "\t" + obj.kataban + "\n");
+				if (!obj.isUpdate) {
+					downloadPicture(obj, picFolder);
+				}
 				writeOut(priceBw, obj);
 			}
+			Files.write(sbProduct.toString(), new File("res/YonexProduct.txt"), Charset.forName("UTF-8"));
 			System.out.println("-------- FINISH--------");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -62,7 +80,8 @@ public class YonexBadBaobeiProducer {
 		for(String picUrl : goods.pictureList){
 			try{
 				String picName = "yonex_" + goods.kataban+"_" +i ;
-				TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+				// TODO un comment it out
+				//TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
 				goods.pictureNameList.add(picName);
 				i++;
 			} catch (Exception ex) { 
@@ -71,8 +90,19 @@ public class YonexBadBaobeiProducer {
 	}
 	protected void writeOut(BufferedWriter priceBw, GoodsObject item)
 			throws Exception {
+		BaobeiPublishObject baobeiTemplate = readTemplateObjectIn(item);
+		priceBw.write(composeBaobeiLine(item, baobeiTemplate));
+		priceBw.flush();
+	}
+	private BaobeiPublishObject readTemplateObjectIn(GoodsObject item) throws IOException {
+		if(item.isUpdate){
+			for(BaobeiPublishObject obj:this.toUpdatebaobeiList){
+				if(obj.outer_id.equals(item.kataban)){
+					return obj;
+				}
+			}
+		}
 		BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
-		
 		BufferedReader br = null;
 		try {
 			File file = new File(taobeiTemplateFile);
@@ -88,47 +118,34 @@ public class YonexBadBaobeiProducer {
 			if (br != null)
 				br.close();
 		}
-		
-		priceBw.write(composeBaobeiLine(item, baobeiTemplate));
-		priceBw.flush();
+		return baobeiTemplate;
 	}
 	protected String composeBaobeiLine(GoodsObject item,BaobeiPublishObject baobeiTemplate) throws Exception {
 		BaobeiPublishObject obj = TaobaoUtil.copyTaobaoTemplate(baobeiTemplate);
 
+		if(item.isUpdate){
+			// 宝贝价格
+			obj.price = findPrice(item);
+			// 宝贝类目;
+			obj.cid = composeBaobeiCId(item);
+			// 宝贝描述
+			obj.description = composeBaobeiMiaoshu(item);
+			return TaobaoUtil.composeTaobaoLine(obj);
+		}
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
+		// 宝贝类目;
+		obj.cid = composeBaobeiCId(item);
+		// 店铺类目;
+		obj.seller_cids = composeBaobeiSellerCids(item);
 		// 宝贝价格
-		obj.price = item.price;
+		obj.price = findPrice(item);
 		// 宝贝数量
 		obj.num = "9999";
 		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
-		
-		// 0:宝贝属性 1:销售属性组合 2:销售属性别名
-//		String[] props = composeBaobeiPropColor(item,baobeiTemplate);
-//		// 宝贝属性
-//		String str = baobeiTemplate.cateProps + props[0];
-//		str = str.replaceAll("\"\"", "");
-//		str = props[0];
-//		obj.cateProps = str;
-//		// 销售属性组合
-//		if("\"\"".equals(baobeiTemplate.skuProps)){
-//			obj.skuProps = props[1];
-//		}else{
-//			obj.skuProps = baobeiTemplate.skuProps + props[1];
-//		}
-//		obj.skuProps = props[1];
 		// 商家编码
 		obj.outer_id = item.kataban;
-//		// 销售属性别名
-//		if("\"\"".equals(baobeiTemplate.skuProps)){
-//			obj.propAlias = props[2];
-//		}else{
-//			obj.propAlias = baobeiTemplate.propAlias + props[2];
-//		}
-//		obj.propAlias = props[2];
-		// 商品条形码
-		//obj.barcode = item.sku;
 		String[] picProp = composeBaobeiPropPicture(item, baobeiTemplate);
 		// 图片状态
 		obj.picture_status = picProp[0];
@@ -140,11 +157,54 @@ public class YonexBadBaobeiProducer {
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
 
+	private String composeBaobeiSellerCids(GoodsObject item) {
+		if(item.categoryType == 1){
+			// "羽毛球拍"
+			return "1184433503";
+		}else if(item.categoryType == 2){
+			// "羽毛球鞋/"
+			return "1184433505";
+		}else if(item.categoryType == 3){
+			// 网球球拍
+			return "1184433506";
+		}else if(item.categoryType == 4){
+			//网球鞋
+			return "1184433507";
+		}else {
+			return "";
+		}
+	}
+	private String composeBaobeiCId(GoodsObject item) {
+		if(item.categoryType == 1){
+			// "羽毛球拍"
+			return "50012323";
+		}else if(item.categoryType == 2){
+			// "羽毛球鞋/"
+			return "50012331";
+		}else if(item.categoryType == 3){
+			// 网球球拍
+			return "50012323";
+		}else if(item.categoryType == 4){
+			//网球鞋
+			return "50012037";
+		}else {
+			return "";
+		}
+	}
+	private String findPrice(GoodsObject item) {
+		for(String line : priceList){
+			String[] spl = line.split("\t");
+			if(item.kataban.equals(spl[1])){
+				return spl[2].replaceAll(",","");
+			}
+		}
+		return "XXX";
+	}
 	private String composeBaobeiSubtitle(GoodsObject item) {
 		return "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleJP + "!" + item.kataban + "!" + "\"";
 	}
 	private String composeBaobeiTitle(GoodsObject item) {
-		String title = "\"日本直邮 Yonex/尤尼克斯 ";
+		String title = "\"日本直邮 Yonex/尤尼克斯";
 		title += " " + item.title;
 //		String suffix = "/包邮";
 //		if (title.length() + suffix.length() < 60) {
@@ -219,10 +279,10 @@ public class YonexBadBaobeiProducer {
 		return this;
 	}
 
-	public YonexBadBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-		this.publishedBaobeiFile = publishedBaobeiFile;
-		return this;
-	}
+//	public YonexBadBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
+//		this.publishedBaobeiFile = publishedBaobeiFile;
+//		return this;
+//	}
 
 	public YonexBadBaobeiProducer setMiaoshuTemplateFile(
 			String miaoshuTemplateFile) {
@@ -237,6 +297,10 @@ public class YonexBadBaobeiProducer {
 	public YonexBadBaobeiProducer setOutputFile(String outputFile) {
 		this.outputFile = outputFile;
 		return this;
+	}
+	@Override
+	public BaseBaobeiParser getParser() {
+		return new YonexBadProductParser();
 	}
 
 }

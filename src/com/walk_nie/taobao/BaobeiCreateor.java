@@ -23,12 +23,10 @@ public class BaobeiCreateor {
         double currencyRate = 0.0595 + 0.002;
         double benefitRate = 0.1;
         String scanUrlsFile = "in/earphone_scan_urls.txt";
-        String publishedBaobeiFile = "in/publishedBaobeiFile.csv";
         String outputFile = ".\\out\\earphone_baobei_%s.csv";
         EarphoneBaobeiProducer producer = new EarphoneBaobeiProducer();
         producer.setScanUrlsFile(scanUrlsFile)
                 .setOutputFile(outputFile)
-                .setPublishedBaobeiFile(publishedBaobeiFile)
                 .setBenefitRate(benefitRate)
                 .setCurrencyRate(currencyRate)
                 .process();
@@ -38,7 +36,6 @@ public class BaobeiCreateor {
         double benefitRate = 0.1;
 
         String outputFile = ".\\out\\montBell_baobei_%s.csv";
-        String publishedBaobeiFile = "in/publishedBaobeiFile.csv";
 
         MontbellBaobeiProducer db = new MontbellBaobeiProducer();
         db
@@ -77,7 +74,6 @@ public class BaobeiCreateor {
                 .setCurrencyRate(currencyRate)
                 
                 .setOutputFile(outputFile)
-                .setPublishedBaobeiFile(publishedBaobeiFile)
                 .process();
     }
     

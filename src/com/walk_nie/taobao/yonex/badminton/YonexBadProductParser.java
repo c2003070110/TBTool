@@ -9,32 +9,46 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class YonexBadProductParser {
-	// change me!!
-	double rate = 0.060;
-	private final static double benefitRate = 0.001;
+public class YonexBadProductParser extends BaseBaobeiParser {
 	
 	String urlPrefix = "http://www.yonex.co.jp";
 	
-	// TODO picture
-	//boolean downloadPicture = false;
 	boolean detailDisp = true;
+	// 1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
+	private int categoryType = 0;
 	
 	public List<GoodsObject> scanItem() throws IOException {
+		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
 
-		//List<GoodsObject> goodsList = scanStrings();
-		List<GoodsObject> goodsList = scanRacquets();
+		String url = "http://www.yonex.co.jp/badminton/racquets/";
+		categoryType = 1;
+		List<GoodsObject> list = scanRacquets(url);
+		goodsList.addAll(list);
+
+		url = "http://www.yonex.co.jp/badminton/shoes/";
+		categoryType = 2;
+		list = scanRacquets(url);
+		goodsList.addAll(list);
 		
+		url = "http://www.yonex.co.jp/tennis/racquets/";
+		categoryType = 3;
+		list = scanRacquets(url);
+		goodsList.addAll(list);
+		
+		url = "http://www.yonex.co.jp/tennis/shoes/";
+		categoryType = 4;
+		list = scanRacquets(url);
+		goodsList.addAll(list);
+		
+		// List<GoodsObject> goodsList = scanStrings();
+
 		return goodsList;
 	}
-	protected List<GoodsObject> scanRacquets() throws ClientProtocolException, IOException{
+	protected List<GoodsObject> scanRacquets(String url) throws ClientProtocolException, IOException{
 		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
-		//String url = "http://www.yonex.co.jp/badminton/racquets/";
-		//String url = "http://www.yonex.co.jp/badminton/shoes/";
-		//String url = "http://www.yonex.co.jp/tennis/racquets/";
-		String url = "http://www.yonex.co.jp/tennis/shoes/";
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
 		Elements prodEles  = doc.select("ul.prodList").select("li");
 		//int i = 0;
@@ -42,6 +56,8 @@ public class YonexBadProductParser {
 			//if(i>12)break;
 			//i++;
 			GoodsObject obj = new GoodsObject();
+			obj.categoryType = categoryType;
+			
 			String pUrl  = urlPrefix + prodEle.select("a").attr("href");
 			Document pDoc = TaobaoUtil.urlToDocumentByUTF8(pUrl);
 			Element contentEle = pDoc.select("div.contents").get(0);
@@ -49,9 +65,10 @@ public class YonexBadProductParser {
 			obj.titleJP = contentEle.select("h3.prodNameKana").select("span.name").text(); 
 			obj.kataban =contentEle.select("h3.prodNameKana").select("span.kataban").text();
 			
+			// 官方价格不可取。rakuten调查后 定价
 			obj.price = "XXXX";
 			
-			obj.productPlace = contentEle.select("span.seisan").text();
+			obj.productPlace = translateProductPlace(contentEle.select("span.seisan").text());
 
 			// rap 
 //			if("中国製".equals(obj.productPlace) || "台湾製".equals(obj.productPlace)){
@@ -67,7 +84,7 @@ public class YonexBadProductParser {
 			obj.title = translateTitle(obj);
 			
 			String spec = contentEle.select("table.specTbl").outerHtml();
-			obj.detailDisp = rank + spec;
+			obj.detailDisp = rank + spec.replaceAll("\n", "");
 			
 			obj.pictureList = processRacquetForPicture(obj, contentEle);
 			
@@ -76,6 +93,24 @@ public class YonexBadProductParser {
 		return goodsList;
 	}
 	
+	private String translateProductPlace(String text) {
+		if(text.equals("ベトナム製")){
+			return "越南";
+		}
+		if(text.equals("中国製")){
+			return "中国";
+		}
+		if(text.equals("日本製")){
+			return "日本";
+		}
+		if(text.equals("インドネシア製")){
+			return "印尼";
+		}
+		if(text.equals("台湾製")){
+			return "台湾";
+		}
+		return text;
+	}
 	private List<String> processRacquetForPicture(GoodsObject obj,
 			Element contentEle) {
 		List<String> picList = new ArrayList<String>();
@@ -102,74 +137,54 @@ public class YonexBadProductParser {
 		sb.append("</p>");
 		return sb.toString();
 	}
-	protected List<GoodsObject> scanStrings() throws ClientProtocolException, IOException{
-		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
-		String url = "http://www.yonex.co.jp/badminton/strings/";
-		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
-		Elements prodEles  = doc.select("div.prodArchive");
-		for(Element prodEle :prodEles){
-			GoodsObject obj = new GoodsObject();
-			obj.titleJP = prodEle.select("span.name_jp").text();
-			obj.titleEN = prodEle.select("span.name_en").text();
-			obj.kataban = prodEle.select("span.kataban").text();
-			obj.title = translateTitle(obj);
-			obj.priceOrg = prodEle.select("h4.prodPrice").text()
-					.replace("日本製", "")
-					.replace("台湾製", "")
-					.replace("＋税", "")
-					.replace("¥", "")
-					.replace(",", "")
-					.replace(" ", "");
-			obj.price = convertToCNY(obj);
-			obj.productPlace = prodEle.select("span.seisan").text();
-			obj.detailDisp = prodEle.select("table").get(0).outerHtml();
-			Elements picEles = prodEle.select("li.pic");
-			List<String> picList = new ArrayList<String>();
-			for(Element picEle:picEles){
-				String picUrl = urlPrefix + picEle.select("a").attr("href");
-				if(!picList.contains(picUrl)){
-					picList.add(picUrl);
-				}
-			}
-			obj.pictureList = picList;
-			
-			goodsList.add(obj);
-		}
-		return goodsList;
-	}
-	private String translateTitle(GoodsObject goodsObj) {
-		
-		//return "羽毛球线羽线/" + goodsObj.kataban + "/" + goodsObj.titleEN;
-		//return "羽毛球拍/" + goodsObj.titleEN+ "/" + goodsObj.productPlace;
-		//return "网球球拍/" + goodsObj.titleEN+ "/" + goodsObj.productPlace;
-		//return "羽毛球鞋/" + goodsObj.titleEN + "/" + goodsObj.kataban;
-		return "网球鞋/" + goodsObj.titleEN + "/" + goodsObj.kataban;
-	}
-	
-
-	private String convertToCNY(GoodsObject item) {
-		try {
-			int price = Integer.parseInt(item.priceOrg);
-			int emsFee = 0;
-//			int weight = Integer.parseInt(item.weight);
-//			if (weight < 1000) {
-//				emsFee= 1800;
-//			} else if (weight < 2000) {
-//				emsFee= 3000;
-//			} else if (weight < 3000) {
-//				emsFee= 4000;
-//			} else if (weight < 4000) {
-//				emsFee= 5000;
-//			} else {
-//				emsFee= 6000;
+//	protected List<GoodsObject> scanStrings() throws ClientProtocolException, IOException{
+//		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
+//		String url = "http://www.yonex.co.jp/badminton/strings/";
+//		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
+//		Elements prodEles  = doc.select("div.prodArchive");
+//		for(Element prodEle :prodEles){
+//			GoodsObject obj = new GoodsObject();
+//			obj.titleJP = prodEle.select("span.name_jp").text();
+//			obj.titleEN = prodEle.select("span.name_en").text();
+//			obj.kataban = prodEle.select("span.kataban").text();
+//			obj.title = translateTitle(obj);
+//			obj.priceOrg = prodEle.select("h4.prodPrice").text()
+//					.replace("日本製", "")
+//					.replace("台湾製", "")
+//					.replace("＋税", "")
+//					.replace("¥", "")
+//					.replace(",", "")
+//					.replace(" ", "");
+//			obj.price = addEMSFee(obj);
+//			obj.productPlace = prodEle.select("span.seisan").text();
+//			obj.detailDisp = prodEle.select("table").get(0).outerHtml();
+//			Elements picEles = prodEle.select("li.pic");
+//			List<String> picList = new ArrayList<String>();
+//			for(Element picEle:picEles){
+//				String picUrl = urlPrefix + picEle.select("a").attr("href");
+//				if(!picList.contains(picUrl)){
+//					picList.add(picUrl);
+//				}
 //			}
-			double priceCNY = (price + emsFee) * rate;
-			priceCNY = priceCNY + priceCNY * benefitRate;
-			return String.valueOf(Math.round(priceCNY));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return "XXXXXX";
+//			obj.pictureList = picList;
+//			
+//			goodsList.add(obj);
+//		}
+//		return goodsList;
+//	}
+	private String translateTitle(GoodsObject goodsObj) {
+		if(goodsObj.categoryType == 1){
+			return "羽毛球拍/" + goodsObj.titleEN + "/" + goodsObj.kataban+ "/" + goodsObj.productPlace;
+		}else if(goodsObj.categoryType == 2){
+			return "羽毛球鞋/" + goodsObj.titleEN + "/" + goodsObj.kataban + "/" + goodsObj.productPlace;
+		}else if(goodsObj.categoryType == 3){
+			return "网球球拍/" + goodsObj.titleEN + "/" + goodsObj.kataban+ "/" + goodsObj.productPlace;
+		}else if(goodsObj.categoryType == 4){
+			return "网球鞋/" + goodsObj.titleEN + "/" + goodsObj.kataban + "/" + goodsObj.productPlace;
+		}else {
+			return "";
 		}
+		//return "羽毛球线羽线/" + goodsObj.kataban + "/" + goodsObj.titleEN;
 	}
 
 }

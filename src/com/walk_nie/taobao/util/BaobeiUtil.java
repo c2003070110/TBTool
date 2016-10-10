@@ -42,6 +42,9 @@ public class BaobeiUtil {
                     baobeiList.add(obj);
                 }
             }
+        }catch(Exception e){
+        	System.err.println(e.getMessage());
+        	System.out.println("[ERROR]readInPublishedBaobei.BUT continue...");
         } finally {
             if (br != null)
                 br.close();

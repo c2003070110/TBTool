@@ -17,7 +17,7 @@ public abstract class BaseBaobeiProducer {
 	protected List<BaobeiPublishObject> toUpdatebaobeiList = null;
 	
 	protected String outputFile = "";
-	protected String publishedBaobeiFile = "";
+	//protected String publishedBaobeiFile = "";
 
     protected double currencyRate;
     protected double benefitRate;
@@ -57,10 +57,10 @@ public abstract class BaseBaobeiProducer {
         return (toUpdatebaobeiList!=null && !toUpdatebaobeiList.isEmpty());
     }
 
-    public BaseBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-        this.publishedBaobeiFile = publishedBaobeiFile;
-        return this;
-    }
+//    public BaseBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
+//        this.publishedBaobeiFile = publishedBaobeiFile;
+//        return this;
+//    }
 
     public BaseBaobeiProducer setOutputFile(String outputFile) {
         this.outputFile = outputFile;
