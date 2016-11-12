@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
 
@@ -29,19 +30,19 @@ public class MontBellUtil {
     public static String pictureUrlFmt1 = "http://webshop.montbell.jp/common/images/product/prod_k/k_%s_%s.jpg";
 
     
-    public static void downloadPicture(GoodsObject goods,String outFilePathPrice) {
+    public static void downloadPicture(GoodsObject goods,String outFilePath) {
         
         for(String color : goods.colorList){
             color = color.replaceAll("/", "-");
             String picUrl = String.format(pictureUrlFmt, goods.productId,color);
             String picName = goods.productId + "_" + color;
             try {
-                TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+                TaobaoUtil.downloadPicture(outFilePath, picUrl, picName);
                 goods.pictureNameList.add(picName);
             } catch (Exception ex) {
                 picUrl = String.format(pictureUrlFmt1, goods.productId, color);
                 try {
-                    TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+                    TaobaoUtil.downloadPicture(outFilePath, picUrl, picName);
                     goods.pictureNameList.add(picName);
                 } catch (Exception ex1) {
 
@@ -94,6 +95,14 @@ public class MontBellUtil {
         return isCateogrySnowShoes(categoryId)
                 || isCateogryClimbShoes(categoryId)
                 || isCateogryRuningShoes(categoryId);
+    }
+    
+    public static boolean isCateogryDownClothes(String categoryId) {
+        if ("131000".equals(categoryId) || "137000".equals(categoryId)) {
+            // ダウンジャケット
+            return true;
+        }
+        return false;
     }
     
     public static boolean isCateogryRainClothes(String categoryId) {
@@ -307,5 +316,44 @@ public class MontBellUtil {
     public static String findCategoryId(String href) {
         String queryS = href.substring(href.indexOf("?") + 1, href.length());
         return queryS.split("=")[1];
+    }
+
+    public static void composeBaobeiPictureStatus(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors ) {
+        String picStatus = "";
+        // picture_status 图片状态：2;2;2;2;2;2;2;2;2;2;
+        // 宝贝主图 main picture
+        for(int i=0;i<item.pictureNameList.size();i++){
+            if(i==5) break;
+            picStatus +="2;";
+        }
+		int maxColorLen =  Math.min(item.colorList.size(), taobaoColors.size());
+        // 销售属性图片
+        for (int i = 0; i < maxColorLen; i++) {
+            if(item.pictureNameList.size() == item.colorList.size()){
+                // color picture
+                picStatus +="2;";
+            }
+        }
+        obj.picture_status =picStatus;
+    }
+
+    public static void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors) {
+        String picture = "";
+        // picture　新图片：1128533_dkfs:1:0:|;1128533_mst:1:1:|;1128533_scl:1:2:|;1128533_tq:1:3:|;1128533_umr:1:4:|;1128533_dkfs:2:0:1627207:28320|;1128533_mst:2:0:1627207:28340|;1128533_scl:2:0:1627207:3232479|;1128533_tq:2:0:1627207:3232478|;1128533_umr:2:0:1627207:3232482|;
+        // 宝贝主图 main picture
+        for(int i=0;i<item.pictureNameList.size();i++){
+            if(i==5) break;
+            picture += item.pictureNameList.get(i) + ":1:" + i +":|;";
+        }
+		int maxColorLen =  Math.min(item.colorList.size(), taobaoColors.size());
+        // 销售属性图片
+        for (int i = 0; i < maxColorLen; i++) {
+            if(item.pictureNameList.size() == item.colorList.size()){
+                // color picture
+                picture += item.pictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
+            }
+        }
+
+        obj.picture = picture;
     }
 }

@@ -130,11 +130,11 @@ public class MontbellProductParser extends BaseBaobeiParser {
         File rootPath = new File(MontBellUtil.rootPathName);
         String fileNameFmt = "sizeTable_%s_%d";
         try {
-            Elements aboutSize = rootEl.select("p.aboutSize").select("select").select("option");
-            Elements sizeA = aboutSize.select("a");
-            if (sizeA == null || sizeA.isEmpty()) {
-                return ;
-            }
+//            Elements aboutSize = rootEl.select("p.aboutSize").select("select").select("option");
+//            Elements sizeA = aboutSize.select("a");
+//            if (sizeA == null || sizeA.isEmpty()) {
+//                return ;
+//            }
             String sizeUrl = productSizeUrlPrefix + goodsObj.productId;
             Document docSize = TaobaoUtil.urlToDocumentByUTF8(sizeUrl);
             Elements sizePics = docSize.select("div.innerCont").select("img");
@@ -142,16 +142,14 @@ public class MontbellProductParser extends BaseBaobeiParser {
             for (Element sizePic : sizePics) {
                 String url = MontBellUtil.urlPrefix + sizePic.attr("src");
                 String picName = String.format(fileNameFmt, goodsObj.productId, i++);
-                
-                File picFile = new File(rootPath, picName);
-                if (!picFile.exists()) {
-                    TaobaoUtil.downloadPicture(rootPath.getAbsolutePath(), url, picName);
-                }
+
+				File picFile = TaobaoUtil.downloadPicture(
+						rootPath.getAbsolutePath(), url, picName);
                 goodsObj.sizeTipPics.add(picFile.getAbsolutePath());
                 
                 SizeTipObject obj = new SizeTipObject();
                 obj.productId = goodsObj.productId;
-                obj.pictureFileName = picFile.getAbsolutePath();
+                obj.pictureFileName = picFile.getCanonicalPath();
                 obj.pictureUrl = url;
                 sizeTipList.add(obj);
             }
@@ -457,7 +455,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
                     + " product=" + goodsObj.productId);
             goodsObj.weight = 500;
         }
-        goodsObj.weightExtra = 100;
+        goodsObj.weightExtra = 150;
     }
 
     private void scanItemForPriceJPY(GoodsObject goodsObj) {

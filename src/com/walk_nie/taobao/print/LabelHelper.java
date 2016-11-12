@@ -169,13 +169,28 @@ public class LabelHelper {
         g2d.setFont(font);
         h = PrintUtil.fromCMToPPI_i(4.6);
         g2d.drawString(printInfo.receiverName, PrintUtil.fromCMToPPI_i(13), h);
+        if(StringUtils.isNotEmpty(printInfo.receiverHiddenInfo1)){
+            g2d.drawString(printInfo.receiverHiddenInfo1, PrintUtil.fromCMToPPI_i(21), h);
+        }
+        
         h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
         g2d.drawString(printInfo.receiverAddress1, PrintUtil.fromCMToPPI_i(11.2), h);
+        if(StringUtils.isNotEmpty(printInfo.receiverHiddenInfo2)){
+            g2d.drawString(printInfo.receiverHiddenInfo2, PrintUtil.fromCMToPPI_i(21), h);
+        }
+        
         h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
         g2d.drawString(printInfo.receiverAddress2, PrintUtil.fromCMToPPI_i(11.2), h);
+        if(StringUtils.isNotEmpty(printInfo.receiverHiddenInfo3)){
+            g2d.drawString(printInfo.receiverHiddenInfo3, PrintUtil.fromCMToPPI_i(21), h);
+        }
+
+        h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
         if (StringUtils.isNotEmpty(printInfo.receiverAddress3)) {
-            h += fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
             g2d.drawString(printInfo.receiverAddress3, PrintUtil.fromCMToPPI_i(11.2), h);
+        }
+        if(StringUtils.isNotEmpty(printInfo.receiverHiddenInfo4)){
+            g2d.drawString(printInfo.receiverHiddenInfo4, PrintUtil.fromCMToPPI_i(21), h);
         }
 
         font = new Font("KaiTi", Font.PLAIN, 18);

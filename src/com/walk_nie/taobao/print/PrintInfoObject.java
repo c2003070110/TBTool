@@ -23,7 +23,14 @@ public class PrintInfoObject {
     public String receiverTel;
     public String receiverWWID;
     public String orderNo;
+    
 
+    public String receiverHiddenInfo1;
+    public String receiverHiddenInfo2;
+    public String receiverHiddenInfo3;
+    public String receiverHiddenInfo4;
+    public String receiverHiddenInfo5;
+    
     public List<String> orderNos = Lists.newArrayList();
 
 	// 订单创建时间
