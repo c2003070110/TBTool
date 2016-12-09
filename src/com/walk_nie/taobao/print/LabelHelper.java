@@ -150,6 +150,8 @@ public class LabelHelper {
             g2d.drawString(printInfo.receiverHiddenInfo1, PrintUtil.fromCMToPPI_i(21), h);
         }
         h += fm.getHeight() + fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
+        h += fm.getHeight() + fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
+        h += fm.getHeight() + fm.getHeight() + PrintUtil.fromCMToPPI_i(0.02);
         if(StringUtils.isNotEmpty(printInfo.receiverHiddenInfo2)){
             g2d.drawString(printInfo.receiverHiddenInfo2, PrintUtil.fromCMToPPI_i(21), h);
         }
