@@ -44,7 +44,7 @@ public class MontBellUtil {
     public static void downloadPicture(GoodsObject goods,String outFilePath) {
         
         for(String color : goods.colorList){
-            color = color.replaceAll("/", "-");
+            color = color.replaceAll("/", "-").toLowerCase();
             String picUrl = String.format(pictureUrlFmt, goods.productId,color);
             String picName = goods.productId + "_" + color;
             try {

@@ -16,11 +16,11 @@ public class MontbellFreeceBaobeiCreator  {
 		double benefitRate = 0.05;
 		MontbellFreeceBaobeiProducer db = new MontbellFreeceBaobeiProducer();
 		db
-//                .addScanCategory("122000") // フリースジャケット FLEECE JACKET
-//                .addScanCategory("121000") // 防風性フリース
-//                .addScanCategory("126000") // フリースプルオーバー
-//                .addScanCategory("124000") // フリースベスト
-//                .addScanCategory("123000") // フリースパンツ
+                .addScanCategory("122000") // フリースジャケット FLEECE JACKET
+                .addScanCategory("121000") // 防風性フリース
+                .addScanCategory("126000") // フリースプルオーバー
+                .addScanCategory("124000") // フリースベスト
+                .addScanCategory("123000") // フリースパンツ
                 .addScanCategory("129000") // フリーススカート
                 .addScanCategory("") //
                 
