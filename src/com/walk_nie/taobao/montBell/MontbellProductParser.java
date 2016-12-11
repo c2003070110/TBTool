@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
 import org.eclipse.jetty.util.StringUtil;
@@ -22,6 +23,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
@@ -29,23 +31,14 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MontbellProductParser extends BaseBaobeiParser {
 
-    String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
-
-    String categoryUrlPrefix_fo = "http://webshop.montbell.jp/goods/list_fo.php?category=";
-
-    String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
-
-    String productUrlPrefix_fo = "http://webshop.montbell.jp/goods/disp_fo.php?product_id=";
-
-    String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
-    
     List<SizeTipObject> sizeTipList = null;
+    Map<String,String> enTitleMap = Maps.newHashMap();
   
     public void scanSingleItem(GoodsObject goodsObj) throws IOException {
 
-        String url = productUrlPrefix + goodsObj.productId;
+        String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
         scanSingleItem(goodsObj,url);
-         url = productUrlPrefix_fo + goodsObj.productId;
+         url = MontBellUtil.productUrlPrefix_fo + goodsObj.productId;
         scanSingleItem(goodsObj,url);
     }
 
@@ -68,14 +61,14 @@ public class MontbellProductParser extends BaseBaobeiParser {
         Elements colors = mainRightEle.select("div#size_").select("table.dataTbl")
                 .select("p.colorName");
         for (int i = 0; i < colors.size(); i++) {
-            String color = colors.get(i).text().toLowerCase();
+            String color = colors.get(i).text().toUpperCase();
             if (!goodsObj.colorList.contains(color)) {
                 goodsObj.colorList.add(color);
             }
         }
 
-        screenshotProductDetailDesp(goodsObj);
-        processProductSizeTable(goodsObj,mainRightEle);
+        //screenshotProductDetailDesp(goodsObj);
+        //processProductSizeTable(goodsObj,mainRightEle);
     }
 
     protected void screenshotProductDetailDesp(GoodsObject goodsObj) throws ClientProtocolException,
@@ -84,7 +77,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
         String fileName = String.format(fileNameFmt, goodsObj.productId);
         File despFile = new File(MontBellUtil.rootPathName, fileName);
         if (!despFile.exists()) {
-            String url = productUrlPrefix + goodsObj.productId;
+            String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
             WebDriver webDriver = WebDriverUtil.getWebDriver(url);
             List<WebElement> ele = webDriver.findElements(By.className("ttlType02"));
             if (!ele.isEmpty()) {
@@ -135,7 +128,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 //            if (sizeA == null || sizeA.isEmpty()) {
 //                return ;
 //            }
-            String sizeUrl = productSizeUrlPrefix + goodsObj.productId;
+            String sizeUrl = MontBellUtil.productSizeUrlPrefix + goodsObj.productId;
             Document docSize = TaobaoUtil.urlToDocumentByUTF8(sizeUrl);
             Elements sizePics = docSize.select("div.innerCont").select("img");
             int i= 0;
@@ -164,6 +157,13 @@ public class MontbellProductParser extends BaseBaobeiParser {
             if(StringUtil.isBlank(categoryId)) continue;
             CategoryObject categoryObj = new CategoryObject();
             categoryObj.categoryId = categoryId;
+            scanEnTitleByCategory(categoryObj);
+        }
+        
+        for (String categoryId : categoryIds) {
+            if(StringUtil.isBlank(categoryId)) continue;
+            CategoryObject categoryObj = new CategoryObject();
+            categoryObj.categoryId = categoryId;
             scanItemByCategory(goodsList, categoryObj);
         }
         
@@ -180,7 +180,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
         return filteredProdList;
     }
 
-    private void saveSizeTip(List<GoodsObject> filteredProdList) throws IOException {
+	private void saveSizeTip(List<GoodsObject> filteredProdList) throws IOException {
         if (sizeTipList == null) {
             return;
         }
@@ -236,12 +236,52 @@ public class MontbellProductParser extends BaseBaobeiParser {
         }
     }
 
-    public void scanItemByCategory(List<GoodsObject> goodsList, CategoryObject category) throws IOException {
-        String cateogryUrl = categoryUrlPrefix + category.categoryId;
-        scanItemByCategory(goodsList, category, cateogryUrl);
+    private void scanEnTitleByCategory(
+			CategoryObject categoryObj) throws ClientProtocolException, IOException {
+        String cateogryUrl = MontBellUtil.categoryUrlPrefix_en + categoryObj.categoryId;
+        Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
+        scanEnTitleByCategory(doc, categoryObj);
+        Elements pages = doc.select("div.resultArea").select("div.leftArea").select("p");
+        int minP = 3;
+        if (pages.size() > minP) {
+            for (int i = minP; i < pages.size() - 1; i++) {
+                String pagedCategoryUrl = cateogryUrl + "&page=" + (i - 1);
+                Document docPage = TaobaoUtil.urlToDocumentByUTF8(pagedCategoryUrl);
+                scanEnTitleByCategory(docPage, categoryObj);
+            }
+        }
+		
+	}
+
+    private void scanEnTitleByCategory(Document doc,
+			CategoryObject categoryObj) {
+
+        Elements goods = doc.select("div.unit");
+        for (Element goodsElement : goods) {
+            Elements ttl = goodsElement.select(".ttlType03");
+            String title = ttl.text();
+            title = title.replaceAll(" W'S", "");
+            title = title.replaceAll(" M'S", "");
+            title = title.replaceAll(" K'S", "");
+            title = title.replaceAll(" MEN'S", "");
+            title = title.replaceAll(" WOMEN'S", "");
+            title = title.replaceAll(" KID'S", "");
+            title = title.replaceAll(" FLEECE", "");
+            title = title.replaceAll(" JACKET", "茄克");
+            title = title.replaceAll(" SHIRT", "T恤");
+
+            Elements desp = goodsElement.select(".description").select("p");
+            String productId = desp.get(1).text().trim().replace("No. #", "");
+            enTitleMap.put(productId, title);
+        }
+	}
+
+	public void scanItemByCategory(List<GoodsObject> goodsList, CategoryObject categoryObj) throws IOException {
+        String cateogryUrl = MontBellUtil.categoryUrlPrefix + categoryObj.categoryId;
+        scanItemByCategory(goodsList, categoryObj, cateogryUrl);
         // outlet
-        cateogryUrl = categoryUrlPrefix_fo + category.categoryId;
-        scanItemByCategory(goodsList, category, cateogryUrl);
+        cateogryUrl = MontBellUtil.categoryUrlPrefix_fo + categoryObj.categoryId;
+        scanItemByCategory(goodsList, categoryObj, cateogryUrl);
     }
 
     protected void scanItemByCategory(List<GoodsObject> goodsList, CategoryObject category, String cateogryUrl)
@@ -249,8 +289,9 @@ public class MontbellProductParser extends BaseBaobeiParser {
         Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
         scanItemByCategory(doc, goodsList, category);
         Elements pages = doc.select("div.resultArea").select("div.leftArea").select("p");
-        if (pages.size() > 6) {
-            for (int i = 3; i < pages.size() - 6; i++) {
+        int minP = 3;
+        if (pages.size() > minP) {
+            for (int i = minP; i < pages.size() - 1; i++) {
                 String pagedCategoryUrl = cateogryUrl + "&page=" + (i - 1);
                 Document docPage = TaobaoUtil.urlToDocumentByUTF8(pagedCategoryUrl);
                 scanItemByCategory(docPage, goodsList, category);
@@ -267,6 +308,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
             Elements ttl = goodsElement.select(".ttlType03");
             goodsObj.titleOrg = ttl.text();
+            
             //goodsObj.goodTitleCN = translateTitle(goodsObj, ttl.text());
 
             String gender = ttl.select("img").attr("alt");
@@ -279,6 +321,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
             
             String productId = desp.get(1).text().trim().replace("品番", "");
             goodsObj.productId = productId.replace("#", "").trim();
+            
+            goodsObj.titleEn = this.enTitleMap.get(goodsObj.productId);
 
             goodsObj.brand = desp.get(2).text().replace("ブランド", "").trim();
             if (!goodsObj.brand.equals("モンベル")) {
@@ -484,7 +528,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 //        }
 //        goodsObj.sizeList = rslt;
 //    }
-
+//
 //    private void scanItemForColor(GoodsObject goodsObj, Element good) {
 //
 //        List<String> rslt = new ArrayList<String>();
@@ -495,17 +539,22 @@ public class MontbellProductParser extends BaseBaobeiParser {
 //            return;
 //        }
 //
-//        String itemId = goodsObj.productId;
-//        for (int i = 1; i < color.size(); i++) {
-//            String tcolorS = color.get(i).select("a").attr("onclick");
-//            if (tcolorS.indexOf("s_" + itemId) > 0) {
-//                String tc = tcolorS.substring(tcolorS.indexOf("s_" + itemId)
-//                        + ("s_" + itemId).length() + 1);
-//                String trueS = tc.substring(0, tc.indexOf("."));
-//                rslt.add(trueS);
-//            } else {
-//                rslt.add("-");
-//            }
+//        //String itemId = goodsObj.productId;
+//        for (int i = 0; i < color.size(); i++) {
+//        	Elements pic = color.get(i).select("img");
+//			if (pic == null || pic.isEmpty()) {
+//				continue;
+//			}
+//			rslt.add(pic.get(0).attr("alt"));
+////            String tcolorS = color.get(i).select("a").attr("onclick");
+////            if (tcolorS.indexOf("s_" + itemId) > 0) {
+////                String tc = tcolorS.substring(tcolorS.indexOf("s_" + itemId)
+////                        + ("s_" + itemId).length() + 1);
+////                String trueS = tc.substring(0, tc.indexOf("."));
+////                rslt.add(trueS);
+////            } else {
+////                rslt.add("-");
+////            }
 //        }
 //        goodsObj.colorList = rslt;
 //    }

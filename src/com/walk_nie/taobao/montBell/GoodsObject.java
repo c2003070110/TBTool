@@ -8,6 +8,7 @@ public class GoodsObject {
 	public CategoryObject cateogryObj ;
 	public String titleOrg;
     public String titleCN;
+    public String titleEn;
 	public String genderOrg;
 	public String gender;
 	public String priceJPY;

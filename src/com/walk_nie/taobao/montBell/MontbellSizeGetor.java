@@ -27,10 +27,10 @@ import com.beust.jcommander.internal.Maps;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MontbellSizeGetor  {
-	private static String urlPrefix = "http://webshop.montbell.jp";
-	private static String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
-	private static String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
-	private static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
+	//private static String urlPrefix = "http://webshop.montbell.jp";
+	//private static String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
+	//private static String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
+	//private static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
 	private static Map<String,String> sizePictureMap = Maps.newHashMap();
 	private static List<String> sizePictureList = Lists.newArrayList();
 
@@ -87,7 +87,7 @@ public class MontbellSizeGetor  {
 		int i = 0;
 		for (String picSrc : sizePictureList) {
 			String picName = "MontBell_sizeTable_" + i;
-			TaobaoUtil.downloadPicture("MontBell_sizeTable", urlPrefix + picSrc, picName);
+			TaobaoUtil.downloadPicture("MontBell_sizeTable", MontBellUtil.urlPrefix + picSrc, picName);
 			System.out.println("map.put(\"" + picSrc +"\"," + "\""+picName+"\");");
 			i++;
 		}
@@ -96,11 +96,11 @@ public class MontbellSizeGetor  {
 
 	protected static void scanSize(List<GoodsObject> goodsList) throws ClientProtocolException, IOException {
 		for (GoodsObject goods : goodsList) {
-			String url = productUrlPrefix  + goods.productId;
+			String url = MontBellUtil.productUrlPrefix  + goods.productId;
 			Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
 			Elements elesSize = doc.select("p.aboutSize").select("a");
 			if(elesSize.size() !=0){
-				String sizeUrl = productSizeUrlPrefix  + goods.productId;
+				String sizeUrl = MontBellUtil.productSizeUrlPrefix  + goods.productId;
 				Document docSize = TaobaoUtil.urlToDocumentByUTF8(sizeUrl);
 				Elements sizePics = docSize.select("div.innerCont").select("img");
 				int i = 0;
@@ -118,7 +118,7 @@ public class MontbellSizeGetor  {
 
 	protected static void scanItem(List<GoodsObject> goodsList,
 			CategoryObject category) throws ClientProtocolException, IOException {
-		String cateogryUrl = categoryUrlPrefix + category.categoryId;
+		String cateogryUrl = MontBellUtil.categoryUrlPrefix + category.categoryId;
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
 		Elements goods = doc.select("div.unit");
 		for (Element goodsElement : goods) {

@@ -29,6 +29,17 @@ public class MontBellUtil {
     public static String pictureUrlFmt = "http://webshop.montbell.jp/common/images/product/prod_k/m_k_%s_%s.jpg";
     public static String pictureUrlFmt1 = "http://webshop.montbell.jp/common/images/product/prod_k/k_%s_%s.jpg";
 
+	public static String categoryUrlPrefix = "http://webshop.montbell.jp/goods/list.php?category=";
+
+	public static String categoryUrlPrefix_en = "http://en.montbell.jp/products/goods/list.php?category=";
+
+    public static String categoryUrlPrefix_fo = "http://webshop.montbell.jp/goods/list_fo.php?category=";
+
+    public static String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
+
+    public static String productUrlPrefix_fo = "http://webshop.montbell.jp/goods/disp_fo.php?product_id=";
+
+    public static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
     
     public static void downloadPicture(GoodsObject goods,String outFilePath) {
         
@@ -162,7 +173,7 @@ public class MontBellUtil {
     }
     
     public static boolean isCateogryFreece2(String categoryId) {
-        if ("123000".equals(categoryId)) {
+        if ("123000".equals(categoryId)|| "129000".equals(categoryId)) {
             // フリースパンツ 抓毛裤
             return true;
         }
@@ -355,5 +366,114 @@ public class MontBellUtil {
         }
 
         obj.picture = picture;
+    }
+
+
+    public static  void composeBaobeiTaobaoCategory(GoodsObject item,
+            BaobeiPublishObject baobei) {
+        String categoryId = baobei.cid;
+        String prodCId = item.cateogryObj.categoryId;
+        // TODO
+        if (MontBellUtil.isCateogryDownClothes(prodCId) ) {
+        	//羽绒衣|裤
+            categoryId = "50014798";
+        }
+        if (MontBellUtil.isCateogryRainClothes(prodCId) ) {
+            // レインウェア 户外雨衣
+            categoryId = "124208012";
+        }
+        if (MontBellUtil.isCateogrySoftShell1(prodCId)
+                || MontBellUtil.isCateogryHardShell1(prodCId)) {
+            // ソフトシェルジャケット + ハードシェル>ジャケット 冲锋衣
+            categoryId = "50014785";
+        }
+        if (MontBellUtil.isCateogrySoftShell2(prodCId)
+                || MontBellUtil.isCateogryHardShell2(prodCId)) {
+            // ソフトシェルパンツ + ハードシェル>パンツ 冲锋裤
+            categoryId = "50014785";
+        }
+        if (MontBellUtil.isCateogryFreece1(prodCId) ) {
+            // フリース 抓绒衣 抓绒衣
+            categoryId = "50014787";
+        }
+        if (MontBellUtil.isCateogryFreece2(prodCId) ) {
+            // フリースパンツ 抓绒裤 
+            categoryId = "50014787";
+        } 
+        if (MontBellUtil.isCateogryTShirt(prodCId) ) {
+            // Tシャツ（半袖/長袖）
+            categoryId = "50013932";
+        } 
+        if (MontBellUtil.isCateogryPack(prodCId) ) {
+            // 大型ザック
+            categoryId = "";
+        } 
+        baobei.cid =  categoryId;
+    }
+
+    public static void composeBaobeiSubtitle(GoodsObject item,BaobeiPublishObject baobei) {
+        baobei.subtitle =  "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleOrg + "\"";
+    }
+
+    public static  void composeBaobeiTitle(GoodsObject item,
+            BaobeiPublishObject baobei) {
+        String title = "\"日本直邮";
+        title += " " + item.titleCN ;
+        title += " MontBell";
+        if(!StringUtil.isBlank(item.titleEn)){
+            title += " " + item.titleEn ;
+        }
+        title += " #" + item.productId;
+        if(!StringUtil.isBlank(item.gender)){
+            title += " " + item.gender;
+        }
+//        String suffix = "/包邮";
+//        if (title.length() + suffix.length() < 60) {
+//            title += suffix;
+//        }
+        baobei.title =  title + "\"";
+    }
+    public static  void composeBaobeiMyCategory(GoodsObject item,
+            BaobeiPublishObject baobei) {
+
+        String categoryId = baobei.seller_cids;
+        String prodCId = item.cateogryObj.categoryId;
+        // TODO
+        if (MontBellUtil.isCateogryDownClothes(prodCId) ) {
+        	//羽绒衣|裤
+            categoryId = "1184361986";
+        }
+        
+        if (MontBellUtil.isCateogryRainClothes(prodCId) ) {
+            // レインウェア 户外雨衣
+            categoryId = "1184361988";
+        }
+        if (MontBellUtil.isCateogrySoftShell1(prodCId)
+                || MontBellUtil.isCateogryHardShell1(prodCId)) {
+            // ソフトシェルジャケット + ハードシェル>ジャケット 冲锋衣
+            categoryId = "1184361987";
+        }
+        if (MontBellUtil.isCateogrySoftShell2(prodCId)
+                || MontBellUtil.isCateogryHardShell2(prodCId)) {
+            // ソフトシェルパンツ + ハードシェル>パンツ 冲锋裤
+            categoryId = "1184361987";
+        }
+        if (MontBellUtil.isCateogryFreece1(prodCId) ) {
+            // フリース 抓绒衣 抓绒衣
+            categoryId = "1184361987";
+        }
+        if (MontBellUtil.isCateogryFreece2(prodCId) ) {
+            // フリースパンツ 抓绒裤 
+            categoryId = "1184361987";
+        } 
+        if (MontBellUtil.isCateogryTShirt(prodCId) ) {
+            // Tシャツ（半袖/長袖）
+            categoryId = "1184361987";
+        } 
+        if (MontBellUtil.isCateogryPack(prodCId) ) {
+            // 大型ザック
+            categoryId = "";
+        } 
+        baobei.seller_cids =  categoryId;
     }
 }
