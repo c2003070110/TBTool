@@ -34,5 +34,11 @@ public abstract class BaseBaobeiParser {
         toUpdatebaobeiList = baobeiList;
         return this;
     }
+    
+    protected List<BaobeiPublishObject> publishedbaobeiList;
+    public BaseBaobeiParser setPublishedbaobeiList(List<BaobeiPublishObject> baobeiList){
+    	publishedbaobeiList = baobeiList;
+        return this;
+    }
    
 }

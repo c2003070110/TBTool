@@ -18,7 +18,7 @@ import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer{
+public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
     
     private List<String> scanCategoryIds = Lists.newArrayList();
     private List<String> taobaoColors = Lists.newArrayList();
@@ -53,9 +53,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer{
             if(scanCategoryIds.isEmpty()){
                 
             }else{
-            	MontbellProductParser parser = new MontbellProductParser();
-            	parser.setPublishedbaobeiList(publishedbaobeiList);
-                itemIdList = parser.scanItem(scanCategoryIds);    
+                itemIdList = new MontbellProductParser().scanItem(scanCategoryIds);    
             }
             if (itemIdList.isEmpty())
                 return;
@@ -69,7 +67,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer{
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             
             for (GoodsObject obj : itemIdList) {
-                MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+                //MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
             }
             String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
             for (GoodsObject obj : itemIdList) {
@@ -256,7 +254,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer{
         return "\"" + detailSB.toString() +sizeTips.toString()+ extraMiaoshu +extraMiaoshu1+ "\"";
     }
 
-    public MontbellFreeceBaobeiProducer addScanCategory(String scanCategoryId) {
+    public MontbellDownBaobeiProducer addScanCategory(String scanCategoryId) {
 
         this.scanCategoryIds.add(scanCategoryId);
         return this;

@@ -25,6 +25,7 @@ import org.openqa.selenium.WebElement;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
+import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
@@ -67,8 +68,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
             }
         }
 
-        screenshotProductDetailDesp(goodsObj);
-        processProductSizeTable(goodsObj,mainRightEle);
+        //screenshotProductDetailDesp(goodsObj);
+        //processProductSizeTable(goodsObj,mainRightEle);
     }
 
     protected void screenshotProductDetailDesp(GoodsObject goodsObj) throws ClientProtocolException,
@@ -166,12 +167,12 @@ public class MontbellProductParser extends BaseBaobeiParser {
             categoryObj.categoryId = categoryId;
             scanItemByCategory(goodsList, categoryObj);
         }
-        
-        for (GoodsObject goodsObj : goodsList) {
-            scanSingleItem(goodsObj);
-        }
 
         List<GoodsObject> filteredProdList = filter(goodsList);
+        
+        for (GoodsObject goodsObj : filteredProdList) {
+            scanSingleItem(goodsObj);
+        }
         
         translate(filteredProdList);
 
@@ -217,7 +218,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
         List<GoodsObject> filterdList = Lists.newArrayList();
         List<String> productId = Lists.newArrayList();
         for(GoodsObject prod :prodList){
-            if(!productId.contains(prod.productId)){
+			if (!productId.contains(prod.productId) && !isPublished(prod)) {
                 productId.add(prod.productId);
                 filterdList.add(prod);
             }
@@ -225,7 +226,29 @@ public class MontbellProductParser extends BaseBaobeiParser {
         return filterdList;
     }
 
-    private void translate(List<GoodsObject> prodList) {
+    private boolean isPublished(GoodsObject prod) {
+    	if(publishedbaobeiList==null){
+    		return false;
+    	}if(publishedbaobeiList.isEmpty()){
+    		return false;
+    	}
+    	for(BaobeiPublishObject baobeiObj:publishedbaobeiList){
+    		String publisedProductId = "";
+			String outer_id = baobeiObj.outer_id.replace("\"", "");
+			if (outer_id.startsWith("MTBL_")) {
+				String[] split = outer_id.split("-");
+				publisedProductId =split[split.length-1];
+			}else{
+				publisedProductId =outer_id;
+			}
+			if(publisedProductId.equals(prod.productId)){
+				return true;
+			}
+    	}
+		return false;
+	}
+
+	private void translate(List<GoodsObject> prodList) {
         for(GoodsObject prod :prodList){
             prod.titleCN = translateTitle(prod);
 

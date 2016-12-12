@@ -15,6 +15,7 @@ public abstract class BaseBaobeiProducer {
 
 	// for update
 	protected List<BaobeiPublishObject> toUpdatebaobeiList = null;
+    protected List<BaobeiPublishObject> publishedbaobeiList = null;
 	
 	protected String outputFile = "";
 	//protected String publishedBaobeiFile = "";
@@ -51,6 +52,10 @@ public abstract class BaseBaobeiProducer {
     
     public BaseBaobeiProducer setBenefitRate(double benefitRate) {
         this.benefitRate = benefitRate;
+        return this;
+    }
+    public BaseBaobeiProducer setPublishedbaobeiList(List<BaobeiPublishObject> baobeiList){
+    	publishedbaobeiList = baobeiList;
         return this;
     }
     protected boolean isUpdateMode(){
