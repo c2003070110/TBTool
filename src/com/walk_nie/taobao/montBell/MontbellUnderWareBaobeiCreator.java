@@ -23,10 +23,10 @@ public class MontbellUnderWareBaobeiCreator  {
 		//
 		double currencyRate = 0.061 + 0.004;
 		double benefitRate = 0.08;
-		MontbellFreeceBaobeiProducer db = new MontbellFreeceBaobeiProducer();
+		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
 		db
-                .addScanCategory("71300") //  
-                .addScanCategory("71400") //  
+                .addScanCategory("71300") //  アンダーシャツ
+                //.addScanCategory("71400") //  タイツ
                 .addScanCategory("") // 
                 .addScanCategory("") // 
                 

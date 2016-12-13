@@ -201,7 +201,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer{
     private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
         // ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
-        String inputValues = "\"montbell,"+item.productId+","+item.priceCNY+",";
+        String inputValues = "\"montbell,"+item.productId+","+obj.price+",";
         for(int i =0;i<item.colorList.size();i++){
             if(i>=taobaoColors.size())break;
             inputValues +=item.colorList.get(i) +  "颜色分类;";

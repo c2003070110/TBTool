@@ -87,6 +87,20 @@ public class MontBellUtil {
             return "XXXXXX";
         }
     }
+
+    public static String convertToCNYNoneEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
+        String priceStr = item.priceJPY;
+        try {
+            int price = Integer.parseInt(priceStr);
+            long priceTax  = Math.round(price*1.08);
+            double priceCNY = (priceTax ) * curencyRate;
+            priceCNY = priceCNY + priceCNY * benefitRate;
+            return String.valueOf(Math.round(priceCNY));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "XXXXXX";
+        }
+    }
     public static boolean isCateogryClothes(String categoryId) {
         return isCateogryRainClothes(categoryId)
                 || isCateogrySoftShell1(categoryId)
