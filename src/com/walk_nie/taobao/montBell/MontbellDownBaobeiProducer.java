@@ -23,13 +23,13 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
     private List<String> scanCategoryIds = Lists.newArrayList();
     private List<String> taobaoColors = Lists.newArrayList();
     {
-//        taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");
-//        taobaoColors.add("-1004");taobaoColors.add("-1005");taobaoColors.add("-1006");
-//        taobaoColors.add("-1007");taobaoColors.add("-1008");taobaoColors.add("-1009");
-//        taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
-        taobaoColors.add("3741675");taobaoColors.add("3574624");taobaoColors.add("3579132");
-        taobaoColors.add("3614432");taobaoColors.add("28635738");taobaoColors.add("28635737");
-        taobaoColors.add("7928402");taobaoColors.add("85186009");taobaoColors.add("366446425");
+        taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");
+        taobaoColors.add("-1004");taobaoColors.add("-1005");taobaoColors.add("-1006");
+        taobaoColors.add("-1007");taobaoColors.add("-1008");taobaoColors.add("-1009");
+        taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
+//        taobaoColors.add("3741675");taobaoColors.add("3574624");taobaoColors.add("3579132");
+//        taobaoColors.add("3614432");taobaoColors.add("28635738");taobaoColors.add("28635737");
+//        taobaoColors.add("7928402");taobaoColors.add("85186009");taobaoColors.add("366446425");
     }
 //    private List<String> taobaoSizes = Lists.newArrayList();
 //    {
@@ -53,7 +53,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
             if(scanCategoryIds.isEmpty()){
                 
             }else{
-                itemIdList = new MontbellProductParser().scanItem(scanCategoryIds);    
+            	MontbellProductParser parer = new MontbellProductParser();
+            	parer.setPublishedbaobeiList(this.publishedbaobeiList);
+                itemIdList = parer.scanItem(scanCategoryIds);    
             }
             if (itemIdList.isEmpty())
                 return;
@@ -67,7 +69,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             
             for (GoodsObject obj : itemIdList) {
-                //MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+                MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
             }
             String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
             for (GoodsObject obj : itemIdList) {
@@ -98,11 +100,11 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         BaobeiUtil.setBaobeiCommonInfo(obj);
 
         // 宝贝名称
-        MontBellUtil.composeBaobeiTitle(item,obj);
+        composeBaobeiTitle(item,obj);
         // 宝贝类目
-        MontBellUtil.composeBaobeiTaobaoCategory(item,obj);
+        obj.cid =  "50014798";
         // 店铺类目
-        MontBellUtil.composeBaobeiMyCategory(item, obj);
+        obj.seller_cids =  "1184361986";
         // 省
         obj.location_state = "日本";
         // 宝贝价格
@@ -151,6 +153,24 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
+    private    void composeBaobeiTitle(GoodsObject item,
+            BaobeiPublishObject baobei) {
+        String title = "\"日本直邮";
+        title += " " + item.titleCN ;
+        title += " MontBell 羽绒衣裤";
+        if(!StringUtil.isBlank(item.titleEn)){
+            title += " " + item.titleEn ;
+        }
+        title += " #" + item.productId;
+        if(!StringUtil.isBlank(item.gender)){
+            title += " " + item.gender;
+        }
+//        String suffix = "/包邮";
+//        if (title.length() + suffix.length() < 60) {
+//            title += suffix;
+//        }
+        baobei.title =  title + "\"";
+    }
 	private void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
         // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
         String prodCId = item.cateogryObj.categoryId;
@@ -164,9 +184,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
 //        }
 //        cateProps += "122216608:29923;";
         // ダウンジャケット
-        //cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
+        cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
         // freece
-        cateProps += "20000:6217823;13021751:3262315;6103476:3231061;122216608:29923;21548:38488;";
+        //cateProps += "20000:6217823;13021751:3262315;6103476:3231061;122216608:29923;21548:38488;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -199,7 +219,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
     private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
         // ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
-        String inputValues = "\"montbell,"+item.productId+","+item.priceCNY+",";
+        String inputValues = "\"montbell,"+item.productId+","+obj.price+",";
         for(int i =0;i<item.colorList.size();i++){
             if(i>=taobaoColors.size())break;
             inputValues +=item.colorList.get(i) +  "颜色分类;";

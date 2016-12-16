@@ -25,8 +25,18 @@ public class MontbellUnderWareBaobeiCreator  {
 		double benefitRate = 0.08;
 		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
 		db
-                .addScanCategory("71300") //  アンダーシャツ
-                //.addScanCategory("71400") //  タイツ
+//                .addScanCategory("71300") //  アンダーシャツ
+//                .addScanCategory("71400") //  タイツ
+                .addScanCategory("75200") // スーパーメリノウール（厚手／エクスペディション）
+                .addScanCategory("75100") // スーパーメリノウール（中厚手／ミドルウエイト）
+                .addScanCategory("75000") // スーパーメリノウール（薄手／ライトウエイト）
+                .addScanCategory("71200") // ジオライン（厚手／エクスペディション）
+                .addScanCategory("71100") // ジオライン（中厚手／ミドルウエイト）
+                .addScanCategory("71000") // ジオライン（薄手／ライトウエイト）
+                .addScanCategory("") // 
+                .addScanCategory("") // 
+                .addScanCategory("") // 
+                .addScanCategory("") // 
                 .addScanCategory("") // 
                 .addScanCategory("") // 
                 

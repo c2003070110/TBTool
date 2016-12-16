@@ -68,8 +68,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
             }
         }
 
-        //screenshotProductDetailDesp(goodsObj);
-        //processProductSizeTable(goodsObj,mainRightEle);
+        screenshotProductDetailDesp(goodsObj);
+        processProductSizeTable(goodsObj,mainRightEle);
     }
 
     protected void screenshotProductDetailDesp(GoodsObject goodsObj) throws ClientProtocolException,

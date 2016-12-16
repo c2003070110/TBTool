@@ -14,7 +14,7 @@ public class FileExtensionConverter {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		String path = "C:/Users/niehp/Google ドライブ/git/TbTool/out/montBell_freece_baobei_2016_12_11_03_50_27";
+		String path = "C:/Users/niehp/Google ドライブ/git/TbTool/out/montBell_underware_baobei_2016_12_14_16_11_16";
 		final String extensionFrom = "jpg";
 		final String extensionTo = "tbi";
 		final boolean doReversa = false;

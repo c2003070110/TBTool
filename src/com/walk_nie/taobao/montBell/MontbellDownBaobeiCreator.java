@@ -15,7 +15,7 @@ public class MontbellDownBaobeiCreator  {
 			IOException {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
-		String outputFile = "out/montBell_freece_baobei_%s.csv";
+		String outputFile = "out/montBell_down_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -23,7 +23,7 @@ public class MontbellDownBaobeiCreator  {
 		//
 		double currencyRate = 0.061 + 0.004;
 		double benefitRate = 0.05;
-		MontbellFreeceBaobeiProducer db = new MontbellFreeceBaobeiProducer();
+		MontbellDownBaobeiProducer db = new MontbellDownBaobeiProducer();
 		db
                 .addScanCategory("131000") // ダウンジャケット
                 .addScanCategory("137000") // ダウンジャケット（軽量シリーズ）
