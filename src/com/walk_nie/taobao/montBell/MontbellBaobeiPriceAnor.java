@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
@@ -17,11 +19,17 @@ public class MontbellBaobeiPriceAnor  {
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
 
-		String outputFile = "out/montBell_underware_baobei_%s.csv";
-		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
+		String outputPath = "out/montBell_price";
+		String publishedBaobeiFile = "C:/Users/niehp/Google ドライブ/taobao-niehtjp/montbell/montbell-down-20161217.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
+		
+		File root = new File(outputPath);
+		if(!root.exists()){
+			root.mkdir();
+		}
+        String fileNameFmt = "%s-%s.png";
 		for (BaobeiPublishObject baobeiObj : baobeiList) {
 			String publisedProductId = "";
 			String outer_id = baobeiObj.outer_id.replace("\"", "");
@@ -31,34 +39,15 @@ public class MontbellBaobeiPriceAnor  {
 			} else {
 				publisedProductId = outer_id;
 			}
+			String fileNm = String.format(fileNameFmt, publisedProductId , baobeiObj.price);
 			String searchUrl = String.format(taobaoUrl,publisedProductId);
 			WebDriver webDriver = WebDriverUtil.getWebDriver(searchUrl);
-		}
-		//
-		double currencyRate = 0.061 + 0.004;
-		double benefitRate = 0.08;
-		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
-		db
-//                .addScanCategory("71300") //  アンダーシャツ
-//                .addScanCategory("71400") //  タイツ
-                .addScanCategory("75200") // スーパーメリノウール（厚手／エクスペディション）
-                .addScanCategory("75100") // スーパーメリノウール（中厚手／ミドルウエイト）
-                .addScanCategory("75000") // スーパーメリノウール（薄手／ライトウエイト）
-                .addScanCategory("71200") // ジオライン（厚手／エクスペディション）
-                .addScanCategory("71100") // ジオライン（中厚手／ミドルウエイト）
-                .addScanCategory("71000") // ジオライン（薄手／ライトウエイト）
-                .addScanCategory("") // 
-                .addScanCategory("") // 
-                .addScanCategory("") // 
-                .addScanCategory("") // 
-                .addScanCategory("") // 
-                .addScanCategory("") // 
-                
-                .setOutputFile(outputFile)
-                .setCurrencyRate(currencyRate)
-                .setBenefitRate(benefitRate)
-                .setPublishedbaobeiList(baobeiList)
-                .process();
+			List<WebElement> reslt = webDriver.findElements(By.id("list-itemList"));
+			File despFile = new File(root,fileNm);
+			if(!reslt.isEmpty()){
+				  WebDriverUtil.screenShot(webDriver, reslt, despFile.getAbsolutePath());
+			}
+		} 
 
 		System.exit(0);
 	}

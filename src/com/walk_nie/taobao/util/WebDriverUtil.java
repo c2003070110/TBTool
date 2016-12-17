@@ -81,12 +81,16 @@ public class WebDriverUtil  {
             eleWidth = elements.get(elements.size() - 1).getSize().getWidth() ;
         }
         
-        //Crop the entire page screenshot to get only element screenshot
-        BufferedImage eleScreenshot= fullImg.getSubimage(point1.getX(), point1.getY(), eleWidth,
-            eleHeight);
-        String picSuffix = "png";
-        ImageIO.write(eleScreenshot, picSuffix, screenshot);
-        //Copy the element screenshot to disk
-        FileUtils.copyFile(screenshot, new File(saveTo));
+        if(eleWidth != 0  &&  eleHeight!=0 ){
+            //Crop the entire page screenshot to get only element screenshot
+            BufferedImage eleScreenshot= fullImg.getSubimage(point1.getX(), point1.getY(), eleWidth,
+                eleHeight);
+            String picSuffix = "png";
+            ImageIO.write(eleScreenshot, picSuffix, screenshot);
+            //Copy the element screenshot to disk
+            FileUtils.copyFile(screenshot, new File(saveTo));
+        	
+        }
+        
     }
 }
