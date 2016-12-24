@@ -57,6 +57,22 @@ public class MontbellProductParser extends BaseBaobeiParser {
             if (!goodsObj.sizeList.contains(zie)) {
                 goodsObj.sizeList.add(zie);
             }
+            Elements colors = mainRightEle.select("div#size_"+ zie).select("table.dataTbl")
+                    .select("tr");
+            for (int j = 1; j < colors.size(); j++) {
+            	StockObject stock = new StockObject();
+            	Element color = colors.get(i);
+            	stock.colorName = color.select("p.colorName").text();
+            	stock.sizeName= zie;
+            	String stockN = color.select("p.sell").text();
+            	if("在庫あり".equals(stockN)){
+            		stock.isStock = true;
+            	}
+            	if("直営店在庫あり".equals(stockN)){
+            		stock.isStock = true;
+            	}
+            	goodsObj.stockList.add(stock);
+            }
         }
 
         Elements colors = mainRightEle.select("div#size_").select("table.dataTbl")

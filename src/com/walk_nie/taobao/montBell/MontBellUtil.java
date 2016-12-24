@@ -490,4 +490,16 @@ public class MontBellUtil {
         } 
         baobei.seller_cids =  categoryId;
     }
+
+	public static String getStock(GoodsObject item, String colorName, String sizeName) {
+		boolean isStock = false;
+		for (StockObject stockObj : item.stockList) {
+			if (stockObj.colorName.equals(colorName)
+					&& stockObj.sizeName.equals(sizeName)) {
+				isStock = stockObj.isStock;
+				break;
+			}
+		}
+		return isStock ? "999" : "0";
+	}
 }

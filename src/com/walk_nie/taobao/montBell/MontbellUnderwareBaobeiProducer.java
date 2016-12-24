@@ -240,7 +240,9 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 			for (int j = 0; j < item.sizeList.size(); j++) {
 				if (j >= taobaoSizes.size())
 					break;
-				skuProps += obj.price + ":999" + ":" + ":1627207" + ":"
+                String num  = MontBellUtil.getStock(item, taobaoColors.get(i),
+						taobaoSizes.get(j));
+				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";20509:" + taobaoSizes.get(j)
 						+ ";";
 				// skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price +

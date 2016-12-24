@@ -27,6 +27,9 @@ public class GoodsObject {
     //public List<String> pictureUrlList = new ArrayList<String>();
     //public List<String> pictureLocalList = new ArrayList<String>();
 	
+
+	public List<StockObject> stockList = new ArrayList<StockObject>();
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\"");
