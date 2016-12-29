@@ -207,8 +207,8 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
             if(i>=taobaoColors.size())break;
             for (int j = 0; j < item.sizeList.size(); j++) {
                 if(j>=taobaoSizes.size())break;
-                String num  = MontBellUtil.getStock(item, taobaoColors.get(i),
-						taobaoSizes.get(j));
+                String num  = MontBellUtil.getStock(item, item.colorList.get(i),
+                		item.sizeList.get(j));
                 skuProps += obj.price + ":" +  num  + ":" + ":1627207" + ":" + taobaoColors.get(i)
                         + ";20509:" + taobaoSizes.get(j) + ";";
 //                skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)

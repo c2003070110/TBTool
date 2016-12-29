@@ -63,8 +63,9 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 			if (scanCategoryIds.isEmpty()) {
 
 			} else {
-				itemIdList = new MontbellProductParser()
-						.scanItem(scanCategoryIds);
+				MontbellProductParser parser = new MontbellProductParser();
+				parser.scanFOFlag = false;
+				itemIdList = parser.scanItem(scanCategoryIds);
 			}
 			if (itemIdList.isEmpty())
 				return;
@@ -240,8 +241,8 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 			for (int j = 0; j < item.sizeList.size(); j++) {
 				if (j >= taobaoSizes.size())
 					break;
-                String num  = MontBellUtil.getStock(item, taobaoColors.get(i),
-						taobaoSizes.get(j));
+                String num  = MontBellUtil.getStock(item, item.colorList.get(i),
+                		item.sizeList.get(j));
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";20509:" + taobaoSizes.get(j)
 						+ ";";

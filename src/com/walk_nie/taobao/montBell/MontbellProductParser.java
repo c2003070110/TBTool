@@ -31,17 +31,20 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MontbellProductParser extends BaseBaobeiParser {
+	protected boolean scanFOFlag = true;
 
     List<SizeTipObject> sizeTipList = null;
     Map<String,String> enTitleMap = Maps.newHashMap();
   
-    public void scanSingleItem(GoodsObject goodsObj) throws IOException {
+	public void scanSingleItem(GoodsObject goodsObj) throws IOException {
 
-        String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
-        scanSingleItem(goodsObj,url);
-         url = MontBellUtil.productUrlPrefix_fo + goodsObj.productId;
-        scanSingleItem(goodsObj,url);
-    }
+		String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
+		scanSingleItem(goodsObj, url);
+		if (scanFOFlag) {
+			url = MontBellUtil.productUrlPrefix_fo + goodsObj.productId;
+			scanSingleItem(goodsObj, url);
+		}
+	}
 
     public void scanSingleItem(GoodsObject goodsObj,String url) throws IOException {
         Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
@@ -61,7 +64,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
                     .select("tr");
             for (int j = 1; j < colors.size(); j++) {
             	StockObject stock = new StockObject();
-            	Element color = colors.get(i);
+            	Element color = colors.get(j);
             	stock.colorName = color.select("p.colorName").text();
             	stock.sizeName= zie;
             	String stockN = color.select("p.sell").text();
@@ -319,8 +322,11 @@ public class MontbellProductParser extends BaseBaobeiParser {
         String cateogryUrl = MontBellUtil.categoryUrlPrefix + categoryObj.categoryId;
         scanItemByCategory(goodsList, categoryObj, cateogryUrl);
         // outlet
-        cateogryUrl = MontBellUtil.categoryUrlPrefix_fo + categoryObj.categoryId;
-        scanItemByCategory(goodsList, categoryObj, cateogryUrl);
+		if (scanFOFlag) {
+			cateogryUrl = MontBellUtil.categoryUrlPrefix_fo
+					+ categoryObj.categoryId;
+			scanItemByCategory(goodsList, categoryObj, cateogryUrl);
+		}
     }
 
     protected void scanItemByCategory(List<GoodsObject> goodsList, CategoryObject category, String cateogryUrl)
@@ -479,12 +485,12 @@ public class MontbellProductParser extends BaseBaobeiParser {
             // return "男女通用";
         } else if ("Men".equals(gender)) {
             // return "男士";
-            return "男款";
+            return "男";
         } else if ("Women".equals(gender)) {
             // return "女士";
-            return "女款";
+            return "女";
         } else if ("Child".equals(gender)) {
-            return "小孩";
+            return "儿童";
         } else {
             return "";
         }
