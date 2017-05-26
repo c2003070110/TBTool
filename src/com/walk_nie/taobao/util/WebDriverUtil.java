@@ -28,7 +28,7 @@ public class WebDriverUtil  {
 
     public static WebDriver getWebDriver(String url) {
         FirefoxProfile profile = new FirefoxProfile(new File(
-                "C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/nu29zmti.default"));
+                "C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/i5bwa3vd.default"));
 
         if (driver == null) {
             driver = new FirefoxDriver(profile);
