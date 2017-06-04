@@ -25,6 +25,7 @@ public class CodeNotifyMain {
 
 	public void notifyA() throws IOException {
 		File notifyFile = notifyFileReadin();
+		//File notifyFile = new File("C:\\temp\\test\\notify-test.txt");
 		List<String> allRecord = Files.readLines(notifyFile,
 				Charset.forName("UTF-8"));
 
@@ -63,7 +64,9 @@ public class CodeNotifyMain {
 		sb.append("亲 你的票已经准备好了，请前往百度网盘提取。").append("\n");
 		sb.append("下载地址：" + url).append("\n");
 		sb.append("提取密码：" + password).append("\n");
-		sb.append("请及时投票，确认收货，好评。谢谢！");
+		sb.append("请及时投票，确认收货，好评。谢谢！").append("\n");
+		sb.append("==投票晚于本店的发票时间，都不能算废票哦！==").append("\n");
+		sb.append("==务必保护好票码，并且及时投票！===========");
 		return sb.toString();
 	}
 

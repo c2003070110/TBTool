@@ -14,9 +14,9 @@ import org.openqa.selenium.interactions.Actions;
 public class PanBaidu  {
 
     protected  BufferedReader stdReader = null;
-    protected  StringBuffer links = new StringBuffer();
     protected  boolean loopFlag = true;
     
+    protected boolean fetchBreakFlag = false;
 
 	public static void main(String[] args) throws IOException {
 
@@ -38,11 +38,14 @@ public class PanBaidu  {
         	if(!loopFlag){
         		break;
         	}
-            generateHref(driver);
-            System.out.println("Finished on this FOLDER!");
+			try {
+				generateHref(driver);
+				System.out.println("Finished on this FOLDER!");
+			} catch (Exception ignore) {
+				ignore.printStackTrace();
+			}
     	}
     	driver.close();
-    	System.out.println(links);
     }
 
     private WebDriver logon(String user, String pass) throws IOException {
@@ -63,6 +66,7 @@ public class PanBaidu  {
 
 	protected void generateHref(WebDriver driver) throws IOException {
 
+	       StringBuffer links = new StringBuffer();
 		WebElement listRoot = driver.findElement(By.className("vdAfKMb"));
 		List<WebElement> list = listRoot.findElements(By.tagName("dd"));
 		for (int i = 0; i < list.size(); i++) {
@@ -74,6 +78,7 @@ public class PanBaidu  {
 
 			// System.out.println(driver.getPageSource());
 			mywait();
+			if(fetchBreakFlag)break;
 			// System.out.println(driver.getPageSource());
 			WebElement dialogRoot = driver.findElement(By
 					.cssSelector("div[id=\"share\"]"));
@@ -95,6 +100,7 @@ public class PanBaidu  {
 			dialogFoot.findElement(By.className("create")).click();
 
 			mywait();
+			if(fetchBreakFlag)break;
 			// System.out.println(driver.getPageSource());
 
 			dialogRoot = driver
@@ -120,10 +126,11 @@ public class PanBaidu  {
 
 			builder = new Actions(driver);
 			builder.moveToElement(closeBtn).click().build().perform();
-			if (i != list.size() - 1) {
-				//mywait();
-			}
+		
+			mywait();
+			if(fetchBreakFlag)break;
 		}
+    	System.out.println(links);
 	}
     
 	protected void mywait1() throws IOException {
@@ -143,10 +150,14 @@ public class PanBaidu  {
     
 	protected void mywait() throws IOException {
 		while (true) {
-			System.out.print("ready for continue? ENTER");
+			System.out.print("ready for continue? ENTER;N for exit ");
 			String line = getStdReader().readLine().trim();
 			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
 					|| "".equals(line)) {
+				break;
+			}
+			if ("n".equalsIgnoreCase(line)) {
+				fetchBreakFlag = true;
 				break;
 			}
 		}

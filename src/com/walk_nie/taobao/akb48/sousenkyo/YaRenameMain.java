@@ -33,7 +33,8 @@ public class YaRenameMain  {
             String fileName = file.getName().substring(0,idx);
             String newFileName = fileName.replaceAll(" ", "");
             
-			newFileName = prefix + "-" + (cnt++);
+			//newFileName = prefix + "-" + (cnt++);
+			newFileName = prefix + "-" + fileName;
             String extension = file.getName().substring(idx+1);
             System.out.println("[INFO]rename " + fileName +"." + extension + " to " + newFileName+ "." + extension);
             file.renameTo(new File(parentFile,newFileName +"." + extension));
@@ -53,17 +54,17 @@ public class YaRenameMain  {
 			yaId = line;
 			break;
 		}
-		while (true) {
-			System.out.print("input the yahoo seller id :");
-			String line = getStdReader().readLine().trim();
-			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
-					|| "".equals(line)) {
-				continue;
-			}
-			yaSellerId = line.replaceAll("_", "");
-			yaSellerId = line.replaceAll("-", "");
-			break;
-		}
+//		while (true) {
+//			System.out.print("input the yahoo seller id :");
+//			String line = getStdReader().readLine().trim();
+//			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
+//					|| "".equals(line)) {
+//				continue;
+//			}
+//			yaSellerId = line.replaceAll("_", "");
+//			yaSellerId = line.replaceAll("-", "");
+//			break;
+//		}
 		return yaId + "_" + yaSellerId;
 	}
 	private File srcFolderReadin() throws IOException {
