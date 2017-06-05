@@ -6,10 +6,14 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class PanBaidu  {
 
@@ -69,20 +73,49 @@ public class PanBaidu  {
 	       StringBuffer links = new StringBuffer();
 		WebElement listRoot = driver.findElement(By.className("vdAfKMb"));
 		List<WebElement> list = listRoot.findElements(By.tagName("dd"));
+		
 		for (int i = 0; i < list.size(); i++) {
 			WebElement element = list.get(i);
-			Actions builder = new Actions(driver);
-			builder.moveToElement(element).build().perform();
+			// 启动分享Dialog
+			while(true){
+				try{
+					Actions builder = new Actions(driver);
+					builder.moveToElement(element).build().perform();
+					break;
+				}catch(MoveTargetOutOfBoundsException e){
+					element.sendKeys(Keys.PAGE_DOWN);
+				}
+			}
+			
 			element.findElement(By.cssSelector("a[data-button-id=\"b51\"]"))
 					.click();
+			
+			// 等待分享Dialog是否打开
+			WebDriverWait wait1 = new WebDriverWait(driver,10);
+			wait1.until(new ExpectedCondition<Boolean>(){
+				@Override
+				public Boolean apply(WebDriver driver) {
+					while (true){
+						try {
+							driver.findElement(By
+									.cssSelector("div[id=\"share\"]"));
+							return true;
+						} catch (Exception e) {
 
+						}
+					}
+				}
+			});
+			mysleep(1);
 			// System.out.println(driver.getPageSource());
-			mywait();
-			if(fetchBreakFlag)break;
+			//mywait();
+			//if(fetchBreakFlag)break;
 			// System.out.println(driver.getPageSource());
+			
 			WebElement dialogRoot = driver.findElement(By
 					.cssSelector("div[id=\"share\"]"));
 
+			// 取得分享的文件名
 			WebElement dialogHeader = dialogRoot.findElement(By
 					.className("dialog-header"));
 			String fileName = dialogHeader.findElement(By.tagName("h3"))
@@ -95,13 +128,78 @@ public class PanBaidu  {
 
 			WebElement dialogBody = dialogRoot.findElement(By
 					.cssSelector("div[class=\"dialog-body\"]"));
+
+			WebElement shareLink = dialogBody.findElement(
+					By.cssSelector("ul[class=\"tab\"]")).findElements(
+					By.cssSelector("li")).get(0);
+			shareLink.click();
+			mysleep(3);
+
+			wait1.until(new ExpectedCondition<Boolean>() {
+				@Override
+				public Boolean apply(WebDriver driver) {
+					while (true) {
+						try {
+							WebElement dialogRoot = driver.findElement(By
+									.cssSelector("div[id=\"share\"]"));
+							WebElement createBtn = dialogRoot.findElement(
+									By.cssSelector("div[class=\"footer\"]"))
+									.findElement(By.className("create"));
+							if(!createBtn.isDisplayed()){
+								WebElement dialogBody = dialogRoot.findElement(By
+										.cssSelector("div[class=\"dialog-body\"]"));
+								List<WebElement> shareLinks = dialogBody.findElement(
+										By.cssSelector("ul[class=\"tab\"]")).findElements(
+										By.cssSelector("li"));
+								shareLinks.get(1).click();
+								mysleep(1);
+								shareLinks.get(0).click();
+							}
+							return true;
+						} catch (Exception e) {
+
+						}
+					}
+				}
+			});
 			WebElement dialogFoot = dialogRoot.findElement(By
 					.cssSelector("div[class=\"footer\"]"));
 			dialogFoot.findElement(By.className("create")).click();
+			mysleep(4);
 
-			mywait();
-			if(fetchBreakFlag)break;
+			//mywait();
+			//if(fetchBreakFlag)break;
 			// System.out.println(driver.getPageSource());
+
+			wait1.until(new ExpectedCondition<Boolean>() {
+
+				@Override
+				public Boolean apply(WebDriver driver) {
+					while (true) {
+						try {
+							WebElement dialogRoot = driver.findElement(By
+									.cssSelector("div[id=\"share\"]"));
+							WebElement dialogBody = dialogRoot.findElement(By
+									.cssSelector("div[class=\"dialog-body\"]"));
+							WebElement linkInfo = dialogBody
+									.findElement(
+											By.cssSelector("ul[class=\"content\"]"))
+									.findElement(
+											By.cssSelector("li[class=\"share-link\"]"))
+									.findElement(
+											By.cssSelector("div[class=\"link-info\"]"));
+							WebElement url = linkInfo.findElement(
+									By.cssSelector("div[class=\"url\"]"))
+									.findElement(By.tagName("input"));
+							String urlTxt = url.getAttribute("value");
+							return !"".equals(urlTxt);
+						} catch (Exception e) {
+
+						}
+					}
+				}
+			});
+			mysleep(2);
 
 			dialogRoot = driver
 					.findElement(By.cssSelector("div[id=\"share\"]"));
@@ -124,13 +222,29 @@ public class PanBaidu  {
 			links.append(fileName + "\t" + urlTxt + "\t" + passwordTxt).append(
 					"\n");
 
-			builder = new Actions(driver);
+			Actions builder = new Actions(driver);
 			builder.moveToElement(closeBtn).click().build().perform();
-		
-			mywait();
-			if(fetchBreakFlag)break;
+			//if (i % 8 == 7) {
+				//mywait2();
+				//if (fetchBreakFlag)break;
+			//}
 		}
     	System.out.println(links);
+	}
+    
+	protected void mywait2() throws IOException {
+		while (true) {
+			System.out.print("ready for change screnn ? ENTER;N for exit ");
+			String line = getStdReader().readLine().trim();
+			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
+					|| "".equals(line)) {
+				break;
+			}
+			if ("n".equalsIgnoreCase(line)) {
+				fetchBreakFlag = true;
+				break;
+			}
+		}
 	}
     
 	protected void mywait1() throws IOException {
@@ -156,11 +270,16 @@ public class PanBaidu  {
 					|| "".equals(line)) {
 				break;
 			}
-			if ("n".equalsIgnoreCase(line)) {
-				fetchBreakFlag = true;
-				break;
-			}
 		}
+	}
+	protected void mysleep(int second) throws IOException {
+		
+		long now = System.currentTimeMillis();
+		long millis = second * 1000 + now;
+		while(true){
+			if(millis < System.currentTimeMillis())break;
+		}
+		
 	}
 
     public  BufferedReader getStdReader() {

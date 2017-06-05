@@ -27,6 +27,7 @@ public class WebDriverUtil  {
     private static WebDriver driver = null;
 
     public static WebDriver getWebDriver(String url) {
+        System.setProperty("webdriver.gecko.driver", "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
         FirefoxProfile profile = new FirefoxProfile(new File(
                 "C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/i5bwa3vd.default"));
 
