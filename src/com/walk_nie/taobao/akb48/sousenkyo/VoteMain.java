@@ -3,6 +3,8 @@ package com.walk_nie.taobao.akb48.sousenkyo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,31 +28,61 @@ import com.google.common.io.Files;
 public class VoteMain {
 
 	public static BufferedReader stdReader = null;
-	private String screenshotOutRoot = "c:/temp/vote/";
-	private String voteFile = "./shipment/vote.txt";
-	private String candidatesFile = "./shipment/candidateList.txt";
+	protected String screenshotOutRoot = "c:/temp/vote/";
+	private String voteFile = "./vote/vote.txt";
+	private String candidatesFile = "./vote/candidateList.txt";
 
 	public static void main(String[] args) throws IOException {
 
 		VoteMain main = new VoteMain();
-		main.vote();
+		boolean isDemon = false;
+		if(args.length==1){
+			isDemon = args[0].equals("1");
+		}
+		if(args.length==2){
+			main.screenshotOutRoot = args[1];
+		}
+		if (isDemon) {
+			main.demonVote();
+		} else {
+			main.oneTimeVote();
+		}
+	}
+
+	private void oneTimeVote() throws IOException {
+		vote();
+	}
+
+	private void demonVote() throws IOException {
+		long updateTime = System.currentTimeMillis();
+		while (true) {
+			File tempFile0 = new File(voteFile);
+			if (updateTime < tempFile0.lastModified()) {
+				updateTime = tempFile0.lastModified();
+				vote();
+			}
+		}
 	}
 
 	protected void vote() throws IOException {
+
 		File tempFile0 = new File(voteFile);
 		List<String> votes = Files.readLines(tempFile0,
 				Charset.forName("UTF-8"));
 		File tempFile = new File(candidatesFile);
 		List<String> candidates = Files.readLines(tempFile,
 				Charset.forName("UTF-8"));
-
 		Logger.getLogger("org.openqa.selenium").setLevel(
 				java.util.logging.Level.OFF);
 
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
+		if (System.getProperty("webdriver.chrome.driver")==null || "".equals(System.getProperty("webdriver.chrome.driver"))) {
+			System.setProperty("webdriver.chrome.driver",
+					"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
+		}
+		if (System.getProperty("webdriver.gecko.driver")==null || "".equals(System.getProperty("webdriver.gecko.driver"))) {
+			System.setProperty("webdriver.gecko.driver",
+					"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
+		}
 
 		FirefoxOptions opts = new FirefoxOptions().setLogLevel(Level.OFF);
 		DesiredCapabilities capabilities = opts.addTo(DesiredCapabilities
@@ -58,7 +90,7 @@ public class VoteMain {
 		capabilities.setCapability("marionette", true);
 		WebDriver driver = new FirefoxDriver(capabilities);
 		driver.manage().window().setPosition(new Point(10, 10));
-		driver.manage().window().setSize(new Dimension(570, 780));
+		driver.manage().window().setSize(new Dimension(540, 860));
 		// driver.manage().window().maximize() ;
 
 		for (String vote : votes) {
@@ -81,7 +113,7 @@ public class VoteMain {
 				continue;
 			}
 			driver.get(candidatorUrl);
-			String fileNamePrefix = orderNo + "-" + taobaoId + "/"
+			String fileNamePrefix = taobaoId + "(" + orderNo + ")/"
 					+ voteCode[0] + "_" + voteCode[1] + "-" + candidator + "-";
 			driver.findElement(By.name("serial_code_1")).sendKeys(
 					voteCode[0].trim());
@@ -94,16 +126,15 @@ public class VoteMain {
 			submitWE.sendKeys(Keys.PAGE_DOWN);
 			String fileNm = screenshotOutRoot + fileNamePrefix + "-1.jpg";
 			screenShot(driver, fileNm);
-			mysleep(2);
+			mysleep(4);
 			submitWE.click();
 
-			mysleep(1);
-			WebElement submitWE2 = driver.findElement(By
-					.cssSelector("input[type=\"submit\"]"));
-			submitWE2.sendKeys(Keys.PAGE_DOWN);
+			mysleep(3);
+			// WebElement submitWE2 = driver.findElement(By
+			// .cssSelector("input[type=\"submit\"]"));
+			// submitWE2.sendKeys(Keys.PAGE_DOWN);
 			fileNm = screenshotOutRoot + fileNamePrefix + "-2.jpg";
 			screenShot(driver, fileNm);
-			mysleep(1);
 
 		}
 		driver.close();
@@ -127,5 +158,19 @@ public class VoteMain {
 				break;
 		}
 
+	}
+
+	protected String getVotes() throws IOException {
+
+		System.out.print("input voter list ? ENTER for exit");
+		return getStdReader().readLine().trim();
+	}
+
+	public BufferedReader getStdReader() throws UnsupportedEncodingException {
+		if (stdReader == null) {
+			stdReader = new BufferedReader(new InputStreamReader(System.in,
+					"Shift-JIS"));
+		}
+		return stdReader;
 	}
 }

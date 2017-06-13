@@ -19,7 +19,32 @@ public class YaRenameMain  {
 
 	public static void main(String[] args) throws IOException {
 		YaRenameMain main = new YaRenameMain();
-		main.rename();
+		//main.rename();
+		main.rename2();
+	}
+
+	protected void rename2() throws IOException {
+		File srcFolder = srcFolderReadin();
+		File[] files = srcFolder.listFiles();
+		for (File file : files) {
+			if (!file.isDirectory())
+				continue;
+			File[] chldFiles = file.listFiles();
+			String fmt = "%03d";
+			String fName = file.getName();
+			String[] split = fName.split("-");
+			String yaid = split[1];
+			int cnt = 1;
+			for (File jpgF : chldFiles) {
+				File parentFile = jpgF.getParentFile();
+				int idx = jpgF.getName().indexOf(".");
+				String extension = jpgF.getName().substring(idx + 1);
+				String newFileName = yaid + "-" + String.format(fmt, cnt);
+				jpgF.renameTo(new File(parentFile, newFileName + "."
+						+ extension.toLowerCase()));
+				cnt++;
+			}
+		}
 	}
     protected  void rename() throws IOException {
     	File srcFolder = srcFolderReadin();

@@ -45,15 +45,14 @@ public class VerifyPan {
 			String fileName = panArr[0].trim();
 			String url = panArr[1].trim();
 			String pass = panArr[2].trim();
-
 			driver.get(url);
-			mysleep(1);
-//System.out.println(driver.getPageSource());
-			driver.findElement(By.id("accessCode")).sendKeys(pass);
-			driver.findElement(By.id("submitBtn")).findElement(By.tagName("a")).click();
-			mysleep(2);
 			String fileNameWeb = null;
 			try {
+				mysleep(1);
+				//System.out.println(driver.getPageSource());
+							driver.findElement(By.id("accessCode")).sendKeys(pass);
+							driver.findElement(By.id("submitBtn")).findElement(By.tagName("a")).click();
+							mysleep(3);
 				WebElement el = driver.findElement(By
 						.cssSelector("h2[class=\"file-name\"]"));
 				fileNameWeb = el.getAttribute("title");
