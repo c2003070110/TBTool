@@ -203,7 +203,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 //			}
 //			// title += " " + item.titleEn ;
 //		}
-		title += " #" + item.productId;
+		title += " " + item.productId;
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}

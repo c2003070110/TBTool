@@ -538,7 +538,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
             weight = weight.replace(",", "");
         }
         try {
-            goodsObj.weight = Integer.parseInt(weight) * doubleFl;
+            goodsObj.weight = new BigDecimal(weight).intValue() * doubleFl;
         } catch (Exception ex) {
             System.err.println("[ERROR]parse weight!category=" + goodsObj.cateogryObj.categoryId
                     + " product=" + goodsObj.productId);

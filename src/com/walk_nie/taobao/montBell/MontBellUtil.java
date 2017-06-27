@@ -361,7 +361,7 @@ public class MontBellUtil {
                 picStatus +="2;";
             }
         }
-        obj.picture_status =picStatus;
+        obj.picture_status ="\"" + picStatus + "\""  ;
     }
 
     public static void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors) {
@@ -381,7 +381,7 @@ public class MontBellUtil {
             }
         }
 
-        obj.picture = picture;
+        obj.picture = "\"" + picture + "\"" ;
     }
 
 
@@ -434,12 +434,14 @@ public class MontBellUtil {
     public static  void composeBaobeiTitle(GoodsObject item,
             BaobeiPublishObject baobei) {
         String title = "\"日本直邮";
-        title += " " + item.titleCN ;
         title += " MontBell";
+        if(!StringUtil.isBlank(item.titleCN)){
+            title += " " + item.titleEn ;
+        }
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
         }
-        title += " #" + item.productId;
+        title += " " + item.productId;
         if(!StringUtil.isBlank(item.gender)){
             title += " " + item.gender;
         }

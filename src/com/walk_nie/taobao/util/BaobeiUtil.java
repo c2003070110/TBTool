@@ -61,7 +61,7 @@ public class BaobeiUtil {
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">购物须知</h3>");
         miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         miaoshu.append("<ol>");
-        miaoshu.append("<li style=\"padding:10.0px;\">宝贝采购于直营店 OR 官网！加微信（东京太郎 tokyoson）可采购直播。</li>");
+        miaoshu.append("<li style=\"padding:10.0px;\">宝贝采购于直营店 OR 官网！（东京太郎 tokyoson）可采购直播。</li>");
         miaoshu.append("<li style=\"padding:10.0px;\">日本直邮。即日本直发到您府上，无国内中转，是真真正正的日本代购！不是野鸡代购！<span style=\";color:red;font-weight:bold\">100%日本，100%真品。</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 取消订单！！退款！！！</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">店主在日本购入后，<span style=\";color:red;font-weight:bold\">宝贝不能取消！</span>除质量问题，<span style=\";color:red;font-weight:bold\">不接受退换。</span></li>");
@@ -85,7 +85,7 @@ public class BaobeiUtil {
         // 新旧程度;
         obj.stuff_status = "1";
         // 省
-        obj.location_state = "海外";
+        obj.location_state = "\"海外\"";
         // 城市
         obj.location_city = "日本";
         // 出售方式;
@@ -99,7 +99,7 @@ public class BaobeiUtil {
         // 有效期
         obj.valid_thru = "0";
         // 运费承担;
-        obj.freight_payer = "0";
+        obj.freight_payer = "2";
         // 平邮;
         obj.post_fee = "7.09434e-39";
         // EMS;
@@ -113,7 +113,7 @@ public class BaobeiUtil {
         // 放入仓库;
         obj.approve_status = "1";
         // 橱窗推荐
-        obj.has_showcase = "1";
+        obj.has_showcase = "0";
         // 开始时间
         obj.list_time = "";
         // 宝贝描述;
@@ -151,7 +151,7 @@ public class BaobeiUtil {
         // 数字ID;
         obj.num_id = "0";
         // 本地ID
-        obj.local_cid = "1069841847";
+        obj.local_cid = "0";
         // 宝贝分类
         obj.navigation_type = "1";
         // 用户名称;
@@ -159,9 +159,9 @@ public class BaobeiUtil {
         // 宝贝状态;
         obj.syncStatus = "6";
         // 闪电发货;
-        obj.is_lighting_consigment = "56";
+        obj.is_lighting_consigment = "204";
         // 新品
-        obj.is_xinpin = "245";
+        obj.is_xinpin = "242";
         // 食品专项;
         obj.foodparame = "product_date_end:;product_date_start:;stock_date_end:;stock_date_start:";
         // 尺码库;

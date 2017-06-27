@@ -17,22 +17,28 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class WebDriverUtil  {
     // TODO change it to fix your pc
     public final static String chromeDriverPath = "C:/Users/niehp/Google ドライブ/tool/chromedriver.exe";
+    public final static String firefoxDriverPath = "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.17.0-win64/geckodriver.exe";
+    public final static String ieDriverPath = "C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
 
     private static WebDriver driver = null;
 
     public static WebDriver getWebDriver(String url) {
-        System.setProperty("webdriver.gecko.driver", "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
+        System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        System.setProperty("webdriver.ie.driver", ieDriverPath);
         FirefoxProfile profile = new FirefoxProfile(new File(
                 "C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/i5bwa3vd.default"));
 
         if (driver == null) {
-            driver = new FirefoxDriver(profile);
+            //driver = new FirefoxDriver(profile);
+            //driver = new ChromeDriver();
+            driver = new InternetExplorerDriver();
         }
         if (!url.equals(driver.getCurrentUrl())) {
             driver.get(url);
@@ -78,7 +84,7 @@ public class WebDriverUtil  {
             eleWidth = elements.get(2).getSize().getWidth() ;
         } else {
             Point point2 = elements.get(elements.size() - 1).getLocation();
-            eleHeight = point2.getY() - point1.getY();
+            eleHeight = point2.getY() - point1.getY() - elements.get(elements.size() - 1).getSize().getHeight();
             eleWidth = elements.get(elements.size() - 1).getSize().getWidth() ;
         }
         
