@@ -254,6 +254,15 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
     private  String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
         
         StringBuffer detailSB = new StringBuffer();
+        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">拼邮包税</h3>");
+        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+        detailSB.append("<p style=\"text-indent:2.0em;\">鉴于国内海关趋于严厉，本店提供拼邮包税</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税，是指，您下单后，和被人的订单一起，通过包税渠道运回国内，再国内快递到您手</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">费用，根据您的地址，收费有所不同，请咨询。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">不拼单包税的订单，<span style=\";color:red;font-weight:bold\">如发生关税，报关等由您处理，关税由您承担。</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"> 拼单包税的订单，<span style=\";color:red;font-weight:bold\">报关，关税等都有我来处理，承担！</span></p>");
+        detailSB.append("</div>");
+        
         String productInfo = item.detailScreenShotPicFile;
         if(!StringUtil.isBlank(item.detailScreenShotPicFile)){
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
