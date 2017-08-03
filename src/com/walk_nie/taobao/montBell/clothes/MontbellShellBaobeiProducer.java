@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.montBell.clothes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +12,9 @@ import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.montBell.GoodsObject;
+import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.taobao.montBell.MontbellProductParser;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;

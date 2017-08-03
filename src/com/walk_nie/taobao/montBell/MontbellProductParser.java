@@ -31,7 +31,7 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MontbellProductParser extends BaseBaobeiParser {
-	protected boolean scanFOFlag = true;
+	public boolean scanFOFlag = true;
 
     List<SizeTipObject> sizeTipList = null;
     Map<String,String> enTitleMap = Maps.newHashMap();

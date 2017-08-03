@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.montBell.clothes;
 
 import java.io.IOException;
 

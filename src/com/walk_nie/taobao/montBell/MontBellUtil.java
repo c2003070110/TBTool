@@ -431,7 +431,7 @@ public class MontBellUtil {
     }
 
     public static void composeBaobeiSubtitle(GoodsObject item,BaobeiPublishObject baobei) {
-        baobei.subtitle =  "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleOrg + "\"";
+        baobei.subtitle =  "\"日本直邮！100%正品！真正的日本代购！" + item.titleOrg + "\"";
     }
 
     public static  void composeBaobeiTitle(GoodsObject item,
