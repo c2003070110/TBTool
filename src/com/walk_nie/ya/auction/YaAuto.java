@@ -25,7 +25,7 @@ public class YaAuto {
 
 	public void execute() throws IOException {
 		WebDriver driver = logon();
-		mywait();
+		//mywait();
 
 		while (true) {
 			try {
@@ -76,10 +76,14 @@ public class YaAuto {
 	private WebDriver logon() {
 
 		String rootUrl = "https://auctions.yahoo.co.jp/user/jp/show/mystatus";
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
+		if(System.getProperty("webdriver.chrome.driver")==null || "".equals(System.getProperty("webdriver.chrome.driver"))){
+			System.setProperty("webdriver.chrome.driver",
+					"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
+		}
+		if(System.getProperty("webdriver.gecko.driver")==null || "".equals(System.getProperty("webdriver.gecko.driver"))){
+			System.setProperty("webdriver.gecko.driver",
+					"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
+		}
 		// WebDriver driver = new ChromeDriver();
 		WebDriver driver = new FirefoxDriver();
 		driver.get(rootUrl);
