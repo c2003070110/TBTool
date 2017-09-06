@@ -21,7 +21,7 @@ import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
+public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
     
     private List<String> scanCategoryIds = Lists.newArrayList();
     private List<String> taobaoColors = Lists.newArrayList();
@@ -114,10 +114,10 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
 			// 宝贝名称
 			composeBaobeiTitle(item, obj);
 		}
-        // 宝贝类目
+        // 宝贝类目 TODO
         obj.cid =  "50014798";
         // 店铺类目
-        obj.seller_cids =  "1184361986";
+        obj.seller_cids =  "1339722359";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
@@ -178,33 +178,21 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         String title = "\"日本直邮 MontBell";
         //title += " " + item.titleCN ;
         String cateId = item.cateogryObj.categoryId;
-        if("131000".equals(cateId)){
-        	// ダウンジャケット
-        	title += " 羽绒茄克" ;
-        }else if("137000".equals(cateId)){
-        	//ダウンジャケット（軽量シリーズ）
-        	title += " 超轻 羽绒茄克" ;
-        }else if("137500".equals(cateId)){
-        	//半袖ダウンジャケット
-        	title += " 半袖 羽绒茄克" ;
-        }else if("134000".equals(cateId)){
-        	//ダウンベスト
-        	title += " 羽绒背心" ;
-        }else if("136000".equals(cateId)){
-        	//コート（中綿入り）
-        	title += " 羽绒大衣" ;
-        }else if("138000".equals(cateId)){
-        	//ダウンパンツ
-        	title += " 羽绒裤" ;
-        }else if("136500".equals(cateId)){
-        	//ダウンはんてん（半纏）
-        	title += " 羽绒内衣" ;
-        }else if("132000".equals(cateId)){
-        	// ダウン（極地用）
-        	title += " 极地羽绒服" ;
-        }else if("138600".equals(cateId)){
-        	//ダウンマフラー/ブランケット
-        	title += " 羽绒垫" ;
+        if("139000".equals(cateId)){
+        	// 化繊綿ジャケット
+        	title += " 化棉茄克" ;
+        }else if("139500".equals(cateId)){
+        	//化繊綿ジャケット（軽量シリーズ）
+        	title += " 超轻化棉茄克" ;
+        }else if("139700".equals(cateId)){
+        	//化繊綿ベスト
+        	title += " 化棉背心" ;
+        }else if("133000".equals(cateId)){
+        	//化繊綿パンツ
+        	title += " 化棉裤" ;
+        }else if("133500".equals(cateId)){
+        	//化繊綿スカート
+        	title += " 化棉群" ;
         }
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
@@ -327,7 +315,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         return "\"" + detailSB.toString() + extraMiaoshu +extraMiaoshu1+ "\"";
     }
 
-    public MontbellDownBaobeiProducer addScanCategory(String scanCategoryId) {
+    public MontbellSyntheticBaobeiProducer addScanCategory(String scanCategoryId) {
 
         this.scanCategoryIds.add(scanCategoryId);
         return this;

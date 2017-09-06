@@ -82,12 +82,14 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName+ "/"
+						+ obj.cateogryObj.categoryId);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName, taobaoPicFolder);
+						MontBellUtil.rootPathName+ "/"
+								+ obj.cateogryObj.categoryId, taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -123,11 +125,14 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
-		obj.price = MontBellUtil.convertToCNY(item, this.currencyRate,
+		obj.price = MontBellUtil.convertToCNYNoneEMSFee(item, this.currencyRate,
 				this.benefitRate);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
+		
+        // 邮费模版ID 全场90包邮
+        obj.postage_id = "1780373930";
 
 		// 用户输入ID串;
 		obj.inputPids = "\"20000,13021751,6103476,1627207\"";
@@ -170,32 +175,32 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
 		String title = "\"日本直邮";
-		title += "" + item.titleCN;
+		//title += "" + item.titleCN;
 		title += " MontBell";
 		String categoryId = item.cateogryObj.categoryId;
 		if("75200".equals(categoryId)){
 			// スーパーメリノウール（厚手／エクスペディション）
-			title += " 厚手EXP 超级美丽奴羊毛";
+			title += " 厚手 超级美丽奴羊毛";
 		}
 		if("75100".equals(categoryId)){
 			// スーパーメリノウール（中厚手／ミドルウエイト）
-			title += " 中厚手M.W 超级美丽奴羊毛";
+			title += " 中厚手 超级美丽奴羊毛";
 		}
 		if("75000".equals(categoryId)){
 			// スーパーメリノウール（薄手／ライトウエイト）
-			title += " 薄厚手L.W 超级美丽奴羊毛";
+			title += " 薄厚手 超级美丽奴羊毛";
 		}
 		if("71200".equals(categoryId)){
 			//  ジオライン（厚手／エクスペディション）
-			title += " 厚手EXP ZEO LINE";
+			title += " 厚手 ZEO LINE";
 		}
 		if("71100".equals(categoryId)){
 			//  ジオライン（中厚手／ミドルウエイト）
-			title += " 中厚 M.W ZEO LINE";
+			title += " 中厚 ZEO LINE";
 		}
 		if("71000".equals(categoryId)){
 			//  ジオライン（薄手／ライトウエイト）
-			title += " 薄厚手L.W ZEO LINE";
+			title += " 薄手 ZEO LINE";
 		}
 //		if (!StringUtil.isBlank(item.titleEn)) {
 //			if (item.titleEn.indexOf("T恤") > 0) {
@@ -301,28 +306,18 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 	private String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
 
 		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailScreenShotPicFile;
-		if (!StringUtil.isBlank(item.detailScreenShotPicFile)) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-					+ productInfo + "\"/></p>");
-			detailSB.append("</div>");
-		}
-		StringBuffer sizeTips = new StringBuffer();
-		if (!item.sizeTipPics.isEmpty()) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for (String sizeTip : item.sizeTipPics) {
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-						+ sizeTip + "\"/></p>");
-			}
-			detailSB.append("</div>");
-		}
+        // 包邮
+        detailSB.append(MontBellUtil.getBaoyouMiaoshu());
+        
+        // 宝贝描述
+        detailSB.append(MontBellUtil.getProductInfoMiaoshu(item.detailScreenShotPicFile));
+
+        // 尺寸描述
+        detailSB.append(MontBellUtil.getSizeTipMiaoshu(item.sizeTipPics));
+		 
 		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		return "\"" + detailSB.toString() + sizeTips.toString() + extraMiaoshu
+		return "\"" + detailSB.toString() + extraMiaoshu
 				+ extraMiaoshu1 + "\"";
 	}
 

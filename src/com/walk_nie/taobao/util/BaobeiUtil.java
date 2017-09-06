@@ -61,7 +61,7 @@ public class BaobeiUtil {
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">购物须知</h3>");
         miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         miaoshu.append("<ol>");
-        miaoshu.append("<li style=\"padding:10.0px;\">宝贝采购于直营店 OR 官网！（东京太郎 tokyoson）可采购直播。</li>");
+        miaoshu.append("<li style=\"padding:10.0px;\">宝贝采购于直营店 OR 官网！（tokyoson）可采购直播。</li>");
         miaoshu.append("<li style=\"padding:10.0px;\">日本直邮。即日本直发到您府上，无国内中转，是真真正正的日本代购！不是野鸡代购！<span style=\";color:red;font-weight:bold\">100%日本，100%真品。</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 取消订单！！退款！！！</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">店主在日本购入后，<span style=\";color:red;font-weight:bold\">宝贝不能取消！</span>除质量问题，<span style=\";color:red;font-weight:bold\">不接受退换。</span></li>");

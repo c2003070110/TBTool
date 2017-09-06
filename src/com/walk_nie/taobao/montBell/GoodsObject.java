@@ -24,6 +24,8 @@ public class GoodsObject {
 	public List<String> sizeList = new ArrayList<String>();
 	public List<String> colorList = new ArrayList<String>();
 	public List<String> pictureNameList = new ArrayList<String>();
+	
+	public List<String> dressOnPics = new ArrayList<String>();
     //public List<String> pictureUrlList = new ArrayList<String>();
     //public List<String> pictureLocalList = new ArrayList<String>();
 	
