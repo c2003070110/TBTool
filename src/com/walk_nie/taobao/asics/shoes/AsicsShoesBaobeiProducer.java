@@ -12,6 +12,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.montBell.GoodsObject;
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
@@ -233,5 +234,54 @@ public class AsicsShoesBaobeiProducer  extends BaseBaobeiProducer{
         urls.add(url);
         return this;
     }
+
+	@Override
+	protected void composeBaobeiMiaoshu(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiCateProps(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiSkuProps(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiPropAlias(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiPictureStatus(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiPicture(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiInputCustomCpv(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

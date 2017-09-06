@@ -113,6 +113,12 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	protected String composeBaobeiLine(GoodsObject item) throws Exception {
+		BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
+				item, this.publishedbaobeiList);
+		if (publishedBaobei != null) {
+			return super.updatePublishedBaobei(item, publishedBaobei);
+		}
+		
 		BaobeiPublishObject obj = new BaobeiPublishObject();
 		BaobeiUtil.setBaobeiCommonInfo(obj);
 
@@ -142,7 +148,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		composeBaobeiInputValues(item, obj);
 
 		// 宝贝描述
-		obj.description = composeBaobeiMiaoshu(item);
+		 composeBaobeiMiaoshu(item, obj);
 
 		// 宝贝属性
 		composeBaobeiCateProps(item, obj);
@@ -156,9 +162,9 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		// 商品条形码
 		// obj.barcode = item.sku;
 		// 图片状态
-		MontBellUtil.composeBaobeiPictureStatus(item, obj, taobaoColors);
+		composeBaobeiPictureStatus(item, obj);
 		// 新图片
-		MontBellUtil.composeBaobeiPicture(item, obj, taobaoColors);
+		composeBaobeiPicture(item, obj);
 		// 自定义属性值
 		composeBaobeiInputCustomCpv(item, obj);
 		// 宝贝卖点
@@ -219,7 +225,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		baobei.title = title + "\"";
 	}
 
-	private void composeBaobeiCateProps(GoodsObject item,
+	protected void composeBaobeiCateProps(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		String cateProps = "";
@@ -240,7 +246,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		obj.cateProps = cateProps;
 	}
 
-	private void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
 		// skuProps　销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
 		String skuProps = "";
 		for (int i = 0; i < item.colorList.size(); i++) {
@@ -275,7 +281,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		obj.inputValues = inputValues + "\"";
 	}
 
-	private void composeBaobeiPropAlias(GoodsObject item,
+	protected void composeBaobeiPropAlias(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// propAlias　销售属性别名：20509:28381:size1;20509:28313:size2;20509:28314:size3;20509:28315:size4;20509:28316:size5;20509:28317:size6;20509:28319:size7
 		String propAlias = "";
@@ -289,7 +295,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		obj.propAlias = propAlias;
 	}
 
-	private void composeBaobeiInputCustomCpv(GoodsObject item,
+	protected void composeBaobeiInputCustomCpv(GoodsObject item,
 			BaobeiPublishObject obj) {
 		String inputCustomCpv = "";
 		// 自定义属性值
@@ -303,7 +309,8 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		obj.input_custom_cpv = inputCustomCpv;
 	}
 
-	private String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
+	protected void composeBaobeiMiaoshu(GoodsObject item,
+			BaobeiPublishObject obj)   {
 
 		StringBuffer detailSB = new StringBuffer();
         // 包邮
@@ -317,7 +324,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		 
 		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		return "\"" + detailSB.toString() + extraMiaoshu
+		obj.description =  "\"" + detailSB.toString() + extraMiaoshu
 				+ extraMiaoshu1 + "\"";
 	}
 
@@ -330,6 +337,19 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 	@Override
 	public BaseBaobeiParser getParser() {
 		return new MontbellProductParser();
+	}
+
+	@Override
+	protected void composeBaobeiPictureStatus(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		MontBellUtil.composeBaobeiPictureStatus(item, publishedBaobei,
+				this.taobaoColors);
+	}
+
+	@Override
+	protected void composeBaobeiPicture(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		MontBellUtil.composeBaobeiPicture(item, publishedBaobei, this.taobaoColors);
 	}
 
 }

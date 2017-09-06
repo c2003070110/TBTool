@@ -186,7 +186,7 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 		baobei.title = "\"" + title + "\"";
 	}
 
-	private void composeBaobeiCateProps(GoodsObject item,
+	protected void composeBaobeiCateProps(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		String categoryId = item.cateogryObj.categoryId;
@@ -209,7 +209,7 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 		obj.cateProps = "\"" + cateProps + "\"";
 	}
 
-	private void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
 		// skuProps　销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
 		String skuProps = "";
 		for (int i = 0; i < item.colorList.size(); i++) {
@@ -222,7 +222,7 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 		obj.skuProps = "\"" + skuProps + "\"";
 	}
 
-	private void composeBaobeiInputValues(GoodsObject item,
+	protected void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// montbell;型号;1109136
 		String inputValues = "montbell;型号;" + item.productId 
@@ -235,7 +235,7 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 		obj.inputValues = "\"" + inputValues + "\"";
 	}
 
-	private void composeBaobeiPropAlias(GoodsObject item,
+	protected void composeBaobeiPropAlias(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// propAlias　销售属性别名：20509:28381:size1;20509:28313:size2;20509:28314:size3;20509:28315:size4;20509:28316:size5;20509:28317:size6;20509:28319:size7
 		String propAlias = "";
@@ -249,7 +249,7 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 		obj.propAlias = "\"" + propAlias + "\"";
 	}
 
-	private void composeBaobeiInputCustomCpv(GoodsObject item,
+	protected void composeBaobeiInputCustomCpv(GoodsObject item,
 			BaobeiPublishObject obj) {
 		String inputCustomCpv = "";
 		// 自定义属性值
@@ -300,6 +300,27 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 	@Override
 	public BaseBaobeiParser getParser() {
 		return new MontbellProductParser();
+	}
+
+	@Override
+	protected void composeBaobeiMiaoshu(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiPictureStatus(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void composeBaobeiPicture(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
