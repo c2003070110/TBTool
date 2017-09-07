@@ -1,5 +1,6 @@
 package com.walk_nie.taobao.util;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -26,6 +28,7 @@ import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.TaobaoSaledObject;
 
 public class TaobaoUtil {
+    public static String watermark_file = "in/watermark.png";
     public static String FILE_NAME_SEPERATOR =";;;";
     
 	public static Document urlToDocumentByUTF8(String url)
@@ -610,7 +613,7 @@ public class TaobaoUtil {
 	}
 
 	public static File downloadPicture(String pathName, String pictureUrl,
-			String picName) throws ClientProtocolException, IOException {
+			String picName,boolean addWatermarkFlag) throws ClientProtocolException, IOException {
 
 		//String photoName = "out/" + itemType;
 		File path = new File(pathName);
@@ -638,9 +641,32 @@ public class TaobaoUtil {
 		Graphics2D g = resizedImage.createGraphics();
 		g.drawImage(originalImage.getScaledInstance(originalW, originalH,
 				Image.SCALE_AREA_AVERAGING), 0, 0, originalW, originalH, null);
+		if (addWatermarkFlag) {
+			ImageIcon imgIcon = new ImageIcon(watermark_file);
+			int interval = 0;
+			Image img = imgIcon.getImage();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
+					0.15f/* 水印透明度 */));
+			for (int height = interval + imgIcon.getIconHeight(); height < resizedImage
+					.getHeight(); height = height + interval
+					+ imgIcon.getIconHeight()) {
+				for (int weight = interval + imgIcon.getIconWidth(); weight < resizedImage
+						.getWidth(); weight = weight + interval
+						+ imgIcon.getIconWidth()) {
+					g.drawImage(img, weight - imgIcon.getIconWidth(), height
+							- imgIcon.getIconHeight(), null);
+				}
+			}
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+		}
 		g.dispose();
 		ImageIO.write(resizedImage, "jpg", downloadFile);
 		return downloadFile;
+	}
+
+	public static File downloadPicture(String pathName, String pictureUrl,
+			String picName) throws ClientProtocolException, IOException {
+		return downloadPicture(pathName, pictureUrl, picName, false);
 	}
     
 	public static String composeTaobaoHeaderLine() {

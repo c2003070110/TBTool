@@ -66,12 +66,12 @@ public class MontBellUtil {
         StringBuffer detailSB = new StringBuffer();
         detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">运费</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮运费只收90.</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">本店所有宝贝，采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方店铺</span>。是经过<span style=\";color:red;font-weight:bold\">日本MONTBELL严格质检</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日本质检严，性价比非常之高！</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">不是厂货！不是渠道货！不是清仓货！不是韩国货！</p>");
-        //detailSB.append("<p style=\"text-indent:2.0em;\">不参与包场的宝贝也可能有。</p>");
-        //detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不定期的推出  满1XXX免邮活动，请关注哦。</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">标价，仅适于大陆！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只收<span style=\";color:red;font-weight:bold\">90</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日本质检严，性价比高！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店所有宝贝，采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满1XXX免邮，请关注哦。</p>");
         detailSB.append("</div>");
         return detailSB.toString();
     }
@@ -83,12 +83,12 @@ public class MontBellUtil {
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
             detailSB.append("<p style=\"text-indent:2.0em;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">店主本职工作很忙，请尽量自己比对哦。</span></p>");
-            detailSB.append("<p style=\"text-indent:2.0em;\">如有纠结 请咨询店主。店主有空时，第一时间回复。</p>");
-            detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得本店的奖励 全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
-            detailSB.append("<p style=\"text-indent:2.0em;\">晒图包含了 <span style=\";color:red;font-weight:bold\">自己身材，衣服size，尺码如何</span>  100%奖励！！！</p>");
-            detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">为了后购买的淘友，请踊跃参与！！</span></p>");
+            detailSB.append("<p style=\"text-indent:2.0em;\">如纠结 请咨询店主。店主有空时，第一时间回复。</p>");
+            detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得本店的奖励:全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
+            detailSB.append("<p style=\"text-indent:2.0em;\">晒图包含了 <span style=\";color:red;font-weight:bold\">自己身材，衣服size，合适否</span>  100%奖励！！！</p>");
+            detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">请踊跃参与！！</span></p>");
             for(String sizeTip:sizeTipPics){
-                detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + sizeTip + "\"/></p>");    
+                detailSB.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + sizeTip + "\"/></p>");    
             }
             detailSB.append("</div>");
 		}
@@ -99,7 +99,7 @@ public class MontBellUtil {
 		if (!StringUtil.isBlank(productInfo)) {
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
+			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
 					+ productInfo + "\"/></p>");
 			detailSB.append("</div>");
 		}
@@ -111,7 +111,7 @@ public class MontBellUtil {
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
             for(String pic:dressOnPics){
-                detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///" + pic + "\"/></p>");    
+                detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + pic + "\"/></p>");    
             }
             detailSB.append("</div>");
 		}
@@ -120,9 +120,6 @@ public class MontBellUtil {
     public static String getExtraMiaoshu() {
         StringBuffer miaoshu = new StringBuffer();
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！直播(tokyoson)</h3>");
-        miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        miaoshu.append("<p style=\"text-indent:2.0em;\">本宝贝价格，适用于中国大陆！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价，请咨询客服！</p>");
-        miaoshu.append("</div>");
         miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i2/2498620403/TB2.eGxkXXXXXXJXpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2SLKFkXXXXXc9XXXXXXXXXXXX_!!2498620403.jpg\" /></p>");
@@ -489,7 +486,7 @@ public class MontBellUtil {
     }
 
     public static void composeBaobeiSubtitle(GoodsObject item,BaobeiPublishObject baobei) {
-        baobei.subtitle =  "\"日本直邮！100%正品！真正的日本代购！" + item.titleOrg + "\"";
+        baobei.subtitle =  "\"日本直邮！100%正品！真正的日本代购！" + item.titleOrg + "！"+ item.titleEn + "\"";
     }
 
     public static  void composeBaobeiTitle(GoodsObject item,

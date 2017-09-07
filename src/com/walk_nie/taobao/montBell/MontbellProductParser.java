@@ -96,7 +96,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
         
         Element mainLeftEle = doc.select("div.leftCont").get(0);
         
-        processProductDressOnPicture(goodsObj,mainLeftEle);
+		processProductDressOnPicture(goodsObj, mainLeftEle);
         
     }
 
@@ -105,24 +105,28 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		Elements hiddEles = mainLeftEle.select("div.img_hidden");
 		if (hiddEles.isEmpty())
 			return;
-		Elements aEles = hiddEles.select("a");
+		Elements aEles = mainLeftEle.select("a.fancy_largelink");
 		if (aEles.isEmpty())
 			return;
-		String picRoot = MontBellUtil.rootPathName  + "/" + goodsObj.cateogryObj.categoryId;
+		String picRoot = MontBellUtil.rootPathName + "/dressOn/"
+				+ goodsObj.cateogryObj.categoryId;
         String fileNameFmt = "dressOn_%s_%d";
         int i= 0;
-        for (Element a : aEles) {
-        	i++;
-        	String url = a.attr("href");
-        	if(url.endsWith("no_image.gif"))continue;
-        	if(!url.startsWith("http")){
-        		url = "http://webshop.montbell.jp" + url;
-        	}
-            String picName = String.format(fileNameFmt, goodsObj.productId, i++);
-			File picFile = TaobaoUtil.downloadPicture(
-					picRoot, url, picName);
-            goodsObj.dressOnPics.add(picFile.getAbsolutePath());
-        }
+		for (Element a : aEles) {
+			String url = a.attr("href");
+			if (url.endsWith("no_image.gif"))
+				continue;
+			if (!url.startsWith("http")) {
+				url = "http://webshop.montbell.jp" + url;
+			}
+			i++;
+			String picName = String
+					.format(fileNameFmt, goodsObj.productId, i++);
+			File picFile = TaobaoUtil.downloadPicture(picRoot, url, picName,true);
+			if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
+				goodsObj.dressOnPics.add(picFile.getAbsolutePath());
+			}
+		}
 		
 	}
 
@@ -147,12 +151,13 @@ public class MontbellProductParser extends BaseBaobeiParser {
             throws ClientProtocolException, IOException {
         List<SizeTipObject> sizeTips = getExistedSizeTips(goodsObj);
         if(sizeTips != null && !sizeTips.isEmpty()){
-            for(SizeTipObject sizeTip:sizeTips){
-                goodsObj.sizeTipPics.add(sizeTip.pictureFileName);
-            }
-            return;
+			for (SizeTipObject sizeTip : sizeTips) {
+				if (!goodsObj.sizeTipPics.contains(sizeTip.pictureFileName))
+					goodsObj.sizeTipPics.add(sizeTip.pictureFileName);
+			}
+			return;
         }
-        File rootPath = new File(MontBellUtil.rootPathName + "/"
+        File rootPath = new File(MontBellUtil.rootPathName + "/sizeTable/"
 				+ goodsObj.cateogryObj.categoryId);
         String fileNameFmt = "sizeTable_%s_%d";
         try {
@@ -274,14 +279,16 @@ public class MontbellProductParser extends BaseBaobeiParser {
         List<GoodsObject> filterdList = Lists.newArrayList();
         List<String> productId = Lists.newArrayList();
         productId.add("1108723");
-        for(GoodsObject prod :prodList){
-			//if (!productId.contains(prod.productId) && !isPublished(prod)) {
-        	if (!productId.contains(prod.productId)) {
-                productId.add(prod.productId);
-                filterdList.add(prod);
-            }
-        }
-        return filterdList;
+		for (GoodsObject prod : prodList) {
+			if (!productId.contains(prod.productId)
+					&& MontBellUtil.getPublishedBaobei(prod,
+							this.publishedbaobeiList) == null) {
+				// if (!productId.contains(prod.productId)) {
+				productId.add(prod.productId);
+				filterdList.add(prod);
+			}
+		}
+		return filterdList;
     }
 
 	//private void translate(List<GoodsObject> prodList) {

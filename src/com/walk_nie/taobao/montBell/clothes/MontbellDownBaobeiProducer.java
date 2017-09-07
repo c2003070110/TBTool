@@ -134,6 +134,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         obj.inputPids = "\"20000,13021751,6103476\"";
         // ダウンジャケット
         obj.inputPids = "\"20000,13021751,6103476,1627207\"";
+		obj.inputPids = "\"13021751,6103476,1627207\"";
         
         // 用户输入名-值对
         //obj.inputValues = "\"montbell,"+item.productId+",*\"";
@@ -220,18 +221,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
         String prodCId = item.cateogryObj.categoryId;
         String cateProps = "";
-//        if (MontBellUtil.isCateogrySoftShell1(prodCId)
-//                || MontBellUtil.isCateogryHardShell1(prodCId)
-//                || MontBellUtil.isCateogrySoftShell2(prodCId)
-//                || MontBellUtil.isCateogryHardShell2(prodCId)) {
-//            // 冲锋衣 冲锋裤
-//            cateProps += "20021:20213;122216816:20213;";
-//        }
-//        cateProps += "122216608:29923;";
         // ダウンジャケット
-        cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
-        // freece
-        //cateProps += "20000:6217823;13021751:3262315;6103476:3231061;122216608:29923;21548:38488;";
+        //cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
+        cateProps += "20000:84533669;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -266,7 +258,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
         // ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
-        String inputValues = "\"montbell,"+item.productId+","+obj.price+",";
+        String inputValues = "\""+item.productId+","+obj.price+",";
         for(int i =0;i<item.colorList.size();i++){
             if(i>=taobaoColors.size())break;
             inputValues +=item.colorList.get(i) +  ";颜色分类;";
@@ -313,6 +305,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         
         // 宝贝描述
         detailSB.append(MontBellUtil.getProductInfoMiaoshu(item.detailScreenShotPicFile));
+        
         // 着装图片
         detailSB.append(MontBellUtil.getDressOnMiaoshu(item.dressOnPics));
 

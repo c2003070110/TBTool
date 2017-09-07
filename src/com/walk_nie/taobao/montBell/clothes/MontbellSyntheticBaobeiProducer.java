@@ -102,20 +102,29 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
         priceBw.flush();
     }
     protected String composeBaobeiLine(GoodsObject item) throws Exception {
-        BaobeiPublishObject obj = new BaobeiPublishObject();
-        BaobeiUtil.setBaobeiCommonInfo(obj);
-        
 		BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
 				item, this.publishedbaobeiList);
 
 		if (publishedBaobei != null) {
-			obj.title = "\"" + publishedBaobei.title + "\"";
-		} else {
-			// 宝贝名称
-			composeBaobeiTitle(item, obj);
+			return super.updatePublishedBaobei(item,publishedBaobei);
 		}
-        // 宝贝类目 TODO
-        obj.cid =  "50014798";
+		
+        BaobeiPublishObject obj = new BaobeiPublishObject();
+        BaobeiUtil.setBaobeiCommonInfo(obj);
+         
+		// 宝贝名称
+		composeBaobeiTitle(item, obj);
+        // 宝贝类目 
+		if(item.cateogryObj.categoryId.equals("139000")
+				|| item.cateogryObj.categoryId.equals("139500")
+				|| item.cateogryObj.categoryId.equals("139700")){
+			// 保暖棉衣
+	        obj.cid =  "50014799";
+		}else if(item.cateogryObj.categoryId.equals("133000")
+				|| item.cateogryObj.categoryId.equals("133500")){
+			// 保暖棉裤
+	        obj.cid =  "50019547";
+		}
         // 店铺类目
         obj.seller_cids =  "1339722359";
         // 省
@@ -125,18 +134,12 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
         //obj.price = item.priceCNY;
         // 宝贝数量
         obj.num = "9999";
-		if (publishedBaobei != null) {
-			// 数字ID 宝贝ID
-			obj.num_id = "\"" + publishedBaobei.num_id+ "\"" ;
-		}
 		
         // 邮费模版ID 全场90包邮
         obj.postage_id = "1780373930";
         
         // 用户输入ID串;
-        obj.inputPids = "\"20000,13021751,6103476\"";
-        // ダウンジャケット
-        obj.inputPids = "\"20000,13021751,6103476,1627207\"";
+        obj.inputPids = "\"13021751,6103476,1627207\"";
         
         // 用户输入名-值对
         //obj.inputValues = "\"montbell,"+item.productId+",*\"";
@@ -211,18 +214,8 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
         // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
         String prodCId = item.cateogryObj.categoryId;
         String cateProps = "";
-//        if (MontBellUtil.isCateogrySoftShell1(prodCId)
-//                || MontBellUtil.isCateogryHardShell1(prodCId)
-//                || MontBellUtil.isCateogrySoftShell2(prodCId)
-//                || MontBellUtil.isCateogryHardShell2(prodCId)) {
-//            // 冲锋衣 冲锋裤
-//            cateProps += "20021:20213;122216816:20213;";
-//        }
-//        cateProps += "122216608:29923;";
         // ダウンジャケット
-        cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
-        // freece
-        //cateProps += "20000:6217823;13021751:3262315;6103476:3231061;122216608:29923;21548:38488;";
+        cateProps += "20000:84533669;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -257,7 +250,7 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
         // ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
-        String inputValues = "\"montbell,"+item.productId+","+obj.price+",";
+        String inputValues = "\""+item.productId+","+obj.price+",";
         for(int i =0;i<item.colorList.size();i++){
             if(i>=taobaoColors.size())break;
             inputValues +=item.colorList.get(i) +  ";颜色分类;";
@@ -304,16 +297,7 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
 			BaobeiPublishObject publishedBaobei) {
 
         StringBuffer detailSB = new StringBuffer();
-        /*
-        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">拼邮包税</h3>");
-        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        detailSB.append("<p style=\"text-indent:2.0em;\">鉴于国内海关趋于严厉，本店提供拼邮包税</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税，是指，您下单后，和被人的订单一起，通过包税渠道运回国内，再国内快递到您手</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">费用，根据您的地址，收费有所不同，请咨询。</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">不拼单包税的订单，<span style=\";color:red;font-weight:bold\">如发生关税，报关等由您处理，关税由您承担。</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\"> 拼单包税的订单，<span style=\";color:red;font-weight:bold\">报关，关税等都有我来处理，承担！</span></p>");
-        detailSB.append("</div>");
-        */
+        
         // 包邮
         detailSB.append(MontBellUtil.getBaoyouMiaoshu());
         

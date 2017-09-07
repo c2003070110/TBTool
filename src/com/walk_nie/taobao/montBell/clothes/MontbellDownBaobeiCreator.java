@@ -23,10 +23,10 @@ public class MontbellDownBaobeiCreator  {
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
-		//baobeiList.clear();
+		baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.05;
+		double benefitRate = 0.07;
 		MontbellDownBaobeiProducer db = new MontbellDownBaobeiProducer();
 		db
                 .addScanCategory("131000") // ダウンジャケット
