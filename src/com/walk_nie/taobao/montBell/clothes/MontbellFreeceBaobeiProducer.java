@@ -82,12 +82,14 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
+						+ "/" + obj.cateogryObj.categoryId);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName, taobaoPicFolder);
+						MontBellUtil.rootPathName
+						+ "/" + obj.cateogryObj.categoryId, taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -120,8 +122,16 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		BaobeiUtil.setBaobeiCommonInfo(obj);
 
 		// 宝贝名称
-		MontBellUtil.composeBaobeiTitle(item, obj);
+		composeBaobeiTitle(item, obj);
 		// 宝贝类目
+        if (MontBellUtil.isCateogryFreece1(item.cateogryObj.categoryId) ) {
+            // フリース 抓绒衣 抓绒衣
+        	obj.seller_cids = "1289906242";
+        }
+        if (MontBellUtil.isCateogryFreece2(item.cateogryObj.categoryId) ) {
+            // フリースパンツ 抓绒裤 
+        	obj.seller_cids = "1289906242";
+        } 
 		MontBellUtil.composeBaobeiTaobaoCategory(item, obj);
 		// 店铺类目
 		// MontBellUtil.composeBaobeiMyCategory(item, obj);
@@ -136,10 +146,10 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		obj.num = "9999";
 
 		// 用户输入ID串;
-		obj.inputPids = "\"20000,13021751,6103476\"";
+		//obj.inputPids = "\"20000,13021751,6103476\"";
 		// ダウンジャケット
-		obj.inputPids = "\"20000,13021751,6103476,1627207\"";
-		obj.inputPids = "\"13021751,6103476,1627207\"";
+		//obj.inputPids = "\"20000,13021751,6103476,1627207\"";
+		obj.inputPids = "\"1627207\"";
 
 		// 用户输入名-值对
 		// obj.inputValues = "\"montbell,"+item.productId+",*\"";
@@ -180,7 +190,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 	protected void composeBaobeiCateProps(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
-		String prodCId = item.cateogryObj.categoryId;
+		//String prodCId = item.cateogryObj.categoryId;
 		String cateProps = "";
 		// if (MontBellUtil.isCateogrySoftShell1(prodCId)
 		// || MontBellUtil.isCateogryHardShell1(prodCId)
@@ -194,7 +204,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		// cateProps +=
 		// "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
 		// freece
-		cateProps += "20000:84533669;13021751:3262315;6103476:3231061;122216608:29923;21548:38488;";
+		cateProps += "20000:84533669;122216608:29923;21548:38488;";
 
 		// 宝贝属性
 		for (int i = 0; i < item.colorList.size(); i++) {
@@ -275,32 +285,24 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	protected void composeBaobeiMiaoshu(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
+			BaobeiPublishObject obj) {
+        StringBuffer detailSB = new StringBuffer();
 
-		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailScreenShotPicFile;
-		if (!StringUtil.isBlank(item.detailScreenShotPicFile)) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-					+ productInfo + "\"/></p>");
-			detailSB.append("</div>");
-		}
-		StringBuffer sizeTips = new StringBuffer();
-		if (!item.sizeTipPics.isEmpty()) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for (String sizeTip : item.sizeTipPics) {
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-						+ sizeTip + "\"/></p>");
-			}
-			detailSB.append("</div>");
-		}
-		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
-		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		publishedBaobei.description = "\"" + detailSB.toString()
-				+ sizeTips.toString() + extraMiaoshu + extraMiaoshu1 + "\"";
+        // 包邮
+        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        
+        // 宝贝描述
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
+
+        // 尺寸描述
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+        String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
+        obj.description =  "\"" + detailSB.toString() + extraMiaoshu +extraMiaoshu1+ "\"";
 	}
 
 	public MontbellFreeceBaobeiProducer addScanCategory(String scanCategoryId) {
@@ -326,6 +328,23 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 			BaobeiPublishObject publishedBaobei) {
 		MontBellUtil.composeBaobeiPicture(item, publishedBaobei,
 				this.taobaoColors);
+	}
+
+	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
+		String title = "\"日本直邮 MontBell";
+		String cateId = item.cateogryObj.categoryId;
+		if ("".equals(cateId)) {
+			// 
+			title += " ";
+		}
+		if (!StringUtil.isBlank(item.titleEn)) {
+			title += " " + item.titleEn;
+		}
+		title += " " + item.productId;
+		if (!StringUtil.isBlank(item.gender)) {
+			title += " " + item.gender;
+		}
+		baobei.title = title + "\"";
 	}
 
 }

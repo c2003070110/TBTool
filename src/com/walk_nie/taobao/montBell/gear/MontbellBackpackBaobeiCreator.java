@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell.clothes;
+package com.walk_nie.taobao.montBell.gear;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,13 +12,13 @@ import com.walk_nie.taobao.util.BaobeiUtil;
  * ダウン 羽绒服
  *
  */
-public class MontbellDownBaobeiCreator  {
+public class MontbellBackpackBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
-		String outputFile = "out/montBell_down_baobei_%s.csv";
+		String outputFile = "out/montBell_backpack_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -27,20 +27,16 @@ public class MontbellDownBaobeiCreator  {
 		//
 		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.07;
-		MontbellDownBaobeiProducer db = new MontbellDownBaobeiProducer();
+		MontbellBackpackBaobeiProducer db = new MontbellBackpackBaobeiProducer();
 		db
-                .addScanCategory("131000") // ダウンジャケット
+                .addScanCategory("263000") // 小型ザック（5～25L）
                 
-                .addScanCategory("137000") // ダウンジャケット（軽量シリーズ）
-                .addScanCategory("137500") // 半袖ダウンジャケット
-                .addScanCategory("134000") // ダウンベスト
-                .addScanCategory("136000") // コート（中綿入り）
-                .addScanCategory("138000") // ダウンパンツ
-                .addScanCategory("136500") //  ダウンはんてん（半纏）
-                .addScanCategory("132000") //  ダウン（極地用）
-                .addScanCategory("625000") //USモデル ダウンジャケット
+                .addScanCategory("262000") // 中型ザック（30～45L）
+                .addScanCategory("261000") // 大型ザック（50～120L）
+                .addScanCategory("263500") // ザック（ポケッタブル）
+                //.addScanCategory("265000") // キャメルバック
                 
-                .addScanCategory("138600") //  ダウンマフラー/ブランケット
+                .addScanCategory("264000") // ザックカバー
                 .addScanCategory("") //  
                 .addScanCategory("") //  
                 .addScanCategory("") //  

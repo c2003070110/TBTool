@@ -273,7 +273,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 			}
 			detailSB.append("</div>");
 		}
-		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
+		String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
 		return "\"" + detailSB.toString() + sizeTips.toString() + extraMiaoshu
 				+ extraMiaoshu1 + "\"";

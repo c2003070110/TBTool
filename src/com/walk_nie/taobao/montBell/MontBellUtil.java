@@ -62,21 +62,21 @@ public class MontBellUtil {
             }
         }
     }
-    public static String getBaoyouMiaoshu() {
+    public static String composeBaoyouMiaoshu() {
         StringBuffer detailSB = new StringBuffer();
         detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">运费</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         detailSB.append("<p style=\"text-indent:2.0em;\">标价，仅适于大陆！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只收<span style=\";color:red;font-weight:bold\">90</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日本质检严，性价比高！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">本店所有宝贝，采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满1XXX免邮，请关注哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
         detailSB.append("</div>");
         return detailSB.toString();
     }
 
-	public static String getSizeTipMiaoshu(List<String> sizeTipPics) {
+	public static String composeSizeTipMiaoshu(List<String> sizeTipPics) {
 
 		StringBuffer detailSB = new StringBuffer();
 		if (!sizeTipPics.isEmpty()) {
@@ -84,7 +84,7 @@ public class MontBellUtil {
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
             detailSB.append("<p style=\"text-indent:2.0em;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">店主本职工作很忙，请尽量自己比对哦。</span></p>");
             detailSB.append("<p style=\"text-indent:2.0em;\">如纠结 请咨询店主。店主有空时，第一时间回复。</p>");
-            detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得本店的奖励:全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
+            detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得奖励:全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
             detailSB.append("<p style=\"text-indent:2.0em;\">晒图包含了 <span style=\";color:red;font-weight:bold\">自己身材，衣服size，合适否</span>  100%奖励！！！</p>");
             detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">请踊跃参与！！</span></p>");
             for(String sizeTip:sizeTipPics){
@@ -94,7 +94,7 @@ public class MontBellUtil {
 		}
 		return detailSB.toString();
 	}
-	public static String getProductInfoMiaoshu(String productInfo) {
+	public static String composeProductInfoMiaoshu(String productInfo) {
 		StringBuffer detailSB = new StringBuffer();
 		if (!StringUtil.isBlank(productInfo)) {
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
@@ -105,7 +105,7 @@ public class MontBellUtil {
 		}
 		return detailSB.toString();
 	}
-	public static String getDressOnMiaoshu(List<String> dressOnPics) {
+	public static String composeDressOnMiaoshu(List<String> dressOnPics) {
 		StringBuffer detailSB = new StringBuffer();
 		if (!dressOnPics.isEmpty()) {
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
@@ -117,7 +117,7 @@ public class MontBellUtil {
 		}
 		return detailSB.toString();
 	}
-    public static String getExtraMiaoshu() {
+    public static String composeExtraMiaoshu() {
         StringBuffer miaoshu = new StringBuffer();
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！直播(tokyoson)</h3>");
         miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
@@ -150,8 +150,13 @@ public class MontBellUtil {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
-			if (price < 10000)
+			if (price < 5000){
 				price = price + 800;
+			}else if (price < 8000){
+				price = price + 600;
+			}else if (price < 10000){
+				price = price + 500;
+			}
             long priceTax  = Math.round(price*1.08);
             double priceCNY = (priceTax ) * curencyRate;
             priceCNY = priceCNY + priceCNY * benefitRate;

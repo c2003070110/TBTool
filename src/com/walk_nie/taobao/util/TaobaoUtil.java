@@ -1026,7 +1026,7 @@ public class TaobaoUtil {
             throws IOException {
 		for (String name : pictureNameList) {
 			File from = new File(fromFolder, name + ".jpg");
-			File to = new File(toFolder, name + ".jpg");
+			File to = new File(toFolder, name + ".tbi");
             Files.copy(from, to);
         }
     }

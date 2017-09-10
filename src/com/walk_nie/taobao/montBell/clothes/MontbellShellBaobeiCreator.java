@@ -15,25 +15,40 @@ public class MontbellShellBaobeiCreator  {
 			IOException {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
-		String outputFile = "out/montBell_underware_baobei_%s.csv";
+		String outputFile = "out/montBell_shell_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.08;
+		double benefitRate = 0.1;
 		MontbellShellBaobeiProducer db = new MontbellShellBaobeiProducer();
 		db
                 .addScanCategory("142000") // ハードシェル>ジャケット（保温材入り）
                 .addScanCategory("141000") // ハードシェル>ジャケット（保温材なし）
                 .addScanCategory("146000") // ハードシェル>パンツ(保温材入り)
                 .addScanCategory("145000") // ハードシェル>パンツ(保温材なし)
+                
                 .addScanCategory("22000") // ソフトシェル>ソフトシェルジャケット
+                
                 .addScanCategory("25000") // ソフトシェル>ライトシェルジャケット/ベスト
                 .addScanCategory("22500") // ソフトシェル>ソフトシェルパンツ
                 .addScanCategory("23000") // ソフトシェル>ライトシェルパンツ
-                .addScanCategory("") // 
+                
+                .addScanCategory("8800") // レインウェア（ゴアテックス製）
+                .addScanCategory("1000") // レインウェア
+                .addScanCategory("2000") // レインコート
+                
+                .addScanCategory("8000") // レインウェア（自転車用）
+                .addScanCategory("8700") // レインウェア（釣り用）
+                .addScanCategory("8500") // レインウェア（バイク用）
+                .addScanCategory("8600") // レインウェア（農作業用）
+                
+                .addScanCategory("9000") // レインポンチョ
+                .addScanCategory("4000") // 傘
+                .addScanCategory("3000") // レインキャップ/ハット
+                
                 .addScanCategory("") // 
                 
                 .setOutputFile(outputFile)

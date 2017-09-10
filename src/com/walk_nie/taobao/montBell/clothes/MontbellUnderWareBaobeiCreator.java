@@ -23,7 +23,7 @@ public class MontbellUnderWareBaobeiCreator  {
 				.readInPublishedBaobei(file);
 		baobeiList.clear();
 		//
-		double currencyRate = 0.061 + 0.004;
+		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.1;
 		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
 		db

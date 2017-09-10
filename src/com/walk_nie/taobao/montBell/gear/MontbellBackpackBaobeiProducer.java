@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell.clothes;
+package com.walk_nie.taobao.montBell.gear;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +21,7 @@ import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
+public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
     
     private List<String> scanCategoryIds = Lists.newArrayList();
     private List<String> taobaoColors = Lists.newArrayList();
@@ -110,15 +110,14 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
 			return super.updatePublishedBaobei(item,publishedBaobei);
 		}
 		
-		
         BaobeiPublishObject obj = new BaobeiPublishObject();
         BaobeiUtil.setBaobeiCommonInfo(obj);
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
         // 宝贝类目
-        obj.cid =  "50014798";
+        obj.cid =  "50014493";
         // 店铺类目
-        obj.seller_cids =  "1184361986";
+        obj.seller_cids =  "1184396872,";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
@@ -171,37 +170,28 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
-	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
+    private    void composeBaobeiTitle(GoodsObject item,
+            BaobeiPublishObject baobei) {
         String title = "\"日本直邮 MontBell";
-        //title += " " + item.titleCN ;
         String cateId = item.cateogryObj.categoryId;
-        if("131000".equals(cateId)){
-        	// ダウンジャケット
-        	title += " 羽绒茄克" ;
-        }else if("137000".equals(cateId)){
-        	//ダウンジャケット（軽量シリーズ）
-        	title += " 超轻 羽绒茄克" ;
-        }else if("137500".equals(cateId)){
-        	//半袖ダウンジャケット
-        	title += " 半袖 羽绒茄克" ;
-        }else if("134000".equals(cateId)){
-        	//ダウンベスト
-        	title += " 羽绒背心" ;
-        }else if("136000".equals(cateId)){
-        	//コート（中綿入り）
-        	title += " 羽绒大衣" ;
-        }else if("138000".equals(cateId)){
-        	//ダウンパンツ
-        	title += " 羽绒裤" ;
-        }else if("136500".equals(cateId)){
-        	//ダウンはんてん（半纏）
-        	title += " 羽绒内衣" ;
-        }else if("132000".equals(cateId)){
-        	// ダウン（極地用）
-        	title += " 极地羽绒服" ;
-        }else if("138600".equals(cateId)){
-        	//ダウンマフラー/ブランケット
-        	title += " 羽绒垫" ;
+        if("263000".equals(cateId)){
+        	// 小型ザック（5～25L）
+        	title += " 小型背包(5-25L)" ;
+        }else if("262000".equals(cateId)){
+        	//中型ザック（30～45L）
+        	title += "  中型背包(30-45L)" ;
+        }else if("261000".equals(cateId)){
+        	//大型ザック（50～120L）
+        	title += " 大型背包(50-120L)" ;
+        }else if("263500".equals(cateId)){
+        	//ザック（ポケッタブル）
+        	title += " 可折叠包" ;
+        //}else if("265000".equals(cateId)){
+        	//キャメルバック
+        //	title += " " ;
+        }else if("264000".equals(cateId)){
+        	//ザックカバー
+        	title += " 背包防水罩" ;
         }
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
@@ -210,20 +200,12 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         if(!StringUtil.isBlank(item.gender)){
             title += " " + item.gender;
         }
-//        String suffix = "/包邮";
-//        if (title.length() + suffix.length() < 60) {
-//            title += suffix;
-//        }
         baobei.title =  title + "\"";
     }
     protected void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
         // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
-        String prodCId = item.cateogryObj.categoryId;
         String cateProps = "";
-        // ダウンジャケット
-        //cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
-        //cateProps += "20000:84533669;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
-        cateProps += "20000:84533669;122216608:29923;21548:38488;";
+        cateProps += "20000:3589713;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -290,16 +272,6 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
     
 	protected  void composeBaobeiMiaoshu(GoodsObject item, BaobeiPublishObject obj) {
         StringBuffer detailSB = new StringBuffer();
-        /*
-        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">拼邮包税</h3>");
-        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        detailSB.append("<p style=\"text-indent:2.0em;\">鉴于国内海关趋于严厉，本店提供拼邮包税</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税，是指，您下单后，和被人的订单一起，通过包税渠道运回国内，再国内快递到您手</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">费用，根据您的地址，收费有所不同，请咨询。</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">不拼单包税的订单，<span style=\";color:red;font-weight:bold\">如发生关税，报关等由您处理，关税由您承担。</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\"> 拼单包税的订单，<span style=\";color:red;font-weight:bold\">报关，关税等都有我来处理，承担！</span></p>");
-        detailSB.append("</div>");
-        */
         // 包邮
         detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         
@@ -317,7 +289,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         obj.description =  "\"" + detailSB.toString() + extraMiaoshu +extraMiaoshu1+ "\"";
     }
 
-    public MontbellDownBaobeiProducer addScanCategory(String scanCategoryId) {
+    public MontbellBackpackBaobeiProducer addScanCategory(String scanCategoryId) {
 
         this.scanCategoryIds.add(scanCategoryId);
         return this;

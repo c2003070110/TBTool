@@ -62,12 +62,14 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
+						+ "/" + obj.cateogryObj.categoryId);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName, taobaoPicFolder);
+						MontBellUtil.rootPathName
+						+ "/" + obj.cateogryObj.categoryId, taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -116,13 +118,14 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 		composeBaobeiCateProps(item, obj);
 
 		// 用户输入ID串;
-		obj.inputPids = "\"20000,6103476,13021751\"";
+		//obj.inputPids = "\"20000,6103476,13021751\"";
+		obj.inputPids = "\"13021751,6103476,1627207\"";
 
 		// 用户输入名-值对
 		composeBaobeiInputValues(item, obj);
 
 		// 宝贝描述
-		obj.description = composeBaobeiMiaoshu(item);
+		composeBaobeiMiaoshu(item, obj);
 		// 销售属性组合
 		composeBaobeiSkuProps(item, obj);
 		// 商家编码
@@ -246,34 +249,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 		}
 		obj.input_custom_cpv = "\"" + inputCustomCpv + "\"";
 	}
-
-	private String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
-
-		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailScreenShotPicFile;
-		if (!StringUtil.isBlank(item.detailScreenShotPicFile)) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-					+ productInfo + "\"/></p>");
-			detailSB.append("</div>");
-		}
-		StringBuffer sizeTips = new StringBuffer();
-		if (!item.sizeTipPics.isEmpty()) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for (String sizeTip : item.sizeTipPics) {
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-						+ sizeTip + "\"/></p>");
-			}
-			detailSB.append("</div>");
-		}
-		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
-		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		return "\"" + detailSB.toString() + sizeTips.toString() + extraMiaoshu
-				+ extraMiaoshu1 + "\"";
-	}
+ 
 
 	public MontbellTShirtBaobeiProducer addScanCategory(String scanCategoryId) {
 
@@ -289,21 +265,38 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 	@Override
 	protected void composeBaobeiMiaoshu(GoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
+
+		StringBuffer detailSB = new StringBuffer();
+        // 包邮
+        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        
+        // 宝贝描述
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
+
+        // 尺寸描述
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+		 
+		String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
+		publishedBaobei.description =  "\"" + detailSB.toString() + extraMiaoshu
+				+ extraMiaoshu1 + "\"";
 	}
 
 	@Override
 	protected void composeBaobeiPictureStatus(GoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
+		MontBellUtil.composeBaobeiPictureStatus(item, publishedBaobei,
+				this.taobaoColors);
 		
 	}
 
 	@Override
 	protected void composeBaobeiPicture(GoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
+		MontBellUtil.composeBaobeiPicture(item, publishedBaobei, this.taobaoColors);
 		
 	}
 

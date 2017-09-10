@@ -125,7 +125,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
 		// 宝贝类目
-		obj.cid = "121470015";
+		obj.cid = "121408015";
 		// 店铺类目
 		obj.seller_cids = "1286992226";
 		// 省
@@ -230,7 +230,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		String cateProps = "";
 
-		cateProps += "20000:84533669;13021751:3239387;6103476:3231061;122216608:29923;21548:42440;";
+		cateProps += "20000:84533669;122216608:29923;21548:42440;";
 
 		// 宝贝属性
 		for (int i = 0; i < item.colorList.size(); i++) {
@@ -314,18 +314,18 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 
 		StringBuffer detailSB = new StringBuffer();
         // 包邮
-        detailSB.append(MontBellUtil.getBaoyouMiaoshu());
+        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         
         // 宝贝描述
-        detailSB.append(MontBellUtil.getProductInfoMiaoshu(item.detailScreenShotPicFile));
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
         
         // 着装图片
-        detailSB.append(MontBellUtil.getDressOnMiaoshu(item.dressOnPics));
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
-        detailSB.append(MontBellUtil.getSizeTipMiaoshu(item.sizeTipPics));
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
 		 
-		String extraMiaoshu = MontBellUtil.getExtraMiaoshu();
+		String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
 		obj.description =  "\"" + detailSB.toString() + extraMiaoshu
 				+ extraMiaoshu1 + "\"";

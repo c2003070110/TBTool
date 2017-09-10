@@ -157,11 +157,11 @@ public class BaobeiUtil {
         // 用户名称;
         obj.user_name = "";
         // 宝贝状态;
-        obj.syncStatus = "6";
+        obj.syncStatus = "2";
         // 闪电发货;
-        obj.is_lighting_consigment = "204";
+        obj.is_lighting_consigment = "3";
         // 新品
-        obj.is_xinpin = "242";
+        obj.is_xinpin = "224";
         // 食品专项;
         obj.foodparame = "product_date_end:;product_date_start:;stock_date_end:;stock_date_start:";
         // 尺码库;

@@ -122,9 +122,14 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			i++;
 			String picName = String
 					.format(fileNameFmt, goodsObj.productId, i++);
-			File picFile = TaobaoUtil.downloadPicture(picRoot, url, picName,true);
-			if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
-				goodsObj.dressOnPics.add(picFile.getAbsolutePath());
+			try {
+				File picFile = TaobaoUtil.downloadPicture(picRoot, url,
+						picName, true);
+				if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
+					goodsObj.dressOnPics.add(picFile.getAbsolutePath());
+				}
+			} catch (Exception ex) {
+				System.err.println("[ERROR]Download picture URL = " + url);
 			}
 		}
 		
@@ -278,6 +283,14 @@ public class MontbellProductParser extends BaseBaobeiParser {
     private List<GoodsObject> filter(List<GoodsObject> prodList) {
         List<GoodsObject> filterdList = Lists.newArrayList();
         List<String> productId = Lists.newArrayList();
+        productId.add("1128587");
+        productId.add("1128516");
+        productId.add("1128508");
+        productId.add("1128509");
+        
+        productId.add("1129386");
+        //productId.add("");
+        
         productId.add("1108723");
 		for (GoodsObject prod : prodList) {
 			if (!productId.contains(prod.productId)
@@ -342,6 +355,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
             title = title.replaceAll(" Baby's", "");
             title = title.replaceAll(" 100-120", "1");
             title = title.replaceAll(" 130-160", "2");
+            title = title.replaceAll("U.L.", "");
+            title = title.replaceAll("US", "");
 
             Elements desp = goodsElement.select(".description").select("p");
             String productId = desp.get(1).text().trim().replace("No. #", "");
@@ -557,6 +572,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
         weight = weight.replace("【重量】", "");
         weight = weight.replace("【平均重量】", "");
         weight = weight.replace("【総重量】", "");
+        weight = weight.replace("【本体重量】", "");
         weight = weight.replace(",", "");
         if (weight.indexOf("kg") > 0) {
             weight = weight.substring(0, weight.indexOf("kg"));
