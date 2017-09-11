@@ -121,7 +121,7 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
-        obj.price = MontBellUtil.convertToCNYNoneEMSFee(item,this.currencyRate,this.benefitRate);
+        obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
         obj.num = "9999";
@@ -176,22 +176,22 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
         String cateId = item.cateogryObj.categoryId;
         if("263000".equals(cateId)){
         	// 小型ザック（5～25L）
-        	title += " 小型背包(5-25L)" ;
+        	title += " 小型背包" ;
         }else if("262000".equals(cateId)){
         	//中型ザック（30～45L）
-        	title += "  中型背包(30-45L)" ;
+        	title += "  中型背包" ;
         }else if("261000".equals(cateId)){
         	//大型ザック（50～120L）
-        	title += " 大型背包(50-120L)" ;
+        	title += " 大型背包" ;
         }else if("263500".equals(cateId)){
         	//ザック（ポケッタブル）
-        	title += " 可折叠包" ;
+        	title += " 折叠包" ;
         //}else if("265000".equals(cateId)){
         	//キャメルバック
         //	title += " " ;
         }else if("264000".equals(cateId)){
         	//ザックカバー
-        	title += " 背包防水罩" ;
+        	title += " 防水罩" ;
         }
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;

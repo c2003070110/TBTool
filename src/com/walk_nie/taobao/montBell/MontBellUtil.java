@@ -33,6 +33,8 @@ public class MontBellUtil {
 
 	public static String categoryUrlPrefix_en = "http://en.montbell.jp/products/goods/list.php?category=";
 
+	public static String categoryUrlPrefix_fo_en = "http://en.montbell.jp/products/goods/list_fo.php?category=";
+
     public static String categoryUrlPrefix_fo = "http://webshop.montbell.jp/goods/list_fo.php?category=";
 
     public static String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
@@ -64,14 +66,17 @@ public class MontBellUtil {
     }
     public static String composeBaoyouMiaoshu() {
         StringBuffer detailSB = new StringBuffer();
-        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">运费</h3>");
+        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        detailSB.append("<p style=\"text-indent:2.0em;\">标价，仅适于大陆！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日本质检严，性价比高！</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">本店所有宝贝，采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日货料好质高，低调奢华，性价比高！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单可商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！100%日货</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图，有机会获得奖励:手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图包含了 <span style=\";color:red;font-weight:bold\">身材尺寸，衣服size，合适否</span>  100%奖励！！！请踊跃参与！！</p>");
         detailSB.append("</div>");
         return detailSB.toString();
     }
@@ -128,13 +133,24 @@ public class MontBellUtil {
         miaoshu.append("</div>");
         return miaoshu.toString();
     }
-
-    public static String convertToCNY(GoodsObject item,double curencyRate,double benefitRate) {
+    public static String convertToCNYWithEmsFee(GoodsObject item,double curencyRate,double benefitRate) {
+    	if(item.titleEn == null||  "".equals(item.titleEn)){
+    		return convertToCNYEMSFee(item, curencyRate, benefitRate);
+    	}else{
+    		return convertToCNYNoneEMSFee(item, curencyRate, benefitRate);
+    	}
+    }
+    private static String convertToCNYEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
-			//if (price < 10000)
-			//	price = price + 1000;
+			if (price < 5000){
+				price = price + 800;
+			}else if (price < 8000){
+				price = price + 600;
+			}else if (price < 10000){
+				price = price + 500;
+			}
             long priceTax  = Math.round(price*1.08);
             int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
             double priceCNY = (priceTax + emsFee) * curencyRate;
@@ -146,7 +162,7 @@ public class MontBellUtil {
         }
     }
 
-    public static String convertToCNYNoneEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
+    private static String convertToCNYNoneEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);

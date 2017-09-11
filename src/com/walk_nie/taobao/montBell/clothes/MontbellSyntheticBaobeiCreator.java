@@ -26,7 +26,7 @@ public class MontbellSyntheticBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.1;
+		double benefitRate = 0.08;
 		MontbellSyntheticBaobeiProducer db = new MontbellSyntheticBaobeiProducer();
 		db
                 .addScanCategory("139000") //  化繊綿ジャケット

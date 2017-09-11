@@ -122,7 +122,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
-        obj.price = MontBellUtil.convertToCNYNoneEMSFee(item,this.currencyRate,this.benefitRate);
+        obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
         obj.num = "9999";
@@ -177,19 +177,19 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         String cateId = item.cateogryObj.categoryId;
         if("131000".equals(cateId)){
         	// ダウンジャケット
-        	title += " 羽绒茄克" ;
+        	title += " 羽绒衣" ;
         }else if("137000".equals(cateId)){
         	//ダウンジャケット（軽量シリーズ）
-        	title += " 超轻 羽绒茄克" ;
+        	title += " 超轻羽绒衣" ;
         }else if("137500".equals(cateId)){
         	//半袖ダウンジャケット
-        	title += " 半袖 羽绒茄克" ;
+        	title += " 短袖羽绒衣" ;
         }else if("134000".equals(cateId)){
         	//ダウンベスト
         	title += " 羽绒背心" ;
         }else if("136000".equals(cateId)){
         	//コート（中綿入り）
-        	title += " 羽绒大衣" ;
+        	title += " 羽绒风衣" ;
         }else if("138000".equals(cateId)){
         	//ダウンパンツ
         	title += " 羽绒裤" ;

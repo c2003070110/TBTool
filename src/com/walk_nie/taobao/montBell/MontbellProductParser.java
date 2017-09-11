@@ -54,33 +54,41 @@ public class MontbellProductParser extends BaseBaobeiParser {
         Element mainRightEle = doc.select("div.rightCont").get(0);
 
         Elements sizes = mainRightEle.select("div.sizeChoice").select("select").select("option");
-        for (int i = 1; i < sizes.size(); i++) {
-            String zie = sizes.get(i).text();
-            if (!goodsObj.sizeList.contains(zie)) {
-                goodsObj.sizeList.add(zie);
-            }
-            int escpIdx = zie.indexOf("/");
-            String escpzie = zie;
-            if(escpIdx != -1){
-            	escpzie = zie.substring(0,escpIdx) + "\\/"+ zie.substring(escpIdx+1);
-            }
-            Elements colors = mainRightEle.select("div#size_"+ escpzie).select("table.dataTbl")
-                    .select("tr");
-            for (int j = 1; j < colors.size(); j++) {
-            	StockObject stock = new StockObject();
-            	Element color = colors.get(j);
-            	stock.colorName = color.select("p.colorName").text();
-            	stock.sizeName= zie;
-            	String stockN = color.select("p.sell").text();
-            	if("在庫あり".equals(stockN)){
-            		stock.isStock = true;
-            	}
-            	if("直営店在庫あり".equals(stockN)){
-            		stock.isStock = true;
-            	}
-            	goodsObj.stockList.add(stock);
-            }
-        }
+		for (int i = 1; i < sizes.size(); i++) {
+			String zie = sizes.get(i).text();
+			if (!goodsObj.sizeList.contains(zie)) {
+				goodsObj.sizeList.add(zie);
+			}
+			int escpIdx = zie.indexOf("/");
+			String escpzie = zie;
+			if (escpIdx != -1) {
+				escpzie = zie.substring(0, escpIdx) + "\\/"
+						+ zie.substring(escpIdx + 1);
+			}
+			try {
+
+				Elements colors = mainRightEle.select("div#size_" + escpzie)
+						.select("table.dataTbl").select("tr");
+				for (int j = 1; j < colors.size(); j++) {
+					StockObject stock = new StockObject();
+					Element color = colors.get(j);
+					stock.colorName = color.select("p.colorName").text();
+					stock.sizeName = zie;
+					String stockN = color.select("p.sell").text();
+					if ("在庫あり".equals(stockN)) {
+						stock.isStock = true;
+					}
+					if ("直営店在庫あり".equals(stockN)) {
+						stock.isStock = true;
+					}
+					goodsObj.stockList.add(stock);
+				}
+			} catch (Exception ex) {
+				System.err.println("[ERROR]product Id = " + goodsObj.productId
+						+ " Size = " + escpzie);
+				continue;
+			}
+		}
 
         Elements colors = mainRightEle.select("div#size_").select("table.dataTbl")
                 .select("p.colorName");
@@ -294,9 +302,10 @@ public class MontbellProductParser extends BaseBaobeiParser {
         productId.add("1108723");
 		for (GoodsObject prod : prodList) {
 			if (!productId.contains(prod.productId)
+//					&& MontBellUtil.getPublishedBaobei(prod,
+//							this.publishedbaobeiList) != null) {
 					&& MontBellUtil.getPublishedBaobei(prod,
 							this.publishedbaobeiList) == null) {
-				// if (!productId.contains(prod.productId)) {
 				productId.add(prod.productId);
 				filterdList.add(prod);
 			}
@@ -315,21 +324,28 @@ public class MontbellProductParser extends BaseBaobeiParser {
      //   }
     //}
 
-    private void scanEnTitleByCategory(
-			CategoryObject categoryObj) throws ClientProtocolException, IOException {
-        String cateogryUrl = MontBellUtil.categoryUrlPrefix_en + categoryObj.categoryId;
-        Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
-        scanEnTitleByCategory(doc, categoryObj);
-        Elements pages = doc.select("div.resultArea").select("div.leftArea").select("p");
-        int minP = 3;
-        if (pages.size() > minP) {
-            for (int i = minP; i < pages.size() - 1; i++) {
-                String pagedCategoryUrl = cateogryUrl + "&page=" + (i - 1);
-                Document docPage = TaobaoUtil.urlToDocumentByUTF8(pagedCategoryUrl);
-                scanEnTitleByCategory(docPage, categoryObj);
-            }
-        }
-		
+	private void scanEnTitleByCategory(CategoryObject categoryObj)
+			throws ClientProtocolException, IOException {
+		String cateogryUrl = MontBellUtil.categoryUrlPrefix_fo_en
+				+ categoryObj.categoryId;
+		Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
+		scanEnTitleByCategory(doc, categoryObj);
+
+		cateogryUrl = MontBellUtil.categoryUrlPrefix_en
+				+ categoryObj.categoryId;
+		doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
+		scanEnTitleByCategory(doc, categoryObj);
+		Elements pages = doc.select("div.resultArea").select("div.leftArea")
+				.select("p");
+		int minP = 3;
+		if (pages.size() > minP) {
+			for (int i = minP; i < pages.size() - 1; i++) {
+				String pagedCategoryUrl = cateogryUrl + "&page=" + (i - 1);
+				Document docPage = TaobaoUtil
+						.urlToDocumentByUTF8(pagedCategoryUrl);
+				scanEnTitleByCategory(docPage, categoryObj);
+			}
+		}
 	}
 
     private void scanEnTitleByCategory(Document doc,

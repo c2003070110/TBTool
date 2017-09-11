@@ -139,7 +139,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
-		obj.price = MontBellUtil.convertToCNY(item, this.currencyRate,
+		obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
 				this.benefitRate);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
@@ -333,9 +333,29 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
 		String title = "\"日本直邮 MontBell";
 		String cateId = item.cateogryObj.categoryId;
-		if ("".equals(cateId)) {
-			// 
-			title += " ";
+		if ("122000".equals(cateId)) {
+			// フリースジャケット
+			title += " 抓绒衣";
+		}
+		if ("121000".equals(cateId)) {
+			// 防風性フリース
+			title += " 防风抓绒衣";
+		}
+		if ("126000".equals(cateId)) {
+			// フリースプルオーバー
+			title += " 抓绒衣";
+		}
+		if ("124000".equals(cateId)) {
+			// フリースベスト
+			title += " 抓绒背心";
+		}
+		if ("123000".equals(cateId)) {
+			// フリースパンツ
+			title += " 抓绒裤";
+		}
+		if ("129000".equals(cateId)) {
+			// フリーススカート
+			title += " 抓绒裙";
 		}
 		if (!StringUtil.isBlank(item.titleEn)) {
 			title += " " + item.titleEn;

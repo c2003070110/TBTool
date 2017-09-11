@@ -19,7 +19,7 @@ public class MontbellDownBaobeiCreator  {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_down_baobei_%s.csv";
-		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
+		String publishedBaobeiFile = "c:/temp/montbell-down.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);

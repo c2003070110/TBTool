@@ -89,7 +89,7 @@ public abstract class BaseBaobeiProducer {
 			BaobeiPublishObject publishedBaobei) {
 
 		// 宝贝价格
-		publishedBaobei.price = MontBellUtil.convertToCNYNoneEMSFee(item,
+		publishedBaobei.price = MontBellUtil.convertToCNYWithEmsFee(item,
 				this.currencyRate, this.benefitRate);
 		// 宝贝描述
 		composeBaobeiMiaoshu(item, publishedBaobei);

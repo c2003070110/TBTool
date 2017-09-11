@@ -103,7 +103,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 		// 省
 		//obj.location_state = "日本";
 		// 宝贝价格
-		obj.price = MontBellUtil.convertToCNYNoneEMSFee(item, this.currencyRate,
+		obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
 				this.benefitRate);
 		// obj.price = item.priceCNY;
 		// 宝贝数量

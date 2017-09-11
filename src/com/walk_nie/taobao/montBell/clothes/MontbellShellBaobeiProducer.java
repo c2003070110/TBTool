@@ -114,46 +114,18 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		
 		BaobeiPublishObject obj = new BaobeiPublishObject();
 		BaobeiUtil.setBaobeiCommonInfo(obj);
-		
-		String categoryId = item.cateogryObj.categoryId;
 
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
+		
 		// 宝贝类目 
-		if ("22000".equals(categoryId)) {
-			// ソフトシェル>ソフトシェルジャケット 软壳衣
-			obj.cid = "124208012";
-		} else if ("25000".equals(categoryId)) {
-			// ソフトシェル>ライトシェルジャケット/ベスト 软壳衣
-			obj.cid = "124208012";
-		} else if ("22500".equals(categoryId)) {
-			// ソフトシェル>ソフトシェルパンツ  软壳裤
-			obj.cid = "124216004";
-		} else if ("23000".equals(categoryId)) {
-			// ソフトシェル>ライトシェルパンツ  软壳裤
-			obj.cid = "124216004";
-		} else if ("146000".equals(categoryId)) {
-			//  ハードシェル>パンツ(保温材入り) 冲锋裤
-			obj.cid = "50014786";
-		} else if ("145000".equals(categoryId)) {
-			//  ハードシェル>パンツ(保温材なし) 冲锋裤
-			obj.cid = "50014786";
-		} else if ("22500".equals(categoryId)) {
-			//  ソフトシェル>ソフトシェルパンツ 冲锋裤
-			obj.cid = "50014786";
-		} else if ("23000".equals(categoryId)) {
-			//  ソフトシェル>ライトシェルパンツ 冲锋裤
-			obj.cid = "50014786";
-		} else {
-			// 冲锋衣
-			obj.cid = "50014785";
-		}
+		composeBaobeiCId(item, obj);
 		// 店铺类目
 		obj.seller_cids = "1184361987";
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
-		obj.price = MontBellUtil.convertToCNY(item, this.currencyRate,
+		obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
 				this.benefitRate);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
@@ -198,6 +170,38 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		obj.add_qualification = "1";
 
 		return TaobaoUtil.composeTaobaoLine(obj);
+	}
+
+	private void composeBaobeiCId(GoodsObject item, BaobeiPublishObject obj) {
+		String categoryId = item.cateogryObj.categoryId;
+		if ("22000".equals(categoryId)) {
+			// ソフトシェル>ソフトシェルジャケット 软壳衣
+			obj.cid = "124208012";
+		} else if ("25000".equals(categoryId)) {
+			// ソフトシェル>ライトシェルジャケット/ベスト 软壳衣
+			obj.cid = "124208012";
+		} else if ("22500".equals(categoryId)) {
+			// ソフトシェル>ソフトシェルパンツ  软壳裤
+			obj.cid = "124216004";
+		} else if ("23000".equals(categoryId)) {
+			// ソフトシェル>ライトシェルパンツ  软壳裤
+			obj.cid = "124216004";
+		} else if ("146000".equals(categoryId)) {
+			//  ハードシェル>パンツ(保温材入り) 冲锋裤
+			obj.cid = "50014786";
+		} else if ("145000".equals(categoryId)) {
+			//  ハードシェル>パンツ(保温材なし) 冲锋裤
+			obj.cid = "50014786";
+		} else if ("22500".equals(categoryId)) {
+			//  ソフトシェル>ソフトシェルパンツ 冲锋裤
+			obj.cid = "50014786";
+		} else if ("23000".equals(categoryId)) {
+			//  ソフトシェル>ライトシェルパンツ 冲锋裤
+			obj.cid = "50014786";
+		} else {
+			// 冲锋衣
+			obj.cid = "50014785";
+		}
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
@@ -355,34 +359,6 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 					+ item.colorList.get(i) + ";";
 		}
 		obj.input_custom_cpv = inputCustomCpv;
-	}
-
-	private String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
-
-		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailScreenShotPicFile;
-		if (!StringUtil.isBlank(item.detailScreenShotPicFile)) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-					+ productInfo + "\"/></p>");
-			detailSB.append("</div>");
-		}
-		StringBuffer sizeTips = new StringBuffer();
-		if (!item.sizeTipPics.isEmpty()) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for (String sizeTip : item.sizeTipPics) {
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-						+ sizeTip + "\"/></p>");
-			}
-			detailSB.append("</div>");
-		}
-		String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
-		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		return "\"" + detailSB.toString() + sizeTips.toString() + extraMiaoshu
-				+ extraMiaoshu1 + "\"";
 	}
 
 	public MontbellShellBaobeiProducer addScanCategory(String scanCategoryId) {

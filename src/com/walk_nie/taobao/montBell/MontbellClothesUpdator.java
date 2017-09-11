@@ -114,7 +114,7 @@ public class MontbellClothesUpdator {
 		// FIXME change 
 		double currencyRate = 0.0683;
 		double benefitRate = 0.07;
-		goodsObj.priceCNY =  MontBellUtil.convertToCNY(goodsObj,currencyRate,benefitRate);
+		goodsObj.priceCNY =  MontBellUtil.convertToCNYWithEmsFee(goodsObj,currencyRate,benefitRate);
 		baobei.price = goodsObj.priceCNY;
 		
 		// 用户输入名-值对

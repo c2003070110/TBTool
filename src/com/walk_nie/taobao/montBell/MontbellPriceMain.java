@@ -30,15 +30,15 @@ public class MontbellPriceMain {
 		// MontbellProductParser().scanItemByCategory(goodsObjList,category);
 		String outputFmt = "%s,%s,%s,%s,%s,%s";
 		for (GoodsObject goodObj : goodsObjList) {
-			String price1 = MontBellUtil.convertToCNY(goodObj, currencyRate,
+			String price1 = MontBellUtil.convertToCNYWithEmsFee(goodObj, currencyRate,
 					benefitRate1);
-			String price2 = MontBellUtil.convertToCNY(goodObj, currencyRate,
+			String price2 = MontBellUtil.convertToCNYWithEmsFee(goodObj, currencyRate,
 					benefitRate2);
-			String price3 = MontBellUtil.convertToCNY(goodObj, currencyRate,
+			String price3 = MontBellUtil.convertToCNYWithEmsFee(goodObj, currencyRate,
 					benefitRate3);
-			String price4 = MontBellUtil.convertToCNY(goodObj, currencyRate,
+			String price4 = MontBellUtil.convertToCNYWithEmsFee(goodObj, currencyRate,
 					benefitRate4);
-			String price5 = MontBellUtil.convertToCNY(goodObj, currencyRate,
+			String price5 = MontBellUtil.convertToCNYWithEmsFee(goodObj, currencyRate,
 					benefitRate5);
 			System.out.println(String.format(outputFmt, goodObj.productId,
 					price1, price2, price3, price4, price5));
