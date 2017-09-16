@@ -67,7 +67,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 			} else {
 				MontbellProductParser parser = new MontbellProductParser();
 				parser.setPublishedbaobeiList(publishedbaobeiList);
-				parser.scanFOFlag = false;
+				parser.scanFOFlag = true;
 				itemIdList = parser.scanItem(scanCategoryIds);
 			}
 			if (itemIdList.isEmpty())
@@ -149,7 +149,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		//obj.inputPids = "\"20000,13021751,6103476\"";
 		// ダウンジャケット
 		//obj.inputPids = "\"20000,13021751,6103476,1627207\"";
-		obj.inputPids = "\"1627207\"";
+		obj.inputPids = "\"6103476,13021751\"";
 
 		// 用户输入名-值对
 		// obj.inputValues = "\"montbell,"+item.productId+",*\"";
@@ -246,7 +246,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
-		String inputValues = "\"" + item.productId + "," + obj.price
+		String inputValues = "\"" + obj.price + "," + item.productId
 				+ ",";
 		for (int i = 0; i < item.colorList.size(); i++) {
 			if (i >= taobaoColors.size())

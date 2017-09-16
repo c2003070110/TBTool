@@ -30,7 +30,7 @@ public class MontbellDownBaobeiCreator  {
 		MontbellDownBaobeiProducer db = new MontbellDownBaobeiProducer();
 		db
                 .addScanCategory("131000") // ダウンジャケット
-                
+                /*
                 .addScanCategory("137000") // ダウンジャケット（軽量シリーズ）
                 .addScanCategory("137500") // 半袖ダウンジャケット
                 .addScanCategory("134000") // ダウンベスト
@@ -45,7 +45,7 @@ public class MontbellDownBaobeiCreator  {
                 .addScanCategory("") //  
                 .addScanCategory("") //  
                 .addScanCategory("") //  
-                
+                */
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)

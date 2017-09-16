@@ -67,7 +67,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 
 			} else {
 				MontbellProductParser parser = new MontbellProductParser();
-				parser.scanFOFlag = false;
+				parser.scanFOFlag = true;
 				itemIdList = parser.scanItem(scanCategoryIds);
 			}
 			if (itemIdList.isEmpty())
@@ -183,6 +183,27 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		String title = "\"日本直邮";
 		//title += "" + item.titleCN;
 		title += " MontBell";
+		if (item.titleOrg.indexOf("Tシャツ") > 0) {
+			title += " 功能T恤";
+		} else if (item.titleOrg.indexOf("ブラ") > 0) {
+			title += " 文胸";
+		} else if (item.titleOrg.indexOf("シャツ") > 0) {
+			title += " 内衣";
+		} else if (item.titleOrg.indexOf("タイツ") > 0) {
+			title += " 紧身裤";
+		} else if (item.titleOrg.indexOf("トランクス") > 0) {
+			title += " 内裤";
+		} else if (item.titleOrg.indexOf("ブリーフ") > 0) {
+			title += " 内裤";
+		} else if (item.titleOrg.indexOf("ショーツ") > 0) {
+			title += " 内裤";
+		//} else if (item.titleOrg.indexOf("ウエストウォーマー") > 0) {
+		//	title += " 护腰";
+		} else if (item.titleOrg.indexOf("") > 0) {
+			title += " ";
+		} else if (item.titleOrg.indexOf("") > 0) {
+			title += " ";
+		}
 		String categoryId = item.cateogryObj.categoryId;
 		if("75200".equals(categoryId)){
 			// スーパーメリノウール（厚手／エクスペディション）
@@ -208,15 +229,17 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 			//  ジオライン（薄手／ライトウエイト）
 			title += " 薄手 ZEO LINE";
 		}
-//		if (!StringUtil.isBlank(item.titleEn)) {
-//			if (item.titleEn.indexOf("T恤") > 0) {
-//				title += " 功能T恤";
-//			} else {
-//				title += " 功能内衣";
-//
-//			}
-//			// title += " " + item.titleEn ;
-//		}
+		if("71700".equals(categoryId)){
+			//  ウエストウォーマー
+			title += " 护腰";
+		}
+		if("76000".equals(categoryId)){
+			//  スペリオルシルク（薄手）
+			title += " 薄手 高级丝绸";
+		}
+//        if(!StringUtil.isBlank(item.titleEn)){
+//            title += " " + item.titleEn ;
+//        }
 		title += " " + item.productId;
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;

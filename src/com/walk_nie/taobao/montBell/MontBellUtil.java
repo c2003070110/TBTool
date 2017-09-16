@@ -70,7 +70,7 @@ public class MontBellUtil {
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日货料好质高，低调奢华，性价比高！</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单可商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！100%日货</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
@@ -133,29 +133,38 @@ public class MontBellUtil {
         miaoshu.append("</div>");
         return miaoshu.toString();
     }
-    public static String convertToCNYWithEmsFee(GoodsObject item,double curencyRate,double benefitRate) {
-    	if(item.titleEn == null||  "".equals(item.titleEn)){
-    		return convertToCNYEMSFee(item, curencyRate, benefitRate);
-    	}else{
-    		return convertToCNYNoneEMSFee(item, curencyRate, benefitRate);
-    	}
-    }
+
+	public static String convertToCNYWithEmsFee(GoodsObject item,
+			double curencyRate, double benefitRate) {
+		if (item.titleEn != null && !"".equals(item.titleEn)) {
+			if (Integer.parseInt(item.priceJPY) < 10000
+					&& (item.weight + item.weightExtra) > 500) {
+				return convertToCNYEMSFee(item, curencyRate, benefitRate);
+			} else {
+				return convertToCNYNoneEMSFee(item, curencyRate, benefitRate);
+			}
+		} else if ((item.weight + item.weightExtra) < 500) {
+			return convertToCNYNoneEMSFee(item, curencyRate, benefitRate);
+		} else {
+			return convertToCNYEMSFee(item, curencyRate, benefitRate);
+		}
+	}
     private static String convertToCNYEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
 			if (price < 5000){
-				price = price + 800;
+				price = price + 400;
 			}else if (price < 8000){
-				price = price + 600;
+				price = price + 200;
 			}else if (price < 10000){
-				price = price + 500;
+				price = price + 100;
 			}
             long priceTax  = Math.round(price*1.08);
             int emsFee = TaobaoUtil.getEmsFee(item.weight + item.weightExtra);
             double priceCNY = (priceTax + emsFee) * curencyRate;
-            priceCNY = priceCNY + priceCNY * benefitRate;
-            return String.valueOf(Math.round(priceCNY));
+			priceCNY = priceCNY + priceCNY * benefitRate;
+			return String.valueOf(Math.round(priceCNY) - 60);
         } catch (Exception ex) {
             ex.printStackTrace();
             return "XXXXXX";
@@ -167,11 +176,11 @@ public class MontBellUtil {
         try {
             int price = Integer.parseInt(priceStr);
 			if (price < 5000){
-				price = price + 800;
-			}else if (price < 8000){
-				price = price + 600;
-			}else if (price < 10000){
 				price = price + 500;
+			}else if (price < 8000){
+				price = price + 400;
+			}else if (price < 10000){
+				price = price + 300;
 			}
             long priceTax  = Math.round(price*1.08);
             double priceCNY = (priceTax ) * curencyRate;

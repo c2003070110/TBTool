@@ -130,6 +130,9 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		// obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
+		
+        // 邮费模版ID 全场90包邮
+        obj.postage_id = "1780373930";
 
 		// 用户输入ID串;
 		//obj.inputPids = "\"20000,13021751,6103476,1627207\"";
@@ -174,29 +177,35 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiCId(GoodsObject item, BaobeiPublishObject obj) {
 		String categoryId = item.cateogryObj.categoryId;
-		if ("22000".equals(categoryId)) {
+		if ("142000".equals(categoryId)) {
+			// ハードシェル>ジャケット（保温材入り）
+			obj.cid = "50014785";
+		} else if ("141000".equals(categoryId)) {
+			// ハードシェル>ジャケット（保温材なし）
+			obj.cid = "50014785";
+		} else if ("22000".equals(categoryId)) {
 			// ソフトシェル>ソフトシェルジャケット 软壳衣
 			obj.cid = "124208012";
 		} else if ("25000".equals(categoryId)) {
 			// ソフトシェル>ライトシェルジャケット/ベスト 软壳衣
 			obj.cid = "124208012";
 		} else if ("22500".equals(categoryId)) {
-			// ソフトシェル>ソフトシェルパンツ  软壳裤
+			// ソフトシェル>ソフトシェルパンツ 软壳裤
 			obj.cid = "124216004";
 		} else if ("23000".equals(categoryId)) {
-			// ソフトシェル>ライトシェルパンツ  软壳裤
+			// ソフトシェル>ライトシェルパンツ 软壳裤
 			obj.cid = "124216004";
 		} else if ("146000".equals(categoryId)) {
-			//  ハードシェル>パンツ(保温材入り) 冲锋裤
+			// ハードシェル>パンツ(保温材入り) 冲锋裤
 			obj.cid = "50014786";
 		} else if ("145000".equals(categoryId)) {
-			//  ハードシェル>パンツ(保温材なし) 冲锋裤
+			// ハードシェル>パンツ(保温材なし) 冲锋裤
 			obj.cid = "50014786";
 		} else if ("22500".equals(categoryId)) {
-			//  ソフトシェル>ソフトシェルパンツ 冲锋裤
+			// ソフトシェル>ソフトシェルパンツ 冲锋裤
 			obj.cid = "50014786";
 		} else if ("23000".equals(categoryId)) {
-			//  ソフトシェル>ライトシェルパンツ 冲锋裤
+			// ソフトシェル>ライトシェルパンツ 冲锋裤
 			obj.cid = "50014786";
 		} else {
 			// 冲锋衣
@@ -211,10 +220,10 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		String categoryId = item.cateogryObj.categoryId;
 		if ("142000".equals(categoryId)) {
 			// ハードシェル>ジャケット（保温材入り）
-			title += " 保温冲锋裤";
+			title += " 保温冲锋衣";
 		} else if ("141000".equals(categoryId)) {
 			// ハードシェル>ジャケット（保温材なし）
-			title += " 冲锋裤";
+			title += " 冲锋衣";
 		} else if ("146000".equals(categoryId)) {
 			// ハードシェル>パンツ(保温材入り)
 			title += " 保温冲锋裤";
@@ -235,7 +244,7 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " 超轻软壳裤";
 		} else if ("8800".equals(categoryId)) {
 			//レインウェア（ゴアテックス製）
-			title += " GoreTex雨衣裤";
+			title += " Gore雨衣裤";
 		} else if ("1000".equals(categoryId)) {
 			//レインウェア
 			title += " 雨衣裤";
@@ -323,8 +332,7 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// MONTBELL,1106570,1234,color1;颜色分类;color2;颜色分类;color3
-		String inputValues = "\"MONTBELL," + item.productId + "," + obj.price
-				+ ",";
+		String inputValues = "\"" + obj.price + "," + item.productId + ",";
 		for (int i = 0; i < item.colorList.size(); i++) {
 			if (i >= taobaoColors.size())
 				break;
