@@ -131,8 +131,8 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝数量
 		obj.num = "9999";
 		
-        // 邮费模版ID 全场90包邮
-        obj.postage_id = "1780373930";
+        // 邮费模版ID
+        obj.postage_id = MontBellUtil.composePostageId(item);
 
 		// 用户输入ID串;
 		//obj.inputPids = "\"20000,13021751,6103476,1627207\"";
@@ -286,12 +286,23 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 
 	protected void composeBaobeiCateProps(GoodsObject item,
 			BaobeiPublishObject obj) {
-		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		String cateProps = "";
+		String categoryId = item.cateogryObj.categoryId;
 
-		//cateProps += "20000:84533669;13021751:11419312;6103476:3231061;122216608:29923;21548:42580;20021:28347;122216816:39036084;";
-		cateProps += "20000:84533669;122216608:29923;21548:42580;20021:28347;122216816:39036084;";
-        
+		cateProps += "20000:84533669;";
+		 if ("146000".equals(categoryId)) {
+			// ハードシェル>パンツ(保温材入り) 冲锋裤
+			cateProps += "20021:37454349;";
+		} else if ("145000".equals(categoryId)) {
+			// ハードシェル>パンツ(保温材なし) 冲锋裤
+			cateProps += "20021:37454349;";
+		} else if ("22500".equals(categoryId)) {
+			// ソフトシェル>ソフトシェルパンツ 冲锋裤
+			cateProps += "20021:37454349;";
+		} else {
+			cateProps += "20021:28347;";
+		}
+		cateProps += "122216608:29923;21548:42580;122216816:39036084;";
 		// 宝贝属性
 		for (int i = 0; i < item.colorList.size(); i++) {
 			if (i >= taobaoColors.size())

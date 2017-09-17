@@ -26,11 +26,11 @@ public class MontbellDownBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.07;
+		double benefitRate = 0.05;
 		MontbellDownBaobeiProducer db = new MontbellDownBaobeiProducer();
 		db
                 .addScanCategory("131000") // ダウンジャケット
-                /*
+                
                 .addScanCategory("137000") // ダウンジャケット（軽量シリーズ）
                 .addScanCategory("137500") // 半袖ダウンジャケット
                 .addScanCategory("134000") // ダウンベスト
@@ -38,6 +38,7 @@ public class MontbellDownBaobeiCreator  {
                 .addScanCategory("138000") // ダウンパンツ
                 .addScanCategory("136500") //  ダウンはんてん（半纏）
                 .addScanCategory("132000") //  ダウン（極地用）
+                
                 .addScanCategory("625000") //USモデル ダウンジャケット
                 
                 .addScanCategory("138600") //  ダウンマフラー/ブランケット
@@ -45,7 +46,7 @@ public class MontbellDownBaobeiCreator  {
                 .addScanCategory("") //  
                 .addScanCategory("") //  
                 .addScanCategory("") //  
-                */
+                
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)

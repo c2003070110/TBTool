@@ -26,7 +26,7 @@ public class MontbellBackpackBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.07;
+		double benefitRate = 0.05;
 		MontbellBackpackBaobeiProducer db = new MontbellBackpackBaobeiProducer();
 		db
                 .addScanCategory("263000") // 小型ザック（5～25L）

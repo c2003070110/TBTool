@@ -13,7 +13,7 @@ public class MontbellFreeceBaobeiCreator  {
 		String outputFile = "out/montBell_freece_baobei_%s.csv";
 		//String publishedBaobeiFile = "";
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.1;
+		double benefitRate = 0.06;
 		MontbellFreeceBaobeiProducer db = new MontbellFreeceBaobeiProducer();
 		db
                 .addScanCategory("122000") // フリースジャケット FLEECE JACKET

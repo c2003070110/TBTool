@@ -24,7 +24,7 @@ public class MontbellUnderWareBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.08;
+		double benefitRate = 0.1;
 		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
 		db
                 .addScanCategory("75200") // スーパーメリノウール（厚手／エクスペディション）

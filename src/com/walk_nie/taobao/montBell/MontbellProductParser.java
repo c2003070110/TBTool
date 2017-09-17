@@ -373,6 +373,11 @@ public class MontbellProductParser extends BaseBaobeiParser {
             title = title.replaceAll(" 130-160", "2");
             title = title.replaceAll("U.L.", "");
             title = title.replaceAll("US", "");
+            title = title.replaceAll(" Pants", "");
+            title = title.replaceAll(" PANTS", "");
+            title = title.replaceAll("Lining", "");
+            title = title.replaceAll(" LINING", "");
+            title = title.trim();
 
             Elements desp = goodsElement.select(".description").select("p");
             String productId = desp.get(1).text().trim().replace("No. #", "");

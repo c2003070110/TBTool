@@ -127,8 +127,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝数量
         obj.num = "9999";
 		
-        // 邮费模版ID 全场90包邮
-        obj.postage_id = "1780373930";
+        // 邮费模版ID
+        obj.postage_id = MontBellUtil.composePostageId(item);
+        //obj.postage_id = "1780373930";
         
         // 用户输入ID串;
         //obj.inputPids = "\"20000,13021751,6103476\"";
@@ -163,10 +164,16 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         MontBellUtil.composeBaobeiSubtitle(item, obj);
         // 库存计数
         obj.sub_stock_type = "1";
+        
+        // 闪电发货
+        obj.is_lighting_consigment = "80";
+        // 新品
+        obj.is_xinpin = "247";
+        
         // 商品资质
         obj.qualification = "%7B%7D";
         // 增加商品资质
-        obj.add_qualification = "1";
+        obj.add_qualification = "0";
 
         return TaobaoUtil.composeTaobaoLine(obj);
     }
@@ -223,7 +230,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         // ダウンジャケット
         //cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
         //cateProps += "20000:84533669;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
-        cateProps += "20000:84533669;122216608:29923;21548:38488;";
+        cateProps += "20000:84533669;13021751:124459527;6103476:3375990;122216608:29923;21548:38488;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){

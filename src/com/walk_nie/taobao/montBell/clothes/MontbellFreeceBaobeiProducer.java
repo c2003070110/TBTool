@@ -144,6 +144,9 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		// obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "9999";
+		
+        // 邮费模版ID
+        obj.postage_id = MontBellUtil.composePostageId(item);
 
 		// 用户输入ID串;
 		//obj.inputPids = "\"20000,13021751,6103476\"";

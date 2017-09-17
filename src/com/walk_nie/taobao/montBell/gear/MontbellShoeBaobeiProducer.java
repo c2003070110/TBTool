@@ -126,6 +126,9 @@ public class MontbellShoeBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝数量
         obj.num = "9999";
 		
+        // 邮费模版ID
+        obj.postage_id = MontBellUtil.composePostageId(item);
+		
         // 邮费模版ID 全场90包邮
         obj.postage_id = "1780373930";
         

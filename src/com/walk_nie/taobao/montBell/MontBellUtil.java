@@ -134,6 +134,16 @@ public class MontBellUtil {
         return miaoshu.toString();
     }
 
+	public static String composePostageId(GoodsObject item) {
+		int price = Integer.parseInt(item.priceJPY);
+		if (price > 20000 && (item.titleEn != null && !"".equals(item.titleEn))) {
+			// 日本直邮包邮
+			return "5327378310";
+		}
+		// 全场90包邮
+		return "1780373930";
+	}
+
 	public static String convertToCNYWithEmsFee(GoodsObject item,
 			double curencyRate, double benefitRate) {
 		if (item.titleEn != null && !"".equals(item.titleEn)) {
