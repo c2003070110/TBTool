@@ -309,10 +309,10 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
         
-        String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+        //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
         
-        publishedBaobei.description = "\"" + detailSB.toString() + extraMiaoshu +extraMiaoshu1+ "\"";
+        publishedBaobei.description = "\"" + detailSB.toString()  +extraMiaoshu1+ "\"";
 	}
 
 	@Override

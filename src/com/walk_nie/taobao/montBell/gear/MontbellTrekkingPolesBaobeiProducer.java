@@ -272,9 +272,9 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
         
-        String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+        //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-        obj.description =  "\"" + detailSB.toString() + extraMiaoshu +extraMiaoshu1+ "\"";
+        obj.description =  "\"" + detailSB.toString()  +extraMiaoshu1+ "\"";
     }
 
     public MontbellTrekkingPolesBaobeiProducer addScanCategory(String scanCategoryId) {

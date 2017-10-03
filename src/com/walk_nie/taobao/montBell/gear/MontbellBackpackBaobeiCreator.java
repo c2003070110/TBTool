@@ -9,7 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 /**
- * ダウン 羽绒服
+ * 背包
  *
  */
 public class MontbellBackpackBaobeiCreator  {

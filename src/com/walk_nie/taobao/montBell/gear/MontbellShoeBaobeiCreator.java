@@ -26,7 +26,7 @@ public class MontbellShoeBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.07;
+		double benefitRate = 0.05;
 		MontbellShoeBaobeiProducer db = new MontbellShoeBaobeiProducer();
 		db
                 .addScanCategory("241000") //  登山靴（アルパイン）

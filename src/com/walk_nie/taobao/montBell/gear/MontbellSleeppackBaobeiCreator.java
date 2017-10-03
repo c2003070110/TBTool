@@ -26,7 +26,7 @@ public class MontbellSleeppackBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.07;
+		double benefitRate = 0.05;
 		MontbellSleeppackBaobeiProducer db = new MontbellSleeppackBaobeiProducer();
 		db
                 .addScanCategory("235500") //  ダウンモデル

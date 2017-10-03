@@ -279,9 +279,9 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
 		 
-		String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+		//String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		publishedBaobei.description =  "\"" + detailSB.toString() + extraMiaoshu
+		publishedBaobei.description = "\"" + detailSB.toString()
 				+ extraMiaoshu1 + "\"";
 	}
 

@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
@@ -44,6 +45,18 @@ public class MontBellUtil {
     public static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
     
     public static void downloadPicture(GoodsObject goods,String outFilePath) {
+    	if(goods.colorList.isEmpty()){
+    		int i=1;
+    		for(String dressOnPic :goods.dressOnPics){
+                String picName = goods.productId + "_" + i;
+                i++;
+                try {
+					Files.copy(new File(dressOnPic), new File(outFilePath,picName+".jpg"));
+	                goods.pictureNameList.add(picName);
+				} catch (IOException e) {
+				}
+    		}
+    	}
         
         for(String color : goods.colorList){
             color = color.replaceAll("/", "-").toLowerCase();
@@ -122,9 +135,9 @@ public class MontBellUtil {
 		}
 		return detailSB.toString();
 	}
-    public static String composeExtraMiaoshu() {
+    public  String composeExtraMiaoshu() {
         StringBuffer miaoshu = new StringBuffer();
-        miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！直播(tokyoson)</h3>");
+        miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！</h3>");
         miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i2/2498620403/TB2.eGxkXXXXXXJXpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2SLKFkXXXXXc9XXXXXXXXXXXX_!!2498620403.jpg\" /></p>");
@@ -163,7 +176,9 @@ public class MontBellUtil {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
-			if (price < 5000){
+			if (price < 2000){
+				price = price + 200;
+			}else if (price < 5000){
 				price = price + 400;
 			}else if (price < 8000){
 				price = price + 200;
@@ -185,7 +200,9 @@ public class MontBellUtil {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
-			if (price < 5000){
+			if (price < 2000){
+				price = price + 200;
+			}else if (price < 5000){
 				price = price + 500;
 			}else if (price < 8000){
 				price = price + 400;

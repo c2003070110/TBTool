@@ -26,7 +26,7 @@ public class MontbellTrekkingPolesBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.1;
+		double benefitRate = 0.05;
 		MontbellTrekkingPolesBaobeiProducer db = new MontbellTrekkingPolesBaobeiProducer();
 		db
                 .addScanCategory("252000") //  Iグリップ

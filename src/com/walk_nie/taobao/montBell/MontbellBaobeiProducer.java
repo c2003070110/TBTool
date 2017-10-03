@@ -375,9 +375,9 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
             }
             detailSB.append("</div>");
         }
-        String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+        //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-        return "\"" + detailSB.toString() +sizeTips.toString()+ extraMiaoshu +extraMiaoshu1+ "\"";
+        return "\"" + detailSB.toString() +sizeTips.toString() +extraMiaoshu1+ "\"";
     }
 
     public MontbellBaobeiProducer addScanCategory(String scanCategoryId) {

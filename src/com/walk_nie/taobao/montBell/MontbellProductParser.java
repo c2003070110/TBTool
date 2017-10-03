@@ -34,7 +34,36 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
     List<SizeTipObject> sizeTipList = null;
     Map<String,String> enTitleMap = Maps.newHashMap();
-  
+
+    public List<GoodsObject> scanItem(List<String> categoryIds) throws IOException {
+        List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
+        for (String categoryId : categoryIds) {
+            if(StringUtil.isBlank(categoryId)) continue;
+            CategoryObject categoryObj = new CategoryObject();
+            categoryObj.categoryId = categoryId;
+            scanEnTitleByCategory(categoryObj);
+        }
+        
+        for (String categoryId : categoryIds) {
+            if(StringUtil.isBlank(categoryId)) continue;
+            CategoryObject categoryObj = new CategoryObject();
+            categoryObj.categoryId = categoryId;
+            scanItemByCategory(goodsList, categoryObj);
+        }
+
+        List<GoodsObject> filteredProdList = filter(goodsList);
+        
+        for (GoodsObject goodsObj : filteredProdList) {
+            scanSingleItem(goodsObj);
+        }
+        
+        //translate(filteredProdList);
+
+        saveSizeTip(filteredProdList);
+        
+        return filteredProdList;
+    }
+    
 	public void scanSingleItem(GoodsObject goodsObj) throws IOException {
 
 		String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
@@ -94,6 +123,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
                 .select("p.colorName");
         for (int i = 0; i < colors.size(); i++) {
             String color = colors.get(i).text().toUpperCase();
+            if("－".equals(color))continue;
             if (!goodsObj.colorList.contains(color)) {
                 goodsObj.colorList.add(color);
             }
@@ -224,35 +254,6 @@ public class MontbellProductParser extends BaseBaobeiParser {
             }
         }
         return rtnList;
-    }
-
-    public List<GoodsObject> scanItem(List<String> categoryIds) throws IOException {
-        List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
-        for (String categoryId : categoryIds) {
-            if(StringUtil.isBlank(categoryId)) continue;
-            CategoryObject categoryObj = new CategoryObject();
-            categoryObj.categoryId = categoryId;
-            scanEnTitleByCategory(categoryObj);
-        }
-        
-        for (String categoryId : categoryIds) {
-            if(StringUtil.isBlank(categoryId)) continue;
-            CategoryObject categoryObj = new CategoryObject();
-            categoryObj.categoryId = categoryId;
-            scanItemByCategory(goodsList, categoryObj);
-        }
-
-        List<GoodsObject> filteredProdList = filter(goodsList);
-        
-        for (GoodsObject goodsObj : filteredProdList) {
-            scanSingleItem(goodsObj);
-        }
-        
-        //translate(filteredProdList);
-
-        saveSizeTip(filteredProdList);
-        
-        return filteredProdList;
     }
 
 	private void saveSizeTip(List<GoodsObject> filteredProdList) throws IOException {

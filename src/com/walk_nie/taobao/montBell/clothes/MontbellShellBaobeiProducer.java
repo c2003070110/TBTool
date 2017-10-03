@@ -60,6 +60,7 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 
 			} else {
 				MontbellProductParser parser = new MontbellProductParser();
+				parser.setPublishedbaobeiList(this.publishedbaobeiList);
 				parser.scanFOFlag = true;
 				itemIdList = parser.scanItem(scanCategoryIds);
 			}
@@ -244,7 +245,7 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " 超轻软壳裤";
 		} else if ("8800".equals(categoryId)) {
 			//レインウェア（ゴアテックス製）
-			title += " Gore雨衣裤";
+			title += " GTX雨衣裤";
 		} else if ("1000".equals(categoryId)) {
 			//レインウェア
 			title += " 雨衣裤";
@@ -408,9 +409,9 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
         
-        String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+        //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-        obj.description =  "\"" + detailSB.toString() + extraMiaoshu +extraMiaoshu1+ "\"";
+        obj.description =  "\"" + detailSB.toString() + extraMiaoshu1+ "\"";
 	}
 
 	@Override

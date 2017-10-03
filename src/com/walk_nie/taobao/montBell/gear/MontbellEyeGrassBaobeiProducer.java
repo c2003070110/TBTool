@@ -285,9 +285,9 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 			}
 			detailSB.append("</div>");
 		}
-		String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+		//String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		return "\"" + detailSB.toString() + sizeTips.toString() + extraMiaoshu
+		return "\"" + detailSB.toString() + sizeTips.toString() 
 				+ extraMiaoshu1 + "\"";
 	}
 
