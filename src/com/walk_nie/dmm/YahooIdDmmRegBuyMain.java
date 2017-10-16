@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-public class YahooIdDmmRegMain {
+public class YahooIdDmmRegBuyMain {
 
 	protected BufferedReader stdReader = null;
 
@@ -20,7 +20,7 @@ public class YahooIdDmmRegMain {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		new YahooIdDmmRegMain().execute();
+		new YahooIdDmmRegBuyMain().execute();
 	}
 
 	public void execute() throws IOException {
@@ -30,6 +30,7 @@ public class YahooIdDmmRegMain {
 				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
 		GetYahooIdMain yahoo = new GetYahooIdMain();
 		DmmRegMain dmmReg = new DmmRegMain();
+		DmmBuyMain dmmBuy = new DmmBuyMain();
 		List<String> lines = new ArrayList<String>();
 		WebDriver driver = new FirefoxDriver();
 		try {
@@ -55,6 +56,29 @@ public class YahooIdDmmRegMain {
 							regInfo.pswd);
 					lines.add(regInfo.toString());
 					if (mywait("Dmm registration is finished? Ready for dmm buy? ENTER;N for exit ")) {
+						break;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					if (mywait("ready for continue? ENTER;N for exit ")) {
+						break;
+					}
+				}
+				try {
+					dmmBuy.buy(driver, regInfo.id + "@yahoo.co.jp",
+							regInfo.pswd);
+					if (mywait("buing is finished?ready for get gift Code? ENTER;N for exit ")) {
+						break;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					if (mywait("ready for continue? ENTER;N for exit ")) {
+						break;
+					}
+				}
+				try {
+					getGiftCode(driver, regInfo.id, regInfo.pswd);
+					if (mywait("ready for continue? ENTER;N for exit ")) {
 						break;
 					}
 				} catch (Exception ex) {

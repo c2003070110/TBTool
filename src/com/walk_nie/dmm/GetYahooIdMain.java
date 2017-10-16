@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -91,9 +93,11 @@ public class GetYahooIdMain {
 		RegObjInfo regInfo = new RegObjInfo();
 		String id1 = java.util.UUID.randomUUID().toString();
 		String id2 = java.util.UUID.randomUUID().toString();
-		String p1 = id1.substring(id1.length() - 3);
-		String p2 = id2.substring(id2.length() - 4);
-		regInfo.id = "y" + p1 + "200" + i + p2;
+		String p1 = id1.substring(id1.length() - 4);
+		String p2 = id2.substring(id2.length() - 3);
+		
+		String ftn = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+		regInfo.id = "y" + i + p1 + ftn;
 		regInfo.pswd = "p" + p1 + p2 + "2010";
 		//regInfo.mailAddress = mailAddresss.get(i % mailAddresss.size());
 		regInfo.secQuestion = secQ.get(i % secQ.size());

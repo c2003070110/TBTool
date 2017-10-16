@@ -56,6 +56,66 @@ public class DmmBuyMain {
 			}
 		}
 	}
+	protected void buy(WebDriver driver,String mailAdd,String password) throws IOException, InterruptedException {
+
+		driver.get(buyItemUrl);
+		List<WebElement> submitList = driver.findElements(By.tagName("input"));
+		WebElement buyBtnWe = null;
+		for (WebElement we : submitList) {
+			if ("submit".equalsIgnoreCase(we.getAttribute("type"))) {
+				if ("購入する".equals(we.getAttribute("value"))|| "バスケットに入れる".equals(we.getAttribute("value"))) {
+					buyBtnWe = we;
+				}
+			}
+		}
+		if (buyBtnWe == null) {
+			System.err.println("ERROR. Do NOT Buy !");
+			return;
+		}
+		buyBtnWe.click();
+
+		submitList = driver.findElements(By.tagName("span"));
+		WebElement pointChargeWe = null;
+		for (WebElement we : submitList) {
+			if ("ポイントをチャージする".equalsIgnoreCase(we.getText())) {
+				pointChargeWe = we;
+			}
+		}
+		if (pointChargeWe == null) {
+			System.err.println("ERROR. Do NOT point charge button");
+			return;
+		}
+		pointChargeWe.click();
+
+		submitList = driver.findElements(By.tagName("img"));
+		WebElement bitCashWe = null;
+		for (WebElement we : submitList) {
+			if ("BitCash".equalsIgnoreCase(we.getAttribute("alt"))) {
+				bitCashWe = we;
+			}
+		}
+		if (bitCashWe == null) {
+			System.err.println("ERROR. Do NOT BitCash button");
+			return;
+		}
+		bitCashWe.click();
+
+		submitList = driver.findElements(By.tagName("span"));
+		WebElement bitCahsNextWe = null;
+		for (WebElement we : submitList) {
+			if ("次へ".equalsIgnoreCase(we.getText())) {
+				bitCahsNextWe = we;
+			}
+		}
+		if (bitCahsNextWe == null) {
+			System.err.println("ERROR. Do NOT BitCash Next Button");
+			return;
+		}
+		bitCahsNextWe.click();
+
+		driver.findElement(By.id("hiragana_id")).sendKeys("ふいおなりゆてへわこくゆひいしら");
+		driver.findElement(By.id("submit")).click();
+	}
 
 	protected void buy() throws IOException, InterruptedException {
 
@@ -98,65 +158,7 @@ public class DmmBuyMain {
 
 			Thread.sleep(1000 * 2);
 			
-			driver.get(buyItemUrl);
-			submitList = driver.findElements(By.tagName("input"));
-			WebElement buyBtnWe = null;
-			for (WebElement we : submitList) {
-				if ("submit".equalsIgnoreCase(we.getAttribute("type"))) {
-					if ("購入する".equals(we.getAttribute("value"))|| "バスケットに入れる".equals(we.getAttribute("value"))) {
-						buyBtnWe = we;
-					}
-				}
-			}
-			if (buyBtnWe == null) {
-				System.err.println("ERROR. Do NOT Buy !");
-				break;
-			}
-			buyBtnWe.click();
-
-			submitList = driver.findElements(By.tagName("span"));
-			WebElement pointChargeWe = null;
-			for (WebElement we : submitList) {
-				if ("ポイントをチャージする".equalsIgnoreCase(we.getText())) {
-					pointChargeWe = we;
-				}
-			}
-			if (pointChargeWe == null) {
-				System.err.println("ERROR. Do NOT point charge button");
-				break;
-			}
-			pointChargeWe.click();
-
-			submitList = driver.findElements(By.tagName("img"));
-			WebElement bitCashWe = null;
-			for (WebElement we : submitList) {
-				if ("BitCash".equalsIgnoreCase(we.getAttribute("alt"))) {
-					bitCashWe = we;
-				}
-			}
-			if (bitCashWe == null) {
-				System.err.println("ERROR. Do NOT BitCash button");
-				break;
-			}
-			bitCashWe.click();
-
-			submitList = driver.findElements(By.tagName("span"));
-			WebElement bitCahsNextWe = null;
-			for (WebElement we : submitList) {
-				if ("次へ".equalsIgnoreCase(we.getText())) {
-					bitCahsNextWe = we;
-				}
-			}
-			if (bitCahsNextWe == null) {
-				System.err.println("ERROR. Do NOT BitCash Next Button");
-				break;
-			}
-			bitCahsNextWe.click();
-
-			// TODO
-			driver.findElement(By.id("hiragana_id")).sendKeys("ふいおなりゆてへわこくゆひいしら");
-			driver.findElement(By.id("submit")).click();
-
+			buy();
 			// DMMポイントのチャージ
 			//driver.findElement(By.id("submit")).click();
 			

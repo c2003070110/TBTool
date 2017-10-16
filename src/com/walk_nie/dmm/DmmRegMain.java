@@ -111,11 +111,36 @@ public class DmmRegMain {
 		}
 		if (selectedWeY != null) {
 			driver.get(yUrl);
+			try {
+				Thread.sleep(1000*1);
+			} catch (InterruptedException e) {
+			}
+			WebElement msgWE = driver.findElement(By.id("msg-list"));
+			submitList = msgWE.findElements(By.className("subj"));
+			WebElement selectedWe1 = null;
+			for (WebElement we : submitList) {
+				String attr = we.getAttribute("title");
+				if (attr.indexOf("DMM：会員登録認証メール") != -1 ) {
+					selectedWe1 = we;
+					break;
+				}
+			}
+			if(selectedWe1 != null){
+				selectedWe1.click();
+				WebElement msgPrevWE = driver.findElement(By.id("msg-preview"));
+				submitList = msgPrevWE.findElements(By.tagName("a"));
+				for (WebElement we : submitList) {
+					String href = we.getAttribute("href");
+					if (href!= null&& href.indexOf("register") != -1 &&href.indexOf("complete") != -1 ) {
+						we.click();
+						break;
+					}
+				}
+			}
 			//driver.findElement(By.id("username")).sendKeys(mailAdd);
 			//driver.findElement(By.id("btnNext")).click();
 			//driver.findElement(By.id("passwd")).sendKeys(password);
-			mywait();
-			driver.get("https://www.dmm.com/my/-/login/logout/");
+			//mywait();
 			return;
 		}
 	}
