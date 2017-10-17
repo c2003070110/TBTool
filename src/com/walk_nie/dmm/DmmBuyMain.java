@@ -86,7 +86,7 @@ public class DmmBuyMain {
 			return;
 		}
 		pointChargeWe.click();
-
+/*
 		submitList = driver.findElements(By.tagName("img"));
 		WebElement bitCashWe = null;
 		for (WebElement we : submitList) {
@@ -115,6 +115,7 @@ public class DmmBuyMain {
 
 		driver.findElement(By.id("hiragana_id")).sendKeys("ふいおなりゆてへわこくゆひいしら");
 		driver.findElement(By.id("submit")).click();
+		*/
 	}
 
 	protected void buy() throws IOException, InterruptedException {

@@ -67,7 +67,7 @@ public class YahooDmmCheckMain {
 
 	protected boolean mywait(String hint) throws IOException {
 		while (true) {
-			System.out.print("");
+			System.out.print(hint);
 			String line = getStdReader().readLine().trim();
 			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
 					|| "".equals(line)) {

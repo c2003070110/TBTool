@@ -93,10 +93,10 @@ public class GetYahooIdMain {
 		RegObjInfo regInfo = new RegObjInfo();
 		String id1 = java.util.UUID.randomUUID().toString();
 		String id2 = java.util.UUID.randomUUID().toString();
-		String p1 = id1.substring(id1.length() - 4);
+		String p1 = id1.substring(id1.length() - 2);
 		String p2 = id2.substring(id2.length() - 3);
 		
-		String ftn = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+		String ftn = new SimpleDateFormat("yyMMdd").format(Calendar.getInstance().getTime());
 		regInfo.id = "y" + i + p1 + ftn;
 		regInfo.pswd = "p" + p1 + p2 + "2010";
 		//regInfo.mailAddress = mailAddresss.get(i % mailAddresss.size());

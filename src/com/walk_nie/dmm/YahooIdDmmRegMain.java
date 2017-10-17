@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
+import com.beust.jcommander.internal.Lists;
 
 public class YahooIdDmmRegMain {
 
@@ -30,61 +31,60 @@ public class YahooIdDmmRegMain {
 				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
 		GetYahooIdMain yahoo = new GetYahooIdMain();
 		DmmRegMain dmmReg = new DmmRegMain();
-		List<String> lines = new ArrayList<String>();
 		WebDriver driver = new FirefoxDriver();
-		try {
-			int i = 0;
-			while (true) {
-				GetYahooIdMain.RegObjInfo regInfo = yahoo.createRegInfo(i);
-				i++;
+		int i = 0;
+		while (true) {
+			GetYahooIdMain.RegObjInfo regInfo = yahoo.createRegInfo(i);
+			i++;
 
-				try {
-					yahoo.reg(driver, regInfo);
-					if (mywait("yahoo registration is finished?Ready for dmm member register? ENTER;N for No ")) {
-						continue;
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					if (mywait("ready for continue? ENTER;N for exit ")) {
-						break;
-					}
+			try {
+				yahoo.reg(driver, regInfo);
+				if (mywait("yahoo registration is finished?Ready for dmm member register? ENTER;N for No ")) {
 					continue;
 				}
-				try {
-					dmmReg.reg(driver, regInfo.id + "@yahoo.co.jp",
-							regInfo.pswd);
-					lines.add(regInfo.toString());
-					if (mywait("Dmm registration is finished? Ready for dmm buy? ENTER;N for exit ")) {
-						break;
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					if (mywait("ready for continue? ENTER;N for exit ")) {
-						break;
-					}
-				}
-				driver.get("https://www.dmm.com/my/-/login/logout/");
-				driver.get("https://login.yahoo.co.jp/config/login?logout=1&.intl=jp&.done=https://mail.yahoo.co.jp&.src=ym");
-			}
-		} finally {
-			File out = new File("./out", "yahooId-dmm.txt");
-			while (true)
-				try {
-					FileUtils.writeLines(out, lines, true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				if (mywait("ready for continue? ENTER;N for exit ")) {
 					break;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-					}
 				}
+				continue;
+			}
+			try {
+				dmmReg.reg(driver, regInfo.id + "@yahoo.co.jp", regInfo.pswd);
+				record(regInfo);
+				if (mywait("Dmm registration is finished? Ready for dmm buy? ENTER;N for exit ")) {
+					break;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				if (mywait("ready for continue? ENTER;N for exit ")) {
+					break;
+				}
+			}
+			driver.get("https://www.dmm.com/my/-/login/logout/");
+			driver.get("https://login.yahoo.co.jp/config/login?logout=1&.intl=jp&.done=https://mail.yahoo.co.jp&.src=ym");
 		}
+
 	}
 
-	private void getGiftCode(WebDriver driver, String string, String pswd) {
-		String yUrl = "https://mail.yahoo.co.jp/";
-		driver.get(yUrl);
+	private void record(GetYahooIdMain.RegObjInfo regInfo) {
+		// String ftn = new
+		// SimpleDateFormat("yyMMddHH:mm:ss.SSS").format(Calendar.getInstance().getTime());
+		// File out = new File("./out", "yahooId-dmm" + ftn + ".txt");
+		File out = new File("./out", "yahooId-dmm.txt");
+		while (true)
+			try {
+				List<String> lines = Lists.newArrayList();
+				lines.add(regInfo.toString());
+				FileUtils.writeLines(out, lines, true);
+				break;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+				}
+			}
 	}
 
 	protected boolean mywait(String hint) throws IOException {
