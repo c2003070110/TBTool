@@ -56,9 +56,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
             if(scanCategoryIds.isEmpty()){
                 
             }else{
-            	MontbellProductParser parer = new MontbellProductParser();
-            	parer.setPublishedbaobeiList(this.publishedbaobeiList);
-                itemIdList = parer.scanItem(scanCategoryIds);    
+            	MontbellProductParser parser = new MontbellProductParser();
+            	parser.setPublishedbaobeiList(this.publishedbaobeiList);
+                itemIdList = parser.scanItem(scanCategoryIds);    
             }
             if (itemIdList.isEmpty())
                 return;
@@ -247,18 +247,28 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
     protected void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
         // skuProps　销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
         String skuProps = "";
-        for (int i = 0; i < item.colorList.size(); i++) {
-            if(i>=taobaoColors.size())break;
-            for (int j = 0; j < item.sizeList.size(); j++) {
-                if(j>=taobaoSizes.size())break;
-                String num  = MontBellUtil.getStock(item, item.colorList.get(i),
-                		item.sizeList.get(j));
-                skuProps += obj.price + ":" +  num  + ":" + ":1627207" + ":" + taobaoColors.get(i)
-                        + ";20509:" + taobaoSizes.get(j) + ";";
-//                skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
-//                        +  ";";
-            }
-        }
+		for (int i = 0; i < item.colorList.size(); i++) {
+			if (i >= taobaoColors.size())
+				break;
+			if (item.sizeList.isEmpty()) {
+				String num = "999";
+				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
+						+ taobaoColors.get(i) + ";";
+			} else {
+				for (int j = 0; j < item.sizeList.size(); j++) {
+					if (j >= taobaoSizes.size())
+						break;
+					String num = MontBellUtil.getStock(item,
+							item.colorList.get(i), item.sizeList.get(j));
+					skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
+							+ taobaoColors.get(i) + ";20509:"
+							+ taobaoSizes.get(j) + ";";
+					// skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price
+					// + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
+					// + ";";
+				}
+			}
+		}
         obj.skuProps =skuProps;
     }
 
@@ -312,12 +322,12 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

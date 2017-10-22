@@ -212,6 +212,11 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         String skuProps = "";
         for (int i = 0; i < item.colorList.size(); i++) {
             if(i>=taobaoColors.size())break;
+			if (item.sizeList.isEmpty()) {
+				String num = "999";
+				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
+						+ taobaoColors.get(i) + ";";
+			}else{
             for (int j = 0; j < item.sizeList.size(); j++) {
                 if(j>=taobaoSizes.size())break;
                 String num  = MontBellUtil.getStock(item, item.colorList.get(i),
@@ -221,6 +226,7 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
 //                skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
 //                        +  ";";
             }
+			}
         }
         obj.skuProps =skuProps;
     }
@@ -265,12 +271,12 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

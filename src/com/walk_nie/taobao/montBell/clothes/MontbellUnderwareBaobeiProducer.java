@@ -67,6 +67,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 
 			} else {
 				MontbellProductParser parser = new MontbellProductParser();
+				parser.setPublishedbaobeiList(this.publishedbaobeiList);
 				parser.scanFOFlag = true;
 				itemIdList = parser.scanItem(scanCategoryIds);
 			}
@@ -341,12 +342,12 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 		 
 		//String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

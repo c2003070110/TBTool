@@ -196,6 +196,18 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		} else if ("23000".equals(categoryId)) {
 			// ソフトシェル>ライトシェルパンツ 软壳裤
 			obj.cid = "124216004";
+		} else if ("61200".equals(categoryId)) {
+			//  トレッキングパンツ＜厚手＞ 冲锋裤
+			obj.cid = "50014786";
+		} else if ("61100".equals(categoryId)) {
+			// トレッキングパンツ＜中厚手＞ 冲锋裤
+			obj.cid = "50014786";
+		} else if ("61000".equals(categoryId)) {
+			// トレッキングパンツ＜薄手＞ 冲锋裤
+			obj.cid = "50014786";
+		} else if ("63000".equals(categoryId)) {
+			// リラックスパンツ 冲锋裤
+			obj.cid = "50014786";
 		} else if ("146000".equals(categoryId)) {
 			// ハードシェル>パンツ(保温材入り) 冲锋裤
 			obj.cid = "50014786";
@@ -273,6 +285,24 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		} else if ("4000".equals(categoryId)) {
 			// 傘
 			title += " 伞";
+		} else if ("61200".equals(categoryId)) {
+			// トレッキングパンツ＜厚手＞
+			title += " 厚徒步裤";
+		} else if ("61100".equals(categoryId)) {
+			// 
+			title += " 中厚徒步裤";
+		} else if ("61000".equals(categoryId)) {
+			// 
+			title += " 薄徒步裤";
+		} else if ("63000".equals(categoryId)) {
+			// 
+			title += " 休闲裤";
+		} else if ("".equals(categoryId)) {
+			// 
+			title += " ";
+		} else if ("".equals(categoryId)) {
+			// 
+			title += " ";
 		}
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
@@ -300,6 +330,18 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		} else if ("22500".equals(categoryId)) {
 			// ソフトシェル>ソフトシェルパンツ 冲锋裤
 			cateProps += "20021:37454349;";
+		} else if ("61200".equals(categoryId)) {
+			//  トレッキングパンツ＜厚手＞
+			cateProps += "20021:37454349;";
+		} else if ("61100".equals(categoryId)) {
+			//  トレッキングパンツ＜中厚手＞
+			cateProps += "20021:37454349;";
+		} else if ("61000".equals(categoryId)) {
+			//  トレッキングパンツ＜薄手＞
+			cateProps += "20021:37454349;";
+		} else if ("63000".equals(categoryId)) {
+			//  リラックスパンツ
+			cateProps += "20021:37454349;";
 		} else {
 			cateProps += "20021:28347;";
 		}
@@ -325,6 +367,11 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		for (int i = 0; i < item.colorList.size(); i++) {
 			if (i >= taobaoColors.size())
 				break;
+			if (item.sizeList.isEmpty()) {
+				String num = "999";
+				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
+						+ taobaoColors.get(i) + ";";
+			}else{
 			for (int j = 0; j < item.sizeList.size(); j++) {
 				if (j >= taobaoSizes.size())
 					break;
@@ -336,6 +383,7 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 				// skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price +
 				// ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
 				// + ";";
+			}
 			}
 		}
 		obj.skuProps = skuProps;
@@ -402,12 +450,12 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

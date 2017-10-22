@@ -88,16 +88,24 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			if (!goodsObj.sizeList.contains(zie)) {
 				goodsObj.sizeList.add(zie);
 			}
-			int escpIdx = zie.indexOf("/");
-			String escpzie = zie;
-			if (escpIdx != -1) {
-				escpzie = zie.substring(0, escpIdx) + "\\/"
-						+ zie.substring(escpIdx + 1);
-			}
+//			int escpIdx = zie.indexOf("/");
+//			String escpzie = zie;
+//			if (escpIdx != -1) {
+//				escpzie = zie.substring(0, escpIdx) + "\\/"
+//						+ zie.substring(escpIdx + 1);
+//			}
 			try {
-
-				Elements colors = mainRightEle.select("div#size_" + escpzie)
-						.select("table.dataTbl").select("tr");
+				Elements divs = mainRightEle.select("div");
+				Element colorEle = null;
+				for(Element div:divs){
+					if(("size_" + zie).equals(div.attr("id"))){
+						colorEle = div;
+						break;
+					}
+				}
+				Elements colors = colorEle.select("table.dataTbl").select("tr");
+				//Elements colors = mainRightEle.select("div#size_" + zie)
+				//		.select("table.dataTbl").select("tr");
 				for (int j = 1; j < colors.size(); j++) {
 					StockObject stock = new StockObject();
 					Element color = colors.get(j);
@@ -114,7 +122,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 				}
 			} catch (Exception ex) {
 				System.err.println("[ERROR]product Id = " + goodsObj.productId
-						+ " Size = " + escpzie);
+						+ " Size = " + zie);
 				continue;
 			}
 		}
@@ -355,31 +363,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
         Elements goods = doc.select("div.unit");
         for (Element goodsElement : goods) {
             Elements ttl = goodsElement.select(".ttlType03");
-            String title = ttl.text();
-            title = title.replaceAll(" W'S", "");
-            title = title.replaceAll(" M'S", "");
-            title = title.replaceAll(" K'S", "");
-            title = title.replaceAll(" MEN'S", "");
-            title = title.replaceAll(" WOMEN'S", "");
-            title = title.replaceAll(" KID'S", "");
-            title = title.replaceAll(" FLEECE", "");
-            title = title.replaceAll(" JACKET", "茄克");
-            title = title.replaceAll(" SHIRT", "T恤");
-            title = title.replaceAll(" US", "");
-            title = title.replaceAll(" Men's", "");
-            title = title.replaceAll(" Women's", "");
-            title = title.replaceAll(" Kid's", "");
-            title = title.replaceAll(" Baby's", "");
-            title = title.replaceAll(" 100-120", "1");
-            title = title.replaceAll(" 130-160", "2");
-            title = title.replaceAll("U.L.", "");
-            title = title.replaceAll("US", "");
-            title = title.replaceAll(" Pants", "");
-            title = title.replaceAll(" PANTS", "");
-            title = title.replaceAll("Lining", "");
-            title = title.replaceAll(" LINING", "");
-            title = title.trim();
-
+            String title = translateTitle(ttl.text());
             Elements desp = goodsElement.select(".description").select("p");
             String productId = desp.get(1).text().trim().replace("No. #", "");
             enTitleMap.put(productId, title);
@@ -421,6 +405,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
             Elements ttl = goodsElement.select(".ttlType03");
             goodsObj.titleOrg = ttl.text();
+            goodsObj.titleJP = translateTitle(ttl.text());
             
             //goodsObj.goodTitleCN = translateTitle(goodsObj, ttl.text());
 
@@ -455,97 +440,33 @@ public class MontbellProductParser extends BaseBaobeiParser {
         }
     }
 
-//    private String translateTitle(GoodsObject goodsObj) {
-//        String categoryId = goodsObj.cateogryObj.categoryId;
-//        String goodTitle = goodsObj.titleOrg;
-//        goodTitle = goodTitle.replace("Women's", "");
-//        goodTitle = goodTitle.replace("Men's", "");
-//        if (MontBellUtil.isCateogrySnowShoes(categoryId)) {
-//            String title = "防水透气防滑户外雪地登山鞋";
-//            goodsObj.weightExtra = 250;
-//            return title;
-//        }
-//        if (MontBellUtil.isCateogryClimbShoes(categoryId)) {
-//            String title = "防水透气防滑户外徒步鞋";
-//            goodsObj.weightExtra = 250;
-//            return title;
-//        }
-//        if (MontBellUtil.isCateogryRuningShoes(categoryId)) {
-//            String title = "透气防滑休闲鞋";
-//            goodsObj.weightExtra = 250;
-//            return title;
-//        }
-//        if (MontBellUtil.isCateogryPack(categoryId)) {
-//            // 大型ザック
-//            String newTitle = goodTitle;
-//            newTitle = newTitle.replace("Women's", "");
-//            newTitle = newTitle.replace("トレッキングパック", "");
-//            newTitle = newTitle.replace(" ", "");
-//            goodsObj.weightExtra = 250;
-//            return "户外背包 " + newTitle;
-//        }
-//        if (MontBellUtil.isCateogryRainClothes(categoryId)) {
-//            // ダウンジャケット
-//            goodsObj.weightExtra = 150;
-//            String title = "";
-//            if(goodTitle.indexOf("サイクル")!=-1){
-//                title +="自行车用!";
-//            };
-//            title += "速干!户外雨衣";
-//            return title;
-//        }
-//        if (MontBellUtil.isCateogryFeatherCloth(categoryId)) {
-//            // ダウンジャケット
-//            goodsObj.weightExtra = 150;
-//            return "户外羽绒衣";
-//        }
-//        if (MontBellUtil.isCateogrySoftShell1(categoryId)) {
-//            // ソフトシェルジャケット
-//            return "超轻!软壳冲锋衣";
-//        }
-//        if (MontBellUtil.isCateogrySoftShell2(categoryId)) {
-//            // ソフトシェルパンツ
-//            return "超轻!软壳冲锋裤";
-//        }
-//        if (MontBellUtil.isCateogryWindBreaker(categoryId)) {
-//            // ウインドブレーカー
-//            return "超轻!防水防风衣";
-//        }
-//        if (MontBellUtil.isCateogryHardShell1(categoryId)) {
-//            // ハードシェル>ジャケット
-//            return "冲锋衣";
-//        }
-//        if (MontBellUtil.isCateogryHardShell2(categoryId)) {
-//            // ハードシェル>パンツ
-//            return "冲锋裤";
-//        }
-//        if (MontBellUtil.isCateogryTShirt(categoryId)) {
-//            // Tシャツ（半袖/長袖）
-//            return "Wickron防晒速干t恤";
-//        }
-//        if (MontBellUtil.isCateogryWoolTShirt(categoryId)) {
-//            // Tシャツ（天然素材<メリノウールプラス>）
-//            return "保温通气速干羊毛衫";
-//        }
-//        if (MontBellUtil.isCateogrySocks(categoryId)) {
-//            // ソックス
-//            String title = "";
-//            if(goodTitle.indexOf("ウール")!=-1){
-//                title +="羊毛袜!";
-//            };
-//            title += "户外袜";
-//            return title;
-//        }
-//        if (MontBellUtil.isCateogryFreece1(categoryId)) {
-//            // フリース
-//            return "抓绒衣";
-//        }
-//        if (MontBellUtil.isCateogryFreece2(categoryId)) {
-//            // フリースパンツ
-//            return "抓绒裤";
-//        }
-//        return "";
-//    }
+    private String translateTitle(String ttl) {
+        String title = ttl.replaceAll(" W'S", "");
+        title = title.replaceAll(" M'S", "");
+        title = title.replaceAll(" K'S", "");
+        title = title.replaceAll(" MEN'S", "");
+        title = title.replaceAll(" WOMEN'S", "");
+        title = title.replaceAll(" KID'S", "");
+        title = title.replaceAll(" FLEECE", "");
+        title = title.replaceAll(" JACKET", "茄克");
+        title = title.replaceAll(" SHIRT", "T恤");
+        title = title.replaceAll(" US", "");
+        title = title.replaceAll(" Men's", "");
+        title = title.replaceAll(" Women's", "");
+        title = title.replaceAll(" Kid's", "");
+        title = title.replaceAll(" Baby's", "");
+        title = title.replaceAll(" 100-120", "1");
+        title = title.replaceAll(" 130-160", "2");
+        title = title.replaceAll("U.L.", "");
+        title = title.replaceAll("US", "");
+        title = title.replaceAll(" Pants", "");
+        title = title.replaceAll(" PANTS", "");
+        title = title.replaceAll("Lining", "");
+        title = title.replaceAll(" LINING", "");
+        title = title.replaceAll(" ", "");
+        title = title.trim();
+        return title;
+    }
 
     private String translateGender(String gender) {
         if ("Unisex".equals(gender)) {

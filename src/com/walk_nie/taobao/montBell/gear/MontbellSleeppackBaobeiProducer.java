@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.montBell.GoodsObject;
@@ -115,9 +117,9 @@ public class MontbellSleeppackBaobeiProducer extends BaseBaobeiProducer{
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
         // 宝贝类目
-        obj.cid =  "50014785";
+        obj.cid =  "50013908";
         // 店铺类目
-        obj.seller_cids =  "1184361987,";
+        obj.seller_cids =  "1347369176,";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
@@ -129,23 +131,16 @@ public class MontbellSleeppackBaobeiProducer extends BaseBaobeiProducer{
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);
         
-        // 用户输入ID串;
-        //obj.inputPids = "\"20000,13021751,6103476\"";
-        // ダウンジャケット
-        //obj.inputPids = "\"20000,13021751,6103476,1627207\"";
-		obj.inputPids = "\"13021751,6103476,1627207\"";
-        
-        // 用户输入名-值对
-        //obj.inputValues = "\"montbell,"+item.productId+",*\"";
-        composeBaobeiInputValues(item, obj);
-        
         // 宝贝描述
         composeBaobeiMiaoshu(item, obj);
-
         // 宝贝属性
         composeBaobeiCateProps(item, obj);
         // 销售属性组合
         composeBaobeiSkuProps(item, obj);
+        // 用户输入ID串;
+		obj.inputPids = "\"13021751,6103476,1627207\"";
+        // 用户输入名-值对
+        composeBaobeiInputValues(item, obj);
         // 商家编码
         obj.outer_id = "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
         // 销售属性别名
@@ -170,30 +165,78 @@ public class MontbellSleeppackBaobeiProducer extends BaseBaobeiProducer{
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
-    private    void composeBaobeiTitle(GoodsObject item,
-            BaobeiPublishObject baobei) {
-        String title = "\"日本直邮 MontBell";
-        String cateId = item.cateogryObj.categoryId;
-        if("235500".equals(cateId)){
-        	// ダウンモデル
-        	title += " 羽绒睡袋" ;
-        }else if("235600".equals(cateId)){
-        	//化繊綿（エクセロフト）モデル
-        	title += "  暖棉睡袋" ;
-        }
-        if(!StringUtil.isBlank(item.titleEn)){
-            title += " " + item.titleEn ;
-        }
-        title += " " + item.productId;
-        if(!StringUtil.isBlank(item.gender)){
-            title += " " + item.gender;
-        }
-        baobei.title =  title + "\"";
-    }
+	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
+		String title = "\"日本直邮 MontBell";
+		String cateId = item.cateogryObj.categoryId;
+		if ("235500".equals(cateId)|| "223500".equals(cateId)
+				|| "222500".equals(cateId)|| "236000".equals(cateId)
+				|| "221500".equals(cateId)|| "220500".equals(cateId)) {
+			// ダウンモデル
+			title += " 羽绒睡袋";
+		} else if ("235600".equals(cateId)) {
+			// 化繊綿（エクセロフト）モデル
+			title += " 暖棉睡袋";
+		}
+		if (!StringUtil.isBlank(item.titleJP)) {
+			String repTtl = item.titleJP.replace("ダウンハガー", "");
+			repTtl = repTtl.replace("ロング", "L");
+			repTtl = repTtl.replace("アルパイン", "");
+			repTtl = repTtl.replace("バロウバッグ", "");
+			repTtl = repTtl.replace("US", "");
+			repTtl = repTtl.replaceAll(" ", "");
+			title += " " + repTtl.trim();
+		}
+		String comf="";String limitF="";String maxL="";
+		String url = MontBellUtil.productUrlPrefix + item.productId;
+        try {
+			Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
+	        Elements innerContPs = doc.select("div#contents").select("div.innerCont").select("p");
+	        for(int i=0;i<innerContPs.size();i++){
+	        	String text= innerContPs.get(i).text();
+	        	if(text.indexOf("【コンフォート温度】")>0){
+	        		String[] sp = text.split("【");
+	        		for(int j=0;j<sp.length;j++){
+	        			if(sp[j].startsWith("コンフォート温度")){
+	        				comf = sp[j].substring(sp[j].indexOf("】") + 1);
+	        			}
+	        			if(sp[j].startsWith("リミット温度")){
+	        				limitF = sp[j].substring(sp[j].indexOf("】") + 1);
+	        			}
+	        			if(sp[j].startsWith("適応身長")){
+	        				int idx = sp[j].indexOf("※");
+	        				int maxIdx = idx != -1?idx:sp[j].length();
+	        				maxL = sp[j].substring(sp[j].indexOf("】") + 1,maxIdx);
+	        			}
+	        		}
+	        	}
+	        }
+		} catch (IOException e) {
+		}
+		if (!StringUtil.isBlank(comf) && !StringUtil.isBlank(limitF)) {
+			title += "适温:" + limitF.replace("℃", "").trim() + "～"
+					+ comf.replace("℃", "").trim();
+		}
+		if (!StringUtil.isBlank(maxL)) {
+			maxL = maxL.replace("まで", "");
+			maxL = maxL.replace("～", "");
+			maxL = maxL.replace("〜", "");
+			maxL = maxL.replace("cm", "");
+			//title += "适长" + maxL.trim();
+		}
+		
+		//if (!StringUtil.isBlank(item.titleEn)) {
+		//	title += " " + item.titleEn;
+		//}
+		title += " " + item.productId;
+		if (!StringUtil.isBlank(item.gender)) {
+			title += " " + item.gender;
+		}
+		baobei.title = title + "\"";
+	}
     protected void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
         // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
         String cateProps = "";
-        cateProps += "20000:3589713;";
+        cateProps += "20000:3589713;122216608:3622544;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -210,18 +253,27 @@ public class MontbellSleeppackBaobeiProducer extends BaseBaobeiProducer{
     protected void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
         // skuProps　销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
         String skuProps = "";
-        for (int i = 0; i < item.colorList.size(); i++) {
-            if(i>=taobaoColors.size())break;
-            for (int j = 0; j < item.sizeList.size(); j++) {
-                if(j>=taobaoSizes.size())break;
-                String num  = MontBellUtil.getStock(item, item.colorList.get(i),
-                		item.sizeList.get(j));
-                skuProps += obj.price + ":" +  num  + ":" + ":1627207" + ":" + taobaoColors.get(i)
-                        + ";20509:" + taobaoSizes.get(j) + ";";
-//                skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
-//                        +  ";";
-            }
-        }
+		for (int i = 0; i < item.colorList.size(); i++) {
+			if (i >= taobaoColors.size())
+				break;
+			if (item.sizeList.isEmpty()) {
+				if(item.colorList.size()!=0){
+				String num = "999";
+				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
+						+ taobaoColors.get(i) + ";";
+				}
+			} else {
+				for (int j = 0; j < item.sizeList.size(); j++) {
+					if (j >= taobaoSizes.size())
+						break;
+					String num = MontBellUtil.getStock(item,
+							item.colorList.get(i), item.sizeList.get(j));
+					skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
+							+ taobaoColors.get(i) + ";20509:"
+							+ taobaoSizes.get(j) + ";";
+				}
+			}
+		}
         obj.skuProps =skuProps;
     }
 
@@ -265,12 +317,12 @@ public class MontbellSleeppackBaobeiProducer extends BaseBaobeiProducer{
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

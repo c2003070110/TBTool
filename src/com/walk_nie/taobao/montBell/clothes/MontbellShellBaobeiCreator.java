@@ -32,6 +32,12 @@ public class MontbellShellBaobeiCreator  {
                 
                 .addScanCategory("22000") // ソフトシェル>ソフトシェルジャケット
                 
+                .addScanCategory("61200") // トレッキングパンツ＜厚手＞
+                .addScanCategory("61100") // トレッキングパンツ＜中厚手＞
+                .addScanCategory("61000") // トレッキングパンツ＜薄手＞
+                
+                .addScanCategory("63000") // リラックスパンツ
+                
                 .addScanCategory("25000") // ソフトシェル>ライトシェルジャケット/ベスト
                 .addScanCategory("22500") // ソフトシェル>ソフトシェルパンツ
                 .addScanCategory("23000") // ソフトシェル>ライトシェルパンツ

@@ -46,9 +46,9 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 			if (scanCategoryIds.isEmpty()) {
 
 			} else {
-				MontbellProductParser parer = new MontbellProductParser();
-				parer.setPublishedbaobeiList(this.publishedbaobeiList);
-				itemIdList = parer.scanItem(scanCategoryIds);
+				MontbellProductParser parser = new MontbellProductParser();
+				parser.setPublishedbaobeiList(this.publishedbaobeiList);
+				itemIdList = parser.scanItem(scanCategoryIds);
 			}
 			if (itemIdList.isEmpty())
 				return;
@@ -272,12 +272,12 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 		 
 		//String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

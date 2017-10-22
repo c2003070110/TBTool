@@ -31,6 +31,13 @@ public class MontbellSleeppackBaobeiCreator  {
 		db
                 .addScanCategory("235500") //  ダウンモデル
                 .addScanCategory("235600") //  化繊綿（エクセロフト）モデル
+                
+                .addScanCategory("223500") // ダウンハガー900 
+                .addScanCategory("222500") //  ダウンハガー800
+                .addScanCategory("236000") //  アルパイン ダウンハガー800
+                .addScanCategory("221500") //  ダウンハガー650
+                .addScanCategory("220500") //  アルパインダウンハガー650
+                
                 .addScanCategory("") //  
                 .addScanCategory("") //  
                 

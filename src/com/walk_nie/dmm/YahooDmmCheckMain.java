@@ -60,7 +60,9 @@ public class YahooDmmCheckMain {
 				System.out.println("[ERROR] Checking for " + regMailAddress);
 				continue;
 			}
-			mywait("ready for next ? ENTER;N for exit ");
+			if(mywait("ready for next ? ENTER;N for exit ")){
+				break;
+			}
 			driver.get(logoutUrl);
 		}
 	}
