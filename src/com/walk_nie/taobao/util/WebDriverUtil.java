@@ -17,6 +17,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
@@ -27,6 +28,14 @@ public class WebDriverUtil  {
     public final static String ieDriverPath = "C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
 
     private static WebDriver driver = null;
+
+	public static WebDriver getFirefoxWebDriver() {
+		System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
+		System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+		System.setProperty("webdriver.ie.driver", ieDriverPath);
+
+		return new FirefoxDriver();
+	}
 
     public static WebDriver getWebDriver(String url) {
         System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
