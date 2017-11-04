@@ -34,7 +34,7 @@ public class MericariAutoGetWon {
 		String itemUrlPrefix ="https://item.mercari.com/jp/" ;
 		//String orderurlPrefix ="https://www.mercari.com/jp/transaction/order_status/" ;
 		StringBuffer sb = new StringBuffer();
-		String fmt = "%s\t\t350\t%s\t%s\t%s\t%s\t%s\t%s";
+		String fmt = "%s\t\t350\t%s\t%s\t%s\t%s\t%s\t支払済\t%s";
 		for(String itemId:wonItemIdIds){
 			String url = itemUrlPrefix + itemId;
 			driver.get(url);

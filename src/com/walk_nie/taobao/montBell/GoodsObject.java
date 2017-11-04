@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class GoodsObject {
-	public CategoryObject cateogryObj ;
+	public CategoryObject cateogryObj = new CategoryObject();
 	public String titleOrg = "";
     public String titleJP = "";
     public String titleCN = "";
