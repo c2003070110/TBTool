@@ -32,12 +32,16 @@ public class YaAuto {
 				//
 				int todoType = choiceTodo();
 				if (todoType == 0) {
-					YaAutoGetWon getWon = new YaAutoGetWon();
-					getWon.execute(driver);
+					YaAutoGetWon process = new YaAutoGetWon();
+					process.execute(driver);
 				}
 				if (todoType == 1) {
-					YaAutoReview review = new YaAutoReview();
-					review.execute(driver);
+					YaAutoReview process = new YaAutoReview();
+					process.execute(driver);
+				}
+				if (todoType == 2) {
+					YaAutoGetSold process = new YaAutoGetSold();
+					process.execute(driver);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -48,8 +52,8 @@ public class YaAuto {
 	private int choiceTodo() {
 		int type = 0;
 		try {
-			System.out.print("Type of todo : ");
-			System.out.println("0:落札分取得;\n" + "1:評価;\n" + "2:...;\n");
+			System.out.println("Type of todo : ");
+			System.out.println("0:落札分取得;\n" + "1:評価;\n2:出品終了分:落札者あり;\n" + "3:...;\n");
 
 			stdReader = getStdReader();
 			while (true) {
@@ -62,6 +66,9 @@ public class YaAuto {
 					break;
 				} else if ("2".equals(line.trim())) {
 					type = 2;
+					break;
+				} else if ("3".equals(line.trim())) {
+					type = 3;
 					break;
 				} else {
 					System.out.println("Listed number only!");
