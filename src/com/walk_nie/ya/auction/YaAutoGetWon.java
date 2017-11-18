@@ -17,9 +17,9 @@ public class YaAutoGetWon {
 		driver.get(aucUrl);
 		// WebElement rootTbl = driver.findElement(By
 		// .cssSelector("table[bgcolor=\"#dcdcdc\"]"));
-		String fmt = "%s\t\t216\t%s\t%s\t%s\t%s\t%s";
+		String fmt = "%s\t216\t%s\t%s\t%s\t%s\t%s\t%s";
 		StringBuffer sb = new StringBuffer();
-		for (int i = 1; i <= 50; i++) {
+		for (int i = 1; i <= 10; i++) {
 			WebElement trWe = driver.findElement(
 					By.cssSelector("table[bgcolor=\"#dcdcdc\"]")).findElement(
 					By.cssSelector("tr:nth-child(" + (i + 1) + ")"));
@@ -95,10 +95,11 @@ public class YaAutoGetWon {
 					String sellerAddr = s.get(2).getText();
 					sellerAddr = sellerAddr.replaceAll("\n", " ");
 					sellerAddr = sellerAddr.replaceAll("\\*", "").trim();
+					sellerName = sellerName + " " + sellerAddr;
 					// System.out.println(tradeInfWb.get(0).getAttribute("outerHTML"));
 					sb.append(
 							String.format(fmt, transFee, auctionId, title,
-									price, decMDT, decSellerID)).append("\n");
+									price, decMDT, decSellerID,sellerName)).append("\n");
 					driver.navigate().back();
 				} catch (Exception ex) {
 

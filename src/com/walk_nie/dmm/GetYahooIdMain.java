@@ -44,12 +44,12 @@ public class GetYahooIdMain {
 				try {
 					reg(driver, regInfo);
 					lines.add(regInfo.toString());
-					if(mywait()){
+					if(mywait("ready for continue? ENTER;N for exit ")){
 						break;
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
-					if(mywait()){
+					if(mywait("ready for continue? ENTER;N for exit ")){
 						break;
 					}
 				}
@@ -60,7 +60,7 @@ public class GetYahooIdMain {
 		}
 	}
 
-	public void reg(WebDriver driver, RegObjInfo regInfo) throws IOException {
+	public boolean reg(WebDriver driver, RegObjInfo regInfo) throws IOException {
 		driver.get(regUrl);
 		System.out.println(regInfo.toString());
 		WebElement element = driver.findElement(By.cssSelector("div#yjContentsBody"));
@@ -77,6 +77,42 @@ public class GetYahooIdMain {
 		element.findElement(By.id("pw_a")).sendKeys(regInfo.secAnswer);
 		element.findElement(By.id("deliver")).sendKeys("0");
 		
+		if(testRand(driver)){
+		//if(mywait("yahoo rand is finished ready for continue? ENTER;N for exit")){
+			driver.findElement(By.id("policy2")).click();
+			driver.findElement(By.id("commit")).click();
+		
+			driver.get("https://mail.yahoo.co.jp/");
+			
+			List<WebElement> list = driver.findElements(By.tagName("a"));
+			for (WebElement we : list) {
+				if("start".equals(we.getAttribute("class"))){
+					we.click();
+					break;
+				}
+			}
+			try {
+				Thread.sleep(1000*1);
+			} catch (InterruptedException e) {
+			}
+			// mail box
+			WebElement msgWE = driver.findElement(By.id("msg-list"));
+			list = msgWE.findElements(By.className("subj"));
+			WebElement selectedWe1 = null;
+			for (WebElement we : list) {
+				String attr = we.getAttribute("title");
+				if (attr.indexOf("ようこそYaho") != -1 ) {
+					selectedWe1 = we;
+					break;
+				}
+			}
+			if(selectedWe1 != null){
+				selectedWe1.click();
+			}
+			return true;
+		}
+		return false;
+		
 //		List<WebElement> submitList = element.findElements(By.tagName("input"));
 //		WebElement bitCashWe = null;
 //		for (WebElement we : submitList) {
@@ -87,6 +123,24 @@ public class GetYahooIdMain {
 
         //mywait();
         //element.findElement(By.id("new-button")).click();
+	}
+
+	private boolean testRand(WebDriver driver) throws IOException {
+		int trycnt = 0;
+		while (true) {
+			if(trycnt > 60)break;
+			trycnt++;
+			try {
+				driver.findElement(By.id("policy2"));
+				return true;
+			} catch (Exception ex) {
+				try {
+					Thread.sleep(1000*1);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		return mywait("yahoo rand is finished ready for continue? ENTER;N for exit");
 	}
 
 	public RegObjInfo createRegInfo(int i) {
@@ -109,16 +163,16 @@ public class GetYahooIdMain {
 		regInfo.postCode = postCodes.get(i % postCodes.size());
 		return regInfo;
 	}
-	protected boolean mywait() throws IOException {
+	protected boolean mywait(String hint) throws IOException {
 		while (true) {
-			System.out.print("ready for continue? ENTER;N for exit ");
+			System.out.print(hint);
 			String line = getStdReader().readLine().trim();
 			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
 					|| "".equals(line)) {
-				return false;
+				return true;
 			}
 			if ("n".equalsIgnoreCase(line)) {
-				return true;
+				return false;
 			}
 		}
 	}

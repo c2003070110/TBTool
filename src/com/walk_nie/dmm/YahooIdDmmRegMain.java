@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.dmm.GetYahooIdMain.RegObjInfo;
 
 public class YahooIdDmmRegMain {
 
@@ -36,35 +37,33 @@ public class YahooIdDmmRegMain {
 		while (true) {
 			GetYahooIdMain.RegObjInfo regInfo = yahoo.createRegInfo(i);
 			i++;
-
 			try {
-				yahoo.reg(driver, regInfo);
-				if (mywait("yahoo registration is finished?Ready for dmm member register? ENTER;N for No ")) {
-					continue;
+				if (!execute1(driver, yahoo, dmmReg, regInfo)) {
+					break;
 				}
+				;
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				if (mywait("ready for continue? ENTER;N for exit ")) {
-					break;
-				}
-				continue;
 			}
-			try {
-				dmmReg.reg(driver, regInfo.id + "@yahoo.co.jp", regInfo.pswd);
-				record(regInfo);
-				if (mywait("Dmm registration is finished? Ready for dmm buy? ENTER;N for exit ")) {
-					break;
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				if (mywait("ready for continue? ENTER;N for exit ")) {
-					break;
-				}
-			}
-			driver.get("https://www.dmm.com/my/-/login/logout/");
-			driver.get("https://login.yahoo.co.jp/config/login?logout=1&.intl=jp&.done=https://mail.yahoo.co.jp&.src=ym");
 		}
 
+	}
+
+	private boolean execute1(WebDriver driver, GetYahooIdMain yahoo,
+			DmmRegMain dmmReg, RegObjInfo regInfo) throws IOException {
+		if (!yahoo.reg(driver, regInfo)) {
+			System.out.println("Yahoo register is failure!");
+			if (mywait("ready for continue? ENTER;N for exit ")) {
+				return false;
+			}
+			return true;
+		}
+		if(dmmReg.reg(driver, regInfo.id + "@yahoo.co.jp", regInfo.pswd)){
+			record(regInfo);
+		}
+		driver.get("https://www.dmm.com/my/-/login/logout/");
+		driver.get("https://login.yahoo.co.jp/config/login?logout=1&.intl=jp&.done=https://mail.yahoo.co.jp&.src=ym");
+		return true;
 	}
 
 	private void record(GetYahooIdMain.RegObjInfo regInfo) {
