@@ -49,7 +49,7 @@ public class MontbellDownBaobeiCreator  {
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)
-                .setPublishedbaobeiList(baobeiList)
+                //.setPublishedbaobeiList(baobeiList)
                 .process();
 
 		System.exit(0);

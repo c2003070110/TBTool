@@ -86,9 +86,9 @@ public class MontBellUtil {
         detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！100%日货</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
+        //detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图，有机会获得奖励:手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图，有机会获得奖励:手机流量</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图包含了 <span style=\";color:red;font-weight:bold\">身材尺寸，衣服size，合适否</span>  100%奖励！！！请踊跃参与！！</p>");
         detailSB.append("</div>");
         return detailSB.toString();
@@ -98,6 +98,7 @@ public class MontBellUtil {
 
 		StringBuffer detailSB = new StringBuffer();
 		if (!sizeTipPics.isEmpty()) {
+			/* FIXME un-comment 
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
             detailSB.append("<p style=\"text-indent:2.0em;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">店主本职工作很忙，请尽量自己比对哦。</span></p>");
@@ -108,6 +109,7 @@ public class MontBellUtil {
             for(String sizeTip:sizeTipPics){
                 detailSB.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + sizeTip + "\"/></p>");    
             }
+            */
             detailSB.append("</div>");
 		}
 		return detailSB.toString();
@@ -172,7 +174,7 @@ public class MontBellUtil {
 			return convertToCNYEMSFee(item, curencyRate, benefitRate);
 		}
 	}
-    private static String convertToCNYEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
+	public static String convertToCNYEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
@@ -196,7 +198,7 @@ public class MontBellUtil {
         }
     }
 
-    private static String convertToCNYNoneEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
+    public static String convertToCNYNoneEMSFee(GoodsObject item,double curencyRate,double benefitRate) {
         String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);

@@ -169,8 +169,9 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			String picName = String
 					.format(fileNameFmt, goodsObj.productId, i++);
 			try {
+				// FIXME false->true
 				File picFile = TaobaoUtil.downloadPicture(picRoot, url,
-						picName, true);
+						picName, false);
 				if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
 					goodsObj.dressOnPics.add(picFile.getAbsolutePath());
 				}
@@ -542,6 +543,9 @@ public class MontbellProductParser extends BaseBaobeiParser {
         price = price.replace(" +税", "");
         price = price.replace("アウトレット", "");
         price = price.replace(",", "");
+        if(price.indexOf("～")>0){
+        	price = price.substring(price.indexOf("～")+1);
+        }
         goodsObj.priceJPY = price;
     }
 

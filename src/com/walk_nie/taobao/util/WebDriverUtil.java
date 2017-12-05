@@ -98,6 +98,12 @@ public class WebDriverUtil  {
         }
         
         if(eleWidth != 0  &&  eleHeight!=0 ){
+        	if(eleHeight > fullImg.getHeight()){
+        		eleHeight = fullImg.getHeight();
+        	}
+        	if(eleWidth > fullImg.getWidth()){
+        		eleWidth = fullImg.getWidth();
+        	}
             //Crop the entire page screenshot to get only element screenshot
             BufferedImage eleScreenshot= fullImg.getSubimage(point1.getX(), point1.getY(), eleWidth,
                 eleHeight);

@@ -126,11 +126,11 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝类目
         if (MontBellUtil.isCateogryFreece1(item.cateogryObj.categoryId) ) {
             // フリース 抓绒衣 抓绒衣
-        	obj.seller_cids = "1289906242";
+        	obj.cid = "1289906242";
         }
         if (MontBellUtil.isCateogryFreece2(item.cateogryObj.categoryId) ) {
             // フリースパンツ 抓绒裤 
-        	obj.seller_cids = "1289906242";
+        	obj.cid = "1289906242";
         } 
 		MontBellUtil.composeBaobeiTaobaoCategory(item, obj);
 		// 店铺类目
