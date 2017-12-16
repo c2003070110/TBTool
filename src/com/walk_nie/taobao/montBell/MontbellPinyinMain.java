@@ -16,14 +16,15 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 public class MontbellPinyinMain {
-	private String inFileName = "./pinyin/in.txt";
-	private String outFileName = "./pinyin/out.txt";
+	private String inFileName = "./montbell/pinyin-in.txt";
+	private String outFileName = "./montbell/pinyin-out.txt";
 
 	public static void main(String[] args) throws Exception {
 		new MontbellPinyinMain().process();
 	}
 
 	public void process() throws Exception {
+		/*
 		long updateTime = System.currentTimeMillis();
 		while (true) {
 			File tempFile0 = new File(inFileName);
@@ -34,6 +35,9 @@ public class MontbellPinyinMain {
 						+ tempFile0.getAbsolutePath());
 			}
 		}
+		*/
+		File tempFile0 = new File(inFileName);
+		pinyin(tempFile0);
 	}
 
 	protected void pinyin(File tempFile0) throws IOException, PinyinException {

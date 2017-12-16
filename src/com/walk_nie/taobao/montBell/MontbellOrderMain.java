@@ -32,6 +32,8 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 public class MontbellOrderMain {
 	protected BufferedReader stdReader = null;
 	private String inOrderDir = "./montbell/";
+	//private String pinyinInFileName = "./montbell/pinyin-in.txt";
+	//private String pinyoutInFileName = "./montbell/pinyin-out.txt";
 	private String inFileName = "./montbell/order-in.txt";
 	private String ooutFileName = "./montbell/order-out.txt";
 	private String outFileName = "./montbell/taobao-out.txt";
@@ -55,10 +57,18 @@ public class MontbellOrderMain {
 				if (todoType == 2) {
 					orderForJapan();
 				}
+				if (todoType == 3) {
+					toPinYin();
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	private void toPinYin() throws Exception {
+		MontbellPinyinMain pinyin = new MontbellPinyinMain();
+		pinyin.process();
 	}
 
 	private void anaylizeTaobaoOrder() throws PinyinException, IOException {
@@ -278,9 +288,9 @@ public class MontbellOrderMain {
 					ex.printStackTrace();
 					//driver = logon();
 				}
-				System.out.println("[waiting for order info in ]"
-						+ tempFile0.getAbsolutePath());
 			}
+			System.out.println("[waiting for order info in ]"
+					+ tempFile0.getAbsolutePath());
 		}
 	}
 
@@ -466,6 +476,8 @@ public class MontbellOrderMain {
 			if (pi.length > 2) {
 				sizz = pi[2].replace("尺码:", "");
 				sizz = sizz.replace("尺码：", "");
+				sizz = sizz.replace("鞋码：", "");
+				sizz = sizz.replace("鞋码:", "");
 			}
 			if ("".equals(sizz)) {
 				System.out.println("CANNOT process that..." + line);
@@ -549,7 +561,7 @@ public class MontbellOrderMain {
 		int type = 0;
 		try {
 			System.out.println("Type of todo : ");
-			System.out.println("0:订单取得;\n" + "1:下单（CHINA);\n2:下单（JAPAN);\n" + "3:...;\n");
+			System.out.println("0:Get From Taobao Order;\n" + "1:Order（CHINA);\n2:Order（JAPAN);\n3:to PinYin;\n" + "4:...;\n");
 
 			stdReader = getStdReader();
 			while (true) {
@@ -562,6 +574,9 @@ public class MontbellOrderMain {
 					break;
 				} else if ("2".equals(line.trim())) {
 					type = 2;
+					break;
+				} else if ("3".equals(line.trim())) {
+					type = 3;
 					break;
 				} else {
 					System.out.println("Listed number only!");
