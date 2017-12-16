@@ -39,7 +39,7 @@ public class MontBellUtil {
     public static String categoryUrlPrefix_fo = "http://webshop.montbell.jp/goods/list_fo.php?category=";
 
     public static String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
-
+    public static String productUrlPrefix_en = "https://en.montbell.jp/products/goods/disp.php?product_id=";
     public static String productUrlPrefix_fo = "http://webshop.montbell.jp/goods/disp_fo.php?product_id=";
 
     public static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";

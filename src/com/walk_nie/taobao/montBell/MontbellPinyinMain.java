@@ -52,15 +52,21 @@ public class MontbellPinyinMain {
 					continue;
 				sb.append(str.substring(0, 1).toUpperCase() + str.substring(1));
 			}
+			
+			StringBuffer nsb = new StringBuffer();
+			String[] nsrs = sb.toString().split(",");
+			for(String nsr:nsrs){
+				nsb.append(nsr).append("\n");
+			}
 			outputList.add(line);
-			outputList.add(sb.toString());
+			outputList.add(nsb.toString());
 		}
 
 		// String fileName = String.format("pinyin-%d.txt",
 		// System.currentTimeMillis());
 		File oFile = new File(outFileName);
 		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-mm-dd");
+				"yyyy-MM-dd");
 		FileUtils.write(oFile, "-------" + today + "-------\n",
 				Charset.forName("UTF-8"), true);
 		for (String str : outputList) {
