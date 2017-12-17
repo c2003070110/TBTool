@@ -37,6 +37,7 @@ public class MontbellOrderMain {
 	private String inFileName = "./montbell/order-in.txt";
 	private String ooutFileName = "./montbell/order-out.txt";
 	private String outFileName = "./montbell/taobao-out.txt";
+	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
 
 	public static void main(String[] args) throws Exception {
 		new MontbellOrderMain().process();
@@ -165,8 +166,11 @@ public class MontbellOrderMain {
 		for (String str : montbellOrderList) {
 			FileUtils.write(oFile, str + "\n", Charset.forName("UTF-8"), true);
 		}
+		File outOrderMemoFileName1 = new File(outOrderMemoFileName);
+		FileUtils.write(outOrderMemoFileName1, "-------" + today + "-------\n",
+				Charset.forName("UTF-8"), true);
 		for (String str : orderHis) {
-			System.out.println(str);
+			FileUtils.write(outOrderMemoFileName1, str + "\n", Charset.forName("UTF-8"), true);
 		}
 		oFile = null;
 	}
@@ -278,8 +282,10 @@ public class MontbellOrderMain {
 		
 		WebDriver driver = logonForChina();
 		long updateTime = System.currentTimeMillis();
+		File tempFile0 = new File(inFileName);
+		System.out.println("[waiting for order info in ]"
+				+ tempFile0.getAbsolutePath());
 		while (true) {
-			File tempFile0 = new File(inFileName);
 			if (updateTime < tempFile0.lastModified()) {
 				updateTime = tempFile0.lastModified();
 				try{
@@ -288,9 +294,9 @@ public class MontbellOrderMain {
 					ex.printStackTrace();
 					//driver = logon();
 				}
+				System.out.println("[waiting for order info in ]"
+						+ tempFile0.getAbsolutePath());
 			}
-			System.out.println("[waiting for order info in ]"
-					+ tempFile0.getAbsolutePath());
 		}
 	}
 

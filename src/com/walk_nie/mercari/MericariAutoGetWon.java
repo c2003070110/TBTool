@@ -1,6 +1,5 @@
 package com.walk_nie.mercari;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,8 +10,7 @@ import org.openqa.selenium.WebElement;
 import com.beust.jcommander.internal.Lists;
 
 public class MericariAutoGetWon {
-
-	protected BufferedReader stdReader = null;
+	private String outFileName = "./mercari/won-out.txt";
 
 	public void execute(WebDriver driver) throws IOException {
 		String aucUrl = "https://www.mercari.com/jp/mypage/purchase/";
@@ -33,7 +31,7 @@ public class MericariAutoGetWon {
 		}
 		String itemUrlPrefix ="https://item.mercari.com/jp/" ;
 		//String orderurlPrefix ="https://www.mercari.com/jp/transaction/order_status/" ;
-		StringBuffer sb = new StringBuffer();
+		List<String> outputList = Lists.newArrayList();
 		String fmt = "%s\t\t350\t%s\t%s\t%s\t%s\t%s\t支払済\t%s";
 		for(String itemId:wonItemIdIds){
 			String url = itemUrlPrefix + itemId;
@@ -46,11 +44,11 @@ public class MericariAutoGetWon {
 			String seller = trs.get(0).findElement(By.tagName("a")).getText();
 			String gen = trs.get(6).findElement(By.tagName("a")).getText();
 
-			sb.append(
+			outputList.add(
 					String.format(fmt, "", itemId, itemName,
-							price.trim(), "", seller,gen)).append("\n");
+							price.trim(), "", seller,gen));
 		}
-		System.out.println(sb);
+		MercariUtil.writeOut(outputList, outFileName);
 	}
 
 }

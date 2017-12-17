@@ -13,8 +13,6 @@ import com.beust.jcommander.internal.Lists;
 
 public class MericariAutoReview {
 
-	protected BufferedReader stdReader = null;
-
 	public void execute(WebDriver driver) throws IOException {
 		String aucUrlPrefix = "https://page.auctions.yahoo.co.jp/jp/auction/";
 		List<String> yaAucIds = getYahooAuctionIds();
@@ -110,23 +108,5 @@ public class MericariAutoReview {
 		// String[] spl = str.split("\r\n");
 		// return Arrays.asList(spl);
 		return ids;
-	}
-
-	protected void mywait() throws IOException {
-		while (true) {
-			System.out.print("ready for continue? ENTER;N for exit ");
-			String line = getStdReader().readLine().trim();
-			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
-					|| "".equals(line)) {
-				break;
-			}
-		}
-	}
-
-	public BufferedReader getStdReader() {
-		if (stdReader == null) {
-			stdReader = new BufferedReader(new InputStreamReader(System.in));
-		}
-		return stdReader;
 	}
 }
