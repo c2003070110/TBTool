@@ -26,7 +26,8 @@ public class MontbellStockChecker {
 	}
 
 	public void process() throws Exception {
-		String publishedBaobeiFile = "c:/temp/montbell-underware-20171023.csv";
+		String publishedBaobeiFile = "c:/temp/montbell-down-20171221.csv";
+		String outFile = "StockCheck-%s.txt.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiListPublished = BaobeiUtil
 				.readInPublishedBaobei(file);
@@ -47,7 +48,7 @@ public class MontbellStockChecker {
 			});
 			report(productId, stockListMontbell, stockListTaobao, stockLines);
 		}
-		String fileName = String.format("StockCheck-%s.txt", DateUtils
+		String fileName = String.format(outFile, DateUtils
 				.formatDate(Calendar.getInstance().getTime(),
 						"yyyy_MM_dd_HH_mm_ss"));
 		FileUtils.writeLines(new File(MontBellUtil.rootPathName, fileName),

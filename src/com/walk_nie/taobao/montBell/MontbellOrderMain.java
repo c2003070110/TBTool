@@ -91,7 +91,7 @@ public class MontbellOrderMain {
 		String fmt1 ="%s\t%s\t%s\t%s";
 		for(OrderObject order:orderList){
 			if(!"买家已付款，等待卖家发货".equals(order.orderStatus)) continue;
-			if(order.baobeiTitle.indexOf("MontBell") <0) continue;
+			if(order.baobeiTitle.toLowerCase().indexOf("MontBell".toLowerCase()) <0) continue;
 			//if(!"".equals(order.orderNote))continue;
 			List<OrderDetailObject> orderDtls = Lists.newArrayList();
 			for(OrderDetailObject orderDtl1:orderDtlList){
@@ -126,6 +126,7 @@ public class MontbellOrderMain {
 			String line ="";
 			for (int i=0;i<spl.length;i++) {
 				String str = spl[i];
+				if("".equals(str))continue;
 				line += str.substring(0, 1).toUpperCase() + str.substring(1);
 			}
 			montbellOrderList.add(line);
@@ -368,13 +369,18 @@ public class MontbellOrderMain {
 		state = state.replaceAll("Shi", "");
 		state = state.replaceAll(" ", "");
 		String city = removeEndComma(votes.get(idx++));
-		String adr2 = removeEndComma(votes.get(idx++));
 		String adr1 = removeEndComma(votes.get(idx++));
+		String adr2 = removeEndComma(votes.get(idx++));
 		String postcode = removeEndComma(votes.get(idx++));
 
+		try{
+			addItemToCard(driver,productInfos);
+		}catch(Exception ex){
+			System.out.println("[ERROR] cannt select color OR size! selected by manually!");
+			mywait("Color OR size Selected realdy? ENTER for realdy!");
+		}
+
 		List<WebElement> weList = null;
-		addItemToCard(driver,productInfos);
-		
 		driver.get("https://en.montbell.jp/products/cart/");
 		weList = driver.findElements(By.tagName("img"));
 		for (WebElement we : weList) {
@@ -491,20 +497,34 @@ public class MontbellOrderMain {
 			}
 			driver.get(MontBellUtil.productUrlPrefix_en + pid);
 			weList = driver.findElements(By.tagName("select"));
+			boolean has = false;
 			for (WebElement we : weList) {
 				if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
 					Select dropdown = new Select(we);
 					dropdown.selectByVisibleText(sizz);
+					has = true;
 					break;
 				}
 			}
+			if(!has){
+				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
+				mywait("Color OR size Selected realdy? ENTER for realdy!");
+				continue;
+			}
+			has = false;
 			weList = driver.findElements(By.tagName("select"));
 			for (WebElement we : weList) {
 				if ((sizz.toUpperCase() + "_" + color.toUpperCase() + "_num").equalsIgnoreCase(we
 						.getAttribute("name"))) {
 					Select dropdown = new Select(we);
 					dropdown.selectByValue("1");
+					has = true;
 				}
+			}
+			if(!has){
+				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
+				mywait("Color OR size Selected realdy? ENTER for realdy!");
+				continue;
 			}
 
 			weList = driver.findElements(By.tagName("img"));
@@ -598,5 +618,21 @@ public class MontbellOrderMain {
 			stdReader = new BufferedReader(new InputStreamReader(System.in));
 		}
 		return stdReader;
+	}
+	public  boolean mywait(String hint) {
+		while (true) {
+			System.out.print(hint);
+			String line;
+			try {
+				line = getStdReader().readLine().trim();
+				if ("\r\n".equalsIgnoreCase(line)
+						|| "\n".equalsIgnoreCase(line) || "".equals(line)) {
+					return true;
+				}else if ("n".equalsIgnoreCase(line)){
+					return false;
+				}
+			} catch (IOException e) {
+			}
+		}
 	}
 }

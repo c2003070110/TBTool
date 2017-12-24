@@ -1,13 +1,22 @@
 package com.walk_nie.ya.auction;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Calendar;
+import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.beust.jcommander.internal.Lists;
+
 public class YaAutoGetSold {
+	private String ooutFileName = "./ya/sold-out.txt";
 
 	protected BufferedReader stdReader = null;
 
@@ -17,7 +26,7 @@ public class YaAutoGetSold {
 		// WebElement rootTbl = driver.findElement(By
 		// .cssSelector("table[bgcolor=\"#dcdcdc\"]"));
 		String fmt = "%s\t%s\t%s\t%s\t%s\t%s\n";
-		StringBuffer sb = new StringBuffer();
+		List<String> sb = Lists.newArrayList();
 		for (int i = 1; i <= 50; i++) {
 			WebElement trWe = driver.findElement(
 					By.cssSelector("table[bgcolor=\"#dcdcdc\"]")).findElement(
@@ -45,11 +54,17 @@ public class YaAutoGetSold {
 			if(msg.equals("商品を受け取りました")){
 				msg="完了";
 			}
-			sb.append(String.format(fmt, auctionId, title,
+			sb.add(String.format(fmt, auctionId, title,
 					price, latestTime, obider,msg));
 		}
-		System.out.println(sb);
-
+		File oFile = new File(ooutFileName);
+		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
+				"yyyy-MM-dd");
+		FileUtils.write(oFile, "-------" + today + "-------\n",
+				Charset.forName("UTF-8"), true);
+		for (String str : sb) {
+			FileUtils.write(oFile, str, Charset.forName("UTF-8"), true);
+		}
 	}
 
 }
