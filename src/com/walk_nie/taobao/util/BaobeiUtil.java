@@ -66,8 +66,8 @@ public class BaobeiUtil {
         miaoshu.append("<li style=\"padding:10.0px;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 取消订单！！退款！！！</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">店主在日本购入后，<span style=\";color:red;font-weight:bold\">宝贝不能取消！</span>除质量问题，<span style=\";color:red;font-weight:bold\">不接受退换。</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">包裹如有开封破损的迹象，验货后再签收！如有任何问题，请<span style=\";color:red;font-weight:bold\">拒收！</span></li>");
-        miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">关税：</span> 个人代购非走私，追加关税不是没有可能的。不幸被抽查产生关税，<span style=\";color:red;font-weight:bold\">关税买家自己承担。</span></li>");
-        miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">代购周期：</span>正常情况下5天内发货！发货后5天左右到手！</li>");
+        miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">关税：</span> 个人代购非走私，追加关税不是没有可能的。不幸被抽查产生关税，<span style=\";color:red;font-weight:bold\">由买家通关报关。关税买家自己承担。代办费也是由买家承担</span></li>");
+        miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">代购周期：</span>正常情况下5天内发货！发货后5天左右到手！<span style=\";color:red;font-weight:bold\">物流不受你我控制，急单or神经质买家 慎重！</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">退换货：</span>由于海外代购的特殊性质,代购商品如无严重质量问题一经售出均<span style=\";color:red;font-weight:bold\">不可退换货</span>,请买家在购买前务必确认好颜色、尺码等</li>");
         miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">产地：</span>日本产的非常少。大多数是东南亚和中国制造。<p>大家都知道的。<span style=\";color:red;font-weight:bold\">就算是同条生产线，面向日本本土，要比其他国家的质量要好很多。</span></p></li>");
         miaoshu.append("</ol>");

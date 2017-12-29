@@ -17,6 +17,7 @@ import com.beust.jcommander.internal.Lists;
 
 public class YaAutoGetSold {
 	private String ooutFileName = "./ya/sold-out.txt";
+	private String ooutFileNameMsg = "./ya/sold-msg.txt";
 
 	protected BufferedReader stdReader = null;
 
@@ -27,7 +28,8 @@ public class YaAutoGetSold {
 		// .cssSelector("table[bgcolor=\"#dcdcdc\"]"));
 		String fmt = "%s\t%s\t%s\t%s\t%s\t%s\n";
 		List<String> sb = Lists.newArrayList();
-		for (int i = 1; i <= 50; i++) {
+		List<String> auctionIds = Lists.newArrayList();
+		for (int i = 1; i <= 40; i++) {
 			WebElement trWe = driver.findElement(
 					By.cssSelector("table[bgcolor=\"#dcdcdc\"]")).findElement(
 					By.cssSelector("tr:nth-child(" + (i + 1) + ")"));
@@ -54,6 +56,7 @@ public class YaAutoGetSold {
 			if(msg.equals("商品を受け取りました")){
 				msg="完了";
 			}
+			auctionIds.add(auctionId);
 			sb.add(String.format(fmt, auctionId, title,
 					price, latestTime, obider,msg));
 		}
@@ -64,6 +67,34 @@ public class YaAutoGetSold {
 				Charset.forName("UTF-8"), true);
 		for (String str : sb) {
 			FileUtils.write(oFile, str, Charset.forName("UTF-8"), true);
+		}
+		
+		String urlFmt ="https://contact.auctions.yahoo.co.jp/seller/top?aid=";
+		List<String> msgList = Lists.newArrayList();
+		for (String auctionId:auctionIds) {
+			String url = urlFmt +  auctionId;
+			msgList.add("--------Auction ID=" + auctionId +"--------");
+			driver.get(url);
+			WebElement messagelistWe = null;
+			try{
+			 messagelistWe = driver.findElement(By.id("messagelist"));
+			}catch(Exception e){
+
+				continue;
+			}
+			if(messagelistWe == null){
+				continue;
+			}
+			List<WebElement> ddWes = messagelistWe.findElements(By.tagName("dd"));
+			for(WebElement ddWe :ddWes){
+				msgList.add(ddWe.getText());
+			}
+		}
+		File oFileMsg = new File(ooutFileNameMsg);
+		FileUtils.write(oFile, "-------" + today + "-------\n",
+				Charset.forName("UTF-8"), true);
+		for (String str : msgList) {
+			FileUtils.write(oFileMsg, str + "\n", Charset.forName("UTF-8"), true);
 		}
 	}
 
