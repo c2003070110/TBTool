@@ -38,6 +38,8 @@ public class MontbellOrderMain {
 	private String ooutFileName = "./montbell/order-out.txt";
 	private String outFileName = "./montbell/taobao-out.txt";
 	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
+	
+	private String itemSplitter ="~";
 
 	public static void main(String[] args) throws Exception {
 		new MontbellOrderMain().process();
@@ -111,7 +113,7 @@ public class MontbellOrderMain {
 					productId = split[split.length - 1];
 				}
 				if(i != orderDtls.size()-1){
-					tmp +=productId+";" + dtl.itemAttr + "-";
+					tmp +=productId+";" + dtl.itemAttr + itemSplitter;
 				}else{
 					tmp +=productId+";" + dtl.itemAttr;
 				}
@@ -369,8 +371,8 @@ public class MontbellOrderMain {
 		state = state.replaceAll("Shi", "");
 		state = state.replaceAll(" ", "");
 		String city = removeEndComma(votes.get(idx++));
-		String adr1 = removeEndComma(votes.get(idx++));
 		String adr2 = removeEndComma(votes.get(idx++));
+		String adr1 = removeEndComma(votes.get(idx++));
 		String postcode = removeEndComma(votes.get(idx++));
 
 		try{
@@ -474,7 +476,7 @@ public class MontbellOrderMain {
 	private void addItemToCard(WebDriver driver, String productInfos) {
 
 		List<WebElement> weList = null;
-		String[] pis = productInfos.split("-");
+		String[] pis = productInfos.split(itemSplitter);
 		for (String line : pis) {
 			System.out.println("[processing]" + line);
 			String[] pi = line.split(";");
@@ -493,6 +495,7 @@ public class MontbellOrderMain {
 			}
 			if ("".equals(sizz)) {
 				System.out.println("CANNOT process that..." + line);
+				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
 			}
 			driver.get(MontBellUtil.productUrlPrefix_en + pid);

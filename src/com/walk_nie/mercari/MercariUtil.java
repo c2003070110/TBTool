@@ -48,7 +48,6 @@ public class MercariUtil {
 		if (pswdWe != null) {
 			pswdWe.sendKeys("nhp12345");
 		}
-		mywait("login Finished? ENTER for continue");
 		return driver;
 	}
 
