@@ -1,6 +1,7 @@
 package com.walk_nie.taobao.montBell;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,10 +24,51 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 public class MontbellStockChecker {
 
 	public static void main(String[] args) throws Exception {
-		new MontbellStockChecker().process();
+		if (args.length == 0) {
+			new MontbellStockChecker().processByFile();
+		} else if (args.length == 1) {
+			new MontbellStockChecker().processByProductId(args[0]);
+		}
 	}
 
-	public void process() throws Exception {
+	public void processByProductId(String productId) throws Exception {
+		String outFile = "StockCheck-%s-%s.txt.csv";
+		List<StockObject> stockListMontbell = getMontbellStockInfo(productId);
+		Collections.sort(stockListMontbell, new Comparator<StockObject>() {
+			@Override
+			public int compare(StockObject arg0, StockObject arg1) {
+				return arg0.colorName.compareTo(arg1.colorName);
+			}
+		});
+		List<String> stockLines = Lists.newArrayList();
+		String fmt = "[PRODUCT:%s][COLOR:%-6s][SIZE:%-6s][STOCK:%s]";
+		for (StockObject stockObj : stockListMontbell) {
+			String line = String.format(fmt, productId, stockObj.colorName,
+					stockObj.sizeName,stockObj.stockStatus);
+			stockLines.add(line);
+			System.out.println(line);
+		}
+		Collections.sort(stockListMontbell, new Comparator<StockObject>() {
+			@Override
+			public int compare(StockObject arg0, StockObject arg1) {
+				return arg0.sizeName.compareTo(arg1.sizeName);
+			}
+		});
+		 fmt = "[PRODUCT:%s][SIZE:%-6s][COLOR:%-6s][STOCK:%s]";
+		for (StockObject stockObj : stockListMontbell) {
+			String line = String.format(fmt, productId, stockObj.sizeName,
+					stockObj.colorName,stockObj.stockStatus);
+			stockLines.add(line);
+			System.out.println(line);
+		}
+		String fileName = String.format(outFile, productId, DateUtils
+				.formatDate(Calendar.getInstance().getTime(),
+						"yyyy_MM_dd_HH_mm_ss"));
+		FileUtils.writeLines(new File(MontBellUtil.rootPathName, fileName),
+				stockLines);
+	}
+
+	public void processByFile() throws Exception {
 		String publishedBaobeiFile = "c:/temp/montbell-down-20171221.csv";
 		String outFile = "StockCheck-%s.txt.csv";
 		File file = new File(publishedBaobeiFile);
@@ -39,18 +82,16 @@ public class MontbellStockChecker {
 			List<StockObject> stockListMontbell = getMontbellStockInfo(productId);
 			List<StockObject> stockListTaobao = getTaobaoStockInfo(productId,
 					baobeiListPublished);
-			Collections.sort(stockListTaobao, new Comparator<StockObject>(){
+			Collections.sort(stockListTaobao, new Comparator<StockObject>() {
 				@Override
 				public int compare(StockObject arg0, StockObject arg1) {
 					return arg0.colorName.compareTo(arg1.colorName);
 				}
-				
 			});
 			report(productId, stockListMontbell, stockListTaobao, stockLines);
 		}
-		String fileName = String.format(outFile, DateUtils
-				.formatDate(Calendar.getInstance().getTime(),
-						"yyyy_MM_dd_HH_mm_ss"));
+		String fileName = String.format(outFile, DateUtils.formatDate(Calendar
+				.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
 		FileUtils.writeLines(new File(MontBellUtil.rootPathName, fileName),
 				stockLines);
 	}
@@ -114,7 +155,7 @@ public class MontbellStockChecker {
 		}
 		if (!stockChange) {
 			stockLines.add(String.format(fmt, productId, "", "", "库存没有变化"));
-		}else if(allNoStock){
+		} else if (allNoStock) {
 			stockLines.add(String.format(fmt, productId, "", "", "官网无"));
 		} else {
 			stockLines.addAll(lines);
@@ -213,7 +254,7 @@ public class MontbellStockChecker {
 		return siz;
 	}
 
-	private List<StockObject> getMontbellStockInfo(String productId)
+	public List<StockObject> getMontbellStockInfo(String productId)
 			throws Exception {
 
 		List<StockObject> stockObjList = Lists.newArrayList();
@@ -225,8 +266,8 @@ public class MontbellStockChecker {
 		return stockObjList;
 	}
 
-	private void scanStock(List<StockObject> stockList, String url)
-			throws Exception {
+	private void scanStock(List<StockObject> stockList, String url) throws ClientProtocolException, IOException
+			{
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
 		Element mainRightEle = null;
 		try {
@@ -234,6 +275,18 @@ public class MontbellStockChecker {
 		} catch (Exception e) {
 			return;
 		}
+		
+		Elements priceEls = mainRightEle.select("p.price");
+		String price ="" ;
+		if(!priceEls.isEmpty()){
+			price = priceEls.get(0).text();
+			price = price.replace("+税", "");
+			price = price.replace("価格", "");
+			price = price.replace(",", "");
+			price = price.replace("¥", "");
+			price = price.trim();
+		}
+				
 		Elements sizes = mainRightEle.select("div.sizeChoice").select("select")
 				.select("option");
 		for (int i = 1; i < sizes.size(); i++) {
@@ -250,18 +303,20 @@ public class MontbellStockChecker {
 			for (int j = 1; j < colors.size(); j++) {
 				StockObject stock = new StockObject();
 				Element color = colors.get(j);
+				stock.priceJPY = price;
 				stock.colorName = color.select("p.colorName").text();
 				stock.sizeName = zie;
 				String stockN = color.select("p.sell").text();
-				if ("在庫あり".equals(stockN)) {
+				if ("".equals(stockN)) {
+					stockN = "完売";
+				} else if ("在庫あり".equals(stockN)) {
+					stock.isStock = true;
+				} else if ("直営店在庫あり".equals(stockN)) {
+					stock.isStock = true;
+				} else if ("入荷待ち（受付可）".equals(stockN)) {
 					stock.isStock = true;
 				}
-				if ("直営店在庫あり".equals(stockN)) {
-					stock.isStock = true;
-				}
-				if ("入荷待ち（受付可）".equals(stockN)) {
-					stock.isStock = true;
-				}
+				stock.stockStatus = stockN;
 				boolean alreadyScan = false;
 				for (StockObject obj : stockList) {
 					if (obj.sizeName.equalsIgnoreCase(stock.sizeName)

@@ -39,7 +39,7 @@ public class MontbellOrderMain {
 	private String outFileName = "./montbell/taobao-out.txt";
 	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
 	
-	private String itemSplitter ="~";
+	private String itemSplitter ="#";
 
 	public static void main(String[] args) throws Exception {
 		new MontbellOrderMain().process();
@@ -63,10 +63,33 @@ public class MontbellOrderMain {
 				if (todoType == 3) {
 					toPinYin();
 				}
+				if (todoType == 4) {
+					stockCheck();
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	private void stockCheck() throws Exception {
+		String productId = "";
+		System.out.println("Please Input the Product ID : ");
+
+		stdReader = getStdReader();
+		while (true) {
+			String line = stdReader.readLine().trim();
+			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
+					|| "".equals(line)) {
+				break;
+			} else if (!"".equalsIgnoreCase(line)) {
+				productId = line;
+				break;
+			}
+		}
+
+		MontbellStockChecker stockChecker = new MontbellStockChecker();
+		stockChecker.processByProductId(productId);
 	}
 
 	private void toPinYin() throws Exception {
@@ -74,7 +97,7 @@ public class MontbellOrderMain {
 		pinyin.process();
 	}
 
-	private void anaylizeTaobaoOrder() throws PinyinException, IOException {
+	private void anaylizeTaobaoOrder() throws Exception {
 		File f = new File(inOrderDir);
 		File[] fs = f.listFiles();
 		List<OrderObject> orderList = Lists.newArrayList();
@@ -90,7 +113,7 @@ public class MontbellOrderMain {
 		}
 		List<String> orderHis = Lists.newArrayList();
 		List<String> montbellOrderList = Lists.newArrayList();
-		String fmt1 ="%s\t%s\t%s\t%s";
+		String fmt1 ="%s\t%s\t%s\t%s\t\t\t%s";
 		for(OrderObject order:orderList){
 			if(!"买家已付款，等待卖家发货".equals(order.orderStatus)) continue;
 			if(order.baobeiTitle.toLowerCase().indexOf("MontBell".toLowerCase()) <0) continue;
@@ -118,7 +141,9 @@ public class MontbellOrderMain {
 					tmp +=productId+";" + dtl.itemAttr;
 				}
 				
-				orderHis.add(String.format(fmt1, order.buyerName,order.orderPayedTime,productId,order.acturalPayAmt));
+				String stockStuts = anlynizeStock(productId,dtl.itemAttr);
+				
+				orderHis.add(String.format(fmt1, order.buyerName,order.orderPayedTime,productId,order.acturalPayAmt,stockStuts));
 			}
 			montbellOrderList.add(tmp);
 			
@@ -176,6 +201,26 @@ public class MontbellOrderMain {
 			FileUtils.write(outOrderMemoFileName1, str + "\n", Charset.forName("UTF-8"), true);
 		}
 		oFile = null;
+	}
+
+	private String anlynizeStock(String productId, String itemAttr) throws Exception {
+		String color="",siz = "";
+		if(itemAttr.indexOf(";") >=0){
+			String[] sl = itemAttr.split(";");
+			color = realColorName(sl[0]);
+			siz = realSizeName(sl[1]);
+		}
+		MontbellStockChecker check = new MontbellStockChecker();
+		List<StockObject>  stockList = check.getMontbellStockInfo(productId);
+		String stockSts = "",price="";
+		for(StockObject ojb:stockList){
+			if(ojb.colorName.equals(color) &&ojb.sizeName.equals(siz)){
+				stockSts = ojb.stockStatus;
+				price = ojb.priceJPY;
+				break;
+			}
+		}
+		return String.format("%s\t%s", stockSts,price);
 	}
 
 	private List<OrderDetailObject> readInOrderDetail(File ff) {
@@ -284,23 +329,23 @@ public class MontbellOrderMain {
 	private void orderForChina() {
 		
 		WebDriver driver = logonForChina();
-		long updateTime = System.currentTimeMillis();
+		//long updateTime = System.currentTimeMillis();
 		File tempFile0 = new File(inFileName);
-		System.out.println("[waiting for order info in ]"
-				+ tempFile0.getAbsolutePath());
-		while (true) {
-			if (updateTime < tempFile0.lastModified()) {
-				updateTime = tempFile0.lastModified();
+		//System.out.println("[waiting for order info in ]"
+		//		+ tempFile0.getAbsolutePath());
+		//while (true) {
+		//	if (updateTime < tempFile0.lastModified()) {
+		//		updateTime = tempFile0.lastModified();
 				try{
 				orderForChina(driver, tempFile0);
 				}catch(Exception ex){
 					ex.printStackTrace();
 					//driver = logon();
 				}
-				System.out.println("[waiting for order info in ]"
-						+ tempFile0.getAbsolutePath());
-			}
-		}
+		//		System.out.println("[waiting for order info in ]"
+		//				+ tempFile0.getAbsolutePath());
+		//	}
+		//}
 	}
 
 	private WebDriver logonForChina() {
@@ -374,6 +419,11 @@ public class MontbellOrderMain {
 		String adr2 = removeEndComma(votes.get(idx++));
 		String adr1 = removeEndComma(votes.get(idx++));
 		String postcode = removeEndComma(votes.get(idx++));
+		
+		if("".equals(postcode)){
+			System.out.println("[ERROR] Order Info NO Correct! File=" + tempFile0.getAbsolutePath());
+			return;
+		}
 
 		try{
 			addItemToCard(driver,productInfos);
@@ -419,7 +469,7 @@ public class MontbellOrderMain {
 		}
 		driver.switchTo().alert().accept();
 		try {
-			Thread.sleep(1000*2);
+			Thread.sleep(1000*1);
 		} catch (InterruptedException e) {
 		}
 		WebElement we = driver.findElement(By.id("basicInfo"));
@@ -443,6 +493,7 @@ public class MontbellOrderMain {
 		}
 		// add credit card
 		addCreditCardJCB(driver);
+		//addCreditCardMASTER(driver);
 
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we1 : weList) {
@@ -481,24 +532,20 @@ public class MontbellOrderMain {
 			System.out.println("[processing]" + line);
 			String[] pi = line.split(";");
 			String pid = pi[0];
+			driver.get(MontBellUtil.productUrlPrefix_en + pid);
 			String color = "";
 			if (pi.length > 1) {
-				color = pi[1].replace("颜色分类:", "");
-				color = color.replace("颜色分类：", "");
+				color = realColorName(pi[1]);
 			}
 			String sizz = "";
 			if (pi.length > 2) {
-				sizz = pi[2].replace("尺码:", "");
-				sizz = sizz.replace("尺码：", "");
-				sizz = sizz.replace("鞋码：", "");
-				sizz = sizz.replace("鞋码:", "");
+				sizz = realSizeName(pi[2]);
 			}
 			if ("".equals(sizz)) {
 				System.out.println("CANNOT process that..." + line);
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
 			}
-			driver.get(MontBellUtil.productUrlPrefix_en + pid);
 			weList = driver.findElements(By.tagName("select"));
 			boolean has = false;
 			for (WebElement we : weList) {
@@ -537,6 +584,10 @@ public class MontbellOrderMain {
 					we.click();
 					break;
 				}
+			}
+			try {
+				Thread.sleep(1000*1);
+			} catch (InterruptedException e) {
 			}
 		}
 	}
@@ -586,11 +637,47 @@ public class MontbellOrderMain {
 		c.findElement(By.cssSelector("input[name=\"security_code\"")).sendKeys("047");
 	}
 
+	private void addCreditCardMASTER(WebDriver driver) {
+		WebElement c = driver.findElement(By.id("contents"));
+
+		List<WebElement> weList = null;
+		weList = c.findElements(By.tagName("select"));
+		for (WebElement we : weList) {
+			if ("card_type_id".equalsIgnoreCase(we.getAttribute("name"))) {
+				Select dropdown = new Select(we);
+				dropdown.selectByVisibleText("MASTER");
+				break;
+			}
+		}
+		c.findElement(By.cssSelector("input[name=\"card_number1\"")).sendKeys("5316");
+		c.findElement(By.cssSelector("input[name=\"card_number2\"")).sendKeys("9303");
+		c.findElement(By.cssSelector("input[name=\"card_number3\"")).sendKeys("2051");
+		c.findElement(By.cssSelector("input[name=\"card_number4\"")).sendKeys("4975");
+
+		weList = c.findElements(By.tagName("select"));
+		for (WebElement we : weList) {
+			if ("card_expire_month".equalsIgnoreCase(we.getAttribute("name"))) {
+				Select dropdown = new Select(we);
+				dropdown.selectByVisibleText("4");
+				break;
+			}
+		}
+		for (WebElement we : weList) {
+			if ("card_expire_year".equalsIgnoreCase(we.getAttribute("name"))) {
+				Select dropdown = new Select(we);
+				dropdown.selectByVisibleText("24");
+				break;
+			}
+		}
+		c.findElement(By.cssSelector("input[name=\"security_code\"")).sendKeys("444");
+	}
+
 	private int choiceTodo() {
 		int type = 0;
 		try {
 			System.out.println("Type of todo : ");
-			System.out.println("0:Get From Taobao Order;\n" + "1:Order（CHINA);\n2:Order（JAPAN);\n3:to PinYin;\n" + "4:...;\n");
+			System.out.println("0:Get From Taobao Order;\n" + "1:Order（CHINA);\n2:Order（JAPAN);\n3:to PinYin;\n"
+			                   + "4:stock check.\n5..;\n");
 
 			stdReader = getStdReader();
 			while (true) {
@@ -606,6 +693,9 @@ public class MontbellOrderMain {
 					break;
 				} else if ("3".equals(line.trim())) {
 					type = 3;
+					break;
+				} else if ("4".equals(line.trim())) {
+					type = 4;
 					break;
 				} else {
 					System.out.println("Listed number only!");
@@ -637,5 +727,28 @@ public class MontbellOrderMain {
 			} catch (IOException e) {
 			}
 		}
+	}
+	
+	private String realColorName(String str){
+
+		String color = "";
+		if (str == null) {
+			return color;
+		}
+		color = str.replace("颜色分类:", "");
+		color = color.replace("颜色分类：", "");
+		return color;
+	}
+	private String realSizeName(String str){
+
+		String sizz = "";
+		if (str == null) {
+			return sizz;
+		}
+		sizz = str.replace("尺码:", "");
+		sizz = sizz.replace("尺码：", "");
+		sizz = sizz.replace("鞋码：", "");
+		sizz = sizz.replace("鞋码:", "");
+		return sizz;
 	}
 }
