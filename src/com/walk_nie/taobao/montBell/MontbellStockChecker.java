@@ -48,18 +48,21 @@ public class MontbellStockChecker {
 			stockLines.add(line);
 			System.out.println(line);
 		}
-		Collections.sort(stockListMontbell, new Comparator<StockObject>() {
-			@Override
-			public int compare(StockObject arg0, StockObject arg1) {
-				return arg0.sizeName.compareTo(arg1.sizeName);
+		if (stockListMontbell.get(0).sizeName != null
+				&& !"".equals(stockListMontbell.get(0).sizeName)) {
+			Collections.sort(stockListMontbell, new Comparator<StockObject>() {
+				@Override
+				public int compare(StockObject arg0, StockObject arg1) {
+					return arg0.sizeName.compareTo(arg1.sizeName);
+				}
+			});
+			fmt = "[PRODUCT:%s][SIZES:%-6s][COLOR:%-6s][STOCK:%s]";
+			for (StockObject stockObj : stockListMontbell) {
+				String line = String.format(fmt, productId, stockObj.sizeName,
+						stockObj.colorName, stockObj.stockStatus);
+				stockLines.add(line);
+				System.out.println(line);
 			}
-		});
-		 fmt = "[PRODUCT:%s][SIZE:%-6s][COLOR:%-6s][STOCK:%s]";
-		for (StockObject stockObj : stockListMontbell) {
-			String line = String.format(fmt, productId, stockObj.sizeName,
-					stockObj.colorName,stockObj.stockStatus);
-			stockLines.add(line);
-			System.out.println(line);
 		}
 		String fileName = String.format(outFile, productId, DateUtils
 				.formatDate(Calendar.getInstance().getTime(),
@@ -327,6 +330,20 @@ public class MontbellStockChecker {
 				if (!alreadyScan)
 					stockList.add(stock);
 			}
+		}
+		if(stockList.isEmpty()){
+	        Elements colors = mainRightEle.select("div#size_").select("table.dataTbl")
+	                .select("tr");
+	        for (int i = 1; i < colors.size(); i++) {
+				StockObject stock = new StockObject();
+	        	String colorName = colors.get(i).select("p.colorName").text().toLowerCase();
+	            if("－".equals(colorName))continue;
+	        	String stockN = colors.get(i).select("p.sell").text().toLowerCase();
+				stock.stockStatus = stockN;
+				stockList.add(stock);
+				stock.priceJPY = price;
+				stock.colorName = colorName;
+	        }
 		}
 	}
 

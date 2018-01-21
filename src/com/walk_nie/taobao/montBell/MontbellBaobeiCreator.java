@@ -15,7 +15,7 @@ public class MontbellBaobeiCreator  {
 
 		MontbellBaobeiProducer db = new MontbellBaobeiProducer();
 		db
-                .addScanCategory("4000") // 傘
+                .addScanCategory("22000") 
                 .addScanCategory("") // 
                 .addScanCategory("") //
                 

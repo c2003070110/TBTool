@@ -40,6 +40,8 @@ public class MontbellOrderMain {
 	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
 	
 	private String itemSplitter ="#";
+	
+	private WebDriver driver = null;
 
 	public static void main(String[] args) throws Exception {
 		new MontbellOrderMain().process();
@@ -214,7 +216,7 @@ public class MontbellOrderMain {
 		List<StockObject>  stockList = check.getMontbellStockInfo(productId);
 		String stockSts = "",price="";
 		for(StockObject ojb:stockList){
-			if(ojb.colorName.equals(color) &&ojb.sizeName.equals(siz)){
+			if(ojb.colorName.equalsIgnoreCase(color) &&ojb.sizeName.equalsIgnoreCase(siz)){
 				stockSts = ojb.stockStatus;
 				price = ojb.priceJPY;
 				break;
@@ -329,27 +331,39 @@ public class MontbellOrderMain {
 	private void orderForChina() {
 		
 		WebDriver driver = logonForChina();
-		//long updateTime = System.currentTimeMillis();
+		long updateTime = System.currentTimeMillis();
 		File tempFile0 = new File(inFileName);
-		//System.out.println("[waiting for order info in ]"
-		//		+ tempFile0.getAbsolutePath());
-		//while (true) {
-		//	if (updateTime < tempFile0.lastModified()) {
-		//		updateTime = tempFile0.lastModified();
+		System.out.println("[waiting for order info in ]"
+				+ tempFile0.getAbsolutePath());
+		while (true) {
+			if (updateTime < tempFile0.lastModified()) {
+				updateTime = tempFile0.lastModified();
 				try{
 				orderForChina(driver, tempFile0);
 				}catch(Exception ex){
+					driver.close();
+					driver = null;
 					ex.printStackTrace();
 					//driver = logon();
 				}
-		//		System.out.println("[waiting for order info in ]"
-		//				+ tempFile0.getAbsolutePath());
-		//	}
-		//}
+				System.out.println("[waiting for order info in ]"
+						+ tempFile0.getAbsolutePath());
+			}
+		}
 	}
 
 	private WebDriver logonForChina() {
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		if (driver != null) {
+//			List<WebElement> es = driver.findElements(By
+//					.cssSelector("p#btnLogin"));
+//			if (es.isEmpty()) {
+//				return driver;
+//			}
+			driver.get("https://en.montbell.jp/login/logout.php");
+		} else {
+			driver = WebDriverUtil.getFirefoxWebDriver();
+		}
+		
 		driver.get("https://en.montbell.jp/login/");
 
 		List<WebElement> submitList = driver.findElements(By.tagName("input"));

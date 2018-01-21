@@ -17,7 +17,6 @@ public class GoodsObject {
 	public String priceOrg = "";
 	public String productId = "";
 	public String brand = "";
-	public String weightOrg = "";
 	public int weight = 0;
     public int weightExtra = 0;
 	public String detailScreenShotPicFile = "";
@@ -30,6 +29,12 @@ public class GoodsObject {
     //public List<String> pictureUrlList = new ArrayList<String>();
     //public List<String> pictureLocalList = new ArrayList<String>();
 	
+	public String materialOrg = "";// 素材
+	public String weightOrg = "";// 平均重量
+	public String colorOrg = "";// カラー
+	public String sizeOrg = "";// サイズ
+	public String specialOrg = "";// 特長
+	public String functionOrg = ""; // 機能
 
 	public List<StockObject> stockList = new ArrayList<StockObject>();
 	
