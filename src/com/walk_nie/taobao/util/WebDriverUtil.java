@@ -1,11 +1,15 @@
 package com.walk_nie.taobao.util;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -28,6 +32,7 @@ public class WebDriverUtil  {
     public final static String ieDriverPath = "C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
 
     private static WebDriver driver = null;
+    public static String watermark_file = "in/watermark.png";
 
 	public static WebDriver getFirefoxWebDriver() {
 		System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
@@ -108,7 +113,33 @@ public class WebDriverUtil  {
             BufferedImage eleScreenshot= fullImg.getSubimage(point1.getX(), point1.getY(), eleWidth,
                 eleHeight);
             String picSuffix = "png";
+
+    		int originalH = eleHeight;
+    		int originalW = eleWidth;
+
+    		Graphics2D g = eleScreenshot.createGraphics();
+    		g.drawImage(eleScreenshot.getScaledInstance(originalW, originalH,
+    				Image.SCALE_AREA_AVERAGING), 0, 0, originalW, originalH, null);
+    			ImageIcon imgIcon = new ImageIcon(watermark_file);
+    			int interval = 0;
+    			Image img = imgIcon.getImage();
+    			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
+    					0.07f/* 水印透明度 */));
+    			for (int height = interval + imgIcon.getIconHeight(); height < eleScreenshot
+    					.getHeight(); height = height + interval
+    					+ imgIcon.getIconHeight()) {
+    				for (int weight = interval + imgIcon.getIconWidth(); weight < eleScreenshot
+    						.getWidth(); weight = weight + interval
+    						+ imgIcon.getIconWidth()) {
+    					g.drawImage(img, weight - imgIcon.getIconWidth(), height
+    							- imgIcon.getIconHeight(), null);
+    				}
+    			}
+    			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+    		g.dispose();
+
             ImageIO.write(eleScreenshot, picSuffix, screenshot);
+    		
             //Copy the element screenshot to disk
             FileUtils.copyFile(screenshot, new File(saveTo));
         	

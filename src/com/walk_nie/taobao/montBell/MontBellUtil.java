@@ -82,6 +82,9 @@ public class MontBellUtil {
         detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">标有 拼邮可的宝贝 可以包税拼邮。!运费只<span style=\";color:red;font-weight:bold\">40</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">直邮是 日本发货到你家，时效快但<span style=\";color:red;font-weight:bold\">关税买家承担！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税是指 把宝贝运到国内，然后分发给大家。时效20天左右 <span style=\";color:red;font-weight:bold\"> 但不用操心关税</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日货料好质高，低调奢华，性价比高！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
@@ -89,7 +92,7 @@ public class MontBellUtil {
         //detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">使用转运地址的买家</span>，因为通关清关的问题。<span style=\";color:red;font-weight:bold\">本店拒绝发货！！</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">居住在大陆的非大陆买家</span>，如不知道如何 通关清关，<span style=\";color:red;font-weight:bold\">请不要下单！！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不能报关的买家，请不要下单！！</span></p>");
         //detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图，有机会获得奖励:手机流量</p>");
         //detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图包含了 <span style=\";color:red;font-weight:bold\">身材尺寸，衣服size，合适否</span>  100%奖励！！！请踊跃参与！！</p>");
         detailSB.append("</div>");
@@ -140,11 +143,11 @@ public class MontBellUtil {
 		}
 		return detailSB.toString();
 	}
-    public  String composeExtraMiaoshu() {
+    public static String composeExtraMiaoshu() {
         StringBuffer miaoshu = new StringBuffer();
         miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">montbell直营店采购现场！</h3>");
         miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i2/2498620403/TB2.eGxkXXXXXXJXpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
+        //miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i2/2498620403/TB2.eGxkXXXXXXJXpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2SLKFkXXXXXc9XXXXXXXXXXXX_!!2498620403.jpg\" /></p>");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2WvGSkXXXXXbuXXXXXXXXXXXX_!!2498620403.jpg\" /></p>");
         miaoshu.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;\" src=\"http://img.alicdn.com/imgextra/i3/2498620403/TB2AtmtkXXXXXX1XpXXXXXXXXXX_!!2498620403.jpg\" /></p>");
@@ -624,7 +627,7 @@ public class MontBellUtil {
 				break;
 			}
 		}
-		return isStock ? "999" : "0";
+		return isStock ? "99" : "0";
 	}
 
 	public static BaobeiPublishObject getPublishedBaobei(GoodsObject prod,

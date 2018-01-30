@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,7 +32,7 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MontbellOrderMain {
 	protected BufferedReader stdReader = null;
-	private String inOrderDir = "./montbell/";
+	//private String inOrderDir = "./montbell/";
 	//private String pinyinInFileName = "./montbell/pinyin-in.txt";
 	//private String pinyoutInFileName = "./montbell/pinyin-out.txt";
 	private String inFileName = "./montbell/order-in.txt";
@@ -100,16 +101,28 @@ public class MontbellOrderMain {
 	}
 
 	private void anaylizeTaobaoOrder() throws Exception {
-		File f = new File(inOrderDir);
+		//File f = new File(inOrderDir);
+		File f = new File(System.getProperty("user.home"),"Downloads");
 		File[] fs = f.listFiles();
+		List<File> fslist = Arrays.asList(fs);
+		Collections.sort(fslist, new Comparator<File>() {
+			@Override
+			public int compare(File arg0, File arg1) {
+				return (int) (arg0.lastModified() - arg1.lastModified());
+			}
+		});
 		List<OrderObject> orderList = Lists.newArrayList();
 		List<OrderDetailObject> orderDtlList = Lists.newArrayList();
-		for(File ff:fs){
+		for(File ff:fslist){
 			if(!ff.isFile())continue;
 			if(ff.getName().startsWith("ExportOrderList")){
 				orderList = readInOrder(ff);
 			}
-			if(ff.getName().startsWith("ExportOrderDetailList")){
+		}
+		for (File ff : fslist) {
+			if (!ff.isFile())
+				continue;
+			if (ff.getName().startsWith("ExportOrderDetailList")) {
 				orderDtlList = readInOrderDetail(ff);
 			}
 		}

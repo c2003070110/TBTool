@@ -241,9 +241,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			String picName = String
 					.format(fileNameFmt, goodsObj.productId, i++);
 			try {
-				// FIXME false->true
 				File picFile = TaobaoUtil.downloadPicture(picRoot, url,
-						picName, false);
+						picName, true);
 				if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
 					goodsObj.dressOnPics.add(picFile.getAbsolutePath());
 				}
@@ -452,7 +451,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			String title = translateTitle(ttl.text());
 			Elements desp = goodsElement.select(".description").select("p");
 			String productId = desp.get(1).text().trim().replace("No. #", "");
-			enTitleMap.put(productId, title);
+			enTitleMap.put(productId, title.trim());
 		}
 	}
 
@@ -554,7 +553,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		title = title.replaceAll(" PANTS", "");
 		title = title.replaceAll("Lining", "");
 		title = title.replaceAll(" LINING", "");
-		title = title.replaceAll(" ", "");
+		//title = title.replaceAll(" ", "");
 		title = title.trim();
 		return title;
 	}
