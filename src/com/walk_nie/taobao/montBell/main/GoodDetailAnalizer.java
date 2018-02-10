@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell.analyze;
+package com.walk_nie.taobao.montBell.main;
 
 public class GoodDetailAnalizer {
 
