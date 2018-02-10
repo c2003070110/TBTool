@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.montBell.main;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +26,8 @@ import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.google.common.io.Files;
+import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderObject;
 import com.walk_nie.taobao.util.WebDriverUtil;
@@ -519,8 +521,8 @@ public class MontbellOrderMain {
 			}
 		}
 		// add credit card
-		addCreditCardJCB(driver);
-		//addCreditCardMASTER(driver);
+		//addCreditCardJCB(driver);
+		addCreditCardMASTER(driver);
 
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we1 : weList) {

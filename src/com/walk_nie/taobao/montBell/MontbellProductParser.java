@@ -468,7 +468,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		}
 	}
 
-	protected void scanItemByCategory(List<GoodsObject> goodsList,
+	public void scanItemByCategory(List<GoodsObject> goodsList,
 			CategoryObject category, String cateogryUrl) throws IOException {
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
 		scanItemByCategory(doc, goodsList, category);

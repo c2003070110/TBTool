@@ -1,8 +1,12 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.montBell.main;
 
 import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.montBell.CategoryObject;
+import com.walk_nie.taobao.montBell.GoodsObject;
+import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.taobao.montBell.MontbellProductParser;
 
 public class MontbellPriceMain {
 	double todayCurrencyRate = 0.064;

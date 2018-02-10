@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.montBell.main;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +17,8 @@ import org.jsoup.select.Elements;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
+import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;

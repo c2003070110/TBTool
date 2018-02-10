@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell;
+package com.walk_nie.taobao.montBell.main;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
