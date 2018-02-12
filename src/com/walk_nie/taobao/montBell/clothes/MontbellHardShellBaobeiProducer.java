@@ -21,7 +21,7 @@ import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
+public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
 
 	private List<String> scanCategoryIds = Lists.newArrayList();
 	private List<String> taobaoColors = Lists.newArrayList();
@@ -429,7 +429,7 @@ public class MontbellShellBaobeiProducer extends BaseBaobeiProducer {
 		obj.input_custom_cpv = inputCustomCpv;
 	}
 
-	public MontbellShellBaobeiProducer addScanCategory(String scanCategoryId) {
+	public MontbellHardShellBaobeiProducer addScanCategory(String scanCategoryId) {
 
 		this.scanCategoryIds.add(scanCategoryId);
 		return this;

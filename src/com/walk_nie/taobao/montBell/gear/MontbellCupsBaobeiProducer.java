@@ -105,7 +105,9 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
         
 		BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
 				item, this.publishedbaobeiList);
-
+		if(item.sizeList.isEmpty()){
+			item.sizeList.add(MontBellUtil.sizeNameDefault);
+		}
 		if (publishedBaobei != null) {
 			return super.updatePublishedBaobei(item,publishedBaobei);
 		}
@@ -115,28 +117,25 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
         // 宝贝类目
-        obj.cid =  "50014493";
+        obj.cid =  "50015396";
         // 店铺类目
-        obj.seller_cids =  "1184396872,";
+        obj.seller_cids =  "1293392732,";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
         obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "99";
 		
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);
         
         // 用户输入ID串;
-        //obj.inputPids = "\"20000,13021751,6103476\"";
-        // ダウンジャケット
         //obj.inputPids = "\"20000,13021751,6103476,1627207\"";
-		obj.inputPids = "\"13021751,6103476,1627207\"";
+		obj.inputPids = "\"13021751,6103476\"";
         
         // 用户输入名-值对
-        //obj.inputValues = "\"montbell,"+item.productId+",*\"";
         composeBaobeiInputValues(item, obj);
         
         // 宝贝描述
@@ -172,12 +171,18 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
 
     private    void composeBaobeiTitle(GoodsObject item,
             BaobeiPublishObject baobei) {
-        String title = "\"日本直邮 MontBell";
+        String title = "\"[可拼邮]Montbell";
         String cateId = item.cateogryObj.categoryId;
-        if("327000".equals(cateId)){
-        	// カップ/マグ/タンブラー
-        	title += " 口杯 马克杯" ;
-        }
+		if ("327000".equals(cateId)) {
+			// カップ/マグ/タンブラー
+			title += " 口杯 马克杯";
+		} else if ("321100".equals(cateId)) {
+			// 保温・保冷ボトル
+			title += " 保温杯";
+		} else if ("321300".equals(cateId)) {
+			// ソフトボトル
+			title += " 压缩杯";
+		}
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
         }
@@ -188,9 +193,8 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
         baobei.title =  title + "\"";
     }
     protected void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
-        // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
         String cateProps = "";
-        cateProps += "20000:3589713;";
+        cateProps += "20000:84533669;122216608:29923;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -211,7 +215,7 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
 			if (i >= taobaoColors.size())
 				break;
 			if (item.sizeList.isEmpty()) {
-				String num = "999";
+				String num = "99";
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";";
 			} else {
@@ -235,11 +239,13 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
         // ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
-        String inputValues = "\""+item.productId+","+obj.price+",";
+        String inputValues = "\""+""+item.productId+","+obj.price;
+        /*
         for(int i =0;i<item.colorList.size();i++){
             if(i>=taobaoColors.size())break;
             inputValues +=item.colorList.get(i) +  ";颜色分类;";
         }
+        */
         obj.inputValues = inputValues+"\"";
 	}
 

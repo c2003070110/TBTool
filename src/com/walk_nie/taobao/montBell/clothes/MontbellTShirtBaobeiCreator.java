@@ -25,6 +25,8 @@ public class MontbellTShirtBaobeiCreator  {
 		double benefitRate = 0.08;
 		MontbellTShirtBaobeiProducer db = new MontbellTShirtBaobeiProducer();
 		db
+        		.addScanCategory("46500") // 天然素材<メリノウールプラス>
+        		.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
                 .addScanCategory("44000") // 機能素材<ウイックロンクール>
                 .addScanCategory("45500") // 機能素材<ウイックロンZEO>
                 .addScanCategory("42000") // 機能素材<ウイックロン>

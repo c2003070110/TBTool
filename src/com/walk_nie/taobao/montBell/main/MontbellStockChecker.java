@@ -345,6 +345,8 @@ public class MontbellStockChecker {
 				stockList.add(stock);
 				stock.priceJPY = price;
 				stock.colorName = colorName;
+				stock.sizeName = MontBellUtil.sizeNameDefault;
+				stockList.add(stock);
 	        }
 		}
 	}

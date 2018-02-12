@@ -162,6 +162,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 				stock.colorName = colorName;
 				stock.sizeName = null;
 				String stockN = color.select("p.sell").text();
+				stock.stockStatus = stockN;
 				if ("在庫あり".equals(stockN)) {
 					stock.isStock = true;
 				}
@@ -202,6 +203,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 					stock.colorName = color.select("p.colorName").text();
 					stock.sizeName = zie;
 					String stockN = color.select("p.sell").text();
+					stock.stockStatus = stockN;
 					if ("在庫あり".equals(stockN)) {
 						stock.isStock = true;
 					}

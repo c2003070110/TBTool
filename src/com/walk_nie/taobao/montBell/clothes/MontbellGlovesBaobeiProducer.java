@@ -160,6 +160,7 @@ public class MontbellGlovesBaobeiProducer extends BaseBaobeiProducer {
 		}else{
 			title += "日本直邮";
 		}
+		title += " Montbell";
 		
 		String categoryId = item.cateogryObj.categoryId;
 		if("85000".equals(categoryId)){

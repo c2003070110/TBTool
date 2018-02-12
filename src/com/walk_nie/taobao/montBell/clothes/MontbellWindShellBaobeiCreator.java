@@ -9,13 +9,12 @@ import org.apache.http.client.ClientProtocolException;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 
-public class MontbellShellBaobeiCreator  {
+public class MontbellWindShellBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
-		String outputFile = "out/montBell_shell_baobei_%s.csv";
+		String outputFile = "out/montBell_windshell_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -23,7 +22,7 @@ public class MontbellShellBaobeiCreator  {
 		//
 		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.05;
-		MontbellShellBaobeiProducer db = new MontbellShellBaobeiProducer();
+		MontbellWindShellBaobeiProducer db = new MontbellWindShellBaobeiProducer();
 		db
                 .addScanCategory("142000") // ハードシェル>ジャケット（保温材入り）
                 .addScanCategory("141000") // ハードシェル>ジャケット（保温材なし）

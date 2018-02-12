@@ -43,6 +43,9 @@ public class MontBellUtil {
     public static String productUrlPrefix_fo = "http://webshop.montbell.jp/goods/disp_fo.php?product_id=";
 
     public static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
+
+    public static String colorNameDefault ="选我没错";
+    public static String sizeNameDefault ="选我没错";
     
     public static void downloadPicture(GoodsObject goods,String outFilePath) {
     	if(goods.colorList.isEmpty()){
@@ -620,9 +623,11 @@ public class MontBellUtil {
 
 	public static String getStock(GoodsObject item, String colorName, String sizeName) {
 		boolean isStock = false;
+		boolean isSkipColor = colorNameDefault.equals(colorName) ? true : false;
+		boolean isSkipSize = sizeNameDefault.equals(sizeName) ? true : false;
 		for (StockObject stockObj : item.stockList) {
-			if (stockObj.colorName.equals(colorName)
-					&& stockObj.sizeName.equals(sizeName)) {
+			if ((isSkipColor || stockObj.colorName.equals(colorName))
+					&& (isSkipSize || stockObj.sizeName.equals(sizeName))) {
 				isStock = stockObj.isStock;
 				break;
 			}

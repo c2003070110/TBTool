@@ -230,8 +230,13 @@ public class MontbellOrderMain {
 		MontbellStockChecker check = new MontbellStockChecker();
 		List<StockObject>  stockList = check.getMontbellStockInfo(productId);
 		String stockSts = "",price="";
-		for(StockObject ojb:stockList){
-			if(ojb.colorName.equalsIgnoreCase(color) &&ojb.sizeName.equalsIgnoreCase(siz)){
+		for (StockObject ojb : stockList) {
+			boolean isSkipColor = MontBellUtil.colorNameDefault.equals(color) ? true
+					: false;
+			boolean isSkipSize = MontBellUtil.sizeNameDefault.equals(siz) ? true
+					: false;
+			if ((isSkipColor || ojb.colorName.equalsIgnoreCase(color))
+					&& (isSkipSize || ojb.sizeName.equalsIgnoreCase(siz))) {
 				stockSts = ojb.stockStatus;
 				price = ojb.priceJPY;
 				break;
@@ -448,6 +453,7 @@ public class MontbellOrderMain {
 		String adr2 = removeEndComma(votes.get(idx++));
 		String adr1 = removeEndComma(votes.get(idx++));
 		String postcode = removeEndComma(votes.get(idx++));
+		String masterF = removeEndComma(votes.get(idx++));
 		
 		if("".equals(postcode)){
 			System.out.println("[ERROR] Order Info NO Correct! File=" + tempFile0.getAbsolutePath());
@@ -521,8 +527,11 @@ public class MontbellOrderMain {
 			}
 		}
 		// add credit card
-		//addCreditCardJCB(driver);
-		addCreditCardMASTER(driver);
+		if("master".equalsIgnoreCase(masterF)){
+			addCreditCardMASTER(driver);
+		}else{
+			addCreditCardJCB(driver);
+		}
 
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we1 : weList) {

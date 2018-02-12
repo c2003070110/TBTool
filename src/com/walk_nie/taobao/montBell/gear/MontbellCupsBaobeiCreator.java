@@ -9,7 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 /**
- * 背包
+ * 水杯
  *
  */
 public class MontbellCupsBaobeiCreator  {
@@ -31,8 +31,9 @@ public class MontbellCupsBaobeiCreator  {
 		db
                 .addScanCategory("327000") //  カップ/マグ/タンブラー
                 
-                .addScanCategory("") //  
-                .addScanCategory("") //  
+                .addScanCategory("321100") //  保温・保冷ボトル
+                
+                .addScanCategory("321300") //  ソフトボトル
                 .addScanCategory("") //  
                 .addScanCategory("") //  
                 
