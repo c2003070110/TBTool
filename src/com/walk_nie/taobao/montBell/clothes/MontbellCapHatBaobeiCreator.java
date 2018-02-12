@@ -8,25 +8,33 @@ import org.apache.http.client.ClientProtocolException;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
-
-public class MontbellWindShellBaobeiCreator  {
+/**
+ * 水杯
+ *
+ */
+public class MontbellCapHatBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
 
-		String outputFile = "out/montBell_windshell_baobei_%s.csv";
+		String outputFile = "out/montBell_caphat_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
+		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.05;
-		MontbellWindShellBaobeiProducer db = new MontbellWindShellBaobeiProducer();
+		MontbellCapHatBaobeiProducer db = new MontbellCapHatBaobeiProducer();
 		db
-                .addScanCategory("11500") // 超軽量ウインドブレーカー
-                .addScanCategory("11000") // ウインドブレーカー
-                .addScanCategory("") // 
+                .addScanCategory("103000") //  防寒キャップ/ハット/耳あて
+                .addScanCategory("102000") // ハット 
+                .addScanCategory("112100") //  ハンチング/キャスケット/ワークキャップ
+                .addScanCategory("101000") //  キャップ
+                .addScanCategory("112000") //  レインキャップ/ハット
+                .addScanCategory("1151100") //  バラクラバ
+                .addScanCategory("") //  
                 
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)

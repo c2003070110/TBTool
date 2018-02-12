@@ -111,7 +111,7 @@ public class MontBellUtil {
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
             detailSB.append("<p style=\"text-indent:2.0em;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">店主本职工作很忙，请尽量自己比对哦。</span></p>");
             detailSB.append("<p style=\"text-indent:2.0em;\">如纠结 请咨询店主。店主有空时，第一时间回复。</p>");
-            detailSB.append("<p style=\"text-indent:2.0em;\">size图片中标有<span style=\";color:red;font-weight:bold\">1,2，3。。。A,B，C。。。 </span>表格中有对应的数据！非常简单明了的Size表哦。不要被日语吓到了！</p>");
+            detailSB.append("<p style=\"text-indent:2.0em;\">图片中标有<span style=\";color:red;font-weight:bold\">1,2，3。。。A,B，C。。。 </span>表格中有对应的数据！非常简单明了的Size表哦。不要被日语吓到了！</p>");
             //detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得奖励:全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
             //detailSB.append("<p style=\"text-indent:2.0em;\">晒图包含了 <span style=\";color:red;font-weight:bold\">自己身材，衣服size，合适否</span>  100%奖励！！！</p>");
             //detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">请踊跃参与！！</span></p>");
