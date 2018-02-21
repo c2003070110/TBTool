@@ -13,8 +13,10 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.ClientProtocolException;
+import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
@@ -25,6 +27,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
+import com.beust.jcommander.internal.Lists;
+
 public class WebDriverUtil  {
     // TODO change it to fix your pc
     public final static String chromeDriverPath = "C:/Users/niehp/Google ドライブ/tool/chromedriver.exe";
@@ -32,7 +36,8 @@ public class WebDriverUtil  {
     public final static String ieDriverPath = "C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
 
     private static WebDriver driver = null;
-    public static String watermark_file = "in/watermark.png";
+    public static String watermark_common = "in/watermark0.png";
+    public static String watermark_montbell = "in/watermark.png";
 
 	public static WebDriver getFirefoxWebDriver() {
 		System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
@@ -78,6 +83,60 @@ public class WebDriverUtil  {
         return doc;
     }
 
+	public static void screenShotV2(WebDriver driver, List<WebElement> elements,
+			String saveTo,String pathToWaterMarkPNG) throws IOException {
+		String picSuffix = "png";
+		File screenshot = ((TakesScreenshot) driver)
+				.getScreenshotAs(OutputType.FILE);
+		BufferedImage fullImg = ImageIO.read(screenshot);
+		List<BufferedImage> childImages = Lists.newArrayList();
+		int maxW=0,ttlHeight=0;
+		for(WebElement element:elements){
+			Point point1 = element.getLocation();
+			Dimension dim = element.getSize();
+			BufferedImage eleScreenshot = fullImg.getSubimage(point1.getX(),
+					point1.getY(), dim.getWidth(), dim.getHeight());
+			Graphics2D g = eleScreenshot.createGraphics();
+			g.drawImage(eleScreenshot.getScaledInstance(dim.getWidth(), dim.getHeight(),
+					Image.SCALE_AREA_AVERAGING), 0, 0, dim.getWidth(), dim.getHeight(), null);
+			g.dispose();
+			childImages.add(eleScreenshot);
+			if(maxW <dim.getWidth()){
+				maxW = dim.getWidth();
+			}
+			ttlHeight += dim.getHeight();
+		}
+		BufferedImage combined = new BufferedImage(maxW, ttlHeight, BufferedImage.TYPE_INT_ARGB);
+		int heightPos = 0;
+		for(BufferedImage image:childImages){
+			combined.createGraphics().drawImage(image, 0, heightPos, null);
+			heightPos += image.getHeight();
+		}
+		
+		// add water mark
+		if (!StringUtil.isBlank(pathToWaterMarkPNG)) {
+			Graphics2D g = combined.createGraphics();
+			ImageIcon imgIcon = new ImageIcon(pathToWaterMarkPNG);
+			int interval = 0;
+			Image img = imgIcon.getImage();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
+					0.05f/* 水印透明度 */));
+			for (int height = interval + imgIcon.getIconHeight(); height < combined
+					.getHeight(); height = height + interval
+					+ imgIcon.getIconHeight()) {
+				for (int weight = interval + imgIcon.getIconWidth(); weight < combined
+						.getWidth() + imgIcon.getIconWidth(); weight = weight
+						+ interval + imgIcon.getIconWidth()) {
+					g.drawImage(img, weight - imgIcon.getIconWidth(), height
+							- imgIcon.getIconHeight(), null);
+				}
+			}
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+		}
+        ImageIO.write(combined, picSuffix, screenshot);
+		FileUtils.copyFile(screenshot, new File(saveTo));
+	}
+
     public static void screenShot(WebDriver driver,List<WebElement> elements,String saveTo) throws ClientProtocolException, IOException {
            
         //Get entire page screenshot
@@ -120,7 +179,8 @@ public class WebDriverUtil  {
     		Graphics2D g = eleScreenshot.createGraphics();
     		g.drawImage(eleScreenshot.getScaledInstance(originalW, originalH,
     				Image.SCALE_AREA_AVERAGING), 0, 0, originalW, originalH, null);
-    			ImageIcon imgIcon = new ImageIcon(watermark_file);
+    		
+    			ImageIcon imgIcon = new ImageIcon(watermark_common);
     			int interval = 0;
     			Image img = imgIcon.getImage();
     			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
@@ -129,13 +189,14 @@ public class WebDriverUtil  {
     					.getHeight(); height = height + interval
     					+ imgIcon.getIconHeight()) {
     				for (int weight = interval + imgIcon.getIconWidth(); weight < eleScreenshot
-    						.getWidth(); weight = weight + interval
+    						.getWidth() + imgIcon.getIconWidth(); weight = weight + interval
     						+ imgIcon.getIconWidth()) {
     					g.drawImage(img, weight - imgIcon.getIconWidth(), height
     							- imgIcon.getIconHeight(), null);
     				}
     			}
     			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+    			
     		g.dispose();
 
             ImageIO.write(eleScreenshot, picSuffix, screenshot);

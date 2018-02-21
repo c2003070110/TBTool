@@ -1,12 +1,19 @@
 package com.walk_nie.taobao.edwin;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.http.client.ClientProtocolException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
+import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
@@ -113,6 +120,7 @@ public class EdwinProductParser extends BaseBaobeiParser {
 				}
 			}
 		}
+		// picture
 		els = doc.getElementsByTag("img");
 		if (!els.isEmpty()) {
 			for (Element e : els) {
@@ -132,6 +140,48 @@ public class EdwinProductParser extends BaseBaobeiParser {
 		return goodsObj;
 	}
 
+	// public void getSizeTable(GoodsObject goodsObj) {
+	public void getSizeTable(String goodsNo) {
+		String sizeTblUrl1 = String.format(sizeTblUrl, goodsNo);
+		WebDriver webDriver = WebDriverUtil.getWebDriver(sizeTblUrl1);
+		WebElement eleMain = webDriver.findElement(By.id("main"));
+		List<WebElement> toPicElements = Lists.newArrayList();
+		toPicElements.add(eleMain.findElement(By.id("size_detail")));
+		toPicElements.add(eleMain.findElement(By
+				.cssSelector("table.tableBlock01")));
+		findSectionBlock(toPicElements, eleMain);
+		if (!toPicElements.isEmpty()) {
+			String fileNameFmt = "detail_%s.png";
+			String fileName = String.format(fileNameFmt, goodsNo);
+			File despFile = new File("./out", fileName);
+			try {
+				WebDriverUtil.screenShotV2(webDriver, toPicElements,
+						despFile.getAbsolutePath(),
+						WebDriverUtil.watermark_common);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	private void findSectionBlock(List<WebElement> ele, WebElement eleMain) {
+		List<WebElement> sectionBls = eleMain.findElements(By
+				.className("sectionBlock"));
+		for (WebElement section : sectionBls) {
+			List<WebElement> pList = section.findElements(By
+					.cssSelector("p.ttlType04"));
+			for (WebElement p : pList) {
+				if ("商品実寸法の測り方".equals(p.getText())) {
+					ele.add(section);
+					return;
+				}
+			}
+		}
+	}
+
 	private String toSizeName(String str) {
 		String n = str.replace("ｲﾝﾁ", "");
 		return n.trim();
@@ -143,14 +193,14 @@ public class EdwinProductParser extends BaseBaobeiParser {
 		return Integer.parseInt(n.trim());
 	}
 
-//	private String findGoodsNo(String str) {
-//
-//		int idx = str.indexOf("GOODS_NO=");
-//		String subStr = str.substring(idx);
-//		int idx2 = subStr.indexOf("&");
-//		if (idx2 == 1) {
-//			idx2 = subStr.length();
-//		}
-//		return subStr.substring("GOODS_NO=".length(), idx2);
-//	}
+	// private String findGoodsNo(String str) {
+	//
+	// int idx = str.indexOf("GOODS_NO=");
+	// String subStr = str.substring(idx);
+	// int idx2 = subStr.indexOf("&");
+	// if (idx2 == 1) {
+	// idx2 = subStr.length();
+	// }
+	// return subStr.substring("GOODS_NO=".length(), idx2);
+	// }
 }

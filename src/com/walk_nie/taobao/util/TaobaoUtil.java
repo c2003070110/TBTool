@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -28,7 +29,6 @@ import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.TaobaoSaledObject;
 
 public class TaobaoUtil {
-    public static String watermark_file = "in/watermark.png";
     public static String FILE_NAME_SEPERATOR =";;;";
     
 	public static Document urlToDocumentByUTF8(String url)
@@ -613,7 +613,7 @@ public class TaobaoUtil {
 	}
 
 	public static File downloadPicture(String pathName, String pictureUrl,
-			String picName,boolean addWatermarkFlag) throws ClientProtocolException, IOException {
+			String picName,String pathToWaterMarkPNG) throws ClientProtocolException, IOException {
 
 		//String photoName = "out/" + itemType;
 		File path = new File(pathName);
@@ -641,8 +641,8 @@ public class TaobaoUtil {
 		Graphics2D g = resizedImage.createGraphics();
 		g.drawImage(originalImage.getScaledInstance(originalW, originalH,
 				Image.SCALE_AREA_AVERAGING), 0, 0, originalW, originalH, null);
-		if (addWatermarkFlag) {
-			ImageIcon imgIcon = new ImageIcon(watermark_file);
+		if (!StringUtil.isBlank(pathToWaterMarkPNG)) {
+			ImageIcon imgIcon = new ImageIcon(pathToWaterMarkPNG);
 			int interval = 0;
 			Image img = imgIcon.getImage();
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
@@ -666,7 +666,7 @@ public class TaobaoUtil {
 
 	public static File downloadPicture(String pathName, String pictureUrl,
 			String picName) throws ClientProtocolException, IOException {
-		return downloadPicture(pathName, pictureUrl, picName, false);
+		return downloadPicture(pathName, pictureUrl, picName, null);
 	}
     
 	public static String composeTaobaoHeaderLine() {

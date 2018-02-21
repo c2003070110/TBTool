@@ -244,7 +244,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 					.format(fileNameFmt, goodsObj.productId, i++);
 			try {
 				File picFile = TaobaoUtil.downloadPicture(picRoot, url,
-						picName, true);
+						picName, WebDriverUtil.watermark_montbell);
 				if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
 					goodsObj.dressOnPics.add(picFile.getAbsolutePath());
 				}
@@ -268,9 +268,19 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			// webDriver.findElements(By.className("ttlType02"));
 			List<WebElement> ele = webDriver.findElements(By
 					.className("column1"));
+			List<WebElement> delEle = Lists.newArrayList();
+			for(WebElement e:ele){
+				if("category".equals(e.getAttribute("id"))){
+					delEle.add(e);
+				}
+			}
+			for(WebElement d:delEle){
+				ele.remove(d);
+			}
 			if (!ele.isEmpty()) {
-				WebDriverUtil.screenShot(webDriver, ele,
-						despFile.getAbsolutePath());
+				WebDriverUtil.screenShotV2(webDriver, ele,
+						despFile.getAbsolutePath(),
+						WebDriverUtil.watermark_montbell);
 			}
 		}
 		goodsObj.detailScreenShotPicFile = despFile.getAbsolutePath();
