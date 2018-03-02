@@ -13,6 +13,11 @@ public class MontbellTShirtBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
+		new MontbellTShirtBaobeiCreator().process();
+
+		System.exit(0);
+	}
+	public void process() throws IOException{
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_tshirt_baobei_%s.csv";
@@ -36,8 +41,6 @@ public class MontbellTShirtBaobeiCreator  {
                 .setBenefitRate(benefitRate)
                 .setPublishedbaobeiList(baobeiList)
                 .process();
-
-		System.exit(0);
 	}
 
 }

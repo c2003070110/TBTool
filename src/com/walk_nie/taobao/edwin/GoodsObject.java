@@ -3,13 +3,19 @@ package com.walk_nie.taobao.edwin;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.beust.jcommander.internal.Lists;
+
 public class GoodsObject {
+	public String brandCd = "";
+	public String cateCd = "";
+	public String sexVal = "";
+	
 	public String goods_no = "";
 	public String titleOrg = "";
     public String titleJP = "";
     public String titleCN = "";
-	public String as_goods_no = "";
-	public String seriesName = "";
+	public  List<String> as_goods_no = Lists.newArrayList();//商品番号
+	public String seriesName = "";//シリーズ
 	
 	public int goods_sale_price = 0; // 税込　原价
 	public int goods_real_price = 0; // 税込　实价
@@ -25,13 +31,15 @@ public class GoodsObject {
 	public List<String> colorNameList = new ArrayList<String>();
 	public List<String> sizeNameList = new ArrayList<String>();
 	
-	public List<String> pictureUrlList = new ArrayList<String>();
-	public List<String> pictureNameList = new ArrayList<String>();
+	public List<String> bodyPictureUrlList = new ArrayList<String>();//宝贝详细用图
+	public List<String> bodyPictureFileNameList = new ArrayList<String>();//宝贝详细用图
 	
-	public List<String> colorPictureUrlList = new ArrayList<String>();
-	public List<String> colorPictureNameList = new ArrayList<String>();
+	public List<String> colorPictureUrlList = new ArrayList<String>();//宝贝头图 颜色用图
+	public List<String> colorPictureFileNameList = new ArrayList<String>();//宝贝头图 颜色用图
 	
-    public List<String> modelList = new ArrayList<String>();
+	public String sizeTipFileName = "";
+	
+    public String modelTipInfo = "";//模特数据
 
 	public List<StockObject> stockList = new ArrayList<StockObject>();
 	

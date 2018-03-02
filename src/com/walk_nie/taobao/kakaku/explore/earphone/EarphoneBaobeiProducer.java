@@ -8,7 +8,6 @@ import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.kakaku.KakakuBaobeiProceducer;
 import com.walk_nie.taobao.kakaku.KakakuObject;
 import com.walk_nie.taobao.kakaku.KakakuUtil;
-import com.walk_nie.taobao.montBell.GoodsObject;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.BaobeiUtil;
@@ -188,54 +187,5 @@ public class EarphoneBaobeiProducer extends KakakuBaobeiProceducer  {
         }
         return "";
     }
-
-	@Override
-	protected void composeBaobeiMiaoshu(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiCateProps(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiSkuProps(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiPropAlias(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiPictureStatus(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiPicture(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiInputCustomCpv(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
 	 
 }

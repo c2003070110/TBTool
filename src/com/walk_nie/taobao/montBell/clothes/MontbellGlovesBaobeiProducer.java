@@ -285,7 +285,6 @@ public class MontbellGlovesBaobeiProducer extends BaseBaobeiProducer {
 		return new MontbellProductParser();
 	}
 
-	@Override
 	protected void composeBaobeiMiaoshu(GoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
 
@@ -307,7 +306,6 @@ public class MontbellGlovesBaobeiProducer extends BaseBaobeiProducer {
 		publishedBaobei.description = "\"" + detailSB.toString() + "\"";
 	}
 
-	@Override
 	protected void composeBaobeiPictureStatus(GoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
 		MontBellUtil.composeBaobeiPictureStatus(item, publishedBaobei,
@@ -315,7 +313,6 @@ public class MontbellGlovesBaobeiProducer extends BaseBaobeiProducer {
 		
 	}
 
-	@Override
 	protected void composeBaobeiPicture(GoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
 		MontBellUtil.composeBaobeiPicture(item, publishedBaobei, this.taobaoColors);

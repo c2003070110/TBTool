@@ -302,25 +302,4 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 		return new MontbellProductParser();
 	}
 
-	@Override
-	protected void composeBaobeiMiaoshu(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiPictureStatus(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void composeBaobeiPicture(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

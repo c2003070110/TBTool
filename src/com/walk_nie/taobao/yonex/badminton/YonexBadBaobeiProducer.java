@@ -302,54 +302,5 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 	public BaseBaobeiParser getParser() {
 		return new YonexBadProductParser();
 	}
-	@Override
-	protected void composeBaobeiMiaoshu(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void composeBaobeiCateProps(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void composeBaobeiSkuProps(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void composeBaobeiPropAlias(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void composeBaobeiPictureStatus(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void composeBaobeiPicture(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	protected void composeBaobeiInputCustomCpv(
-			com.walk_nie.taobao.montBell.GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

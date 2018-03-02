@@ -13,6 +13,11 @@ public class MontbellWindShellBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
+		new MontbellWindShellBaobeiCreator().process();
+
+		System.exit(0);
+	}
+	public void process() throws IOException{
 
 		String outputFile = "out/montBell_windshell_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
@@ -33,8 +38,6 @@ public class MontbellWindShellBaobeiCreator  {
                 .setBenefitRate(benefitRate)
                 .setPublishedbaobeiList(baobeiList)
                 .process();
-
-		System.exit(0);
 	}
 
 }

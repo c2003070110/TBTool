@@ -16,6 +16,11 @@ public class MontbellDownBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
+		new MontbellDownBaobeiCreator().process();
+
+		System.exit(0);
+	}
+	public void process() throws IOException{
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_down_baobei_%s.csv";
@@ -51,8 +56,6 @@ public class MontbellDownBaobeiCreator  {
                 .setBenefitRate(benefitRate)
                 //.setPublishedbaobeiList(baobeiList)
                 .process();
-
-		System.exit(0);
 	}
 
 }

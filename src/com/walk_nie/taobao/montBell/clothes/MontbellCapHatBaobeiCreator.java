@@ -16,7 +16,10 @@ public class MontbellCapHatBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
-
+		new MontbellCapHatBaobeiCreator().process();
+		System.exit(0);
+	}
+	public void process() throws IOException{
 		String outputFile = "out/montBell_caphat_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
@@ -42,7 +45,6 @@ public class MontbellCapHatBaobeiCreator  {
                 .setPublishedbaobeiList(baobeiList)
                 .process();
 
-		System.exit(0);
 	}
 
 }

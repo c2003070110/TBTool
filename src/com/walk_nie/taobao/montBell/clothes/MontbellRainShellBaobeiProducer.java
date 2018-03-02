@@ -107,12 +107,6 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	protected String composeBaobeiLine(GoodsObject item) throws Exception {
-		BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
-				item, this.publishedbaobeiList);
-		if (publishedBaobei != null) {
-			return super.updatePublishedBaobei(item, publishedBaobei);
-		}
-		
 		BaobeiPublishObject obj = new BaobeiPublishObject();
 		BaobeiUtil.setBaobeiCommonInfo(obj);
 
@@ -440,7 +434,6 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
 		return new MontbellProductParser();
 	}
 
-	@Override
 	protected void composeBaobeiMiaoshu(GoodsObject item,
 			BaobeiPublishObject obj) {
         StringBuffer detailSB = new StringBuffer();
@@ -460,20 +453,6 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
         obj.description =  "\"" + detailSB.toString() + extraMiaoshu1+ "\"";
-	}
-
-	@Override
-	protected void composeBaobeiPictureStatus(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-
-		MontBellUtil.composeBaobeiPictureStatus(item, publishedBaobei,
-				this.taobaoColors);
-	}
-
-	@Override
-	protected void composeBaobeiPicture(GoodsObject item,
-			BaobeiPublishObject publishedBaobei) {
-		MontBellUtil.composeBaobeiPicture(item, publishedBaobei, this.taobaoColors);
 	}
 
 }

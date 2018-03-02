@@ -109,7 +109,9 @@ public class WebDriverUtil  {
 		BufferedImage combined = new BufferedImage(maxW, ttlHeight, BufferedImage.TYPE_INT_ARGB);
 		int heightPos = 0;
 		for(BufferedImage image:childImages){
-			combined.createGraphics().drawImage(image, 0, heightPos, null);
+			Graphics2D g = combined.createGraphics();
+			g.drawImage(image, 0, heightPos, null);
+			g.dispose();
 			heightPos += image.getHeight();
 		}
 		
@@ -132,6 +134,7 @@ public class WebDriverUtil  {
 				}
 			}
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+			g.dispose();
 		}
         ImageIO.write(combined, picSuffix, screenshot);
 		FileUtils.copyFile(screenshot, new File(saveTo));

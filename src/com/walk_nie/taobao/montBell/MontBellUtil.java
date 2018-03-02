@@ -95,7 +95,7 @@ public class MontBellUtil {
         //detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">使用转运地址的买家</span>，因为通关清关的问题。<span style=\";color:red;font-weight:bold\">本店拒绝发货！！</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不能报关的买家，请不要下单！！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">如果不幸被海关查到，由买家报关通关，不能报关的买家，请不要下单！！！！</span></p>");
         //detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图，有机会获得奖励:手机流量</p>");
         //detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图包含了 <span style=\";color:red;font-weight:bold\">身材尺寸，衣服size，合适否</span>  100%奖励！！！请踊跃参与！！</p>");
         detailSB.append("</div>");

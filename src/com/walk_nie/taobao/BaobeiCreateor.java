@@ -81,7 +81,6 @@ public class BaobeiCreateor {
         String outputFile = "out/asicsShoes_baobei_%s.csv";
         AsicsShoesBaobeiProducer db = new AsicsShoesBaobeiProducer();
         db
-                .addParseUrl("")
                 .setOutputFile(outputFile)
                 .process();
     }
