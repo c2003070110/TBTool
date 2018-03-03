@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.client.utils.DateUtils;
+import org.eclipse.jetty.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
@@ -58,14 +59,43 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         BufferedWriter priceBw = null;
         try {
             System.out.println("-------- START --------");
+			EdwinProductParser parser = (EdwinProductParser) getParser();
+			parser.setPublishedbaobeiList(this.publishedbaobeiList);
             List<GoodsObject> itemIdList = Lists.newArrayList();
             if(scanSeriesNames.isEmpty()){
-                
-            }else{
-				EdwinProductParser parser = (EdwinProductParser) getParser();
-            	parser.setPublishedbaobeiList(this.publishedbaobeiList);
-                itemIdList = parser.parseByCategoryNames(scanSeriesNames);    
-            }
+				List<String> dispNos = Lists.newArrayList();
+				if (this.brandCd.equals(EdwinUtil.brandCdEdwin)
+						&& this.sexVal.equals(EdwinUtil.sex_val_man)) {
+					dispNos.addAll(DispNoObject.edwinManPants());
+					dispNos.addAll(DispNoObject.edwinManJacket());
+				} else if (this.brandCd.equals(EdwinUtil.brandCdEdwin)
+						&& this.sexVal.equals(EdwinUtil.sex_val_woman)) {
+					dispNos.addAll(DispNoObject.edwinLadyPants());
+					dispNos.addAll(DispNoObject.edwinLadyJacket());
+				} else if (this.brandCd.equals(EdwinUtil.brandCdEdwin)
+						&& this.sexVal.equals(EdwinUtil.sex_val_kids)) {
+					dispNos.addAll(DispNoObject.edwinKidsPants());
+					dispNos.addAll(DispNoObject.edwinKidsJacket());
+				} else if (this.brandCd.equals(EdwinUtil.brandCdLee)
+						&& this.sexVal.equals(EdwinUtil.sex_val_man)) {
+					dispNos.addAll(DispNoObject.leeManPants());
+					dispNos.addAll(DispNoObject.leeManJacket());
+				} else if (this.brandCd.equals(EdwinUtil.brandCdLee)
+						&& this.sexVal.equals(EdwinUtil.sex_val_woman)) {
+					dispNos.addAll(DispNoObject.leeLadyPants());
+					dispNos.addAll(DispNoObject.leeLadyJacket());
+				} else if (this.brandCd.equals(EdwinUtil.brandCdLee)
+						&& this.sexVal.equals(EdwinUtil.sex_val_kids)) {
+					dispNos.addAll(DispNoObject.leeKidsPants());
+					dispNos.addAll(DispNoObject.leeKidsJacket());
+				} else if (this.brandCd.equals(EdwinUtil.brandCdSomething)) {
+					dispNos.addAll(DispNoObject.somethingPants());
+					dispNos.addAll(DispNoObject.somethingJacket());
+				}
+				itemIdList = parser.parseByDispNos(dispNos);
+			} else {
+				itemIdList = parser.parseByCategoryNames(scanSeriesNames);
+			}
             if (itemIdList.isEmpty())
                 return;
             String outFilePathPrice = String.format(outputFile, DateUtils
@@ -118,6 +148,9 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 		} else if (EdwinUtil.sex_val_woman.equals(item.sexVal)) {
 			// " 女";
 			obj.cid = "162205";
+		} else if (EdwinUtil.sex_val_kids.equals(item.sexVal)) {
+			// " 女";
+			obj.cid = "50010167";
 		}
         // 店铺类目
 	    if(EdwinUtil.brandCdEdwin.equals(item.brandCd)){
@@ -126,6 +159,9 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         } else if(EdwinUtil.brandCdLee.equals(item.brandCd)){
         	//Lee
             obj.seller_cids =  "1362257462";
+        } else if(EdwinUtil.brandCdSomething.equals(item.brandCd)){
+        	//Something
+            obj.seller_cids =  "1362257461";
         }
         // 省
         obj.location_state = "\"日本\"";
@@ -139,8 +175,11 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         obj.postage_id = EdwinUtil.composePostageId(item);
         
         // 用户输入ID串;
-		obj.inputPids = "\"13021751,6103476,1627207\"";
-        
+		if (EdwinUtil.isInchSize(item)) {
+			obj.inputPids = "\"13021751,6103476,1627207\"";
+		} else {
+			obj.inputPids = "\"13021751\"";
+		}
         // 用户输入名-值对
         composeBaobeiInputValues(item, obj);
         
@@ -190,36 +229,49 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
         String title = "\"日本直邮";
         if(EdwinUtil.brandCdEdwin.equals(item.brandCd)){
-        	title += " Edwin";
+        	title += " EDWIN";
         }
         if(EdwinUtil.brandCdLee.equals(item.brandCd)){
         	title += " Lee";
         }
+        if(EdwinUtil.brandCdSomething.equals(item.brandCd)){
+        	title += " SOMETHING";
+        }
+    	title += "牛仔裤";
         if(EdwinUtil.sex_val_man.equals(item.sexVal)){
         	title += " 男";
         }
         if(EdwinUtil.sex_val_woman.equals(item.sexVal)){
         	title += " 女";
         }
+        if(EdwinUtil.sex_val_kids.equals(item.sexVal)){
+        	title += " 小孩";
+        }
         if("日本".equals(item.producePlace)){
         	title += " 日本制";
         }
-    	title += " 牛仔裤";
+		if (!StringUtil.isBlank(item.seriesName)) {
+			title += " " + item.seriesName;
+		}
 //        if("1102".equals(item.seriesName)){
 //        	title += " 定番503";
 //        }
 //        if("1120".equals(item.seriesName)){
 //        	title += " JERSEYS";
 //        }
-    	title += " " + item.as_goods_no.get(0);
-        for(int i=1;i<item.as_goods_no.size();i++){
-        	String[] sp = item.as_goods_no.get(i).split("-");
-        	if(sp.length >1){
-             	title += "/" + sp[1];
-        	}else{
-        		title += "/" + sp[1];
-        	}
-        }
+//    	title += " " + item.as_goods_no.get(0);
+//        for(int i=1;i<item.as_goods_no.size();i++){
+//        	String[] sp = item.as_goods_no.get(i).split("-");
+//        	if(sp.length >1){
+//             	title += "/" + sp[1];
+//        	}else{
+//        		title += "/" + sp[1];
+//        	}
+//        }
+    	String[] sp = item.as_goods_no.get(0).split("-");
+    	if(sp.length>1){
+    		title += " " + sp[0];
+    	}
         //title += " " + item.goods_no;
         baobei.title =  title + "\"";
     }
@@ -231,9 +283,15 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         } else if(EdwinUtil.brandCdLee.equals(item.brandCd)){
         	//Lee
 	    	cateProps += "20819;";
+        } else if(EdwinUtil.brandCdSomething.equals(item.brandCd)){
+        	// 
+	    	cateProps += "31732;";
         }
 		if (EdwinUtil.sex_val_man.equals(item.sexVal)) {
 			// 男;
+	    	cateProps += "42722636:3250994;122216515:29535;";
+		} else if (EdwinUtil.sex_val_kids.equals(item.sexVal)) {
+			// 
 	    	cateProps += "42722636:3250994;122216515:29535;";
 		} else if (EdwinUtil.sex_val_woman.equals(item.sexVal)) {
 			// 女;
@@ -241,7 +299,9 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 		}
 		// 长裤
     	cateProps += "122276111:20525;";
-    	cateProps += "13021751:4667605;";
+		if (EdwinUtil.isInchSize(item)) {
+			cateProps += "13021751:4667605;";
+		}
         
         // 宝贝属性
         for(int i =0;i<item.colorNameList.size();i++){
@@ -366,5 +426,6 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
     public BaseBaobeiParser getParser() {
         return new EdwinProductParser(brandCd,sexVal);
     }
+    
 
 }

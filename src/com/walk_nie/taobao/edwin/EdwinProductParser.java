@@ -32,6 +32,25 @@ public class EdwinProductParser extends BaseBaobeiParser {
 		this.sexVal = sexVal;
 	}
 
+	public List<GoodsObject> parseByDispNos(List<String> dispNos) {
+		List<GoodsObject> goodsObjList = Lists.newArrayList();
+		// brandCd,sexVal are Required!!
+		for (String dispNo : dispNos) {
+			String url = String.format(EdwinUtil.dispNoUrlFmt, dispNo,brandCd,
+					sexVal);
+			List<GoodsObject> goodsList = parseByCategory(url);
+			for (GoodsObject goods : goodsList) {
+				goods.brandCd = this.brandCd;
+				goods.dispNo = dispNo;
+				goods.sexVal = sexVal;
+			}
+			goodsObjList.addAll(goodsList);
+		}
+		List<GoodsObject> filteredProdList = filter(goodsObjList);
+		saveSizeTip(filteredProdList);
+		return filteredProdList;
+	}
+
 	public List<GoodsObject> parseByCategoryNames(List<String> scanSeriesNames) {
 		List<GoodsObject> goodsObjList = Lists.newArrayList();
 		// brandCd,sexVal are Required!!

@@ -9,6 +9,7 @@ public class GoodsObject {
 	public String brandCd = "";
 	public String cateCd = "";
 	public String sexVal = "";
+	public String dispNo = "";
 	
 	public String goods_no = "";
 	public String titleOrg = "";

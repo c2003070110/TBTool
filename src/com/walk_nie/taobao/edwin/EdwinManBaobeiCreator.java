@@ -8,12 +8,17 @@ import org.apache.http.client.ClientProtocolException;
  *
  */
 public class EdwinManBaobeiCreator  {
-	double currencyRate = 0.060 + 0.005;
+	double currencyRate = 0.061 + 0.005;
 	double benefitRate = 0.05;
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
-		new EdwinManBaobeiCreator().processEdwinMan();
+		EdwinManBaobeiCreator creator = new EdwinManBaobeiCreator();
+		creator.processEdwinMan();
+		creator.processEdwinWoman();
+		creator.processLeeMan();
+		creator.processLeeWoman();
+		creator.processSomethingWoman();
 
 		System.exit(0);
 	}
@@ -30,7 +35,6 @@ public class EdwinManBaobeiCreator  {
 		        .setBrandCd(EdwinUtil.brandCdEdwin)
 		        .setSexVal(EdwinUtil.sex_val_man)
 				.addScanSeriesName("1101")// INTERNATIONAL BASIC
-				/*
 				.addScanSeriesName("1102")// 503
 				.addScanSeriesName("1120")// JERSEYS
 				.addScanSeriesName("1130")// EDWIN E STANDARD
@@ -43,8 +47,7 @@ public class EdwinManBaobeiCreator  {
 				.addScanSeriesName("1131")// SEN
 				.addScanSeriesName("1123")// WILD FIRE
 				.addScanSeriesName("1127")// AIR IN DENIM
-				.addScanSeriesName("9992")// EDWIN その他
-				*/
+				//.addScanSeriesName("9992")// EDWIN その他
 				//.addScanSeriesName("1299")// MissEDWIN その他
 				//.addScanSeriesName("9999")// その他
                 .setOutputFile(outputFile)
@@ -65,14 +68,12 @@ public class EdwinManBaobeiCreator  {
 		db
 		        .setBrandCd(EdwinUtil.brandCdEdwin)
 		        .setSexVal(EdwinUtil.sex_val_woman)
-		        /*
 				.addScanSeriesName("1101")// INTERNATIONAL BASIC
 				.addScanSeriesName("1120")// JERSEYS
 				.addScanSeriesName("1130")// EDWIN E STANDARD
 				.addScanSeriesName("1127")// AIR IN DENIM
-				.addScanSeriesName("9992")// EDWIN その他
-				.addScanSeriesName("1299")// MissEDWIN その他
-				*/
+				//.addScanSeriesName("9992")// EDWIN その他
+				//.addScanSeriesName("1299")// MissEDWIN その他
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)
@@ -97,13 +98,13 @@ public class EdwinManBaobeiCreator  {
 .addScanSeriesName("2108")//LEENS
 .addScanSeriesName("2109")//ARCHIVES
 .addScanSeriesName("2113")//CLASSICS
-//.addScanSeriesName("2114")//JEGGERS
-//.addScanSeriesName("2118")//HI-STANDARD
+.addScanSeriesName("2114")//JEGGERS
+.addScanSeriesName("2118")//HI-STANDARD
 //.addScanSeriesName("2199")//Lee MEN'S その他
 //.addScanSeriesName("2399")//Lee その他
-//.addScanSeriesName("2123")//CHETOPA
+.addScanSeriesName("2123")//CHETOPA
 //.addScanSeriesName("2130")//WINTER EDITION
-//.addScanSeriesName("2119")//RIDERS ORIGINAL
+.addScanSeriesName("2119")//RIDERS ORIGINAL
 .addScanSeriesName("2321")//Lee KID'S
 //.addScanSeriesName("9999")//その他
 .addScanSeriesName("2000")//Lee
@@ -140,10 +141,10 @@ public class EdwinManBaobeiCreator  {
 .addScanSeriesName("2235")//SEASONAL EDITION
 .addScanSeriesName("2220")//Lee Lady's TOPS
 .addScanSeriesName("2232")//HERITAGE SEASON
-//.addScanSeriesName("2321")//Lee KID'S
+.addScanSeriesName("2321")//Lee KID'S
 //.addScanSeriesName("9999")//その他
-//.addScanSeriesName("2120")//Lee Mens TOPS
-//.addScanSeriesName("2320")//Lee KID'S TOPS
+.addScanSeriesName("2120")//Lee Mens TOPS
+.addScanSeriesName("2320")//Lee KID'S TOPS
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)
@@ -151,5 +152,28 @@ public class EdwinManBaobeiCreator  {
                 .process();
 	}
 
+	public void processSomethingWoman() throws IOException{
+
+		String outputFile = "out/something_woman_baobei_%s.csv";
+		//String publishedBaobeiFile = "c:/temp/edwin-all.csv";
+		//File file = new File(publishedBaobeiFile);
+		//List<BaobeiPublishObject> baobeiList = BaobeiUtil
+		//		.readInPublishedBaobei(file);
+		//
+		EdwinManBaobeiProducer db = new EdwinManBaobeiProducer();
+		db
+		        .setBrandCd(EdwinUtil.brandCdSomething)
+		        .setSexVal(EdwinUtil.sex_val_woman)
+				.addScanSeriesName("1124")// BODY FIRE
+				.addScanSeriesName("1304")// NEO
+				.addScanSeriesName("1306")// シルクinデニム
+				.addScanSeriesName("1310")// VIENUS
+				.addScanSeriesName("1340")// SOPHIA
+                .setOutputFile(outputFile)
+                .setCurrencyRate(currencyRate)
+                .setBenefitRate(benefitRate)
+                //.setPublishedbaobeiList(baobeiList)
+                .process();
+	}
 
 }
