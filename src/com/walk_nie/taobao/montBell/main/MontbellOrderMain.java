@@ -160,7 +160,9 @@ public class MontbellOrderMain {
 				
 				String stockStuts = anlynizeStock(productId,dtl.itemAttr);
 				
-				orderHis.add(String.format(fmt1, order.buyerName,order.orderPayedTime,productId,order.acturalPayAmt,stockStuts));
+				orderHis.add(String.format(fmt1, order.buyerName,
+						order.orderPayedTime, productId + ";" + dtl.itemAttr,
+						order.acturalPayAmt, stockStuts));
 			}
 			montbellOrderList.add(tmp);
 			

@@ -70,6 +70,11 @@ public class GetYahooIdMain {
 
 		element.findElement(By.id("birthday")).sendKeys(
 				regInfo.birthYear + regInfo.birthMonth + regInfo.birthDay);
+		try {
+			element.findElement(By.id("dispname")).sendKeys(regInfo.dispName);
+		} catch (Exception e) {
+
+		}
 
 		element.findElement(By.id("male")).click();
 
@@ -79,7 +84,9 @@ public class GetYahooIdMain {
 		
 		if(testRand(driver)){
 		//if(mywait("yahoo rand is finished ready for continue? ENTER;N for exit")){
+			try{
 			driver.findElement(By.id("policy2")).click();
+			}catch(Exception e){}
 			driver.findElement(By.id("commit")).click();
 		
 			driver.get("https://mail.yahoo.co.jp/");
@@ -128,16 +135,30 @@ public class GetYahooIdMain {
 	private boolean testRand(WebDriver driver) throws IOException {
 		int trycnt = 0;
 		while (true) {
-			if(trycnt > 60)break;
+			if (trycnt > 60)
+				break;
 			trycnt++;
+			// try {
+			// WebElement we = driver.findElement(By.id("policy2"));
+			// if(we != null){
+			// return true;
+			// }
+			// } catch (Exception ex) {
+			//
+			// }
 			try {
-				driver.findElement(By.id("policy2"));
-				return true;
-			} catch (Exception ex) {
-				try {
-					Thread.sleep(1000*1);
-				} catch (InterruptedException e) {
+				List<WebElement> wls = driver.findElements(By
+						.cssSelector("h2.title"));
+				for (WebElement we : wls) {
+					if (we.getText().equals("利用規約の同意")) {
+						return true;
+					}
 				}
+			} catch (Exception ex) {
+			}
+			try {
+				Thread.sleep(1000 * 1);
+			} catch (InterruptedException e) {
 			}
 		}
 		return mywait("yahoo rand is finished ready for continue? ENTER;N for exit");
@@ -161,6 +182,7 @@ public class GetYahooIdMain {
 		regInfo.birthMonth = birthMonthes.get(i % birthMonthes.size());
 		regInfo.birthDay = birthDays.get(i % birthDays.size());
 		regInfo.postCode = postCodes.get(i % postCodes.size());
+		regInfo.dispName = dispNames.get(i % dispNames.size());
 		return regInfo;
 	}
 	protected boolean mywait(String hint) throws IOException {
@@ -248,10 +270,28 @@ public class GetYahooIdMain {
 		postCodes.add("5160024");
 		postCodes.add("5160009");
 	}
+	private List<String> dispNames = new ArrayList<String>();
+	{
+		dispNames.add("悠真");
+		dispNames.add("悠人");
+		dispNames.add("大翔");
+		dispNames.add("陽太");
+		dispNames.add("咲良");
+		dispNames.add("結菜");
+		dispNames.add("陽菜");
+		dispNames.add("結衣");
+		dispNames.add("陽葵");
+		dispNames.add("優愛");
+		dispNames.add("莉子");
+		dispNames.add("芽依");
+		dispNames.add("心春");
+		dispNames.add("柚希");
+	}
 
 	public class RegObjInfo {
 		public String id;
 		public String pswd;
+		public String dispName;
 		public String mailAddress;
 		public String secQuestion;
 		public String secAnswer;
@@ -263,7 +303,7 @@ public class GetYahooIdMain {
 		
 		public String toString() {
 			return id + "@yahoo.co.jp\t" + pswd +  "\t" + "\t" + secQuestion + "\t" + secAnswer
-					+ "\t" + birthYear + "\t" + birthMonth + "\t" + birthDay;
+					+ "\t" + birthYear + "\t" + birthMonth + "\t" + birthDay + "\t" + dispName;
 		}
 	}
 

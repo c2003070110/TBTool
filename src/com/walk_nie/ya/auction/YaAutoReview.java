@@ -38,7 +38,8 @@ public class YaAutoReview {
 				System.out.println("[INFO]「受け取り連絡」または「出品者を評価」なし");
 				continue;
 			}
-			if (we.get(0).getText().equals("受け取り連絡をする")) {
+			if (we.get(0).getText().equals("商品を受け取りました。")) {
+			//if (we.get(0).getText().equals("受け取り連絡をする")) {
 				// receive
 				receive(driver, we.get(0), yaAucId);
 				continue;
@@ -52,6 +53,25 @@ public class YaAutoReview {
 	}
 
 	private void receive(WebDriver driver, WebElement we, String yaAucId) {
+		WebElement el1 = we.findElements(By.id("jsCheckReceive")).get(0);
+		el1.click();
+
+		List<WebElement> btnlist = we.findElements(By.tagName("input"));
+		for (WebElement btnWe : btnlist) {
+			if (btnWe.getAttribute("class").indexOf("jsOnReceiveButton") != -1) {
+				btnWe.click();
+			}
+		}
+
+		WebElement we2 = driver.findElements(By.className("acMdTradeBtn")).get(
+				0);
+		System.out.println("[INFO][受け取は完了しました。]ヤフーオクID＝" + yaAucId);
+		// review
+		review(driver, we2, yaAucId);
+
+	}
+
+	private void receiveV0(WebDriver driver, WebElement we, String yaAucId) {
 		if (we.findElements(By.tagName("a")).isEmpty()) {
 			System.out.println("[INFO][受け取はできません。]ヤフーオクID＝" + yaAucId);
 			return;

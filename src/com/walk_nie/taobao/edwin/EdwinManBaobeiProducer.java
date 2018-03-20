@@ -37,22 +37,23 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 //        taobaoSizes.add("28315");taobaoSizes.add("28316");taobaoSizes.add("28317");
 //        taobaoSizes.add("28319");
 //    }
-//    private List<String> taobaoSizes = Lists.newArrayList();
-//    {
-//    	 // XS,S,M,L,XL,XXL,
-//        taobaoSizes.add("28313");taobaoSizes.add("28314");taobaoSizes.add("28315");
-//        taobaoSizes.add("28316");taobaoSizes.add("28317");taobaoSizes.add("28318");
-//        taobaoSizes.add("28319");taobaoSizes.add("28320");taobaoSizes.add("28321");
-//        taobaoSizes.add("28322");taobaoSizes.add("28323");taobaoSizes.add("28324");
-//    }
+    private List<String> taobaoSizesCN = Lists.newArrayList();
+    {
+    	 // XS,S,M,L,XL,XXL,
+    	taobaoSizesCN.add("28313");taobaoSizesCN.add("28314");taobaoSizesCN.add("28315");
+    	taobaoSizesCN.add("28316");taobaoSizesCN.add("28317");taobaoSizesCN.add("28318");
+    	taobaoSizesCN.add("28319");taobaoSizesCN.add("28320");taobaoSizesCN.add("28321");
+    	taobaoSizesCN.add("28322");taobaoSizesCN.add("28323");taobaoSizesCN.add("28324");
+    }
     private List<String> taobaoSizes = Lists.newArrayList();
     {
     	 // XS,S,M,L,XL,XXL,
-        taobaoSizes.add("-1001");taobaoSizes.add("-1002");taobaoSizes.add("-1003");
-        taobaoSizes.add("-1004");taobaoSizes.add("-1005");taobaoSizes.add("-1006");
-        taobaoSizes.add("-1007");taobaoSizes.add("-1008");taobaoSizes.add("-1009");
-        taobaoSizes.add("-1010");taobaoSizes.add("-1011");taobaoSizes.add("-1012");
+        taobaoSizes.add("-1001");taobaoSizes.add("-1002");taobaoSizes.add("-1003");taobaoSizes.add("-1004");
+        taobaoSizes.add("-1005");taobaoSizes.add("-1006");taobaoSizes.add("-1007");taobaoSizes.add("-1008");
+        taobaoSizes.add("-1009");taobaoSizes.add("-1010");taobaoSizes.add("-1011");taobaoSizes.add("-1012");
     }
+    
+    private List<String> switchTaobaoSizes = null;
     
     
     public void process() {
@@ -136,6 +137,12 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         priceBw.flush();
     }
     protected String composeBaobeiLine(GoodsObject item) throws Exception {
+
+		if (EdwinUtil.isXSMLSize(item)) {
+			this.switchTaobaoSizes = taobaoSizesCN;
+		} else {
+			this.switchTaobaoSizes = taobaoSizes;
+		}
 		
         BaobeiPublishObject obj = new BaobeiPublishObject();
         BaobeiUtil.setBaobeiCommonInfo(obj);
@@ -175,10 +182,10 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         obj.postage_id = EdwinUtil.composePostageId(item);
         
         // 用户输入ID串;
-		if (EdwinUtil.isInchSize(item)) {
-			obj.inputPids = "\"13021751,6103476,1627207\"";
-		} else {
+		if (EdwinUtil.isXSMLSize(item)) {
 			obj.inputPids = "\"13021751\"";
+		} else {
+			obj.inputPids = "\"13021751,6103476,1627207\"";
 		}
         // 用户输入名-值对
         composeBaobeiInputValues(item, obj);
@@ -299,7 +306,7 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 		}
 		// 长裤
     	cateProps += "122276111:20525;";
-		if (EdwinUtil.isInchSize(item)) {
+		if (!EdwinUtil.isXSMLSize(item)) {
 			cateProps += "13021751:4667605;";
 		}
         
@@ -309,8 +316,8 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
             cateProps +="1627207:"+taobaoColors.get(i)+";";
         }
         for(int i =0;i<item.sizeNameList.size();i++){
-            if(i>=taobaoSizes.size())break;
-            cateProps +="20518:"+taobaoSizes.get(i)+";";
+            if(i>=switchTaobaoSizes.size())break;
+            cateProps +="20518:"+switchTaobaoSizes.get(i)+";";
         }
         obj.cateProps =cateProps;
     }
@@ -326,13 +333,13 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 						+ taobaoColors.get(i) + ";";
 			} else {
 				for (int j = 0; j < item.sizeNameList.size(); j++) {
-					if (j >= taobaoSizes.size())
+					if (j >= switchTaobaoSizes.size())
 						break;
 					String num = EdwinUtil.getStock(item,
 							item.colorNameList.get(i), item.sizeNameList.get(j));
 					skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 							+ taobaoColors.get(i) + ";20518:"
-							+ taobaoSizes.get(j) + ";";
+							+ switchTaobaoSizes.get(j) + ";";
 				}
 			}
 		}
@@ -355,8 +362,8 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
         String propAlias = "";
         // 销售属性别名
         for(int i =0;i<item.sizeNameList.size();i++){
-            if(i>=taobaoSizes.size())break;
-            propAlias +="20518:"+taobaoSizes.get(i)+":" +item.sizeNameList.get(i)+";";
+            if(i>=switchTaobaoSizes.size())break;
+            propAlias +="20518:"+switchTaobaoSizes.get(i)+":" +item.sizeNameList.get(i)+";";
         }
         obj.propAlias =propAlias;
     }
@@ -370,8 +377,8 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
             inputCustomCpv += "1627207:" + taobaoColors.get(i)  +":"+item.colorNameList.get(i)+";"; 
         }
         for(int i =0;i<item.sizeNameList.size();i++){
-            if(i>=taobaoSizes.size())break;
-            inputCustomCpv += "20518:" + taobaoSizes.get(i)  +":"+item.sizeNameList.get(i)+";"; 
+            if(i>=switchTaobaoSizes.size())break;
+            inputCustomCpv += "20518:" + switchTaobaoSizes.get(i)  +":"+item.sizeNameList.get(i)+";"; 
         }
         obj.input_custom_cpv =inputCustomCpv;
     }

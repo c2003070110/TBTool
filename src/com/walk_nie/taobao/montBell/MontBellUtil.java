@@ -21,6 +21,9 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 
 public class MontBellUtil {
+	
+	public static String spececialCateId ="1364393554";//2018 spring summer!
+	public static String spececialProductId ="181";//2018 spring summer!
 
     public static String rootPathName = "out/MontBell/";
     public static String sizeTipFileName = "sizeTipList.txt";
@@ -85,10 +88,10 @@ public class MontBellUtil {
         detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">标有 拼邮可的宝贝 可以包税拼邮。!运费只<span style=\";color:red;font-weight:bold\">40</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">标有 拼邮可的宝贝 可以包税拼邮!运费只<span style=\";color:red;font-weight:bold\">40</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">直邮是 日本发货到你家，时效快但<span style=\";color:red;font-weight:bold\">关税买家承担！</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税是指 把宝贝运到国内，然后分发给大家。时效20天左右 <span style=\";color:red;font-weight:bold\"> 但不用操心关税</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">日本直邮。100%正品，日货料好质高，低调奢华，性价比高！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">100%正品，日货料好质高，低调奢华，性价比高！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！100%日货(日货不等于日本产！)</span></p>");

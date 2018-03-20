@@ -195,12 +195,36 @@ public class EdwinUtil {
 		return detailSB.toString();
 	}
 	
-	public static boolean isInchSize(GoodsObject item){
+//	public static boolean isInchSize(GoodsObject item){
+//		if(CollectionUtils.isEmpty(item.sizeNameList)){
+//			return false;
+//		}
+//		if(item.sizeNameList.get(0).equalsIgnoreCase("inch")){
+//			return true;
+//		}
+//		return false;
+//	}
+	
+	public static boolean isXSMLSize(GoodsObject item){
 		if(CollectionUtils.isEmpty(item.sizeNameList)){
 			return false;
 		}
-		if(item.sizeNameList.get(0).equalsIgnoreCase("inch")){
-			return true;
+		for(String str:item.sizeNameList){
+			if(str.equalsIgnoreCase("xs")){
+				return true;
+			}
+			if(str.equalsIgnoreCase("s")){
+				return true;
+			}
+			if(str.equalsIgnoreCase("m")){
+				return true;
+			}
+			if(str.equalsIgnoreCase("l")){
+				return true;
+			}
+			if(str.equalsIgnoreCase("xl")){
+				return true;
+			}
 		}
 		return false;
 	}

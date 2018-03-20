@@ -118,6 +118,9 @@ public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
 		composeBaobeiCId(item, obj);
 		// 店铺类目
 		obj.seller_cids = "1184361987";
+		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
+			obj.seller_cids += "," + MontBellUtil.spececialCateId;
+		}
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
@@ -231,7 +234,7 @@ public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " 保温冲锋衣";
 		} else if ("141000".equals(categoryId)) {
 			// ハードシェル>ジャケット（保温材なし）
-			title += " 冲锋衣";
+			title += " 硬壳冲锋衣";
 		} else if ("146000".equals(categoryId)) {
 			// ハードシェル>パンツ(保温材入り)
 			title += " 保温冲锋裤";
@@ -252,10 +255,10 @@ public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " 超轻软壳裤";
 		} else if ("8800".equals(categoryId)) {
 			//レインウェア（ゴアテックス製）
-			title += " GTX雨衣裤";
+			title += " GTX冲锋裤";
 		} else if ("1000".equals(categoryId)) {
 			//レインウェア
-			title += " 雨衣裤";
+			title += " 冲锋裤";
 		} else if ("2000".equals(categoryId)) {
 			//レインコート
 			title += " 雨风衣裤";
@@ -302,7 +305,10 @@ public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
         }
-		title += " " + item.productId;
+		title += " " + item.productId ;
+        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+            title += MontBellUtil.spececialProductId ;
+        }
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}

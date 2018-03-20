@@ -107,8 +107,6 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	protected String composeBaobeiLine(GoodsObject item) throws Exception {
-		BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
-				item, this.publishedbaobeiList);
 		
 		BaobeiPublishObject obj = new BaobeiPublishObject();
 		BaobeiUtil.setBaobeiCommonInfo(obj);
@@ -120,6 +118,9 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 		composeBaobeiCId(item, obj);
 		// 店铺类目
 		obj.seller_cids = "1184361987";
+		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
+			obj.seller_cids += "," + MontBellUtil.spececialCateId;
+		}
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
@@ -224,9 +225,8 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "\"日本直邮";
+		String title = "\"日本直邮 MontBell";
 		//title += "" + item.titleCN;
-		title += " MontBell";
 		String categoryId = item.cateogryObj.categoryId;
 		if ("142000".equals(categoryId)) {
 			// ハードシェル>ジャケット（保温材入り）
@@ -242,25 +242,25 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " 冲锋裤";
 		} else if ("22000".equals(categoryId)) {
 			// ソフトシェル>ソフトシェルジャケット
-			title += " 软壳衣";
+			title += " 软壳冲锋衣";
 		} else if ("25000".equals(categoryId)) {
 			// ソフトシェル>ライトシェルジャケット/ベスト
-			title += " 超轻软壳衣";
+			title += " 超轻软壳冲锋衣";
 		} else if ("22500".equals(categoryId)) {
 			// ソフトシェル>ソフトシェルパンツ
-			title += " 软壳裤";
+			title += " 软壳冲锋裤";
 		} else if ("23000".equals(categoryId)) {
 			// ソフトシェル>ライトシェルパンツ
-			title += " 超轻软壳裤";
+			title += " 超轻软壳冲锋裤";
 		} else if ("8800".equals(categoryId)) {
 			//レインウェア（ゴアテックス製）
-			title += " GTX雨衣裤";
+			title += " GTX冲锋衣裤";
 		} else if ("1000".equals(categoryId)) {
 			//レインウェア
-			title += " 雨衣裤";
+			title += " 冲锋裤";
 		} else if ("2000".equals(categoryId)) {
 			//レインコート
-			title += " 雨风衣裤";
+			title += " 冲锋衣裤";
 		} else if ("8000".equals(categoryId)) {
 			//レインウェア（自転車用）
 			title += " 单车雨衣裤";
@@ -305,6 +305,9 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
             title += " " + item.titleEn ;
         }
 		title += " " + item.productId;
+        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+            title += MontBellUtil.spececialProductId ;
+        }
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}

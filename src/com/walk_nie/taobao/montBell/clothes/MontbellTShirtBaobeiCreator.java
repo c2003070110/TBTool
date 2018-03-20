@@ -36,6 +36,13 @@ public class MontbellTShirtBaobeiCreator  {
                 .addScanCategory("45500") // 機能素材<ウイックロンZEO>
                 .addScanCategory("42000") // 機能素材<ウイックロン>
                 
+                .addScanCategory("32200") // 長袖シャツ＜中厚手＞
+                .addScanCategory("32100") // 長袖シャツ＜薄手＞
+                .addScanCategory("31500") // スウェットシャツ＆パーカ
+                .addScanCategory("31400") // 作務衣
+                .addScanCategory("31200") // 3半袖シャツ＜中厚手＞
+                .addScanCategory("31100") // 半袖シャツ＜薄手＞
+                
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)

@@ -111,6 +111,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         obj.cid =  "50014798";
         // 店铺类目
         obj.seller_cids =  "1184361986";
+		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
+			obj.seller_cids += "," + MontBellUtil.spececialCateId;
+		}
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
@@ -206,6 +209,9 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
             title += " " + item.titleEn ;
         }
         title += " " + item.productId;
+        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+            title += MontBellUtil.spececialProductId ;
+        }
         if(!StringUtil.isBlank(item.gender)){
             title += " " + item.gender;
         }

@@ -14,8 +14,8 @@ public class EdwinManBaobeiCreator  {
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
 		EdwinManBaobeiCreator creator = new EdwinManBaobeiCreator();
-		creator.processEdwinMan();
-		creator.processEdwinWoman();
+		//creator.processEdwinMan();
+		//creator.processEdwinWoman();
 		creator.processLeeMan();
 		creator.processLeeWoman();
 		creator.processSomethingWoman();

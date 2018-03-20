@@ -102,6 +102,9 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 		obj.cid = "50013932";
 		// 店铺类目
 		obj.seller_cids = "\"1293392734\"";
+		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
+			obj.seller_cids += "," + MontBellUtil.spececialCateId;
+		}
 		// 省
 		//obj.location_state = "日本";
 		// 宝贝价格
@@ -154,15 +157,15 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮 全场90";
+		String title = "日本直邮 Montbell 吸汗速干T恤";
 		//if (!StringUtil.isBlank(item.titleCN)) {
 		//	title += " " + item.titleCN;
 		//}
-		if ("46500".equals(item.cateogryObj.categoryId)) {
-			title += " 美丽奴羊毛速干T恤";
-		} else {
-			title += " Wickron速干T恤";
-		}
+//		if ("46500".equals(item.cateogryObj.categoryId)) {
+//			title += " 美丽奴羊毛速干T恤";
+//		} else {
+//			title += " Wickron速干T恤";
+//		}
 		if (!StringUtil.isBlank(item.titleEn)) {
 			title += " " + item.titleEn;
 		}
@@ -170,6 +173,9 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 			title += " " + item.gender;
 		}
 		title += " " + item.productId;
+        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+            title += MontBellUtil.spececialProductId ;
+        }
 		
 		baobei.title = "\"" + title + "\"";
 	}
