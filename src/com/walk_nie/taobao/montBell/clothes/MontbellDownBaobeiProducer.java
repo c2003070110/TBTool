@@ -207,6 +207,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         }
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
+            title = title.replace(" Down", "");
         }
         title += " " + item.productId;
         if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){

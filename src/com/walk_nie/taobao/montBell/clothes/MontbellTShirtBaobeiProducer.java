@@ -122,7 +122,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 
 		// 用户输入ID串;
 		//obj.inputPids = "\"20000,6103476,13021751\"";
-		obj.inputPids = "\"13021751,6103476,1627207\"";
+		obj.inputPids = "\"6103476,13021751\"";
 
 		// 用户输入名-值对
 		composeBaobeiInputValues(item, obj);
@@ -157,18 +157,36 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮 Montbell 吸汗速干T恤";
+		String title = "日本直邮montbell ";
 		//if (!StringUtil.isBlank(item.titleCN)) {
 		//	title += " " + item.titleCN;
 		//}
-//		if ("46500".equals(item.cateogryObj.categoryId)) {
-//			title += " 美丽奴羊毛速干T恤";
-//		} else {
-//			title += " Wickron速干T恤";
-//		}
-		if (!StringUtil.isBlank(item.titleEn)) {
-			title += " " + item.titleEn;
+		if ("46500".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干T恤 美丽奴羊毛";
+		} else if ("45550".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干T恤  Wickron ZEO";
+		} else if ("44000".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干T恤  Wickron COOL";
+		} else if ("45500".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干T恤  Wickron ZEO";
+		} else if ("42000".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干T恤  Wickron";
+		} else if ("32300".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干长袖 厚";
+		} else if ("32200".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干长袖 中厚";
+		} else if ("32100".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干长袖 薄";
+		} else if ("31200".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干短袖 中厚";
+		} else if ("31100".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干短袖 薄";
+		} else if ("31500".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干卫衣";
 		}
+//		if (!StringUtil.isBlank(item.titleEn)) {
+//			title += " " + item.titleEn;
+//		}
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}
@@ -183,7 +201,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 	protected void composeBaobeiCateProps(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
-		String cateProps = "122216608:29923;";
+		String cateProps = "20000:84533669;122216608:29923;";
 
 		// 宝贝属性
 		for (int i = 0; i < item.colorList.size(); i++) {
@@ -221,7 +239,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// montbell;型号;1109136
-		String inputValues = "montbell," + obj.price + "," + item.productId ;
+		String inputValues = obj.price + "," + item.productId ;
 		/*
 		for (int i = 0; i < item.colorList.size(); i++) {
 			if (i >= taobaoColors.size())
