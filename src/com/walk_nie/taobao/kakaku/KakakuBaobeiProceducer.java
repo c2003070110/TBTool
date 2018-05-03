@@ -31,7 +31,7 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
         try {
             System.out.println("-------- START --------");
             KakakuBaobeiParser parser = (KakakuBaobeiParser) getParser();
-            parser.setScanUrlsFile(this.scanUrlsFile);
+            parser.setScanCategoryUrlsFile(new File(this.scanUrlsFile));
             parser.setToUpdateBaobeiList(this.toUpdatebaobeiList);
 
             List<KakakuObject> itemList = parser.parse();

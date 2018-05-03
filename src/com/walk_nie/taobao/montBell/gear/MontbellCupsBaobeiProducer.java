@@ -119,7 +119,7 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝类目
         obj.cid =  "50015396";
         // 店铺类目
-        obj.seller_cids =  "1293392732,";
+        obj.seller_cids =  "1372090601";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格

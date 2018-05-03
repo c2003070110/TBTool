@@ -131,7 +131,7 @@ public class MontbellFreeceBaobeiProducer extends BaseBaobeiProducer {
 		MontBellUtil.composeBaobeiTaobaoCategory(item, obj);
 		// 店铺类目
 		// MontBellUtil.composeBaobeiMyCategory(item, obj);
-		obj.seller_cids = "1289906242";
+		obj.seller_cids = "1372086393";
 		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
 			obj.seller_cids += "," + MontBellUtil.spececialCateId;
 		}

@@ -110,7 +110,7 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝类目
         obj.cid =  "50014785";
         // 店铺类目
-        obj.seller_cids =  "1184361987,";
+        obj.seller_cids =  "1372090605,";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格

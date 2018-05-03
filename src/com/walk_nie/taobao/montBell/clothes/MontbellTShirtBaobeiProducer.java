@@ -101,7 +101,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝类目
 		obj.cid = "50013932";
 		// 店铺类目
-		obj.seller_cids = "\"1293392734\"";
+		obj.seller_cids = "\"1372084362\"";
 		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
 			obj.seller_cids += "," + MontBellUtil.spececialCateId;
 		}

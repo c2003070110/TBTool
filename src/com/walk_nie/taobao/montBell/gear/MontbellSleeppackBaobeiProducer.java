@@ -119,7 +119,7 @@ public class MontbellSleeppackBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝类目
         obj.cid =  "50013908";
         // 店铺类目
-        obj.seller_cids =  "1347369176,";
+        obj.seller_cids =  "1372090604,";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格

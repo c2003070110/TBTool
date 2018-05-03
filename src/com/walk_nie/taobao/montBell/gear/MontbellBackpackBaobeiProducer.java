@@ -117,7 +117,7 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
         // 宝贝类目
         obj.cid =  "50014493";
         // 店铺类目
-        obj.seller_cids =  "1184396872,";
+        obj.seller_cids =  "1372086400";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格

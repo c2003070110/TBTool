@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
@@ -19,20 +21,25 @@ import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 
 public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
-    protected String scanUrlsFile = "";
+    protected File categoryUrlsFile = null;
+    protected String categoryUrl = "";
+    protected List<String> categoryUrls = Lists.newArrayList();
     
     public KakakuBaobeiParser(){
     }
 
-    protected List<KakakuObject> parse() throws IOException, Exception {
+    public List<KakakuObject> parse() throws IOException, Exception {
         List<KakakuObject> itemList = new ArrayList<KakakuObject>();
 
-        if (!StringUtil.isBlank(scanUrlsFile)) {
+        if (categoryUrlsFile != null) {
             // get item ID only!
-            itemList = parseItemIdFromUrl(scanUrlsFile);
-        } else if (toUpdatebaobeiList != null && !toUpdatebaobeiList.isEmpty()) {
+            itemList = parseItemIdFromCategoryFile(categoryUrlsFile);
+        }else if(!CollectionUtils.isEmpty(categoryUrls)){
             // get item ID only!
-            itemList = parseItemIdFromTaobaoList(toUpdatebaobeiList);
+            itemList = parseItemIdFromCategoryUrls(categoryUrls);
+        }else if(!StringUtils.isEmpty(categoryUrl)){
+            // get item ID only!
+            itemList = parseItemIdFromCategoryUrl(categoryUrl);
         }
 
         List<KakakuObject> filterItemList = new ArrayList<KakakuObject>();
@@ -65,15 +72,41 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         return list;
     }
 
-    private List<KakakuObject> parseItemIdFromUrl(String scanUrlsFile2) throws IOException, Exception {
+	private List<KakakuObject> parseItemIdFromCategoryUrls(List<String> scanUrls)
+			throws IOException, Exception {
+		List<KakakuObject> list = new ArrayList<KakakuObject>();
+        for (String scanUrl : scanUrls) {
+    		List<KakakuObject> rslt = KakakuUtil.parseCategoryUrl(scanUrl);
+            for (KakakuObject obj : rslt) {
+                if (!isPublished(obj)) {
+                    list.add(obj);
+                }
+            }
+        }
+		return list;
+	}
+
+	private List<KakakuObject> parseItemIdFromCategoryUrl(String scanUrl)
+			throws IOException, Exception {
+
+		List<KakakuObject> list = new ArrayList<KakakuObject>();
+		List<KakakuObject> rslt = KakakuUtil.parseCategoryUrl(scanUrl);
+		for (KakakuObject obj : rslt) {
+			if (!isPublished(obj)) {
+				list.add(obj);
+			}
+		}
+		return list;
+	}
+
+    private List<KakakuObject> parseItemIdFromCategoryFile(File scanUrlsFile2) throws IOException, Exception {
 
         List<KakakuObject> list = new ArrayList<KakakuObject>();
 
         BufferedReader br = null;
         try {
-            File file = new File(scanUrlsFile2);
             String str = null;
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(scanUrlsFile2), "UTF-8"));
             while ((str = br.readLine()) != null) {
                 if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
                     List<KakakuObject> rslt = KakakuUtil.parseCategoryUrl(str);
@@ -172,8 +205,18 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         }
     }
 
-    public KakakuBaobeiParser setScanUrlsFile(String scanUrlsFile) {
-        this.scanUrlsFile = scanUrlsFile;
+    public KakakuBaobeiParser setScanCategoryUrlsFile(File scanUrlsFile) {
+        this.categoryUrlsFile = scanUrlsFile;
+        return this;
+    }
+
+    public KakakuBaobeiParser setScanCategoryUrl(String scanUrl) {
+        this.categoryUrl = scanUrl;
+        return this;
+    }
+
+    public KakakuBaobeiParser setScanCategoryUrl(List<String> scanUrls) {
+        this.categoryUrls = scanUrls;
         return this;
     }
 

@@ -109,7 +109,7 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 			obj.cid = "50012517";
 		}
 		// 店铺类目
-		obj.seller_cids = "1327129744";
+		obj.seller_cids = "1372090602";
 		// 省
 		//obj.location_state = "日本";
 		// 宝贝价格

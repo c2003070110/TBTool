@@ -116,7 +116,7 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝类目 
 		composeBaobeiCId(item, obj);
 		// 店铺类目
-		obj.seller_cids = "1184361987";
+		obj.seller_cids = "1372086396";
 		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
 			obj.seller_cids += "," + MontBellUtil.spececialCateId;
 		}

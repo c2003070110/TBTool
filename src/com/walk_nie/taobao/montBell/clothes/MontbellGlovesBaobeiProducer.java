@@ -101,7 +101,7 @@ public class MontbellGlovesBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝类目
 		obj.cid = "50015396";
 		// 店铺类目
-		obj.seller_cids = "\"1292984540\"";
+		obj.seller_cids = "\"1372086394\"";
 		// 省
 		//obj.location_state = "日本";
 		// 宝贝价格

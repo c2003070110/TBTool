@@ -99,7 +99,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝类目
 		obj.cid = "50019274";
 		// 店铺类目
-		obj.seller_cids = "1184361989";
+		obj.seller_cids = "1372084363";
 		// 省
 		//obj.location_state = "日本";
 		// 宝贝价格

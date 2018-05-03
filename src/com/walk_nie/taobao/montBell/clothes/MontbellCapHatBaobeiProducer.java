@@ -118,7 +118,7 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
 		// 户外其他服装
         obj.cid =  "50015396";
         // 店铺类目
-        obj.seller_cids =  "1361464702";
+        obj.seller_cids =  "1372086391";
 		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
 			obj.seller_cids += "," + MontBellUtil.spececialCateId;
 		}

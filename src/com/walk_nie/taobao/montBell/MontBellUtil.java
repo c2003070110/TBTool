@@ -22,7 +22,7 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MontBellUtil {
 	
-	public static String spececialCateId ="1364393554";//2018 spring summer!
+	public static String spececialCateId ="1372082560";//2018 spring summer!
 	public static String spececialProductId ="181";//2018 spring summer!
 
     public static String rootPathName = "out/MontBell/";

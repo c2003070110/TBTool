@@ -41,7 +41,6 @@ public class YahooIdDmmRegMain {
 				if (!execute1(driver, yahoo, dmmReg, regInfo)) {
 					break;
 				}
-				;
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

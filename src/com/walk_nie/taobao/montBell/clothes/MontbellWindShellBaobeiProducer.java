@@ -118,7 +118,7 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
 		//  户外风衣
 		obj.cid = "50013933";
 		// 店铺类目
-		obj.seller_cids = "1184361988";
+		obj.seller_cids = "1372086399";
 		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
 			obj.seller_cids += "," + MontBellUtil.spececialCateId;
 		}

@@ -10,14 +10,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.beust.jcommander.internal.Lists;
+
 public class GetYahooIdMain {
 
 	private String regUrl = "https://account.edit.yahoo.co.jp/registration?.src=ym&.done=https%3A%2F%2Fmail.yahoo.co.jp&src=ym&done=https%3A%2F%2Fmail.yahoo.co.jp&fl=100&no_req_email=true";
+	private String addressUrl = "https://account.edit.yahoo.co.jp/registration?.src=ym&.done=https%3A%2F%2Fmail.yahoo.co.jp&src=ym&done=https%3A%2F%2Fmail.yahoo.co.jp&fl=100&no_req_email=true";
     protected  BufferedReader stdReader = null;
 
 	/**
@@ -34,30 +38,52 @@ public class GetYahooIdMain {
 		System.setProperty("webdriver.gecko.driver",
 				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
 
-		List<String> lines = new ArrayList<String>();
 		WebDriver driver = new FirefoxDriver();
-		try {
-			int i=0;
-			while(true){
-				RegObjInfo regInfo = createRegInfo(i);
-				i++;
-				try {
-					reg(driver, regInfo);
-					lines.add(regInfo.toString());
-					if(mywait("ready for continue? ENTER;N for exit ")){
-						break;
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					if(mywait("ready for continue? ENTER;N for exit ")){
-						break;
-					}
+		int i = 0;
+		while (true) {
+			RegObjInfo regInfo = createRegInfo(i);
+			i++;
+			try {
+				if(reg(driver, regInfo)){
+					fillAddress(driver,regInfo);
+					record(regInfo);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				if (mywait("ready for continue? ENTER;N for exit ")) {
+					break;
 				}
 			}
-		} finally {
-			File out = new File("./out", "yahooId.txt");
-			FileUtils.writeLines(out, lines, true);
 		}
+	}
+	private void fillAddress(WebDriver driver, RegObjInfo regInfo) {
+		// TODO
+//		driver.get(addressUrl);
+//		WebElement element = driver.findElement(By.cssSelector("div#yjMain"));
+//		element.findElement(By.cssSelector("input#LN")).sendKeys(regInfo.name1);
+//		element.findElement(By.cssSelector("input#FN")).sendKeys(regInfo.name2);
+//		element.findElement(By.cssSelector("input#NK1")).sendKeys(regInfo.name1Kana);
+//		element.findElement(By.cssSelector("input#NK2")).sendKeys(regInfo.name2Kana);
+//		element.findElement(By.cssSelector("input#tel_a")).sendKeys(regInfo.telNo);
+//
+//		element.findElement(By.cssSelector("button#saveBtn")).click();
+	}
+
+	private void record(GetYahooIdMain.RegObjInfo regInfo) {
+		File out = new File("./out", "yahooId.txt");
+		while (true)
+			try {
+				List<String> lines = Lists.newArrayList();
+				lines.add(regInfo.toString());
+				FileUtils.writeLines(out, lines, true);
+				break;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+				}
+			}
 	}
 
 	public boolean reg(WebDriver driver, RegObjInfo regInfo) throws IOException {
@@ -168,21 +194,21 @@ public class GetYahooIdMain {
 		RegObjInfo regInfo = new RegObjInfo();
 		String id1 = java.util.UUID.randomUUID().toString();
 		String id2 = java.util.UUID.randomUUID().toString();
-		String p1 = id1.substring(id1.length() - 2);
-		String p2 = id2.substring(id2.length() - 3);
-		
+		String p1 = id1.substring(id1.length() - 3);
+		String p2 = id2.substring(id2.length() - 2);
+		int rInt = RandomUtils.nextInt();
 		String ftn = new SimpleDateFormat("yyMMdd").format(Calendar.getInstance().getTime());
-		regInfo.id = "y" + i + p1 + ftn;
+		regInfo.id = "y" + i + p1 + ftn.substring(0,6);
 		regInfo.pswd = "p" + p1 + p2 + "2010";
 		//regInfo.mailAddress = mailAddresss.get(i % mailAddresss.size());
-		regInfo.secQuestion = secQ.get(i % secQ.size());
-		regInfo.secAnswer = secA.get(i % secA.size());
+		regInfo.secQuestion = secQ.get(rInt % secQ.size());
+		regInfo.secAnswer = secA.get(rInt % secA.size());
 		regInfo.sex = "1"; // 1 man 2
-		regInfo.birthYear = birthYears.get(i % birthYears.size());
-		regInfo.birthMonth = birthMonthes.get(i % birthMonthes.size());
-		regInfo.birthDay = birthDays.get(i % birthDays.size());
-		regInfo.postCode = postCodes.get(i % postCodes.size());
-		regInfo.dispName = dispNames.get(i % dispNames.size());
+		regInfo.birthYear = birthYears.get(rInt % birthYears.size());
+		regInfo.birthMonth = birthMonthes.get(rInt % birthMonthes.size());
+		regInfo.birthDay = birthDays.get(rInt % birthDays.size());
+		regInfo.postCode = postCodes.get(rInt % postCodes.size());
+		regInfo.dispName = dispNames.get(rInt % dispNames.size());
 		return regInfo;
 	}
 	protected boolean mywait(String hint) throws IOException {
@@ -300,6 +326,14 @@ public class GetYahooIdMain {
 		public String birthMonth;
 		public String birthDay;
 		public String postCode;
+
+		public String name1;
+		public String name2;
+		public String name1Kana;
+		public String name2Kana;
+		
+		public String telNo;
+		
 		
 		public String toString() {
 			return id + "@yahoo.co.jp\t" + pswd +  "\t" + "\t" + secQuestion + "\t" + secAnswer
