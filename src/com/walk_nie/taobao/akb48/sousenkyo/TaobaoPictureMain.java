@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,25 +41,25 @@ public class TaobaoPictureMain {
 				.println("[INFO] Parsing the picture url from taobao picture box!");
 		System.out.println("[INFO] please put the html to the File(UTF-8) "
 				+ new File(srcFile).getAbsolutePath());
-		long updateTime = System.currentTimeMillis();
-		String updateDateTimeStr = DateUtils.formatDate(new Date(updateTime),
-				"yyyy-MM-dd HH:mm:ss");
-		while (true) {
+		//long updateTime = System.currentTimeMillis();
+		//String updateDateTimeStr = DateUtils.formatDate(new Date(updateTime),
+		//		"yyyy-MM-dd HH:mm:ss");
+		//while (true) {
 			File tempFile0 = new File(srcFile);
-			long lastModified = tempFile0.lastModified();
-			String lastModifiedStr = DateUtils.formatDate(
-					new Date(lastModified), "yyyy-MM-dd HH:mm:ss");
-			if (lastModifiedStr.compareTo(updateDateTimeStr) > 0) {
-				updateTime = lastModified;
-				updateDateTimeStr = DateUtils.formatDate(
-						new Date(lastModified), "yyyy-MM-dd HH:mm:ss");
+			//long lastModified = tempFile0.lastModified();
+			//String lastModifiedStr = DateUtils.formatDate(
+			//		new Date(lastModified), "yyyy-MM-dd HH:mm:ss");
+			//if (lastModifiedStr.compareTo(updateDateTimeStr) > 0) {
+			//	updateTime = lastModified;
+			//	updateDateTimeStr = DateUtils.formatDate(
+			//			new Date(lastModified), "yyyy-MM-dd HH:mm:ss");
 				generate();
 
 				System.out
 						.println("[INFO] please put the html to the File(UTF-8) "
 								+ tempFile0.getAbsolutePath());
-			}
-		}
+			//}
+		//}
 	}
 
 	public void generate() throws IOException {
@@ -85,33 +86,57 @@ public class TaobaoPictureMain {
 			System.err.println("[ERROR] NOT validate HTML");
 			return;
 		}
-		List<String> outList = Lists.newArrayList();
+		List<TaobaoPictureObject> objList = Lists.newArrayList();
 		String outputFmt = "%03d\t%s\t%s\t%s";
-		int i = 1;
 		for (Element ele : eles) {
 			String dataPicJson = ele.attr("data-picture");
-			if (dataPicJson == null || "".equals(dataPicJson)) {
+			String datafrozenJson = ele.attr("data-frozen");
+			if ((dataPicJson == null || "".equals(dataPicJson))
+					&& (datafrozenJson == null || "".equals(datafrozenJson)) ) {
 				System.err.println("[ERROR] NOT validate Picture "
 						+ ele.toString());
 				continue;
 			}
-			Map<String, String> dataPicMap = JSON.decode(dataPicJson);
+			Map<String, String> dataPicMap = null;
+			if(dataPicJson != null && !"".equals(dataPicJson)){
+				dataPicMap = JSON.decode(dataPicJson);
+			}else if(datafrozenJson != null && !"".equals(datafrozenJson)){
+				dataPicMap = JSON.decode(datafrozenJson);
+			}
 			// String pictureId = dataPicMap.get("pictureId");
 			// String pictureCategoryId = dataPicMap.get("pictureCategoryId");
 			// String picturePath = dataPicMap.get("picturePath");
 			// String sellerId = dataPicMap.get("sellerId");
-			String pictureCategoryName = dataPicMap.get("pictureCategoryName");
-			String name = dataPicMap.get("name");
-			String fullUrl = dataPicMap.get("fullUrl");
-			if (name == null || "".equals(name)) {
+			TaobaoPictureObject obj = new TaobaoPictureObject();
+			obj.pictureCategoryName = dataPicMap.get("pictureCategoryName");
+			obj.name = dataPicMap.get("name");
+			obj.fullUrl = dataPicMap.get("fullUrl");
+			if (obj.name == null || "".equals(obj.name)) {
 				System.err.println("[ERROR] NOT validate data-picture "
 						+ dataPicJson);
 				continue;
 			}
-			outList.add(String.format(outputFmt, i++, pictureCategoryName,
-					name, fullUrl));
+			objList.add(obj);
 		}
-		Collections.sort(outList);
+		Collections.sort(objList, new Comparator<TaobaoPictureObject>(){
+			@Override
+			public int compare(TaobaoPictureObject arg0,
+					TaobaoPictureObject arg1) {
+				return arg0.name.compareTo(arg1.name);
+			}
+			
+		});
+		List<String> outList = Lists.newArrayList();
+		int i = 1;
+		String pictureCategoryNamePrev = "";
+		for (TaobaoPictureObject obj : objList) {
+			if(!pictureCategoryNamePrev.equals(obj.pictureCategoryName)){
+				pictureCategoryNamePrev = obj.pictureCategoryName;
+				i=1;
+			}
+			outList.add(String.format(outputFmt, i++, obj.pictureCategoryName,
+					obj.name, obj.fullUrl));
+		}
 		File oFile = new File(outFileName);
 		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
 				"yyyy-MM-dd HH:mm:ss");
@@ -119,6 +144,6 @@ public class TaobaoPictureMain {
 		FileUtils.writeLines(oFile, "UTF-8", outList, "\n", true);
 		oFile = null;
 		System.out.println("[INFO] Parsing Finish! Count of Picture URL is  "
-				+ outList.size());
+				+ objList.size());
 	}
 }

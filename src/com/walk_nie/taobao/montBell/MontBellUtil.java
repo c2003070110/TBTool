@@ -165,10 +165,10 @@ public class MontBellUtil {
 		int price = Integer.parseInt(item.priceJPY);
 		if (price > 20000 && (item.titleEn != null && !"".equals(item.titleEn))) {
 			// 日本直邮包邮
-			return "5327378310";
+			return "13528017580";
 		}
 		// 全场90包邮
-		return "1780373930";
+		return "13464398120";
 	}
 
 	public static String convertToCNYWithEmsFee(GoodsObject item,

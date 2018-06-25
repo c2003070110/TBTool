@@ -26,8 +26,8 @@ public class MontbellTShirtBaobeiCreator  {
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
 		//
-		double currencyRate = 0.062 + 0.004;
-		double benefitRate = 0.08;
+		double currencyRate = 0.060 + 0.005;
+		double benefitRate = 0.05;
 		MontbellTShirtBaobeiProducer db = new MontbellTShirtBaobeiProducer();
 		db
         		.addScanCategory("46500") // 天然素材<メリノウールプラス>

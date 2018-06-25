@@ -9,12 +9,16 @@ import org.apache.http.client.ClientProtocolException;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 
-public class MontbellSandalsBaobeiCreator  {
+public class MontbellSandalsBaobeiCreator {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
+		new MontbellSandalsBaobeiCreator().process();
+	}
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
+	public void process() throws IOException {
+
+		// String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_sandals_baobei_%s.csv";
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
 		File file = new File(publishedBaobeiFile);
@@ -24,16 +28,12 @@ public class MontbellSandalsBaobeiCreator  {
 		double currencyRate = 0.061 + 0.004;
 		double benefitRate = 0.08;
 		MontbellSandalsBaobeiProducer db = new MontbellSandalsBaobeiProducer();
-		db
-                .addScanCategory("242000") // サンダル
-                
-                .setOutputFile(outputFile)
-                .setCurrencyRate(currencyRate)
-                .setBenefitRate(benefitRate)
-                .setPublishedbaobeiList(baobeiList)
-                .process();
+		db.addScanCategory("242000")
+				// サンダル
+				.setOutputFile(outputFile).setCurrencyRate(currencyRate)
+				.setBenefitRate(benefitRate).setPublishedbaobeiList(baobeiList)
+				.process();
 
-		System.exit(0);
 	}
 
 }

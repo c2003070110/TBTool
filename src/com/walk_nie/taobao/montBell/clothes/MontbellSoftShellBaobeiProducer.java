@@ -242,16 +242,16 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " 冲锋裤";
 		} else if ("22000".equals(categoryId)) {
 			// ソフトシェル>ソフトシェルジャケット
-			title += " 软壳冲锋衣";
+			title += " 软壳衣";
 		} else if ("25000".equals(categoryId)) {
 			// ソフトシェル>ライトシェルジャケット/ベスト
-			title += " 超轻软壳冲锋衣";
+			title += " 软壳衣";
 		} else if ("22500".equals(categoryId)) {
 			// ソフトシェル>ソフトシェルパンツ
 			title += " 软壳冲锋裤";
 		} else if ("23000".equals(categoryId)) {
 			// ソフトシェル>ライトシェルパンツ
-			title += " 超轻软壳冲锋裤";
+			title += " 软壳裤";
 		} else if ("8800".equals(categoryId)) {
 			//レインウェア（ゴアテックス製）
 			title += " GTX冲锋衣裤";

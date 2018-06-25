@@ -122,7 +122,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 		composeBaobeiInputValues(item, obj);
 
 		// 宝贝描述
-		obj.description = composeBaobeiMiaoshu(item);
+		composeBaobeiMiaoshu(item, obj);
 		// 销售属性组合
 		composeBaobeiSkuProps(item, obj);
 		// 商家编码
@@ -171,7 +171,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 			BaobeiPublishObject obj) {
 		// cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		
-		String cateProps = "";
+		String cateProps = "20000:84533669;";
 		cateProps += "122216575:28695;122216608:29923;";
 
 		// 宝贝属性
@@ -213,14 +213,15 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 	private void composeBaobeiInputValues(GoodsObject item,
 			BaobeiPublishObject obj) {
 		// montbell;型号;1109136
-		String inputValues = "\"montbell;" + item.productId 
-				+ ",";
-		for (int i = 0; i < item.colorList.size(); i++) {
-			if (i >= taobaoColors.size())
-				break;
-			inputValues += item.colorList.get(i) + "颜色分类;";
-		}
-		obj.inputValues = inputValues + "\"";
+//		String inputValues = "\"montbell;" + item.productId 
+//				+ ",";
+//		for (int i = 0; i < item.colorList.size(); i++) {
+//			if (i >= taobaoColors.size())
+//				break;
+//			inputValues += item.colorList.get(i) + "颜色分类;";
+//		}
+		String inputValues = item.productId ;
+		obj.inputValues = "\"" + inputValues + "\"";
 	}
 
 	protected void composeBaobeiPropAlias(GoodsObject item,
@@ -251,32 +252,23 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 		obj.input_custom_cpv = inputCustomCpv;
 	}
 
-	private String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
+	private void composeBaobeiMiaoshu(GoodsObject item,
+			BaobeiPublishObject publishedBaobei) throws IOException {
 
 		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailScreenShotPicFile;
-		if (!StringUtil.isBlank(item.detailScreenShotPicFile)) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-					+ productInfo + "\"/></p>");
-			detailSB.append("</div>");
-		}
-		StringBuffer sizeTips = new StringBuffer();
-		if (!item.sizeTipPics.isEmpty()) {
-			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
-			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p>下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">不能因为尺寸问题 不能取消订单！！不能退款！！！</span></p>");
-			for (String sizeTip : item.sizeTipPics) {
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
-						+ sizeTip + "\"/></p>");
-			}
-			detailSB.append("</div>");
-		}
-		//String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
+        // 包邮
+        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        // 尺寸描述
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        
+        // 着装图片
+        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
+		 
+
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-		return "\"" + detailSB.toString() + sizeTips.toString() 
+		publishedBaobei.description = "\"" + detailSB.toString()
 				+ extraMiaoshu1 + "\"";
+		
 	}
 
 	public MontbellSandalsBaobeiProducer addScanCategory(String scanCategoryId) {

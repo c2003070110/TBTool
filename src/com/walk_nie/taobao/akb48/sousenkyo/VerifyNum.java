@@ -19,17 +19,17 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class VerifyNum {
 
-	String candidateListUrl = "http://akb48-sousenkyo.jp/initial_search.php";
+	String candidateListUrl = "https://akb48-sousenkyo.jp/akb/search";
 	String rootUrl = "http://akb48-sousenkyo.jp/";
 	public static BufferedReader stdReader = null;
-	private String candidatesFile = "./shipment/candidateList.txt";
+	private String candidatesFile = "./akb48/candidateList.txt";
 
 	public static void main(String[] args) throws IOException {
 
 		VerifyNum main = new VerifyNum();
 
-		// main.getCandidateList();
-		main.vertify();
+		 main.getCandidateList();
+		//main.vertify();
 	}
 
 	protected void vertify() throws IOException {

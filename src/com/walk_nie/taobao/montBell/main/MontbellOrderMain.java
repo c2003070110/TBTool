@@ -37,7 +37,8 @@ public class MontbellOrderMain {
 	//private String inOrderDir = "./montbell/";
 	//private String pinyinInFileName = "./montbell/pinyin-in.txt";
 	//private String pinyoutInFileName = "./montbell/pinyin-out.txt";
-	private String inFileName = "./montbell/order-in.txt";
+	private String inFileNameJP = "./montbell/order-in-japan.txt";
+	private String inFileNameCN = "./montbell/order-in-china.txt";
 	private String ooutFileName = "./montbell/order-out.txt";
 	private String outFileName = "./montbell/taobao-out.txt";
 	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
@@ -347,14 +348,22 @@ public class MontbellOrderMain {
 	}
 
 	private void orderForJapan() {
-
+		WebDriver driver = logonForJapan();
+		File tempFile0 = new File(inFileNameJP);
+		try {
+			orderForJapan(driver, tempFile0);
+		} catch (Exception ex) {
+			driver.close();
+			driver = null;
+			ex.printStackTrace();
+		}
 	}
 
 	private void orderForChina() {
 		
 		WebDriver driver = logonForChina();
 		long updateTime = System.currentTimeMillis();
-		File tempFile0 = new File(inFileName);
+		File tempFile0 = new File(inFileNameCN);
 		System.out.println("[waiting for order info in ]"
 				+ tempFile0.getAbsolutePath());
 		while (true) {
@@ -374,13 +383,42 @@ public class MontbellOrderMain {
 		}
 	}
 
+	private WebDriver logonForJapan() {
+		if (driver != null) {
+			driver.get("https://www.montbell.jp/mypage/logout.php");
+		} else {
+			driver = WebDriverUtil.getFirefoxWebDriver();
+		}
+		driver.get("https://www.montbell.jp/login/");
+		List<WebElement> submitList = driver.findElements(By.tagName("input"));
+		for (WebElement we : submitList) {
+			if ("text".equalsIgnoreCase(we.getAttribute("type"))) {
+				if ("login_user_id".equals(we.getAttribute("name"))) {
+					we.sendKeys("niehpjp");
+					break;
+				}
+			}
+		}
+		for (WebElement we : submitList) {
+			if ("password".equalsIgnoreCase(we.getAttribute("type"))) {
+				if ("login_user_password".equals(we.getAttribute("name"))) {
+					we.sendKeys("mnt12345");
+					break;
+				}
+			}
+		}
+		submitList = driver.findElements(By.tagName("a"));
+		for (WebElement we : submitList) {
+			if ("javascript:goLoginWeb();".equalsIgnoreCase(we.getAttribute("href"))) {
+				we.click();
+				break;
+			}
+		}
+		return driver;
+	}
+
 	private WebDriver logonForChina() {
 		if (driver != null) {
-//			List<WebElement> es = driver.findElements(By
-//					.cssSelector("p#btnLogin"));
-//			if (es.isEmpty()) {
-//				return driver;
-//			}
 			driver.get("https://en.montbell.jp/login/logout.php");
 		} else {
 			driver = WebDriverUtil.getFirefoxWebDriver();
@@ -436,6 +474,79 @@ public class MontbellOrderMain {
 		return driver;
 	}
 
+	protected void orderForJapan(WebDriver driver, File tempFile0) throws IOException,
+			PinyinException {
+		List<String> orders = Files.readLines(tempFile0,
+				Charset.forName("UTF-8"));
+		int idx = 0;
+		String taobaoOrderName = orders.get(idx++);
+		String productInfos = orders.get(idx++);
+		String masterF = removeEndComma(orders.get(idx++));
+		try{
+			addItemToCard(driver,productInfos,"JP");
+		}catch(Exception ex){
+		}
+		driver.get("https://webshop.montbell.jp/cart");
+		List<WebElement> weList = null;
+		weList = driver.findElements(By.tagName("input"));
+		for (WebElement we : weList) {
+			if ("レジに進む".equalsIgnoreCase(we
+					.getAttribute("alt"))) {
+				we.click();
+				break;
+			}
+		}
+		weList = driver.findElements(By.tagName("input"));
+		for (WebElement we : weList) {
+			if ("radio".equalsIgnoreCase(we
+					.getAttribute("type")) &&"destination_id_1".equalsIgnoreCase(we
+					.getAttribute("id"))) {
+				we.click();
+				break;
+			}
+		}
+		for (WebElement we : weList) {
+			if ("next_destination".equalsIgnoreCase(we
+					.getAttribute("name"))) {
+				we.click();
+				break;
+			}
+		}
+		weList = driver.findElements(By.tagName("input"));
+		for (WebElement we : weList) {
+			if ("image".equalsIgnoreCase(we
+					.getAttribute("type")) && "次へ".equals(we.getAttribute("alt"))) {
+				we.click();
+				break;
+			}
+		}
+		weList = driver.findElements(By.tagName("input"));
+		for (WebElement we : weList) {
+			if ("radio".equalsIgnoreCase(we
+					.getAttribute("type")) &&"payment_type_id_1".equalsIgnoreCase(we
+					.getAttribute("id"))) {
+				we.click();
+				break;
+			}
+		}
+
+		// add credit card
+		if("master".equalsIgnoreCase(masterF)){
+			addCreditCardMASTER(driver);
+		}else{
+			addCreditCardJCB(driver);
+		}
+//		weList = driver.findElements(By.tagName("input"));
+//		for (WebElement we : weList) {
+//			if ("image".equalsIgnoreCase(we
+//					.getAttribute("type")) &&"この内容で注文する".equalsIgnoreCase(we
+//					.getAttribute("alt"))) {
+//				we.click();
+//				break;
+//			}
+//		}
+	}
+
 	protected void orderForChina(WebDriver driver, File tempFile0) throws IOException,
 			PinyinException {
 
@@ -463,7 +574,7 @@ public class MontbellOrderMain {
 		}
 
 		try{
-			addItemToCard(driver,productInfos);
+			addItemToCard(driver,productInfos,"CN");
 		}catch(Exception ex){
 			System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 			mywait("Color OR size Selected realdy? ENTER for realdy!");
@@ -564,7 +675,7 @@ public class MontbellOrderMain {
 		oFile = null;
 	}
 
-	private void addItemToCard(WebDriver driver, String productInfos) {
+	private void addItemToCard(WebDriver driver, String productInfos,String type) {
 
 		List<WebElement> weList = null;
 		String[] pis = productInfos.split(itemSplitter);
@@ -572,7 +683,11 @@ public class MontbellOrderMain {
 			System.out.println("[processing]" + line);
 			String[] pi = line.split(";");
 			String pid = pi[0];
-			driver.get(MontBellUtil.productUrlPrefix_en + pid);
+			if(pid.startsWith("MTBL_")){
+				String[] newP = pid.split("-");
+				pid = newP[1];
+			}
+			driver.get(("JP".equals(type)?MontBellUtil.productUrlPrefix: MontBellUtil.productUrlPrefix_en) + pid);
 			String color = "";
 			if (pi.length > 1) {
 				color = realColorName(pi[1]);
@@ -654,10 +769,20 @@ public class MontbellOrderMain {
 				break;
 			}
 		}
-		c.findElement(By.cssSelector("input[name=\"card_number1\"")).sendKeys("3574");
-		c.findElement(By.cssSelector("input[name=\"card_number2\"")).sendKeys("0140");
-		c.findElement(By.cssSelector("input[name=\"card_number3\"")).sendKeys("6206");
-		c.findElement(By.cssSelector("input[name=\"card_number4\"")).sendKeys("3285");
+		try {
+			c.findElement(By.cssSelector("input[name=\"card_number1\""))
+					.sendKeys("3574");
+			c.findElement(By.cssSelector("input[name=\"card_number2\""))
+					.sendKeys("0140");
+			c.findElement(By.cssSelector("input[name=\"card_number3\""))
+					.sendKeys("6206");
+			c.findElement(By.cssSelector("input[name=\"card_number4\""))
+					.sendKeys("3285");
+		} catch (Exception e) {
+			c.findElement(By.cssSelector("input[name=\"card_number\""))
+					.sendKeys("3574014062063285");
+
+		}
 
 		weList = c.findElements(By.tagName("select"));
 		for (WebElement we : weList) {
@@ -689,16 +814,29 @@ public class MontbellOrderMain {
 				break;
 			}
 		}
-		c.findElement(By.cssSelector("input[name=\"card_number1\"")).sendKeys("5316");
-		c.findElement(By.cssSelector("input[name=\"card_number2\"")).sendKeys("9303");
-		c.findElement(By.cssSelector("input[name=\"card_number3\"")).sendKeys("2051");
-		c.findElement(By.cssSelector("input[name=\"card_number4\"")).sendKeys("4975");
+		try {
+			c.findElement(By.cssSelector("input[name=\"card_number1\""))
+					.sendKeys("5316");
+			c.findElement(By.cssSelector("input[name=\"card_number2\""))
+					.sendKeys("9303");
+			c.findElement(By.cssSelector("input[name=\"card_number3\""))
+					.sendKeys("2051");
+			c.findElement(By.cssSelector("input[name=\"card_number4\""))
+					.sendKeys("4975");
+		} catch (Exception ex) {
+			c.findElement(By.cssSelector("input[name=\"card_number\""))
+					.sendKeys("5316930320514975");
+		}
 
 		weList = c.findElements(By.tagName("select"));
 		for (WebElement we : weList) {
 			if ("card_expire_month".equalsIgnoreCase(we.getAttribute("name"))) {
 				Select dropdown = new Select(we);
-				dropdown.selectByVisibleText("4");
+				try {
+					dropdown.selectByVisibleText("4");
+				} catch (Exception e) {
+					dropdown.selectByVisibleText("04");
+				}
 				break;
 			}
 		}
@@ -777,7 +915,7 @@ public class MontbellOrderMain {
 		}
 		color = str.replace("颜色分类:", "");
 		color = color.replace("颜色分类：", "");
-		return color;
+		return color.trim();
 	}
 	private String realSizeName(String str){
 
@@ -789,6 +927,6 @@ public class MontbellOrderMain {
 		sizz = sizz.replace("尺码：", "");
 		sizz = sizz.replace("鞋码：", "");
 		sizz = sizz.replace("鞋码:", "");
-		return sizz;
+		return sizz.trim();
 	}
 }
