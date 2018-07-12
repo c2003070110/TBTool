@@ -99,10 +99,13 @@ public class YaAuto {
 			WebElement el1 = driver.findElements(By.id("idBox")).get(0);
 			el1.findElement(By.id("username")).sendKeys("yiyi2014jp");
 			driver.findElement(By.id("btnNext")).click();
-
-			// driver.findElement(By.id("passwd")).sendKeys("dengyi");
-			// driver.findElement(By.id("btnSubmit")).click();
 		}
+		try {
+			Thread.sleep(1000*2);
+		} catch (InterruptedException e) {
+		}
+		driver.findElement(By.id("passwd")).sendKeys("dengyi");
+		 driver.findElement(By.id("btnSubmit")).click();
 		return driver;
 	}
 

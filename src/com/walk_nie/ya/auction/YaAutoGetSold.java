@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -31,7 +32,7 @@ public class YaAutoGetSold {
 				.cssSelector("table[bgcolor=\"#dcdcdc\"]"));
 		List<String> llAuctionIds = Lists.newArrayList();
 		List<YaSoldObject> soldObjList = Lists.newArrayList();
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 30; i++) {
 			YaSoldObject yaObj = new YaSoldObject();
 			WebElement trWe = weTbl.findElement(By.cssSelector("tr:nth-child("
 					+ (i + 1) + ")"));
@@ -45,7 +46,7 @@ public class YaAutoGetSold {
 			price = price.replaceAll("円", "");
 			yaObj.price = price.trim();
 			tdWe = trWe.findElement(By.cssSelector("td:nth-child(5)"));
-			yaObj.latestTime = tdWe.getText().replaceAll(" ", "");
+			yaObj.latestTime = toDate(tdWe.getText());
 			tdWe = trWe.findElement(By.cssSelector("td:nth-child(6)"));
 			yaObj.obider = tdWe.getText();
 			if (yaObj.obider.equals("落札者一覧")) {
@@ -93,7 +94,7 @@ public class YaAutoGetSold {
 				}
 				yaObj.statusMsg = msg;
 				tdWe2 = trWe2.findElement(By.cssSelector("td:nth-child(4)"));
-				yaObj.latestTime = tdWe2.getText().replaceAll(" ", "");
+				yaObj.latestTime = toDate(tdWe2.getText());
 
 				soldObjList.add(yaObj);
 			}
@@ -101,6 +102,7 @@ public class YaAutoGetSold {
 		Collections.sort(soldObjList, new Comparator<YaSoldObject>() {
 			@Override
 			public int compare(YaSoldObject obj1, YaSoldObject obj2) {
+				
 				return obj2.latestTime.compareTo(obj1.latestTime);
 			}
 		});
@@ -113,7 +115,7 @@ public class YaAutoGetSold {
 		String fmt = "%s\t%s\t%s\t%s\t%s\t%s\n";
 		for (YaSoldObject yaObj : soldObjList) {
 			String str = String.format(fmt, yaObj.auctionId, yaObj.title,
-					yaObj.price, yaObj.latestTime, yaObj.obider,
+					yaObj.price, DateUtils.formatDate(yaObj.latestTime,"M月d日 H時m分"), yaObj.obider,
 					yaObj.statusMsg);
 			FileUtils.write(oFile, str, Charset.forName("UTF-8"), true);
 		}
@@ -148,6 +150,34 @@ public class YaAutoGetSold {
 			FileUtils.write(oFileMsg, str + "\n", Charset.forName("UTF-8"),
 					true);
 		}
+	}
+
+	private Date toDate(String target) {
+		String text = target;
+		int idx = text.indexOf("月");
+		String sub = text.substring(0, idx).replaceAll(" ", "");
+		int month = Integer.parseInt(sub.trim());
+		text = text.trim().substring(1 + sub.length());
+		idx = text.indexOf("日");
+		sub = text.substring(0, idx).replaceAll(" ", "");
+		int day = Integer.parseInt(sub.trim());
+		text = text.trim().substring(1 + sub.length());
+		idx = text.indexOf("時");
+		sub = text.substring(0, idx).replaceAll(" ", "");
+		int hour = Integer.parseInt(sub.trim());
+		text = text.trim().substring(sub.length() +1);
+		idx = text.indexOf("分");
+		sub = text.substring(0, idx).replaceAll(" ", "");
+		int min = Integer.parseInt(sub.trim());
+		Date dt =  DateUtils.parseDate(month+"-" + day +" " + hour +":" + min, new String[]{"M-d H:m"});
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 2018);
+		cal.set(Calendar.MONTH, month-1);
+		cal.set(Calendar.DAY_OF_MONTH, day);
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, min);
+		//return cal.getTime();
+		return dt;
 	}
 
 }
