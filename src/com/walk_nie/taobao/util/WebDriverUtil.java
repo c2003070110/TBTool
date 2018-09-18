@@ -16,6 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -26,13 +27,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.beust.jcommander.internal.Lists;
 
 public class WebDriverUtil  {
     // TODO change it to fix your pc
     public final static String chromeDriverPath = "C:/Users/niehp/Google ドライブ/tool/chromedriver.exe";
-    public final static String firefoxDriverPath = "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.17.0-win64/geckodriver.exe";
+    public final static String firefoxDriverPath = "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.21.0-win64/geckodriver.exe";
     public final static String ieDriverPath = "C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
 
     private static WebDriver driver = null;
@@ -57,10 +59,22 @@ public class WebDriverUtil  {
         if (driver == null) {
             //driver = new FirefoxDriver(profile);
             //driver = new ChromeDriver();
-            driver = new InternetExplorerDriver();
+            DesiredCapabilities cap = DesiredCapabilities.internetExplorer();
+            cap.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+            driver = new InternetExplorerDriver(cap);
         }
         if (!url.equals(driver.getCurrentUrl())) {
             driver.get(url);
+            Dimension win_size = driver.manage().window().getSize();
+            WebElement html = driver.findElement(By.tagName("html"));
+            int inner_width = Integer.parseInt(html.getAttribute("clientWidth"));
+            int inner_height = Integer.parseInt(html.getAttribute("clientHeight"));
+
+            // set the inner size of the window to 400 x 400 (scrollbar excluded)
+            driver.manage().window().setSize(new Dimension(
+                win_size.width + (910 - inner_width),
+                win_size.height + (800 - inner_height)
+            ));
             return driver;
         }
         return driver;

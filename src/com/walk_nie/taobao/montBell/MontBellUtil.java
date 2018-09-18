@@ -22,8 +22,9 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MontBellUtil {
 	
-	public static String spececialCateId ="1372082560";//2018 spring summer!
-	public static String spececialProductId ="181";//2018 spring summer!
+	//public static String spececialCateId ="1372082560";//2018 spring summer!
+	public static String spececialCateId ="1402017494";//2018 autumn&winter!
+	public static String spececialProductId ="182";//2018 autumn&winter!
 
     public static String rootPathName = "out/MontBell/";
     public static String sizeTipFileName = "sizeTipList.txt";

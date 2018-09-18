@@ -106,7 +106,7 @@ public class MontbellBaobeiProducer extends BaseBaobeiProducer{
         obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "999";
         
         // 用户输入ID串;
         obj.inputPids = "\"20000,13021751,6103476\"";

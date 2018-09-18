@@ -120,7 +120,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "99";
 		
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);
@@ -131,7 +131,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         // ダウンジャケット
         //obj.inputPids = "\"20000,13021751,6103476,1627207\"";
 		obj.inputPids = "\"13021751,6103476,1627207\"";
-        
+	
         // 用户输入名-值对
         //obj.inputValues = "\"montbell,"+item.productId+",*\"";
         composeBaobeiInputValues(item, obj);
@@ -229,7 +229,8 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
         // ダウンジャケット
         //cateProps += "20000:6217823;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
         //cateProps += "20000:84533669;13021751:61043120;6103476:3231061;122216608:29923;21548:38488;";
-        cateProps += "20000:84533669;13021751:124459527;6103476:3375990;122216608:29923;21548:38488;";
+        //cateProps += "20000:84533669;13021751:124459527;6103476:3375990;122216608:29923;21548:38488;";
+        cateProps += "20000:84533669;122216608:29923;21548:38488;6861561:112402;141750102:36229752;148158672:20347329;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){
@@ -250,7 +251,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
 			if (i >= taobaoColors.size())
 				break;
 			if (item.sizeList.isEmpty()) {
-				String num = "999";
+				String num = "99";
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";";
 			} else {

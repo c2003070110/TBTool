@@ -121,7 +121,7 @@ public class MontbellShoeBaobeiProducer extends BaseBaobeiProducer{
         obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "999";
 		
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);
@@ -217,7 +217,7 @@ public class MontbellShoeBaobeiProducer extends BaseBaobeiProducer{
                 if(j>=taobaoSizes.size())break;
                 //String num  = MontBellUtil.getStock(item, item.colorList.get(i),
                 //		item.sizeList.get(j));
-                String num  = "999";
+                String num  = "99";
                 skuProps += obj.price + ":" +  num  + ":" + ":1627207" + ":" + taobaoColors.get(i)
                         + ";20549:" + taobaoSizes.get(j) + ";";
             }

@@ -29,17 +29,22 @@ public class MontbellBackpackBaobeiCreator  {
 		double benefitRate = 0.05;
 		MontbellBackpackBaobeiProducer db = new MontbellBackpackBaobeiProducer();
 		db
+		//--ザック
                 .addScanCategory("263000") // 小型ザック（5～25L）
-                
                 .addScanCategory("262000") // 中型ザック（30～45L）
                 .addScanCategory("261000") // 大型ザック（50～120L）
                 .addScanCategory("263500") // ザック（ポケッタブル）
                 //.addScanCategory("265000") // キャメルバック
                 
                 .addScanCategory("264000") // ザックカバー
-                .addScanCategory("") //  
-                .addScanCategory("") //  
-                .addScanCategory("") //  
+                
+                //-- バッグ
+                .addScanCategory("275000") //  トートバッグ
+                .addScanCategory("283000") //  バッグ（ポケッタブル）
+                .addScanCategory("282000") //  ショルダーバッグ
+                .addScanCategory("281000") //  ウエストバッグ
+                .addScanCategory("274000") //  ポーチ
+                .addScanCategory("274100") // 財布 
                 .addScanCategory("") //  
                 
                 .setOutputFile(outputFile)

@@ -112,7 +112,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 				this.benefitRate);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
-		obj.num = "9999";
+		obj.num = "999";
 
         // 邮费模版ID 全场90包邮
         obj.postage_id = MontBellUtil.composePostageId(item);;

@@ -134,7 +134,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 				this.benefitRate);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
-		obj.num = "9999";
+		obj.num = "999";
 
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);

@@ -116,7 +116,7 @@ public class MontbellKidsBabyBaobeiProducer extends BaseBaobeiProducer{
         obj.price = MontBellUtil.convertToCNYNoneEMSFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "999";
 		
         // 邮费模版ID
         obj.postage_id = "7908392660";
@@ -343,7 +343,7 @@ public class MontbellKidsBabyBaobeiProducer extends BaseBaobeiProducer{
 			if (i >= taobaoColors.size())
 				break;
 			if (item.sizeList.isEmpty()) {
-				String num = "999";
+				String num = "99";
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";";
 			} else {

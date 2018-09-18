@@ -124,7 +124,7 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
         obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "999";
 		
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);
@@ -192,6 +192,22 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
         }else if("264000".equals(cateId)){
         	//ザックカバー
         	title += " 防水罩" ;
+
+        }else if("275000".equals(cateId)){
+        	//ポーチ 
+        	title += " 手提包" ;
+        }else if("283000".equals(cateId)||"282000".equals(cateId)){
+        	//トートバッグ
+        	title += " 背包" ;
+        }else if("281000".equals(cateId)){
+        	//トートバッグ
+        	title += " 腰包" ;
+        }else if("274000".equals(cateId)){
+        	//ポーチ 
+        	title += " 化妆包" ;
+        }else if("274100".equals(cateId)){
+        	//財布 
+        	title += " 钱包" ;
         }
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
@@ -225,7 +241,7 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
         for (int i = 0; i < item.colorList.size(); i++) {
             if(i>=taobaoColors.size())break;
 			if (item.sizeList.isEmpty()) {
-				String num = "999";
+				String num = "99";
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";";
 			}else{

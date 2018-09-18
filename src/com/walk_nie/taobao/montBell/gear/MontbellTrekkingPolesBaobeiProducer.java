@@ -117,7 +117,7 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
         //obj.price = item.priceCNY;
         // 宝贝数量
-        obj.num = "9999";
+        obj.num = "999";
 		
         // 邮费模版ID
         obj.postage_id = MontBellUtil.composePostageId(item);
@@ -206,7 +206,7 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         for (int i = 0; i < item.colorList.size(); i++) {
             if(i>=taobaoColors.size())break;
 			if (item.sizeList.isEmpty()) {
-				String num = "999";
+				String num = "99";
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";";
 			}else{

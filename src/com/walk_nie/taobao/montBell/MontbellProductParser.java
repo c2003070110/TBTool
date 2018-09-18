@@ -244,7 +244,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
 					.format(fileNameFmt, goodsObj.productId, i++);
 			try {
 				File picFile = TaobaoUtil.downloadPicture(picRoot, url,
-						picName, WebDriverUtil.watermark_montbell);
+						picName);
+							//, WebDriverUtil.watermark_montbell);
 				if (!goodsObj.dressOnPics.contains(picFile.getAbsolutePath())) {
 					goodsObj.dressOnPics.add(picFile.getAbsolutePath());
 				}
@@ -258,6 +259,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 	protected void screenshotProductDetailDesp(GoodsObject goodsObj)
 			throws ClientProtocolException, IOException {
 		String fileNameFmt = "detail_%s.png";
+		//String fileNameFmt = "detail_%s.jpg";
 		String fileName = String.format(fileNameFmt, goodsObj.productId);
 		File despFile = new File(MontBellUtil.rootPathName + "/"
 				+ goodsObj.cateogryObj.categoryId, fileName);
@@ -317,7 +319,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 						i++);
 
 				File picFile = TaobaoUtil.downloadPicture(
-						rootPath.getAbsolutePath(), url, picName);
+						rootPath.getAbsolutePath(), url, picName, WebDriverUtil.watermark_montbell);
 				goodsObj.sizeTipPics.add(picFile.getAbsolutePath());
 
 				SizeTipObject obj = new SizeTipObject();

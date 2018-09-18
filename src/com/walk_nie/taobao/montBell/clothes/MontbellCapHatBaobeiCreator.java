@@ -28,7 +28,7 @@ public class MontbellCapHatBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.05;
+		double benefitRate = 0.08;
 		MontbellCapHatBaobeiProducer db = new MontbellCapHatBaobeiProducer();
 		db
                 .addScanCategory("103000") //  防寒キャップ/ハット/耳あて
