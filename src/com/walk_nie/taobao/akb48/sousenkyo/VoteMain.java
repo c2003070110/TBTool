@@ -85,10 +85,10 @@ public class VoteMain {
 		}
 
 		FirefoxOptions opts = new FirefoxOptions().setLogLevel(Level.OFF);
-		DesiredCapabilities capabilities = opts.addTo(DesiredCapabilities
-				.firefox());
-		capabilities.setCapability("marionette", true);
-		WebDriver driver = new FirefoxDriver(capabilities);
+		//DesiredCapabilities capabilities = opts.addTo(DesiredCapabilities
+		//		.firefox());
+		//capabilities.setCapability("marionette", true);
+		WebDriver driver = new FirefoxDriver();
 		driver.manage().window().setPosition(new Point(10, 10));
 		driver.manage().window().setSize(new Dimension(540, 860));
 		// driver.manage().window().maximize() ;

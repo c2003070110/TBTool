@@ -49,8 +49,8 @@ public class MontbellSizeGetor  {
 	}
 	protected static void screenShot() throws ClientProtocolException, IOException {
 
-		FirefoxProfile profile = new FirefoxProfile(new File("C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/nu29zmti.default"));
-		WebDriver driver = new FirefoxDriver(profile);
+		//FirefoxProfile profile = new FirefoxProfile(new File("C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/nu29zmti.default"));
+		WebDriver driver = new FirefoxDriver();
 		
 		String url = "http://webshop.montbell.jp/goods/disp.php?product_id=1128531";
 		driver.get(url);

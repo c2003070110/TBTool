@@ -68,22 +68,23 @@ public class VerifyPan {
 				} catch (Exception e) {
 				}
 				WebDriverWait wait1 = new WebDriverWait(driver,3);
-				wait1.until(new ExpectedCondition<Boolean>(){
-					@Override
-					public Boolean apply(WebDriver driver) {
-						while (true){
-							try {
-								String title = driver.findElement(By
-										.cssSelector("h2[class=\"file-name\"]")).getAttribute("title");
-								if(title.toLowerCase().endsWith(".JPG".toLowerCase())){
-									return true;
-								}
-							} catch (Exception e) {
-
-							}
-						}
-					}
-				});
+				//wait1.until(
+//				wait1.until(new ExpectedCondition<Boolean>(){
+//					@Override
+//					public Boolean apply(WebDriver driver) {
+//						while (true){
+//							try {
+//								String title = driver.findElement(By
+//										.cssSelector("h2[class=\"file-name\"]")).getAttribute("title");
+//								if(title.toLowerCase().endsWith(".JPG".toLowerCase())){
+//									return true;
+//								}
+//							} catch (Exception e) {
+//
+//							}
+//						}
+//					}
+//				});
 				mysleep(2);
 				WebElement el = driver.findElement(By
 						.cssSelector("h2[class=\"file-name\"]"));
