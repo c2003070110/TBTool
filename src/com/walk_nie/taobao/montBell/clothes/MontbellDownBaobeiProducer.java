@@ -250,7 +250,7 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer{
 			if (i >= taobaoColors.size())
 				break;
 			if (item.sizeList.isEmpty()) {
-				String num = "999";
+				String num = "99";
 				skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 						+ taobaoColors.get(i) + ";";
 			} else {
