@@ -32,7 +32,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 	}
 	private List<String> taobaoSizes = Lists.newArrayList();
 	{
-		// XS,S,M,L,XL,XXL,
+		// xxCM,
 		taobaoSizes.add("44886");taobaoSizes.add("33263");taobaoSizes.add("44887");
 		taobaoSizes.add("33264");taobaoSizes.add("44888");taobaoSizes.add("33265");
 		taobaoSizes.add("44889");taobaoSizes.add("669");taobaoSizes.add("44890");

@@ -7,7 +7,7 @@ import java.util.List;
 import com.walk_nie.taobao.kakaku.explore.earphone.EarphoneBaobeiProducer;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
-import com.walk_nie.taobao.yonex.badminton.YonexBadBaobeiProducer;
+import com.walk_nie.taobao.yonex.YonexBaobeiProducer;
 
 
 public class BaobeiUpdator {
@@ -48,7 +48,7 @@ public class BaobeiUpdator {
 
         String outputFile = "out/yonex_baobei-upd_%s.csv";
         
-        YonexBadBaobeiProducer producer = new YonexBadBaobeiProducer();
+        YonexBaobeiProducer producer = new YonexBaobeiProducer();
         producer
             .setToUpdateBaobeiList(baobeiList)
             

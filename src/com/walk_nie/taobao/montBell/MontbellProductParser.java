@@ -13,8 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
-import org.eclipse.jetty.util.StringUtil;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -22,7 +21,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
@@ -221,7 +220,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 	}
 
 	private void processProductDressOnPicture(GoodsObject goodsObj,
-			Element mainLeftEle) throws ClientProtocolException, IOException {
+			Element mainLeftEle) throws IOException {
 		Elements hiddEles = mainLeftEle.select("div.img_hidden");
 		if (hiddEles.isEmpty())
 			return;
@@ -257,7 +256,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 	}
 
 	protected void screenshotProductDetailDesp(GoodsObject goodsObj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		String fileNameFmt = "detail_%s.png";
 		//String fileNameFmt = "detail_%s.jpg";
 		String fileName = String.format(fileNameFmt, goodsObj.productId);
@@ -289,7 +288,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 	}
 
 	protected void processProductSizeTable(GoodsObject goodsObj, Element rootEl)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		List<SizeTipObject> sizeTips = getExistedSizeTips(goodsObj);
 		if (sizeTips != null && !sizeTips.isEmpty()) {
 			for (SizeTipObject sizeTip : sizeTips) {
@@ -434,7 +433,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 	// }
 
 	private void scanEnglishByCategory(CategoryObject categoryObj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		String cateogryUrl = MontBellUtil.categoryUrlPrefix_fo_en
 				+ categoryObj.categoryId;
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);

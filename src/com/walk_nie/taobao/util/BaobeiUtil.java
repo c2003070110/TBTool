@@ -14,7 +14,7 @@ import com.walk_nie.taobao.object.BaobeiPublishObject;
 
 public class BaobeiUtil {
     
-    public static List<BaobeiPublishObject> readInPublishedBaobei(File publishedBaobeiFile) throws IOException {
+    public static List<BaobeiPublishObject> readInPublishedBaobei(File publishedBaobeiFile) {
         List<BaobeiPublishObject> baobeiList = new ArrayList<BaobeiPublishObject>();
         BufferedReader br = null;
         try {
@@ -47,7 +47,11 @@ public class BaobeiUtil {
         	System.out.println("[ERROR]readInPublishedBaobei.BUT continue...");
         } finally {
             if (br != null)
-                br.close();
+				try {
+					br.close();
+				} catch (IOException e) {
+		        	System.err.println(e.getMessage());
+				}
         }
 //        for(BaobeiPublishObject obj :baobeiList){
 //        	System.out.println(obj.title+"\t"+obj.outer_id);

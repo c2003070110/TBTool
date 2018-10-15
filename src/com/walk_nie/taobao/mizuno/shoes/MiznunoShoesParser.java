@@ -13,11 +13,17 @@ import com.beust.jcommander.internal.Lists;
 public class MiznunoShoesParser {
     
     private String urlPrefix = "http://www.asics.com/";
+    
+    public MizunoShoesObject parseProductByProductUrl(String prodUrl) {
+        MizunoShoesObject prodObj = new MizunoShoesObject();
+        prodObj.prodUrl = prodUrl;
+        parseProduct(prodObj);
+    	return prodObj;
+    }
 
-    public List<MizunoShoesObject> parse(){
+    public List<MizunoShoesObject> parseProductByCategoryUrl(String categoryUrl){
         List<MizunoShoesObject> prodList = Lists.newArrayList();
-        String url = "";
-        parseCategory(prodList,url);
+        parseCategory(prodList,categoryUrl);
         
         parseProducts(prodList);
         
@@ -27,8 +33,8 @@ public class MiznunoShoesParser {
         
         return prodList;
     }
-    private void parseCategory(List<MizunoShoesObject> prodList, String url) {
-        Document doc = getDocument(url);
+    private void parseCategory(List<MizunoShoesObject> prodList, String categoryUrl) {
+        Document doc = getDocument(categoryUrl);
         Elements prodEls = doc.select("div#main").select("div.compo_item-list_cmn _disp").select("div.list");
         for(Element rootEl :prodEls){
             MizunoShoesObject prodObj = new MizunoShoesObject();
