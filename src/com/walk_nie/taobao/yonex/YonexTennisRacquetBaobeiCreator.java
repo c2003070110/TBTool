@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.yonex.badminton;
+package com.walk_nie.taobao.yonex;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class YonexTennisRacquetBaobeiCreator  {
 
 		//String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
 		//String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
-		String outputFile = "out/yonex_badmin_racquet_baobei_%s.csv";
+		String outputFile = "out/yonex_tennis_racquet_baobei_%s.csv";
 
 		YonexBaobeiProducer db = new YonexBaobeiProducer();
 		db

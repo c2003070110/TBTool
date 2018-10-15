@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.yonex.badminton;
+package com.walk_nie.taobao.yonex;
 
 import java.io.File;
 import java.io.IOException;

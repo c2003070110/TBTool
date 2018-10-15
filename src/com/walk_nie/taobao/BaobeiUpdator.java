@@ -7,7 +7,7 @@ import java.util.List;
 import com.walk_nie.taobao.kakaku.explore.earphone.EarphoneBaobeiProducer;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
-import com.walk_nie.taobao.yonex.badminton.YonexBaobeiProducer;
+import com.walk_nie.taobao.yonex.YonexBaobeiProducer;
 
 
 public class BaobeiUpdator {
