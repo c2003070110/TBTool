@@ -1,34 +1,34 @@
 package com.walk_nie.taobao.yonex.badminton;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
-import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
+import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
+public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
-	private String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
+	//private String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
 	private String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
 	
 	private File priceFile =  new File("res/YonexCNYPrice.txt");
 	private List<String> priceList = Lists.newArrayList();
+	// 1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
+	private int categoryType = 0;
 	
 	public void process() {
 		BufferedWriter priceBw = null;
@@ -37,7 +37,8 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 			if(priceFile.exists()){
 				priceList = Files.readLines(priceFile, Charset.forName("UTF-8"));
 			}
-			List<GoodsObject> itemIdList = ((YonexBadProductParser)getParser()).scanItem();
+			List<GoodsObject> itemIdList = ((YonexProductParser) getParser()).setCategoryType(categoryType)
+					.scanItem();
 			if (itemIdList.isEmpty())
 				return;
 			String outFilePathPrice = String.format(outputFile, DateUtils
@@ -62,7 +63,7 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 				}
 				writeOut(priceBw, obj);
 			}
-			Files.write(sbProduct.toString(), new File("res/YonexProduct.txt"), Charset.forName("UTF-8"));
+			FileUtils.writeStringToFile(new File("res/YonexProduct.txt"), sbProduct.toString(),Charset.forName("UTF-8"));
 			System.out.println("-------- FINISH--------");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -80,8 +81,7 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 		for(String picUrl : goods.pictureList){
 			try{
 				String picName = "yonex_" + goods.kataban+"_" +i ;
-				// TODO un comment it out
-				//TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+				TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
 				goods.pictureNameList.add(picName);
 				i++;
 			} catch (Exception ex) { 
@@ -90,48 +90,15 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 	}
 	protected void writeOut(BufferedWriter priceBw, GoodsObject item)
 			throws Exception {
-		BaobeiPublishObject baobeiTemplate = readTemplateObjectIn(item);
-		priceBw.write(composeBaobeiLine(item, baobeiTemplate));
+		priceBw.write(composeBaobeiLine(item));
 		priceBw.flush();
 	}
-	private BaobeiPublishObject readTemplateObjectIn(GoodsObject item) throws IOException {
-		if(item.isUpdate){
-			for(BaobeiPublishObject obj:this.toUpdatebaobeiList){
-				if(obj.outer_id.equals(item.kataban)){
-					return obj;
-				}
-			}
-		}
-		BaobeiPublishObject baobeiTemplate = new BaobeiPublishObject();
-		BufferedReader br = null;
-		try {
-			File file = new File(taobeiTemplateFile);
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					file), "UTF-16"));
-			String str = null;
-			while ((str = br.readLine()) != null) {
-				if (!StringUtil.isBlank(str) && !str.startsWith("#")) {
-					baobeiTemplate = TaobaoUtil.readBaobeiIn(str);
-				}
-			}
-		} finally {
-			if (br != null)
-				br.close();
-		}
-		return baobeiTemplate;
-	}
-	protected String composeBaobeiLine(GoodsObject item,BaobeiPublishObject baobeiTemplate) throws Exception {
-		BaobeiPublishObject obj = TaobaoUtil.copyTaobaoTemplate(baobeiTemplate);
-
-		if(item.isUpdate){
-			// 宝贝价格
-			obj.price = findPrice(item);
-			// 宝贝类目;
-			obj.cid = composeBaobeiCId(item);
-			// 宝贝描述
-			obj.description = composeBaobeiMiaoshu(item);
-			return TaobaoUtil.composeTaobaoLine(obj);
-		}
+	
+	protected String composeBaobeiLine(GoodsObject item) throws Exception {
+		
+        BaobeiPublishObject obj = new BaobeiPublishObject();
+        BaobeiUtil.setBaobeiCommonInfo(obj);
+        
 		// 宝贝名称
 		obj.title = composeBaobeiTitle(item);
 		// 宝贝类目;
@@ -141,12 +108,12 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝价格
 		obj.price = findPrice(item);
 		// 宝贝数量
-		obj.num = "9999";
+		obj.num = "99";
 		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
 		// 商家编码
-		obj.outer_id = item.kataban;
-		String[] picProp = composeBaobeiPropPicture(item, baobeiTemplate);
+		obj.outer_id = "YONEX_" + item.kataban;
+		String[] picProp = composeBaobeiPropPicture(item);
 		// 图片状态
 		obj.picture_status = picProp[0];
 		// 新图片
@@ -212,8 +179,7 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 //		}
 		return title + "\"";
 	}
-	private String[] composeBaobeiPropPicture(GoodsObject item,
-			BaobeiPublishObject baobeiTemplate) {
+	private String[] composeBaobeiPropPicture(GoodsObject item) {
 		String picSts = "";
 		String pics = "";
 		for(int i=0;i<item.pictureNameList.size();i++){
@@ -250,57 +216,47 @@ public class YonexBadBaobeiProducer extends BaseBaobeiProducer {
 		return new String[]{"\""+cateProps+"\"","\""+skuProps+"\"" ,"\""+propAlias+"\"" };
 	}
 	
-	protected  String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
-		StringBuffer sb = new StringBuffer();
-		BufferedReader br = null;
-		try {
-			File file = new File(getMiaoshuTemplateFile());
-			String str = null;
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(
-					file), "UTF-8"));
-			while ((str = br.readLine()) != null) {
-				sb.append(str);
-			}
-		} finally {
-			if (br != null)
-				br.close();
-		}
-		String productInfo = item.detailDisp;
-		if(productInfo == null){
-			productInfo = "";
-		}
-		String desp = sb.toString().replace("$detail_disp$", productInfo);
-		desp = desp.replaceAll("\"", "\"\"");
-		return "\"" + desp + "\"";
-	}
-	
-	public YonexBadBaobeiProducer setTaobeiTemplateFile(String taobeiTemplateFile) {
-		this.taobeiTemplateFile = taobeiTemplateFile;
-		return this;
+	protected String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
+		StringBuffer detailSB = new StringBuffer();
+
+        // 包邮 TAX
+		// 宝贝描述
+		detailSB.append("");
+		// 尺寸描述
+		detailSB.append("");
+		// chanpin teshe!
+		detailSB.append(getSeriesSpec(item));
+		//　zhi you
+		detailSB.append(BaobeiUtil.getExtraMiaoshu());
+		return "\"" + detailSB.toString() + "\"";
 	}
 
-//	public YonexBadBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-//		this.publishedBaobeiFile = publishedBaobeiFile;
-//		return this;
-//	}
-
-	public YonexBadBaobeiProducer setMiaoshuTemplateFile(
-			String miaoshuTemplateFile) {
-		this.miaoshuTemplateFile = miaoshuTemplateFile;
-		return this;
+	private Object getSeriesSpec(GoodsObject item) {
+		// TODO 自動生成されたメソッド・スタブ
+        StringBuffer miaoshu = new StringBuffer();
+        miaoshu.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">购物须知</h3>");
+        miaoshu.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+        miaoshu.append("<ol>");
+        miaoshu.append("<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">产地：</span>日本产的非常少。大多数是东南亚和中国制造。<p>大家都知道的。<span style=\";color:red;font-weight:bold\">就算是同条生产线，面向日本本土，要比其他国家的质量要好很多。</span></p></li>");
+        miaoshu.append("</ol>");
+        miaoshu.append("</div>");
+        return miaoshu.toString();
 	}
-
 	public String getMiaoshuTemplateFile() {
 		return this.miaoshuTemplateFile;
 	}
 
-	public YonexBadBaobeiProducer setOutputFile(String outputFile) {
+	public YonexBaobeiProducer setOutputFile(String outputFile) {
 		this.outputFile = outputFile;
+		return this;
+	}
+	public YonexBaobeiProducer setCategoryType(int categoryType){
+		this.categoryType = categoryType;
 		return this;
 	}
 	@Override
 	public BaseBaobeiParser getParser() {
-		return new YonexBadProductParser();
+		return new YonexProductParser();
 	}
 
 }

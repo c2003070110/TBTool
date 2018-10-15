@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class YonexBadProductParser extends BaseBaobeiParser {
+public class YonexProductParser extends BaseBaobeiParser {
 	
 	String urlPrefix = "http://www.yonex.co.jp";
 	
@@ -22,29 +22,44 @@ public class YonexBadProductParser extends BaseBaobeiParser {
 	
 	public List<GoodsObject> scanItem() throws IOException {
 		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
+		if (categoryType == 1) {
+			String url = "http://www.yonex.co.jp/badminton/racquets/";
+			categoryType = 1;
+			List<GoodsObject> list = scanRacquets(url);
+			goodsList.addAll(list);
+		} else if (categoryType == 2) {
+			String url = "http://www.yonex.co.jp/badminton/shoes/";
+			List<GoodsObject> list = scanRacquets(url);
+			goodsList.addAll(list);
+		} else if (categoryType == 3) {
+			String url = "http://www.yonex.co.jp/tennis/racquets/";
+			List<GoodsObject> list = scanRacquets(url);
+			goodsList.addAll(list);
+		} else if (categoryType == 4) {
+			String url = "http://www.yonex.co.jp/tennis/shoes/";
+			List<GoodsObject> list = scanRacquets(url);
+			goodsList.addAll(list);
+		} else {
+			String url = "http://www.yonex.co.jp/badminton/racquets/";
+			categoryType = 1;
+			List<GoodsObject> list = scanRacquets(url);
+			goodsList.addAll(list);
 
-		String url = "http://www.yonex.co.jp/badminton/racquets/";
-		categoryType = 1;
-		List<GoodsObject> list = scanRacquets(url);
-		goodsList.addAll(list);
+			url = "http://www.yonex.co.jp/badminton/shoes/";
+			categoryType = 2;
+			list = scanRacquets(url);
+			goodsList.addAll(list);
 
-		url = "http://www.yonex.co.jp/badminton/shoes/";
-		categoryType = 2;
-		list = scanRacquets(url);
-		goodsList.addAll(list);
-		
-		url = "http://www.yonex.co.jp/tennis/racquets/";
-		categoryType = 3;
-		list = scanRacquets(url);
-		goodsList.addAll(list);
-		
-		url = "http://www.yonex.co.jp/tennis/shoes/";
-		categoryType = 4;
-		list = scanRacquets(url);
-		goodsList.addAll(list);
-		
-		// List<GoodsObject> goodsList = scanStrings();
+			url = "http://www.yonex.co.jp/tennis/racquets/";
+			categoryType = 3;
+			list = scanRacquets(url);
+			goodsList.addAll(list);
 
+			url = "http://www.yonex.co.jp/tennis/shoes/";
+			categoryType = 4;
+			list = scanRacquets(url);
+			goodsList.addAll(list);
+		}
 		return goodsList;
 	}
 	protected List<GoodsObject> scanRacquets(String url) throws ClientProtocolException, IOException{
@@ -187,4 +202,8 @@ public class YonexBadProductParser extends BaseBaobeiParser {
 		//return "羽毛球线羽线/" + goodsObj.kataban + "/" + goodsObj.titleEN;
 	}
 
+	public YonexProductParser setCategoryType(int categoryType){
+		this.categoryType = categoryType;
+		return this;
+	}
 }

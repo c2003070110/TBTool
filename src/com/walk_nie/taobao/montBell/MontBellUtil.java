@@ -171,6 +171,13 @@ public class MontBellUtil {
 		return "13464398120";
 	}
 
+	public static String composeOuter_id(GoodsObject item) {
+		if (item.cateogryObj.categoryId == null || "".equals(item.cateogryObj.categoryId)) {
+			return "MTBL_" + item.productId;
+		}
+		return "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
+	}
+
 	public static String convertToCNYWithEmsFee(GoodsObject item,
 			double curencyRate, double benefitRate) {
 		if (item.titleEn != null && !"".equals(item.titleEn)) {

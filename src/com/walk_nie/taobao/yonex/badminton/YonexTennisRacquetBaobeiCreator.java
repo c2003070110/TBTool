@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.apache.http.client.ClientProtocolException;
 
-public class YonexBadminRacquetBaobeiCreator  {
+public class YonexTennisRacquetBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
@@ -16,7 +16,7 @@ public class YonexBadminRacquetBaobeiCreator  {
 		YonexBaobeiProducer db = new YonexBaobeiProducer();
 		db
 				.setOutputFile(outputFile)
-				.setCategoryType(1)
+				.setCategoryType(3)
 				.process();
 
 		System.exit(0);
