@@ -482,44 +482,17 @@ public class MontBellUtil {
     }
 
     public static void composeBaobeiPictureStatus(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors ) {
-        String picStatus = "";
-        // picture_status 图片状态：2;2;2;2;2;2;2;2;2;2;
-        // 宝贝主图 main picture
-        for(int i=0;i<item.pictureNameList.size();i++){
-            if(i==5) break;
-            picStatus +="2;";
-        }
-		int maxColorLen =  Math.min(item.colorList.size(), taobaoColors.size());
-        // 销售属性图片
-        for (int i = 0; i < maxColorLen; i++) {
-            if(item.pictureNameList.size() == item.colorList.size()){
-                // color picture
-                picStatus +="2;";
-            }
-        }
+        
+		String picStatus = TaobaoUtil.composeBaobeiPictureStatus(item.colorList, item.pictureNameList, taobaoColors);
+
         obj.picture_status ="\"" + picStatus + "\""  ;
     }
 
     public static void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors) {
-        String picture = "";
-        // picture　新图片：1128533_dkfs:1:0:|;1128533_mst:1:1:|;1128533_scl:1:2:|;1128533_tq:1:3:|;1128533_umr:1:4:|;1128533_dkfs:2:0:1627207:28320|;1128533_mst:2:0:1627207:28340|;1128533_scl:2:0:1627207:3232479|;1128533_tq:2:0:1627207:3232478|;1128533_umr:2:0:1627207:3232482|;
-        // 宝贝主图 main picture
-        for(int i=0;i<item.pictureNameList.size();i++){
-            if(i==5) break;
-            picture += item.pictureNameList.get(i) + ":1:" + i +":|;";
-        }
-		int maxColorLen =  Math.min(item.colorList.size(), taobaoColors.size());
-        // 销售属性图片
-        for (int i = 0; i < maxColorLen; i++) {
-            if(item.pictureNameList.size() == item.colorList.size()){
-                // color picture
-                picture += item.pictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) +"|;";
-            }
-        }
+        String picture = TaobaoUtil.composeBaobeiPicture(item.colorList, item.pictureNameList, taobaoColors);;
 
         obj.picture = "\"" + picture + "\"" ;
     }
-
 
     public static  void composeBaobeiTaobaoCategory(GoodsObject item,
             BaobeiPublishObject baobei) {

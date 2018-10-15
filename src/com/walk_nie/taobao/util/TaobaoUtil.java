@@ -32,7 +32,7 @@ public class TaobaoUtil {
     public static String FILE_NAME_SEPERATOR =";;;";
     
 	public static Document urlToDocumentByUTF8(String url)
-			throws ClientProtocolException, IOException {
+			throws IOException {
 		return TaobaoUtil.urlToDocument(url, "UTF-8");
 	}
 
@@ -1030,4 +1030,124 @@ public class TaobaoUtil {
             Files.copy(from, to);
         }
     }
+
+	public static String composeBaobeiPictureStatus(List<String> baobeiColorList, List<String> baobeiPictureNameList,
+			List<String> taobaoColors) {
+
+		String picStatus = "";
+		// picture_status 图片状态：2;2;2;2;2;2;2;2;2;2;
+		// 宝贝主图 main picture
+		for (int i = 0; i < baobeiPictureNameList.size(); i++) {
+			if (i == 5)
+				break;
+			picStatus += "2;";
+		}
+		int maxColorLen = Math.min(baobeiColorList.size(), taobaoColors.size());
+		// 销售属性图片
+		for (int i = 0; i < maxColorLen; i++) {
+			if (baobeiPictureNameList.size() == baobeiColorList.size()) {
+				// color picture
+				picStatus += "2;";
+			}
+		}
+		return picStatus;
+	}
+
+	public static String composeBaobeiPicture(List<String> baobeiColorList, List<String> baobeiPictureNameList,
+			List<String> taobaoColors) {
+		String picture = "";
+		// picture
+		// 新图片：1128533_dkfs:1:0:|;1128533_mst:1:1:|;1128533_scl:1:2:|;1128533_tq:1:3:|;1128533_umr:1:4:|;1128533_dkfs:2:0:1627207:28320|;1128533_mst:2:0:1627207:28340|;1128533_scl:2:0:1627207:3232479|;1128533_tq:2:0:1627207:3232478|;1128533_umr:2:0:1627207:3232482|;
+		// 宝贝主图 main picture
+		for (int i = 0; i < baobeiPictureNameList.size(); i++) {
+			if (i == 5)
+				break;
+			picture += baobeiPictureNameList.get(i) + ":1:" + i + ":|;";
+		}
+		int maxColorLen = Math.min(baobeiColorList.size(), taobaoColors.size());
+		// 销售属性图片
+		for (int i = 0; i < maxColorLen; i++) {
+			if (baobeiPictureNameList.size() == baobeiColorList.size()) {
+				// color picture
+				picture += baobeiPictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) + "|;";
+			}
+		}
+
+		return picture;
+	}
+
+	public static String composeBaobeiPropAlias(List<String> baobeiSizesList, List<String> taobaoSizes) {
+		String propAlias = "";
+		// 销售属性别名
+		for (int i = 0; i < baobeiSizesList.size(); i++) {
+			if (i >= taobaoSizes.size())
+				break;
+			propAlias += "20509:" + taobaoSizes.get(i) + ":" + baobeiSizesList.get(i) + ";";
+		}
+
+		return propAlias;
+	}
+
+	public static String composeBaobeiInputCustomCpv(List<String> baobeiColorList, List<String> taobaoColors) {
+		String inputCustomCpv = "";
+		// 自定义属性值
+		for (int i = 0; i < baobeiColorList.size(); i++) {
+			if (i >= taobaoColors.size())
+				break;
+			// 1627207:-1001:color1;
+			inputCustomCpv += "1627207:" + taobaoColors.get(i) + ":" + baobeiColorList.get(i) + ";";
+		}
+		return inputCustomCpv;
+	}
+
+	public static String composeBaobeiInputValues(List<String> baobeiColorList, List<String> taobaoColors) {
+		String inputValues = "";
+		for (int i = 0; i < baobeiColorList.size(); i++) {
+			if (i >= taobaoColors.size())
+				break;
+			inputValues += baobeiColorList.get(i) + ";颜色分类;";
+		}
+		return inputValues;
+	}
+
+	public static String composeBaobeiCateProps(List<String> baobeiColorList, List<String> baobeiSizeList,
+			List<String> taobaoColors, List<String> taobaoSizes) {
+		String cateProps = "";
+		// 宝贝属性
+		for (int i = 0; i < baobeiColorList.size(); i++) {
+			if (i >= taobaoColors.size())
+				break;
+			cateProps += "1627207:" + taobaoColors.get(i) + ";";
+		}
+		for (int i = 0; i < baobeiSizeList.size(); i++) {
+			if (i >= taobaoSizes.size())
+				break;
+			cateProps += "20509:" + taobaoSizes.get(i) + ";";
+		}
+		return cateProps;
+	}
+
+	public static String composeBaobeiSkuProps(List<String> baobeiColorList, List<String> baobeiSizeList,
+			List<String> taobaoColors, List<String> taobaoSizes, String price) {
+		// skuProps
+		// 销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
+		String skuProps = "";
+		for (int i = 0; i < baobeiColorList.size(); i++) {
+			if (i >= taobaoColors.size())
+				break;
+			if (baobeiSizeList.isEmpty()) {
+				String num = "99";
+				skuProps += price + ":" + num + ":" + ":1627207" + ":" + taobaoColors.get(i) + ";";
+			} else {
+				for (int j = 0; j < baobeiSizeList.size(); j++) {
+					if (j >= taobaoSizes.size())
+						break;
+					String num = "99";
+					skuProps += price + ":" + num + ":" + ":1627207" + ":" + taobaoColors.get(i) + ";20509:"
+							+ taobaoSizes.get(j) + ";";
+				}
+			}
+		}
+		return skuProps;
+	}
 }

@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
@@ -23,12 +22,26 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
 	//private String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
-	private String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
+	//private String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
 	
-	private File priceFile =  new File("res/YonexCNYPrice.txt");
+	private File priceFile =  new File(YonexUtil.priceListFile);
 	private List<String> priceList = Lists.newArrayList();
-	// 1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
-	private int categoryType = 0;
+	// 0:all;1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
+	private int categoryType = 0;    
+	private List<String> taobaoColors = Lists.newArrayList();
+    {
+        taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");
+        taobaoColors.add("-1004");taobaoColors.add("-1005");taobaoColors.add("-1006");
+        taobaoColors.add("-1007");taobaoColors.add("-1008");taobaoColors.add("-1009");
+        taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
+    }
+
+    private List<String> taobaoSizes = Lists.newArrayList();
+    {
+    	 // XS,S,M,L,XL,XXL,
+        taobaoSizes.add("28313");taobaoSizes.add("28314");taobaoSizes.add("28315");
+        taobaoSizes.add("28316");taobaoSizes.add("28317");taobaoSizes.add("28318");
+    }
 	
 	public void process() {
 		BufferedWriter priceBw = null;
@@ -50,20 +63,10 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
-			StringBuffer sbProduct = new StringBuffer();
 			for (GoodsObject obj : itemIdList) {
-				for (BaobeiPublishObject taobao : this.toUpdatebaobeiList) {
-					if (taobao.outer_id.equals(obj.kataban)) {
-						obj.isUpdate = true;
-					}
-				}
-				sbProduct.append(obj.title + "\t" + obj.kataban + "\n");
-				if (!obj.isUpdate) {
-					downloadPicture(obj, picFolder);
-				}
+				downloadPicture(obj, picFolder);
 				writeOut(priceBw, obj);
 			}
-			FileUtils.writeStringToFile(new File("res/YonexProduct.txt"), sbProduct.toString(),Charset.forName("UTF-8"));
 			System.out.println("-------- FINISH--------");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -100,120 +103,123 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
         BaobeiUtil.setBaobeiCommonInfo(obj);
         
 		// 宝贝名称
-		obj.title = composeBaobeiTitle(item);
+		composeBaobeiTitle(item, obj);
 		// 宝贝类目;
-		obj.cid = composeBaobeiCId(item);
+		composeBaobeiCId(item, obj);
 		// 店铺类目;
-		obj.seller_cids = composeBaobeiSellerCids(item);
+		composeBaobeiSellerCids(item, obj);
+        // 省
+        obj.location_state = "\"日本\"";
 		// 宝贝价格
-		obj.price = findPrice(item);
+		findPrice(item,obj);
 		// 宝贝数量
 		obj.num = "99";
+        // 邮费模版ID
+        obj.postage_id = "// TODO";
+        // 用户输入ID串;
+		//obj.inputPids = "\"13021751,6103476,1627207\"";
+		// 用户输入名-值对
+		obj.inputValues = "\"" + TaobaoUtil.composeBaobeiInputValues(item.colorList, taobaoColors) + "\"";
 		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
+        // 宝贝属性
+        obj.cateProps ="\"" + TaobaoUtil.composeBaobeiCateProps(item.colorList, item.sizeList,taobaoColors,taobaoSizes) + "\"";
+		// 销售属性组合
+		obj.skuProps = "\""
+				+ TaobaoUtil.composeBaobeiSkuProps(item.colorList, item.sizeList, taobaoColors, taobaoSizes, obj.price)
+				+ "\"";
 		// 商家编码
 		obj.outer_id = "YONEX_" + item.kataban;
-		String[] picProp = composeBaobeiPropPicture(item);
+		// 销售属性别名
+		obj.propAlias = "\"" + TaobaoUtil.composeBaobeiPropAlias(item.sizeList, taobaoSizes) + "\"";
 		// 图片状态
-		obj.picture_status = picProp[0];
+		obj.picture_status = "\"" + TaobaoUtil.composeBaobeiPictureStatus(item.colorList, item.pictureNameList, taobaoColors) + "\"";
 		// 新图片
-		obj.picture = picProp[1];
-		// 宝贝卖点
-		obj.subtitle = composeBaobeiSubtitle(item);
+		obj.picture = "\"" + TaobaoUtil.composeBaobeiPictureStatus(item.colorList, item.pictureNameList, taobaoColors) + "\"";
+        // 自定义属性值
+		obj.input_custom_cpv = "\"" + TaobaoUtil.composeBaobeiInputCustomCpv(item.colorList, taobaoColors) + "\"";
+        // 宝贝卖点
+        composeBaobeiSubtitle(item, obj);
 		
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
-
-	private String composeBaobeiSellerCids(GoodsObject item) {
+	private void composeBaobeiSellerCids(GoodsObject item, BaobeiPublishObject obj) {
+		String cid = "";
 		if(item.categoryType == 1){
 			// "羽毛球拍"
-			return "1184433503";
+			cid = "1184433503";
 		}else if(item.categoryType == 2){
 			// "羽毛球鞋/"
-			return "1184433505";
+			cid = "1184433505";
 		}else if(item.categoryType == 3){
 			// 网球球拍
-			return "1184433506";
+			cid = "1184433506";
 		}else if(item.categoryType == 4){
 			//网球鞋
-			return "1184433507";
+			cid = "1184433507";
 		}else {
-			return "";
+			cid = "";
 		}
+		obj.seller_cids = cid;
 	}
-	private String composeBaobeiCId(GoodsObject item) {
+	private void composeBaobeiCId(GoodsObject item, BaobeiPublishObject obj) {
+		String cid = "";
 		if(item.categoryType == 1){
 			// "羽毛球拍"
-			return "50012323";
+			cid = "50012323";
 		}else if(item.categoryType == 2){
 			// "羽毛球鞋/"
-			return "50012331";
+			cid = "50012331";
 		}else if(item.categoryType == 3){
 			// 网球球拍
-			return "50012323";
+			cid = "50012323";
 		}else if(item.categoryType == 4){
 			//网球鞋
-			return "50012037";
+			cid = "50012037";
 		}else {
-			return "";
+			cid = "";
 		}
+		obj.cid = cid;
 	}
-	private String findPrice(GoodsObject item) {
+	private void findPrice(GoodsObject item, BaobeiPublishObject obj) {
+		String price = "";
 		for(String line : priceList){
 			String[] spl = line.split("\t");
 			if(item.kataban.equals(spl[1])){
-				return spl[2].replaceAll(",","");
+				price = spl[2].replaceAll(",","");
+				break;
 			}
 		}
-		return "XXX";
+		obj.price = price;
 	}
-	private String composeBaobeiSubtitle(GoodsObject item) {
-		return "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleJP + "!" + item.kataban + "!" + "\"";
+	private void composeBaobeiSubtitle(GoodsObject item, BaobeiPublishObject obj) {
+		String title = "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleJP + "!" + item.kataban;
+		obj.subtitle = "\"" + title + "\"";
 	}
-	private String composeBaobeiTitle(GoodsObject item) {
-		String title = "\"日本直邮 Yonex/尤尼克斯";
-		title += " " + item.title;
-//		String suffix = "/包邮";
-//		if (title.length() + suffix.length() < 60) {
-//			title += suffix;
-//		}
-		return title + "\"";
-	}
-	private String[] composeBaobeiPropPicture(GoodsObject item) {
-		String picSts = "";
-		String pics = "";
-		for(int i=0;i<item.pictureNameList.size();i++){
-			if(i==5) break;
-			pics += item.pictureNameList.get(i) + ":1:" + i +":|;";
-			picSts +="2;";
-		}
-		return new String[] { "\"" + picSts + "\"", "\"" + pics + "\"" };
+
+	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject obj) {
+		String title = "日本直邮 Yonex/尤尼克斯";
+		title += " " + translateTitle(item);
+		// String suffix = "/包邮";
+		// if (title.length() + suffix.length() < 60) {
+		// title += suffix;
+		// }
+		obj.title = "\"" + title + "\"";
 	}
 	
-	protected String[] composeBaobeiPropColor(GoodsObject item,
-			BaobeiPublishObject baobeiTemplate) {
-		List<String> taobaoColors = Lists.newArrayList();
-		taobaoColors.add("28320");taobaoColors.add("28340");taobaoColors.add("3232479");
-		taobaoColors.add("3232478");taobaoColors.add("3232482");taobaoColors.add("60092");
-		taobaoColors.add("30156");taobaoColors.add("28332");taobaoColors.add("90554");
-		taobaoColors.add("3232481");taobaoColors.add("3232484");taobaoColors.add("3232483");
-		int i = 0;
-		// 颜色值:28320 28324 28326 28327 28329 28332 28340 28338 28335
-		// 宝贝属性 -销售属性组合- 销售属性别名
-		String cateProps = "";String skuProps = "";String propAlias = "";
-		for(String color :item.colorList){
-			if(i>=taobaoColors.size())break;
-			// 宝贝属性格式  1627207:28320;
-			cateProps +="1627207:"+taobaoColors.get(i)+";";
-			// 销售属性组合格式 价格:数量:SKU:1627207:28320;
-			skuProps += item.price +":9999"+":"+":1627207"+":"+taobaoColors.get(i)+";20549:44911;";
-			// 销售属性别名格式 1627207:28320:颜色1;
-			//propAlias +="1627207:"+taobaoColors.get(i)+":" +Util.convertColor(color)+";";
-			propAlias += "1627207:" + taobaoColors.get(i) + ":" + color + ";";
-			i++;
+	private String translateTitle(GoodsObject goodsObj) {
+		if(goodsObj.categoryType == 1){
+			return "羽毛球拍/" + goodsObj.titleEN + "/" + goodsObj.kataban+ "/" + goodsObj.producePlace;
+		}else if(goodsObj.categoryType == 2){
+			return "羽毛球鞋/" + goodsObj.titleEN + "/" + goodsObj.kataban + "/" + goodsObj.producePlace;
+		}else if(goodsObj.categoryType == 3){
+			return "网球球拍/" + goodsObj.titleEN + "/" + goodsObj.kataban+ "/" + goodsObj.producePlace;
+		}else if(goodsObj.categoryType == 4){
+			return "网球鞋/" + goodsObj.titleEN + "/" + goodsObj.kataban + "/" + goodsObj.producePlace;
+		}else {
+			return "";
 		}
-		propAlias += "20549:44911:请留言;";
-		return new String[]{"\""+cateProps+"\"","\""+skuProps+"\"" ,"\""+propAlias+"\"" };
+		//return "羽毛球线羽线/" + goodsObj.kataban + "/" + goodsObj.titleEN;
 	}
 	
 	protected String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
@@ -241,9 +247,6 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
         miaoshu.append("</ol>");
         miaoshu.append("</div>");
         return miaoshu.toString();
-	}
-	public String getMiaoshuTemplateFile() {
-		return this.miaoshuTemplateFile;
 	}
 
 	public YonexBaobeiProducer setOutputFile(String outputFile) {

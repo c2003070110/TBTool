@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,11 +18,10 @@ public class YonexFindJPYPrice  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
-		String productFile = "res/YonexProduct.txt";
 		
 		String url = "http://search.rakuten.co.jp/search/inshop-mall/%s/-/sid.207677-st.A";
 		String outFmt = "%s\t%s\t%s\t%s\t";
-		List<String> productList = Files.readLines(new File(productFile), Charset.forName("UTF-8"));
+		List<String> productList = Files.readLines(new File(YonexUtil.productListFile), Charset.forName("UTF-8"));
 		StringBuffer sb = new StringBuffer();
 		for(String line : productList){
 			String[] spl = line.split("\t");
@@ -54,8 +54,7 @@ public class YonexFindJPYPrice  {
 			//System.out.println(rslt);
 			sb.append(rslt).append("\n");
 		}
-		Files.write(sb.toString(), new File("res/YonexJPYPrice.txt"), Charset.forName("UTF-8"));
-		
+		FileUtils.writeStringToFile(new File(YonexUtil.priceListFile), sb.toString(),Charset.forName("UTF-8"));
 	}
 
 	private static String replace(String o) {
