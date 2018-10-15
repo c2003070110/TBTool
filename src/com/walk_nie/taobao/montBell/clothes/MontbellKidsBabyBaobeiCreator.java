@@ -29,8 +29,8 @@ public class MontbellKidsBabyBaobeiCreator  {
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
 		//
-		double currencyRate = 0.060 + 0.010;
-		double benefitRate = 0.00;
+		double currencyRate = 0.062 + 0.005;
+		double benefitRate = 0.1;
 		MontbellKidsBabyBaobeiProducer db = new MontbellKidsBabyBaobeiProducer();
 		db
                 .addScanCategory("159000") //スノースポーツ（キッズ）

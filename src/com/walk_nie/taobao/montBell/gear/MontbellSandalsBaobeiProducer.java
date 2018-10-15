@@ -126,8 +126,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 		// 销售属性组合
 		composeBaobeiSkuProps(item, obj);
 		// 商家编码
-		obj.outer_id = "MTBL_" + item.cateogryObj.categoryId + "-"
-				+ item.productId;
+		obj.outer_id = MontBellUtil.composeOuter_id(item);
 		// 销售属性别名
 		composeBaobeiPropAlias(item, obj);
 		// 商品条形码
@@ -264,7 +263,6 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
 		 
-
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
 		publishedBaobei.description = "\"" + detailSB.toString()
 				+ extraMiaoshu1 + "\"";

@@ -183,7 +183,7 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		//title += "" + item.titleCN;
 		title += " MontBell";
 		if (item.titleOrg.indexOf("Tシャツ") > 0) {
-			title += " 功能T恤";
+			title += " 内衣";
 		} else if (item.titleOrg.indexOf("ブラ") > 0) {
 			title += " 文胸";
 		} else if (item.titleOrg.indexOf("シャツ") > 0) {
@@ -206,15 +206,15 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		String categoryId = item.cateogryObj.categoryId;
 		if("75200".equals(categoryId)){
 			// スーパーメリノウール（厚手／エクスペディション）
-			title += " 厚手 超级美丽奴羊毛";
+			title += " 厚手 美丽奴羊毛";
 		}
 		if("75100".equals(categoryId)){
 			// スーパーメリノウール（中厚手／ミドルウエイト）
-			title += " 中厚手 超级美丽奴羊毛";
+			title += " 中厚手 美丽奴羊毛";
 		}
 		if("75000".equals(categoryId)){
 			// スーパーメリノウール（薄手／ライトウエイト）
-			title += " 薄厚手 超级美丽奴羊毛";
+			title += " 薄厚手 美丽奴羊毛";
 		}
 		if("71200".equals(categoryId)){
 			//  ジオライン（厚手／エクスペディション）

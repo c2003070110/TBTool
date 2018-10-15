@@ -91,7 +91,7 @@ public class BaobeiUtil {
         // 省
         obj.location_state = "\"海外\"";
         // 城市
-        obj.location_city = "日本";
+        obj.location_city = "\"日本\"";
         // 出售方式;
         obj.item_type = "1";
         // 宝贝价格;

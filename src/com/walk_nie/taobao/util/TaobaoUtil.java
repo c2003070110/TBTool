@@ -1076,13 +1076,15 @@ public class TaobaoUtil {
 		return picture;
 	}
 
-	public static String composeBaobeiPropAlias(List<String> baobeiSizesList, List<String> taobaoSizes) {
+	public static String composeBaobeiPropAlias(List<String> baobeiSizesList, List<String> taobaoSizes,String sizeCateKey) {
 		String propAlias = "";
 		// 销售属性别名
 		for (int i = 0; i < baobeiSizesList.size(); i++) {
 			if (i >= taobaoSizes.size())
 				break;
-			propAlias += "20509:" + taobaoSizes.get(i) + ":" + baobeiSizesList.get(i) + ";";
+			String zie = baobeiSizesList.get(i);
+			if(zie.endsWith(".0")) zie = zie.substring(0,zie.length()-".0".length());
+			propAlias += sizeCateKey + ":" + taobaoSizes.get(i) + ":" + zie + ";";
 		}
 
 		return propAlias;
@@ -1111,7 +1113,7 @@ public class TaobaoUtil {
 	}
 
 	public static String composeBaobeiCateProps(List<String> baobeiColorList, List<String> baobeiSizeList,
-			List<String> taobaoColors, List<String> taobaoSizes) {
+			List<String> taobaoColors, List<String> taobaoSizes,String sizeCateKey) {
 		String cateProps = "";
 		// 宝贝属性
 		for (int i = 0; i < baobeiColorList.size(); i++) {
@@ -1122,7 +1124,7 @@ public class TaobaoUtil {
 		for (int i = 0; i < baobeiSizeList.size(); i++) {
 			if (i >= taobaoSizes.size())
 				break;
-			cateProps += "20509:" + taobaoSizes.get(i) + ";";
+			cateProps += sizeCateKey + ":" + taobaoSizes.get(i) + ";";
 		}
 		return cateProps;
 	}

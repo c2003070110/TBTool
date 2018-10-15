@@ -161,7 +161,7 @@ public class AsicsShoesBaobeiProducer  extends BaseBaobeiProducer{
 		taobaoColors.add("3232481");taobaoColors.add("3232484");taobaoColors.add("3232483");
 		// 颜色值:28320 28324 28326 28327 28329 28332 28340 28338 28335
 		// 宝贝属性 -销售属性组合- 销售属性别名
-		String cateProps = "";String skuProps = "";String propAlias = "";
+		String cateProps = "20000:84533669;";String skuProps = "";String propAlias = "";
 		String picStatus = "";String skuPropPic = "";
 		for(int i=0;i<item.picLocalFileNameList.size();i++){
 			if(i==5) break;

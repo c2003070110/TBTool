@@ -283,7 +283,8 @@ public class MontbellKidsBabyBaobeiProducer extends BaseBaobeiProducer{
         	cateProps += "20021:37454349;122216608:29923;21548:42580;122216816:39036084;" ;
         }else if("153000".equals(cateId)){
         	//ダウン/化繊綿入り（キッズ）
-        	cateProps += "13021751:124459527;6103476:3375990;122216608:29923;21548:38488;" ;
+        	//cateProps += "13021751:124459527;6103476:3375990;122216608:29923;21548:38488;" ;
+            cateProps += "20000:84533669;122216608:29923;21548:38488;6861561:112402;141750102:36229752;148158672:20347329;";
         }else if("152000".equals(cateId)){
         	//ジャケット/ベスト（キッズ）
         	cateProps += "20021:37454349;122216608:29923;21548:42580;122216816:39036084;" ;
@@ -424,7 +425,7 @@ public class MontbellKidsBabyBaobeiProducer extends BaseBaobeiProducer{
         //miaoshu.append("<li style=\"padding:10.0px;\">0）	店主长驻日本，真真正正的日本代购！不是野鸡代购！<span style=\";color:red;font-weight:bold\">100%日本，100%真品。</span></li>");
         miaoshu.append("<li style=\"padding:10.0px;\">1）	发货时间：下单后采购，采购时间3天左右<span style=\";color:red;font-weight:bold\">采购时间3天左右。</span>如果断货需要预定的话时间可能长一点，日本直邮发货后7-10天左右收到，接受拼邮，拼邮时间为15天左右到达国内，具体事项请咨询客服。</li>");
         miaoshu.append("<li style=\"padding:10.0px;\">2）	代购商品不接受退换货，不接受个人喜好原因，尺寸大小等原因的退款，除非严重质量问题，发货前我们会对商品的完整性等确认好，关于衣服尺寸大小等问题参照商品详情描述，对于尺寸拿捏不好的以及商品细节，色差等问题可以咨询客服，确认好了再付款交易哦。</li>");
-        miaoshu.append("<li style=\"padding:10.0px;\">3）	日本商品，大多数包装简洁，尤其是衣物等只是塑料袋包装或者无包装，采购时会和店员一起确认，买回来后会用透明玻璃纸包装，一般不提供专柜纸袋，如需提供请拍下后备注，商品经过长途跋涉到达国内很有可能会有压痕，亲们拿到衣服后抖开整理一下一般就不会有问题，介意者慎拍！</li>");
+        //miaoshu.append("<li style=\"padding:10.0px;\">3）	日本商品，大多数包装简洁，尤其是衣物等只是塑料袋包装或者无包装，采购时会和店员一起确认，买回来后会用透明玻璃纸包装，一般不提供专柜纸袋，如需提供请拍下后备注，商品经过长途跋涉到达国内很有可能会有压痕，亲们拿到衣服后抖开整理一下一般就不会有问题，介意者慎拍！</li>");
         miaoshu.append("<li style=\"padding:10.0px;\">4）	店铺商品均为商场专柜采购或者官网预定！</li>");
         miaoshu.append("<li style=\"padding:10.0px;\">5）关税：个人代购非走私，追加关税不是没有可能的。不幸被抽查产生关税，<span style=\";color:red;font-weight:bold\">关税买家自己承担。</span></li>");
         miaoshu.append("</ul>");

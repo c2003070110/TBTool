@@ -25,8 +25,8 @@ public class MontbellBackpackBaobeiCreator  {
 				.readInPublishedBaobei(file);
 		//baobeiList.clear();
 		//
-		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.05;
+		double currencyRate = 0.060 + 0.006;
+		double benefitRate = 0.07;
 		MontbellBackpackBaobeiProducer db = new MontbellBackpackBaobeiProducer();
 		db
 		//--ザック

@@ -176,7 +176,7 @@ public class MontBellUtil {
 		if (item.cateogryObj.categoryId == null || "".equals(item.cateogryObj.categoryId)) {
 			return "MTBL_" + item.productId;
 		}
-		return "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
+		return "\"" + "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId + "\"" ;
 	}
 
 	public static String convertToCNYWithEmsFee(GoodsObject item,

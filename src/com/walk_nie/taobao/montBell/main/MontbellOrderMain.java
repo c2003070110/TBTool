@@ -119,6 +119,7 @@ public class MontbellOrderMain {
 		for(File ff:fslist){
 			if(!ff.isFile())continue;
 			if(ff.getName().startsWith("ExportOrderList")){
+				System.out.println("Read Order List From " + ff.getCanonicalPath());
 				orderList = readInOrder(ff);
 			}
 		}
@@ -126,6 +127,7 @@ public class MontbellOrderMain {
 			if (!ff.isFile())
 				continue;
 			if (ff.getName().startsWith("ExportOrderDetailList")) {
+				System.out.println("Read Order Detail List From " + ff.getCanonicalPath());
 				orderDtlList = readInOrderDetail(ff);
 			}
 		}
@@ -133,7 +135,8 @@ public class MontbellOrderMain {
 		List<String> montbellOrderList = Lists.newArrayList();
 		String fmt1 ="%s\t%s\t%s\t%s\t\t\t%s";
 		for(OrderObject order:orderList){
-			if(!"买家已付款，等待卖家发货".equals(order.orderStatus)) continue;
+			//if(!"买家已付款，等待卖家发货".equals(order.orderStatus)) continue;
+			if("交易关闭".equals(order.orderStatus)) continue;
 			if(order.baobeiTitle.toLowerCase().indexOf("MontBell".toLowerCase()) <0) continue;
 			//if(!"".equals(order.orderNote))continue;
 			List<OrderDetailObject> orderDtls = Lists.newArrayList();
@@ -215,6 +218,7 @@ public class MontbellOrderMain {
 			FileUtils.write(oFile, str + "\n", Charset.forName("UTF-8"), true);
 		}
 		File outOrderMemoFileName1 = new File(outOrderMemoFileName);
+		System.out.println("Write The Result To " + outOrderMemoFileName1.getCanonicalPath());
 		FileUtils.write(outOrderMemoFileName1, "-------" + today + "-------\n",
 				Charset.forName("UTF-8"), true);
 		for (String str : orderHis) {
@@ -306,6 +310,7 @@ public class MontbellOrderMain {
         		OrderObject obj = new OrderObject();
         		int idx = 0;
         		obj.orderNo  = removeNull(split[idx++]);obj.buyerName  = removeNull(split[idx++]);obj.buyerAlipayAccountNo  = removeNull(split[idx++]);
+        		idx++;
         		obj.payAmt  = removeNull(split[idx++]);obj.payEMSAmt  = removeNull(split[idx++]);obj.payPoint  = removeNull(split[idx++]);
         		obj.ttlAmt  = removeNull(split[idx++]);obj.returnPoint  = removeNull(split[idx++]);obj.acturalPayAmt  = removeNull(split[idx++]);
         		obj.acturalPayPoint  = removeNull(split[idx++]);obj.orderStatus  = removeNull(split[idx++]);obj.buyerNote  = removeNull(split[idx++]);
@@ -569,7 +574,7 @@ public class MontbellOrderMain {
 		String masterF = removeEndComma(votes.get(idx++));
 		
 		if("".equals(postcode)){
-			System.out.println("[ERROR] Order Info NO Correct! File=" + tempFile0.getAbsolutePath());
+			System.out.println("[ERROR] Order Info NO Correct! PostCode IS NULL! File=" + tempFile0.getAbsolutePath());
 			return;
 		}
 

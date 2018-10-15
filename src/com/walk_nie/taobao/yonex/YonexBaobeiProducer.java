@@ -123,7 +123,7 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝描述
 		obj.description = composeBaobeiMiaoshu(item);
         // 宝贝属性
-        obj.cateProps ="\"" + TaobaoUtil.composeBaobeiCateProps(item.colorList, item.sizeList,taobaoColors,taobaoSizes) + "\"";
+		composeBaobeiCateProps(item,obj);
 		// 销售属性组合
 		obj.skuProps = "\""
 				+ TaobaoUtil.composeBaobeiSkuProps(item.colorList, item.sizeList, taobaoColors, taobaoSizes, obj.price)
@@ -131,7 +131,7 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		// 商家编码
 		obj.outer_id = "YONEX_" + item.kataban;
 		// 销售属性别名
-		obj.propAlias = "\"" + TaobaoUtil.composeBaobeiPropAlias(item.sizeList, taobaoSizes) + "\"";
+		obj.propAlias = "\"" + TaobaoUtil.composeBaobeiPropAlias(item.sizeList, taobaoSizes,"20509") + "\"";
 		// 图片状态
 		obj.picture_status = "\"" + TaobaoUtil.composeBaobeiPictureStatus(item.colorList, item.pictureNameList, taobaoColors) + "\"";
 		// 新图片
@@ -143,6 +143,15 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
+
+    protected void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
+        String cateProps = "20000:84533669;";
+        
+        // 宝贝属性
+        cateProps +=TaobaoUtil.composeBaobeiCateProps(item.colorList, item.sizeList,taobaoColors,taobaoSizes,"20509");
+     
+        obj.cateProps = cateProps;
+    }
 	private void composeBaobeiSellerCids(GoodsObject item, BaobeiPublishObject obj) {
 		String cid = "";
 		if(item.categoryType == 1){

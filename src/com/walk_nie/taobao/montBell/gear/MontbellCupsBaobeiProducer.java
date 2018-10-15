@@ -58,6 +58,7 @@ public class MontbellCupsBaobeiProducer extends BaseBaobeiProducer{
             }else{
             	MontbellProductParser parer = new MontbellProductParser();
             	parer.setPublishedbaobeiList(this.publishedbaobeiList);
+            	parer.scanFOFlag = false;
                 itemIdList = parer.scanItem(scanCategoryIds);    
             }
             if (itemIdList.isEmpty())

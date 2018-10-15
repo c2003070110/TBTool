@@ -30,19 +30,19 @@ public class MontbellTShirtBaobeiCreator  {
 		double benefitRate = 0.05;
 		MontbellTShirtBaobeiProducer db = new MontbellTShirtBaobeiProducer();
 		db
-        		.addScanCategory("46500") // 天然素材<メリノウールプラス>
-        		.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
-                .addScanCategory("44000") // 機能素材<ウイックロンクール>
-                .addScanCategory("45500") // 機能素材<ウイックロンZEO>
-                .addScanCategory("42000") // 機能素材<ウイックロン>
+//        		.addScanCategory("46500") // 天然素材<メリノウールプラス>
+//        		.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
+//                .addScanCategory("44000") // 機能素材<ウイックロンクール>
+//                .addScanCategory("45500") // 機能素材<ウイックロンZEO>
+//                .addScanCategory("42000") // 機能素材<ウイックロン>
+//                .addScanCategory("31100") // 半袖シャツ＜薄手＞
                 
                 .addScanCategory("32300") // 長袖シャツ＜厚手＞
                 .addScanCategory("32200") // 長袖シャツ＜中厚手＞
                 .addScanCategory("32100") // 長袖シャツ＜薄手＞
                 .addScanCategory("31500") // スウェットシャツ＆パーカ
                 //.addScanCategory("31400") // 作務衣
-                .addScanCategory("31200") // 3半袖シャツ＜中厚手＞
-                .addScanCategory("31100") // 半袖シャツ＜薄手＞
+                //.addScanCategory("31200") // 3半袖シャツ＜中厚手＞
                 
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)
