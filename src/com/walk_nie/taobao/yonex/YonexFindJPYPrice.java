@@ -2,6 +2,7 @@ package com.walk_nie.taobao.yonex;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -20,41 +21,75 @@ public class YonexFindJPYPrice  {
 			IOException {
 		
 		String url = "http://search.rakuten.co.jp/search/inshop-mall/%s/-/sid.207677-st.A";
-		String outFmt = "%s\t%s\t%s\t%s\t";
+		String outFmt = "%s\t%s\t%s\t%s\t%s";
 		List<String> productList = Files.readLines(new File(YonexUtil.productListFile), Charset.forName("UTF-8"));
 		StringBuffer sb = new StringBuffer();
 		for(String line : productList){
 			String[] spl = line.split("\t");
+			int prodType = Integer.parseInt(spl[0]);
 			Document doc = null;
 			try {
-				doc = TaobaoUtil.urlToDocumentByUTF8(String.format(url, spl[1]));
+				doc = TaobaoUtil.urlToDocumentByUTF8(String.format(url, spl[2]));
 			} catch (Exception e) {
-				String rslt = String.format(outFmt, spl[0], spl[1], "URL失败", "");
+				String rslt = String.format(outFmt, spl[1], spl[2], "URL失败", "", "", "");
 				sb.append(rslt).append("\n");
 				continue;
 			}
-			Elements trs = doc.select("div").select("#tableSarch").select("table").select("tr");
-			if(trs.isEmpty()){
-				String rslt = String.format(outFmt, spl[0], spl[1], "无售", "");
+			Elements rsultItems = doc.select("div.searchresultitem");
+			if(rsultItems.isEmpty()){
+				String rslt = String.format(outFmt, spl[1], spl[2], "无售", "", "", "");
 				sb.append(rslt).append("\n");
 				continue;
 			}
-			String title = "";
+			String title = rsultItems.get(0).select("div.title").text();
 			String price = "";
-			for(int i=1;i<trs.size();i++){
-				Element tr = trs.get(i);
-				Elements tds = tr.select("td");
-				if(tds.size()<6)continue;
-				title = title + "|" + tds.get(3).text();
-				price = price + "|" + tds.get(4).text();
+			for (int i = 0; i < rsultItems.size(); i++) {
+				Element tr = rsultItems.get(i);
+				Elements priceEl = tr.select("div.price").select("span");
+				for(Element el:priceEl){
+					String str = el.text();
+					if(str.indexOf("円") != 0){
+						str = str.replaceAll(",", "");
+						str = str.replaceAll("円", "");
+						price = price + str + ";";
+						break;
+					}
+				}
 			}
 			title = replace(title);
 			price = replace(price);
-			String rslt = String.format(outFmt, spl[0], spl[1] ,title,price);
+			String rslt = String.format(outFmt, spl[1], spl[2] ,title,price,maxPriceCNY(prodType,price));
 			//System.out.println(rslt);
 			sb.append(rslt).append("\n");
 		}
-		FileUtils.writeStringToFile(new File(YonexUtil.priceListFile), sb.toString(),Charset.forName("UTF-8"));
+		File out = new File(YonexUtil.priceListFile);
+		FileUtils.writeStringToFile(out, sb.toString(),Charset.forName("UTF-8"));
+		System.out.println("Saved to File = " + out.getCanonicalPath());
+		System.out.println("-------- FINISH--------");
+	}
+
+	private static String maxPriceCNY(int prodType, String price) {
+		String[] spl = price.split(";");
+		int maxPrice = 0;
+		for(String s:spl){
+			int p = Integer.parseInt(s);
+			if(p > maxPrice) maxPrice = p;
+		}
+		double currency = 0.062 + 0.005;
+		double brate = 0.05;
+		int emsFee = 0;
+		if (prodType == 1) {
+			emsFee = 2000;
+		} else if (prodType == 2) {
+			emsFee = 3300;
+		} else if (prodType == 3) {
+			emsFee = 2000;
+		} else if (prodType == 4) {
+			emsFee = 3300;
+		}
+				
+		int rmb = new BigDecimal((maxPrice+emsFee) * (1+brate) * currency).intValue();
+		return String.valueOf(rmb);
 	}
 
 	private static String replace(String o) {

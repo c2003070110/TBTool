@@ -66,6 +66,7 @@ public class MontbellShoeBaobeiProducer extends BaseBaobeiProducer{
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             
 			for (GoodsObject obj : itemIdList) {
+				// FIXME 鞋码 -> Discard
 				obj.sizeList.clear();
 				obj.sizeList.add("鞋码留言 厘米单位");
 				

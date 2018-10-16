@@ -97,6 +97,21 @@ public class YonexProductParser extends BaseBaobeiParser {
 			
 			obj.producePlace = translateProductPlace(contentEle.select("span.seisan").text());
 
+			Element specAreaEle = productDoc.select("div.specArea").get(0);
+			List<Element> specTblEle = specAreaEle.select("table.specTbl");
+			if (specTblEle != null && !specTblEle.isEmpty()) {
+				List<Element> trEls = specTblEle.get(0).select("tr");
+				for(Element trEl:trEls){
+					String k = trEl.select("th").get(0).text();
+					String v = trEl.select("td").get(0).text();
+					if(k.equals("サイズ")){
+						obj.sizeList.add(v);
+					}
+					if(k.equals("カラー")){
+						obj.colorList.add(v);
+					}
+				}
+			}
 			// rank To Object!
 			Elements els = contentEle.select("ul.rank");
 			if (els.size() == 2) {
@@ -122,7 +137,10 @@ public class YonexProductParser extends BaseBaobeiParser {
 			WebDriver webDriver = WebDriverUtil.getWebDriver(obj.productUrl);
 			List<WebElement> ele = webDriver.findElements(By.className("specArea"));
 
-			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
+			if (!ele.isEmpty()) {
+				WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
+				obj.detailScreenShotPicFile = despFile.getAbsolutePath();
+			}
 		}
 	}
 	

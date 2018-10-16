@@ -1,43 +1,52 @@
 package com.walk_nie.taobao.mizuno.shoes;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.mizuno.GoodsObject;
+import com.walk_nie.taobao.support.BaseBaobeiParser;
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 
-public class MiznunoShoesParser {
+public class MiznunoShoesParser extends BaseBaobeiParser{
     
     private String urlPrefix = "http://www.asics.com/";
+    public static String rootPathName = "out/mizuno/";
     
-    public MizunoShoesObject parseProductByProductUrl(String prodUrl) {
-        MizunoShoesObject prodObj = new MizunoShoesObject();
-        prodObj.prodUrl = prodUrl;
+    public GoodsObject parseProductByProductUrl(String prodUrl) throws IOException {
+        GoodsObject prodObj = new GoodsObject();
+        prodObj.productUrl = prodUrl;
         parseProduct(prodObj);
     	return prodObj;
     }
 
-    public List<MizunoShoesObject> parseProductByCategoryUrl(String categoryUrl){
-        List<MizunoShoesObject> prodList = Lists.newArrayList();
+    public List<GoodsObject> parseProductByCategoryUrl(String categoryUrl) throws IOException{
+        List<GoodsObject> prodList = Lists.newArrayList();
         parseCategory(prodList,categoryUrl);
         
         parseProducts(prodList);
         
-        List<MizunoShoesObject> filteredProdList = filter(prodList);
+        List<GoodsObject> filteredProdList = filter(prodList);
         
         translate(filteredProdList);
         
         return prodList;
     }
-    private void parseCategory(List<MizunoShoesObject> prodList, String categoryUrl) {
+    private void parseCategory(List<GoodsObject> prodList, String categoryUrl) {
         Document doc = getDocument(categoryUrl);
         Elements prodEls = doc.select("div#main").select("div.compo_item-list_cmn _disp").select("div.list");
         for(Element rootEl :prodEls){
-            MizunoShoesObject prodObj = new MizunoShoesObject();
+            GoodsObject prodObj = new GoodsObject();
             Element root = rootEl.select("div.list-cont").get(0);
             
             Elements genderEls = rootEl.select("p.ico").select("img");
@@ -50,7 +59,7 @@ public class MiznunoShoesParser {
                 }
             }
             
-            prodObj.prodUrl = root.select("p.img").select("a.productMainLink").attr("href");
+            prodObj.productUrl = root.select("p.img").select("a.productMainLink").attr("href");
             
             prodObj.titleOrg = root.select("p.name").text();
             
@@ -63,68 +72,113 @@ public class MiznunoShoesParser {
             prodList.add(prodObj);
         }
     }
-    private void parseProducts(List<MizunoShoesObject> prodList) {
-        for(MizunoShoesObject prod :prodList){
+    private void parseProducts(List<GoodsObject> prodList) throws IOException {
+        for(GoodsObject prod :prodList){
             parseProduct(prod);
         }
     }
     
-    private void parseProduct(MizunoShoesObject prodObj) {
-        Document doc = getDocument(urlPrefix + prodObj.prodUrl);
-        Element headerEl = doc.select("div#main").select("div.item_detail").get(0);
+    private void parseProduct(GoodsObject prodObj) throws IOException {
+    	String url = prodObj.productUrl;
+    	if(!url.startsWith("http")){
+    		url = urlPrefix + prodObj.productUrl;
+    		prodObj.productUrl = url;
+    	}
+        Document doc = getDocument(url);
+        Element mainEl = doc.select("div#main").get(0);
+        Elements inputEls = mainEl.select("input");
+        for(Element el:inputEls){
+        	if("PARAM_GOODS_NO".equals(el.attr("name"))){
+        		prodObj.goodsNo = el.attr("value");
+        	}
+        	if("ATT_GRP_ID".equals(el.attr("name"))){
+        		prodObj.kataban = el.attr("value");
+        	}
+        }
+        Element headerEl = mainEl.select("div.item_detail").get(0);
+        Elements els = headerEl.select("div.item_detail_summary").select("h1");
+        if(!els.isEmpty()){
+        	prodObj.titleJP = els.get(0).text();
+        }
+        Element priceEl= headerEl.select("div#PRICE_AREA_PC").get(0);
+        
+    	prodObj.priceOrg = priceEl.select("span.price").get(0).text();
+    
+        Elements colorEls = headerEl.select("ul.list_colors").select("a");
+        if(colorEls.size() > 1){
+            for(Element colorEl:colorEls){
+                String text = colorEl.select("img").attr("src");
+                prodObj.colorPicUrlList.add(text);
+                 text = colorEl.text();
+                prodObj.colorNameList.add(text);
+            }
+		}
+
+		Elements sizeEls = headerEl.select("ul.list_size").get(0).select("li");
+		if (sizeEls.size() > 1) {
+			for (Element el : sizeEls) {
+				String text = el.text();
+				prodObj.sizeNameList.add(text);
+			}
+		}
         
         Elements picEls = headerEl.select("div.thumbnail-colors").select("ul").get(1).select("img");
         for(Element picEl:picEls){
             String picUrl = picEl.attr("data-zoom-image");
             if(StringUtil.isBlank(picUrl)){
                 picUrl = picEl.attr("src");
-            }
-            prodObj.picUrlList.add(picUrl);
-        }
-        
-        Elements sizeEls = headerEl.select("div.item_size").select("ul").get(1).select("a");
-        for(Element sizeEl:sizeEls){
-            MizunoShoesObject.SizeOption sizeOpt = prodObj.new SizeOption();
-            if(sizeEl.hasClass("nostock")){
-                sizeOpt.isStock = false;
-            }else{
-                sizeOpt.isStock = true;
-            }
-            sizeOpt.sizeLabel = sizeEl.text();
-            prodObj.sizeOptList.add(sizeOpt);
-        }
-        
-        Elements colorEls = headerEl.select("ul.list_colors").select("a");
-        if(colorEls.size() > 1){
-            for(Element colorEl:colorEls){
-                if(colorEl.hasClass("select")){
-                    continue;
-                }
-                String colorPic = colorEl.select("img").attr("src");
-                prodObj.colorList.add(colorPic);
+                prodObj.dressOnPicsUrlList.add(picUrl);
             }
         }
+		// specArea to picture!
+		screenshotProductDetailDesp(prodObj);
     }
 
-    private List<MizunoShoesObject> filter(List<MizunoShoesObject> prodList) {
-        List<MizunoShoesObject> filterdList = Lists.newArrayList();
+	private void screenshotProductDetailDesp(GoodsObject obj) throws IOException {
+
+		String fileNameFmt = "detail_%s.png";
+		String fileName = String.format(fileNameFmt, obj.kataban);
+		File despFile = new File(rootPathName + "/", fileName);
+		if (!despFile.exists()) {
+			WebDriver webDriver = WebDriverUtil.getWebDriver(obj.productUrl);
+			List<WebElement> eles = webDriver.findElements(By.className("sec01"));
+			List<WebElement> scrnShotEles = Lists.newArrayList();
+			for (WebElement ele : eles) {
+				List<WebElement> h3Eles = ele.findElements(By.tagName("h3"));
+				String h3Text = "";
+				if (h3Eles != null && !h3Eles.isEmpty()) {
+					h3Text = h3Eles.get(0).getText();
+				}
+				if ("商品仕様".equals(h3Text) || "サイズについて".equals(h3Text) || "特長".equals(h3Text)) {
+					scrnShotEles.add(ele);
+				}
+			}
+			if (!scrnShotEles.isEmpty()) {
+				WebDriverUtil.screenShotV2(webDriver, scrnShotEles, despFile.getAbsolutePath(), null);
+				obj.detailScreenShotPicFile = despFile.getAbsolutePath();
+			}
+		}
+	}
+
+	private List<GoodsObject> filter(List<GoodsObject> prodList) {
+        List<GoodsObject> filterdList = Lists.newArrayList();
         List<String> urls = Lists.newArrayList();
-        for(MizunoShoesObject prod :prodList){
-            if(!urls.contains(prod.prodUrl)){
-                urls.add(prod.prodUrl);
+        for(GoodsObject prod :prodList){
+            if(!urls.contains(prod.productUrl)){
+                urls.add(prod.productUrl);
                 filterdList.add(prod);
             }
         }
         return filterdList;
     }
 
-    private void translate(List<MizunoShoesObject> prodList) {
-        for(MizunoShoesObject prod :prodList){
+    private void translate(List<GoodsObject> prodList) {
+        for(GoodsObject prod :prodList){
             translateTitle(prod);
         }
     }
     
-    private void translateTitle(MizunoShoesObject prod) {
+    private void translateTitle(GoodsObject prod) {
         String title = prod.titleOrg;
         // TODO 
         title = title.replaceAll("", "");

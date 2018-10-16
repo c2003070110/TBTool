@@ -13,7 +13,10 @@ import com.walk_nie.taobao.support.BaseBaobeiParser;
 public class YonexProductListProducer {
 	// 0:all;1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
 	private int categoryType = 0;    
-	
+
+	public static void main(String[] args) {
+		new YonexProductListProducer().process();
+	}
 	
 	public void process() {
 		BufferedWriter priceBw = null;
@@ -25,9 +28,12 @@ public class YonexProductListProducer {
 				return;
 			StringBuffer sbProduct = new StringBuffer();
 			for (GoodsObject obj : itemIdList) {
-				sbProduct.append(obj.title + "\t" + obj.kataban + "\n");
+				sbProduct.append(obj.categoryType + "\t" + obj.title + "\t" + obj.kataban + "\n");
+				//sbProduct.append(obj.title + "\t" + obj.kataban  + "\tCOLOR=["+ toString(obj.colorList) + "]\tSIZE=[" +toString(obj.sizeList) +"]\n" );
 			}
-			FileUtils.writeStringToFile(new File(YonexUtil.productListFile), sbProduct.toString(),Charset.forName("UTF-8"));
+			File out = new File(YonexUtil.productListFile);
+			FileUtils.writeStringToFile(out, sbProduct.toString(),Charset.forName("UTF-8"));
+			System.out.println("Saved to File = " + out.getCanonicalPath());
 			System.out.println("-------- FINISH--------");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -39,6 +45,13 @@ public class YonexProductListProducer {
 					e.printStackTrace();
 				}
 		}
+	}
+	private String toString(List<String> list) {
+		String str = "";
+		for (String obj : list) {
+			str += obj+" ";
+		}
+		return str;
 	}
 	public BaseBaobeiParser getParser() {
 		return new YonexProductParser();
