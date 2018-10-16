@@ -15,10 +15,11 @@ import org.openqa.selenium.WebElement;
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.mizuno.GoodsObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
+import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 
-public class MiznunoShoesParser extends BaseBaobeiParser{
+public class MinunoShoesParser extends BaseBaobeiParser{
     
     private String urlPrefix = "http://www.asics.com/";
     public static String rootPathName = "out/mizuno/";
@@ -42,33 +43,15 @@ public class MiznunoShoesParser extends BaseBaobeiParser{
         
         return prodList;
     }
-    private void parseCategory(List<GoodsObject> prodList, String categoryUrl) {
+    private void parseCategory(List<GoodsObject> prodList, String categoryUrl) throws IOException {
         Document doc = getDocument(categoryUrl);
         Elements prodEls = doc.select("div#main").select("div.compo_item-list_cmn _disp").select("div.list");
         for(Element rootEl :prodEls){
             GoodsObject prodObj = new GoodsObject();
             Element root = rootEl.select("div.list-cont").get(0);
             
-            Elements genderEls = rootEl.select("p.ico").select("img");
-            for(Element ele :genderEls){
-                String alt = ele.attr("alt");
-                if(alt.equals("レディース")){
-                    prodObj.gender = 2;
-                }else{
-                    prodObj.gender = 3; 
-                }
-            }
-            
             prodObj.productUrl = root.select("p.img").select("a.productMainLink").attr("href");
             
-            prodObj.titleOrg = root.select("p.name").text();
-            
-            String price = rootEl.select("p.price-wrap").text();
-            price = price.replaceAll("¥", ""); 
-            price = price.replaceAll(",", ""); 
-            prodObj.priceOrg = price;
-            
-            prodObj.kataban = rootEl.select("p.item-number").text();
             prodList.add(prodObj);
         }
     }
@@ -100,9 +83,28 @@ public class MiznunoShoesParser extends BaseBaobeiParser{
         if(!els.isEmpty()){
         	prodObj.titleJP = els.get(0).text();
         }
-        Element priceEl= headerEl.select("div#PRICE_AREA_PC").get(0);
+        Elements genderEls = headerEl.select("span#icon_sex");
+        for(Element ele :genderEls){
+            String alt = ele.text();
+            if(alt.equals("レディース")){
+                prodObj.gender = 2;
+            }else{
+                prodObj.gender = 3; 
+            }
+        }
+        if(prodObj.titleJP.contains("メンズ")){
+            prodObj.gender = 1; 
+        }else if(prodObj.titleJP.contains("レディース")){
+            prodObj.gender = 2; 
+        }else if(prodObj.titleJP.contains("ユニセックス")){
+            prodObj.gender = 3; 
+        }
         
-    	prodObj.priceOrg = priceEl.select("span.price").get(0).text();
+        Element priceEl= headerEl.select("div#PRICE_AREA_PC").get(0);
+        String price = priceEl.select("span.price").get(0).text();
+        price = price.replaceAll("¥", ""); 
+        price = price.replaceAll(",", ""); 
+        prodObj.priceOrg = price;
     
         Elements colorEls = headerEl.select("ul.list_colors").select("a");
         if(colorEls.size() > 1){
@@ -125,8 +127,7 @@ public class MiznunoShoesParser extends BaseBaobeiParser{
         Elements picEls = headerEl.select("div.thumbnail-colors").select("ul").get(1).select("img");
         for(Element picEl:picEls){
             String picUrl = picEl.attr("data-zoom-image");
-            if(StringUtil.isBlank(picUrl)){
-                picUrl = picEl.attr("src");
+            if(!StringUtil.isBlank(picUrl)){
                 prodObj.dressOnPicsUrlList.add(picUrl);
             }
         }
@@ -184,8 +185,8 @@ public class MiznunoShoesParser extends BaseBaobeiParser{
         title = title.replaceAll("", "");
         prod.title = title;
     }
-    private Document getDocument(String url){
-        return null;
+    private Document getDocument(String url) throws IOException{
+        return TaobaoUtil.urlToDocument(url,"Shift_JIS");
     }
     
 }

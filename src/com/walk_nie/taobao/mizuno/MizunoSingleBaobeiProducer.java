@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.http.client.utils.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
-import com.walk_nie.taobao.mizuno.shoes.MiznunoShoesParser;
+import com.walk_nie.taobao.mizuno.shoes.MinunoShoesParser;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
@@ -20,7 +20,7 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 	
-	public void mian(String[] arg){
+	public static void main(String[] args) {
 		String url = "https://www.mizunoshop.net/f/dsg-660939";
 		String outputFile = "out/mizuno_single_baobei_%s.csv";
 		MizunoSingleBaobeiProducer db = new MizunoSingleBaobeiProducer();
@@ -47,7 +47,7 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 		try {
 			System.out.println("-------- START --------");
 			
-			GoodsObject productObj = ((MiznunoShoesParser) getParser())
+			GoodsObject productObj = ((MinunoShoesParser) getParser())
 					.parseProductByProductUrl(productUrl);
 			String outFilePathPrice = String.format(outputFile, DateUtils
 					.formatDate(Calendar.getInstance().getTime(),
@@ -214,7 +214,7 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 	}
 	@Override
 	public BaseBaobeiParser getParser() {
-		return new MiznunoShoesParser();
+		return new MinunoShoesParser();
 	}  
 
 }
