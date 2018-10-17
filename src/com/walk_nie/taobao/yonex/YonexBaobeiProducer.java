@@ -21,11 +21,6 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
-	// private String taobeiTemplateFile =
-	// "in/yonex_badmin_pad_baobeiTemplate.csv";
-	// private String miaoshuTemplateFile =
-	// "in/yonex_badmin_miaoshu_template.html";
-
 	private File priceFile = new File(YonexUtil.priceListFile);
 	private List<String> priceList = Lists.newArrayList();
 	// 0:all;1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis
@@ -35,20 +30,14 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 	{
 		taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");taobaoColors.add("-1004");
 		taobaoColors.add("-1005");taobaoColors.add("-1006");taobaoColors.add("-1007");taobaoColors.add("-1008");
-		taobaoColors.add("-1009");taobaoColors.add("-1010");
-		taobaoColors.add("-1011");
-		taobaoColors.add("-1012");
+		taobaoColors.add("-1009");taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
 	}
 
 	private List<String> taobaoSizes = Lists.newArrayList();
 	{
 		// XS,S,M,L,XL,XXL,
-		taobaoSizes.add("28313");
-		taobaoSizes.add("28314");
-		taobaoSizes.add("28315");
-		taobaoSizes.add("28316");
-		taobaoSizes.add("28317");
-		taobaoSizes.add("28318");
+		taobaoSizes.add("28313");taobaoSizes.add("28314");taobaoSizes.add("28315");taobaoSizes.add("28316");
+		taobaoSizes.add("28317");taobaoSizes.add("28318");
 	}
 
 	public void process() {
@@ -75,11 +64,11 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 				// FIXME 鞋码 -> Discard
 				obj.sizeList.clear();
 				if (obj.categoryType == 1) {
-					obj.sizeList.add("鞋码留言 厘米单位");
+					obj.sizeList.add("空拍");
 				} else if (obj.categoryType == 2) {
 					obj.sizeList.add("鞋码留言 厘米单位");
 				} else if (obj.categoryType == 3) {
-					obj.sizeList.add("鞋码留言 厘米单位");
+					obj.sizeList.add("空拍");
 				} else if (obj.categoryType == 4) {
 					obj.sizeList.add("鞋码留言 厘米单位");
 				}
@@ -249,7 +238,7 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		String str = "";
 		for (String line : priceList) {
 			String[] spl = line.split("\t");
-			if (item.kataban.equals(spl[2])) {
+			if (item.kataban.equals(spl[1])) {
 				str = spl[4].replaceAll(",", "");
 				break;
 			}
@@ -264,25 +253,22 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject obj) {
 		String title = "日本直邮 Yonex/尤尼克斯";
+		title += item.title + " " + item.kataban;
 		title += " " + translateTitle(item);
-		title += "包邮";
-		// String suffix = "/包邮";
-		// if (title.length() + suffix.length() < 60) {
-		// title += suffix;
-		// }
-		title += item.titleEN + " " + item.kataban + " " + item.producePlace + "包邮";
+		//title += " 包邮";
+		if(item.producePlace.equals("日本"))title +=  " " + item.producePlace + "制";
 		obj.title = "\"" + title + "\"";
 	}
 
 	private String translateTitle(GoodsObject goodsObj) {
 		if (goodsObj.categoryType == 1) {
-			return "羽毛球拍/" ;
+			return "羽毛球拍" ;
 		} else if (goodsObj.categoryType == 2) {
-			return "羽毛球鞋/";
+			return "羽毛球鞋";
 		} else if (goodsObj.categoryType == 3) {
-			return "网球球拍/";
+			return "网球拍";
 		} else if (goodsObj.categoryType == 4) {
-			return "网球鞋/";
+			return "网球鞋";
 		} else {
 			return "";
 		}
@@ -293,29 +279,39 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
 		// 包邮 TAX
 		// 宝贝描述
-		detailSB.append("");
-		// 尺寸描述
-		detailSB.append("");
-		// chanpin teshe!
-		detailSB.append(getSeriesSpec(item));
+		if (!"".equals(item.detailScreenShotPicFile)) {
+			detailSB.append(composeDetailScreenShot(item));
+		}
+		// 着装图片
+		if (!item.pictureList.isEmpty()) {
+			detailSB.append(composeDressOnMiaoshu(item));
+		}
 		// zhi you
 		detailSB.append(BaobeiUtil.getExtraMiaoshu());
 		obj.description = "\"" + detailSB.toString() + "\"";
 	}
 
-	private String getSeriesSpec(GoodsObject item) {
-		// TODO 自動生成されたメソッド・スタブ
-		StringBuffer miaoshu = new StringBuffer();
-		miaoshu.append(
-				"<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">购物须知</h3>");
-		miaoshu.append(
-				"<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-		miaoshu.append("<ol>");
-		miaoshu.append(
-				"<li style=\"padding:10.0px;\"><span style=\";color:red;font-weight:bold\">产地：</span>日本产的非常少。大多数是东南亚和中国制造。<p>大家都知道的。<span style=\";color:red;font-weight:bold\">就算是同条生产线，面向日本本土，要比其他国家的质量要好很多。</span></p></li>");
-		miaoshu.append("</ol>");
-		miaoshu.append("</div>");
-		return miaoshu.toString();
+	private Object composeDressOnMiaoshu(GoodsObject item) {
+		StringBuffer detailSB = new StringBuffer();
+		detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
+		detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+		for (String pic : item.pictureList) {
+			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
+					+ pic + "\"/></p>");
+		}
+		detailSB.append("</div>");
+		return detailSB.toString();
+	}
+
+	private String composeDetailScreenShot(GoodsObject item) {
+
+		StringBuffer detailSB = new StringBuffer();
+		detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
+		detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+		detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
+				+ item.detailScreenShotPicFile + "\"/></p>");
+		detailSB.append("</div>");
+		return detailSB.toString();
 	}
 
 	public YonexBaobeiProducer setOutputFile(String outputFile) {
