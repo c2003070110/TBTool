@@ -23,6 +23,7 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 	public static void main(String[] args) {
 		String url = "https://www.mizunoshop.net/f/dsg-660939";
 		String outputFile = "out/mizuno_single_baobei_%s.csv";
+		
 		MizunoSingleBaobeiProducer db = new MizunoSingleBaobeiProducer();
 		db.setOutputFile(outputFile).setProductUrl(url).process();
 	}
@@ -55,11 +56,19 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 			File csvFile = new File(outFilePathPrice);
 			priceBw = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(csvFile), "UTF-16"));
+			
+			downloadPicture(productObj, MizunoUtil.getPictureSavePath(productObj));
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
+			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
+			
+			TaobaoUtil.copyFiles(productObj.colorPicLocalNameList,
+					MizunoUtil.getPictureSavePath(productObj),
+					taobaoPicFolder);
+			TaobaoUtil.copyFiles(productObj.dressOnPicLocalNameList,
+					MizunoUtil.getPictureSavePath(productObj),
+					taobaoPicFolder);
 		
-			downloadPicture(productObj, picFolder);
 			writeOut(priceBw, productObj);
 		
 			System.out.println("-------- FINISH--------");
@@ -74,12 +83,12 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 				}
 		}
 	}
-	protected void downloadPicture(GoodsObject goods,String outFilePathPrice) {
+	protected void downloadPicture(GoodsObject goods,String outFilePath) {
 		int i= 0;
 		for(String picUrl : goods.colorPicUrlList){
 			try {
-				String picName = "yonex_" + goods.kataban + "-" + goods.colorNameList.get(i) + "_" + i;
-				TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+				String picName = "mizuno_" + goods.kataban + "-" + goods.colorNameList.get(i) + "_" + i;
+				TaobaoUtil.downloadPicture(outFilePath, picUrl, picName);
 				goods.colorPicLocalNameList.add(picName);
 				i++;
 			} catch (Exception ex) { 
@@ -87,8 +96,8 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 		}
 		for(String picUrl : goods.dressOnPicsUrlList){
 			try {
-				String picName = "yonex_" + goods.kataban + "_" + i;
-				TaobaoUtil.downloadPicture(outFilePathPrice, picUrl, picName);
+				String picName = "mizuno_" + goods.kataban + "_" + i;
+				TaobaoUtil.downloadPicture(outFilePath, picUrl, picName);
 				goods.dressOnPicLocalNameList.add(picName);
 				i++;
 			} catch (Exception ex) { 
@@ -115,52 +124,115 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
         // 省
         obj.location_state = "\"日本\"";
 		// 宝贝价格
-		findPrice(item,obj);
+		composeBaobeiPrice(item, obj);
 		// 宝贝数量
 		obj.num = "99";
         // 邮费模版ID
         obj.postage_id = "// TODO";
         // 用户输入ID串;
-		//obj.inputPids = "\"13021751,6103476,1627207\"";
+		composeBaobeiInputPids(item, obj);
 		// 用户输入名-值对
-		obj.inputValues = "\"" + TaobaoUtil.composeBaobeiInputValues(item.colorNameList, taobaoColors) + "\"";
+		composeBaobeiInputValues(item, obj);
 		// 宝贝描述
-		obj.description = composeBaobeiMiaoshu(item);
+		composeBaobeiMiaoshu(item, obj);
         // 宝贝属性
-        obj.cateProps ="\"" + TaobaoUtil.composeBaobeiCateProps(item.colorNameList, item.sizeNameList,taobaoColors,taobaoSizes) + "\"";
+		composeBaobeiCateProps(item, obj);
 		// 销售属性组合
-		obj.skuProps = "\""
-				+ TaobaoUtil.composeBaobeiSkuProps(item.colorNameList, item.sizeNameList, taobaoColors, taobaoSizes, obj.price)
-				+ "\"";
+		composeBaobeiSkuProps(item, obj);
 		// 商家编码
-		obj.outer_id = "YONEX_" + item.kataban;
+		composeBaobeiOuter_id(item, obj);
 		// 销售属性别名
-		obj.propAlias = "\"" + TaobaoUtil.composeBaobeiPropAlias(item.sizeNameList, taobaoSizes,"") + "\"";
+		composeBaobeiPropAlias(item, obj);
 		// 图片状态
-		obj.picture_status = "\"" + TaobaoUtil.composeBaobeiPictureStatus(item.colorNameList, item.colorPicLocalNameList, taobaoColors) + "\"";
+		composeBaobeiPictureStatus(item, obj);
 		// 新图片
-		obj.picture = "\"" + TaobaoUtil.composeBaobeiPictureStatus(item.colorNameList, item.colorPicLocalNameList, taobaoColors) + "\"";
+		composeBaobeiPicture(item, obj);
         // 自定义属性值
-		obj.input_custom_cpv = "\"" + TaobaoUtil.composeBaobeiInputCustomCpv(item.colorNameList, taobaoColors) + "\"";
+		composeBaobeiInputCustomCpv(item, obj);
         // 宝贝卖点
         composeBaobeiSubtitle(item, obj);
 		
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
+
+	private void composeBaobeiInputCustomCpv(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		str += TaobaoUtil.composeBaobeiInputCustomCpv(item.colorNameList, taobaoColors);
+		obj.input_custom_cpv = "\"" + str + "\"";
+	}
+
+	private void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		List<String> baobeiPictureNameList = Lists.newArrayList();
+		baobeiPictureNameList.addAll(item.colorPicLocalNameList);
+		baobeiPictureNameList.addAll(item.dressOnPicLocalNameList);
+		str += TaobaoUtil.composeBaobeiPicture(item.colorNameList, baobeiPictureNameList, taobaoColors);
+		obj.picture = "\"" + str + "\"";
+	}
+
+	private void composeBaobeiPictureStatus(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		List<String> baobeiPictureNameList = Lists.newArrayList();
+		baobeiPictureNameList.addAll(item.colorPicLocalNameList);
+		baobeiPictureNameList.addAll(item.dressOnPicLocalNameList);
+		str += TaobaoUtil.composeBaobeiPictureStatus(item.colorNameList, baobeiPictureNameList, taobaoColors);
+		obj.picture_status = "\"" + str + "\"";
+	}
+
+	private void composeBaobeiPropAlias(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		str += TaobaoUtil.composeBaobeiPropAlias(item.sizeNameList, taobaoSizes, "20509");
+		obj.propAlias = "\"" + str + "\"";
+	}
+
+	private void composeBaobeiOuter_id(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		str += "MIZUNO_" + item.kataban;
+		obj.outer_id = "\"" + str + "\"";
+	}
+
+	private void composeBaobeiSkuProps(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		str += TaobaoUtil.composeBaobeiSkuProps(item.colorNameList, item.sizeNameList, taobaoColors, taobaoSizes, obj.price);
+		obj.skuProps = "\"" + str + "\"";
+	}
+
+	private void composeBaobeiInputValues(GoodsObject item, BaobeiPublishObject obj) {
+		String cid = "";
+		cid += TaobaoUtil.composeBaobeiInputValues(item.colorNameList, taobaoColors);
+		obj.inputValues = "\"" + cid + "\"";
+	}
+
+	private void composeBaobeiInputPids(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
+		obj.inputPids = "\"" + str + "\"";
+	}
+
+	protected void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "20000:84533669;";
+
+		// 宝贝属性
+		str += TaobaoUtil.composeBaobeiCateProps(item.colorNameList, item.sizeNameList, taobaoColors, taobaoSizes,
+				"20509");
+
+		obj.cateProps = "\"" + str + "\"";
+	}
+
 	private void composeBaobeiSellerCids(GoodsObject item, BaobeiPublishObject obj) {
-		String cid = "";
-		
-		obj.seller_cids = cid;
+		String str = "";
+		obj.seller_cids = "\"" + str + "\"";
 	}
+
 	private void composeBaobeiCId(GoodsObject item, BaobeiPublishObject obj) {
-		String cid = "";
+		String str = "";
 		
-		obj.cid = cid;
+		obj.cid = "\"" + str + "\"";
 	}
-	private void findPrice(GoodsObject item, BaobeiPublishObject obj) {
-		String price = "";
+
+	private void composeBaobeiPrice(GoodsObject item, BaobeiPublishObject obj) {
+		String str = "";
 		
-		obj.price = price;
+		obj.price = "\"" + str + "\"";
 	}
 	private void composeBaobeiSubtitle(GoodsObject item, BaobeiPublishObject obj) {
 		String title = "\"日本直邮！100%正品！真正的日本代购！包邮！" + item.titleJP + "!" + item.kataban;
@@ -168,15 +240,15 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject obj) {
-		String title = "日本直邮 Yonex/尤尼克斯";
-		// String suffix = "/包邮";
+		String title = "日本直邮 Mizuno/";
+		title += "/包邮";
 		// if (title.length() + suffix.length() < 60) {
 		// title += suffix;
 		// }
 		obj.title = "\"" + title + "\"";
 	}
 	
-	protected String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
+	protected void composeBaobeiMiaoshu(GoodsObject item, BaobeiPublishObject obj) throws IOException {
 		StringBuffer detailSB = new StringBuffer();
 
         // 包邮 TAX
@@ -188,7 +260,7 @@ public class MizunoSingleBaobeiProducer extends BaseBaobeiProducer {
 		detailSB.append(getSeriesSpec(item));
 		//　zhi you
 		detailSB.append(BaobeiUtil.getExtraMiaoshu());
-		return "\"" + detailSB.toString() + "\"";
+		obj.description =  "\"" + detailSB.toString() + "\"";
 	}
 
 	private Object getSeriesSpec(GoodsObject item) {

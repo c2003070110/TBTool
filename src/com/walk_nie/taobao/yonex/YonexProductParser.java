@@ -18,8 +18,6 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class YonexProductParser extends BaseBaobeiParser {
 	
-	String urlPrefix = "http://www.yonex.co.jp";
-    public static String rootPathName = "out/yonex/";
 	
 	boolean detailDisp = true;
 	// 1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
@@ -83,7 +81,7 @@ public class YonexProductParser extends BaseBaobeiParser {
 			GoodsObject obj = new GoodsObject();
 			obj.categoryType = categoryType;
 			
-			String pUrl  = urlPrefix + prodEle.select("a").attr("href");
+			String pUrl  = YonexUtil.urlPrefix + prodEle.select("a").attr("href");
 			obj.productUrl = pUrl;
 			Document productDoc = TaobaoUtil.urlToDocumentByUTF8(pUrl);
 			Element contentEle = productDoc.select("div.contents").get(0);
@@ -132,7 +130,7 @@ public class YonexProductParser extends BaseBaobeiParser {
 	private void screenshotProductDetailDesp(GoodsObject obj) throws IOException {
 		String fileNameFmt = "detail_%s.png";
 		String fileName = String.format(fileNameFmt, obj.kataban);
-		File despFile = new File(rootPathName + "/" + getCategoryTypeName(obj.categoryType), fileName);
+		File despFile = new File(YonexUtil.getPictureSavePath(obj), fileName);
 		if (!despFile.exists()) {
 			WebDriver webDriver = WebDriverUtil.getWebDriver(obj.productUrl);
 			List<WebElement> ele = webDriver.findElements(By.className("specArea"));
@@ -142,19 +140,6 @@ public class YonexProductParser extends BaseBaobeiParser {
 				obj.detailScreenShotPicFile = despFile.getAbsolutePath();
 			}
 		}
-	}
-	
-	private String getCategoryTypeName(int categoryType) {
-		if (categoryType == 1) {
-			return "badminRacquets";
-		} else if (categoryType == 2) {
-			return "badminShoes";
-		} else if (categoryType == 3) {
-			return "tennisRacquets";
-		} else if (categoryType == 4) {
-			return "tennisShoes";
-		}
-		return "";
 	}
 	private String translateProductPlace(String text) {
 		if(text.equals("ベトナム製")){
@@ -179,7 +164,7 @@ public class YonexProductParser extends BaseBaobeiParser {
 		List<String> picList = Lists.newArrayList();
 		Elements picEles = contentEle.select("img.cloudzoom-gallery");
 		for(Element picEle:picEles){
-			String picUrl = urlPrefix + picEle.attr("src");
+			String picUrl = YonexUtil.urlPrefix + picEle.attr("src");
 			if(!picList.contains(picUrl)){
 				picList.add(picUrl);
 			}

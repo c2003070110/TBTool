@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.mizuno.GoodsObject;
+import com.walk_nie.taobao.mizuno.MizunoUtil;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
@@ -21,8 +22,6 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MinunoShoesParser extends BaseBaobeiParser{
     
-    private String urlPrefix = "http://www.asics.com/";
-    public static String rootPathName = "out/mizuno/";
     
     public GoodsObject parseProductByProductUrl(String prodUrl) throws IOException {
         GoodsObject prodObj = new GoodsObject();
@@ -64,7 +63,7 @@ public class MinunoShoesParser extends BaseBaobeiParser{
     private void parseProduct(GoodsObject prodObj) throws IOException {
     	String url = prodObj.productUrl;
     	if(!url.startsWith("http")){
-    		url = urlPrefix + prodObj.productUrl;
+    		url = MizunoUtil.urlPrefix + prodObj.productUrl;
     		prodObj.productUrl = url;
     	}
         Document doc = getDocument(url);
@@ -139,7 +138,7 @@ public class MinunoShoesParser extends BaseBaobeiParser{
 
 		String fileNameFmt = "detail_%s.png";
 		String fileName = String.format(fileNameFmt, obj.kataban);
-		File despFile = new File(rootPathName + "/", fileName);
+		File despFile = new File(MizunoUtil.getPictureSavePath(obj), fileName);
 		if (!despFile.exists()) {
 			WebDriver webDriver = WebDriverUtil.getWebDriver(obj.productUrl);
 			List<WebElement> eles = webDriver.findElements(By.className("sec01"));
