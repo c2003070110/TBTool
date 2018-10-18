@@ -277,7 +277,6 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 	protected void composeBaobeiMiaoshu(GoodsObject item, BaobeiPublishObject obj) throws IOException {
 		StringBuffer detailSB = new StringBuffer();
 
-		// 包邮 TAX
 		// 宝贝描述
 		if (!"".equals(item.detailScreenShotPicFile)) {
 			detailSB.append(composeDetailScreenShot(item));

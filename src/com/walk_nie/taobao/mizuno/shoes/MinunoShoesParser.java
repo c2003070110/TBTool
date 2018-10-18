@@ -22,26 +22,34 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MinunoShoesParser extends BaseBaobeiParser{
     
-    
-    public GoodsObject parseProductByProductUrl(String prodUrl) throws IOException {
-        GoodsObject prodObj = new GoodsObject();
-        prodObj.productUrl = prodUrl;
-        parseProduct(prodObj);
-    	return prodObj;
-    }
+    public List<GoodsObject> parseProductByProductUrl(List<String> prodUrlList) throws IOException {
+		List<GoodsObject> prodList = Lists.newArrayList();
+		for (String prodUrl : prodUrlList) {
+			GoodsObject prodObj = new GoodsObject();
+			prodObj.productUrl = prodUrl;
+			parseProduct(prodObj);
+		}
+		List<GoodsObject> filteredProdList = filter(prodList);
+		translate(filteredProdList);
+		return filteredProdList;
+	}
 
-    public List<GoodsObject> parseProductByCategoryUrl(String categoryUrl) throws IOException{
-        List<GoodsObject> prodList = Lists.newArrayList();
-        parseCategory(prodList,categoryUrl);
-        
-        parseProducts(prodList);
-        
-        List<GoodsObject> filteredProdList = filter(prodList);
-        
-        translate(filteredProdList);
-        
-        return prodList;
-    }
+	public List<GoodsObject> parseProductByCategoryUrl(List<String> categoryUrlList) throws IOException {
+		List<GoodsObject> filteredProdList = Lists.newArrayList();
+		for (String categoryUrl : categoryUrlList) {
+			List<GoodsObject> prodList = Lists.newArrayList();
+			parseCategory(prodList, categoryUrl);
+
+			parseProducts(prodList);
+			filteredProdList.addAll(prodList);
+
+			filteredProdList = filter(filteredProdList);
+		}
+
+		translate(filteredProdList);
+
+		return filteredProdList;
+	}
     private void parseCategory(List<GoodsObject> prodList, String categoryUrl) throws IOException {
         Document doc = getDocument(categoryUrl);
         Elements prodEls = doc.select("div#main").select("div.compo_item-list_cmn _disp").select("div.list");
