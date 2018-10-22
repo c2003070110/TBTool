@@ -217,11 +217,13 @@ public abstract class MizunoBaseBaobeiProducer extends BaseBaobeiProducer {
 
 	protected void composeBaobeiPrice(GoodsObject item, BaobeiPublishObject obj) {
 		String str = "";
-		int emsFee = 3000;
-		double price = Integer.parseInt(item.price) * (1 + benefitRate);
-		price += emsFee;
-		price = price * currencyRate;
-		str = new BigDecimal(price).setScale(0, RoundingMode.CEILING).toPlainString();
+		if(weight !=0){
+			int emsFee = TaobaoUtil.getEmsFee(weight);
+			double price = Integer.parseInt(item.price) * (1 + benefitRate);
+			price += emsFee;
+			double priceCNY = price * currencyRate;
+			str = new BigDecimal(priceCNY).setScale(0, RoundingMode.CEILING).toPlainString();
+		}
 		obj.price = "\"" + str + "\"";
 	}
 	protected void composeBaobeiSubtitle(GoodsObject item, BaobeiPublishObject obj) {
@@ -285,5 +287,11 @@ public abstract class MizunoBaseBaobeiProducer extends BaseBaobeiProducer {
 	public BaseBaobeiParser getParser() {
 		return new MinunoShoesParser();
 	}  
+
+	private int weight = 0;
+	public MizunoBaseBaobeiProducer setWeight(int weightP) {
+		weight = weightP;
+		return this;
+	}
 
 }

@@ -358,8 +358,8 @@ public class MontbellOrderMain {
 		try {
 			orderForJapan(driver, tempFile0);
 		} catch (Exception ex) {
-			driver.close();
-			driver = null;
+			//driver.close();
+			//driver = null;
 			ex.printStackTrace();
 		}
 	}
@@ -375,10 +375,10 @@ public class MontbellOrderMain {
 			if (updateTime < tempFile0.lastModified()) {
 				updateTime = tempFile0.lastModified();
 				try{
-				orderForChina(driver, tempFile0);
+					orderForChina(driver, tempFile0);
 				}catch(Exception ex){
-					driver.close();
-					driver = null;
+					//driver.close();
+					//driver = null;
 					ex.printStackTrace();
 					//driver = logon();
 				}
@@ -501,6 +501,7 @@ public class MontbellOrderMain {
 				break;
 			}
 		}
+		// other person address option
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we : weList) {
 			if ("radio".equalsIgnoreCase(we
@@ -510,6 +511,7 @@ public class MontbellOrderMain {
 				break;
 			}
 		}
+		// next button
 		for (WebElement we : weList) {
 			if ("next_destination".equalsIgnoreCase(we
 					.getAttribute("name"))) {
@@ -651,15 +653,15 @@ public class MontbellOrderMain {
 			addCreditCardJCB(driver);
 		}
 
-		weList = driver.findElements(By.tagName("input"));
-		for (WebElement we1 : weList) {
-			if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
-				if ("btn_next".equalsIgnoreCase(we1.getAttribute("name"))) {
-					we1.click();
-					break;
-				}
-			}
-		}
+//		weList = driver.findElements(By.tagName("input"));
+//		for (WebElement we1 : weList) {
+//			if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
+//				if ("btn_next".equalsIgnoreCase(we1.getAttribute("name"))) {
+//					we1.click();
+//					break;
+//				}
+//			}
+//		}
 		
 		File oFile = new File(ooutFileName);
 		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
