@@ -5,20 +5,16 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MizunoSpecialPageShotor {
-	String serieListFileName = "serieList.txt";
-	String outputPath = "out/mizuno/specialPage/";
 
 	public static void main(String[] args) throws IOException {
 		String url = "https://www.mizuno.jp/football/rebula/";
@@ -28,8 +24,8 @@ public class MizunoSpecialPageShotor {
 	}
 
 	private void process() throws IOException {
-		File file = new File(outputPath,
-				serieListFileName);
+		File file = new File(MizunoUtil.rootPathName,
+				MizunoUtil.serieListFileName);
 		List<String> serielList = Lists.newArrayList();
 		if (!file.exists()) {
 			serielList = Files.readLines(file, Charset.forName("UTF-8"));
@@ -41,7 +37,7 @@ public class MizunoSpecialPageShotor {
 			}
 			String serialName = url.substring(url.lastIndexOf("/"));
 			String fileName = String.format(fileNameFmt, serialName);
-			File saveTo = new File(outputPath, fileName);
+			File saveTo = new File(MizunoUtil.rootPathName, fileName);
 			if(saveTo.exists())continue;
 			
 			WebDriver webDriver = WebDriverUtil.getWebDriver(url);

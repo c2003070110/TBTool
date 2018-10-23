@@ -40,6 +40,7 @@ public class GoodsObject {
 	
 
 	public String detailScreenShotPicFile = "";
+	public String specialPageScreenShotPicFile = "";
     //public List<SizeOption> sizeOptList = Lists.newArrayList();
     
     //public class SizeOption{
