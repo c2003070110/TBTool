@@ -35,16 +35,15 @@ public class MinunoShoesParser extends BaseBaobeiParser{
 	}
 
 	public List<GoodsObject> parseProductByCategoryUrl(List<String> categoryUrlList) throws IOException {
-		List<GoodsObject> filteredProdList = Lists.newArrayList();
+		
+		List<GoodsObject> prodList = Lists.newArrayList();
 		for (String categoryUrl : categoryUrlList) {
-			List<GoodsObject> prodList = Lists.newArrayList();
 			parseCategory(prodList, categoryUrl);
-
-			parseProducts(prodList);
-			filteredProdList.addAll(prodList);
-
-			filteredProdList = filter(filteredProdList);
 		}
+		
+		List<GoodsObject> filteredProdList = Lists.newArrayList();
+		filteredProdList = filter(filteredProdList);
+		parseProducts(filteredProdList);
 
 		translate(filteredProdList);
 
@@ -52,13 +51,10 @@ public class MinunoShoesParser extends BaseBaobeiParser{
 	}
     private void parseCategory(List<GoodsObject> prodList, String categoryUrl) throws IOException {
         Document doc = getDocument(categoryUrl);
-        Elements prodEls = doc.select("div#main").select("div.compo_item-list_cmn _disp").select("div.list");
+        Elements prodEls = doc.select("div#main").select("ul[data-tb-sid=\"st_results-container\"]").select("div[data-tb-sid=\"st_result-container-content\"]");
         for(Element rootEl :prodEls){
             GoodsObject prodObj = new GoodsObject();
-            Element root = rootEl.select("div.list-cont").get(0);
-            
-            prodObj.productUrl = root.select("p.img").select("a.productMainLink").attr("href");
-            
+            prodObj.productUrl = rootEl.attr("data-direct-url");
             prodList.add(prodObj);
         }
     }
