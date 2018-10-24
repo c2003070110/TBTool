@@ -589,7 +589,7 @@ public class MontbellOrderMain {
 
 		List<WebElement> weList = null;
 		driver.get("https://en.montbell.jp/products/cart/");
-		weList = driver.findElements(By.tagName("img"));
+		weList = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
 		for (WebElement we : weList) {
 			if ("PROCEED TO CHECKOUT".equalsIgnoreCase(we
 					.getAttribute("alt"))) {
@@ -604,7 +604,7 @@ public class MontbellOrderMain {
 				break;
 			}
 		}
-		weList = driver.findElements(By.tagName("input"));
+		weList = driver.findElements(By.cssSelector("input[name=\"destination_id\"]"));
 		for (WebElement we : weList) {
 			if ("radio".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("3".equalsIgnoreCase(we.getAttribute("value"))) {
@@ -613,7 +613,7 @@ public class MontbellOrderMain {
 				}
 			}
 		}
-		weList = driver.findElements(By.tagName("input"));
+		weList = driver.findElements(By.cssSelector("input[id=\"btncheck\"]"));
 		for (WebElement we : weList) {
 			if ("image".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("next_dest".equalsIgnoreCase(we.getAttribute("name"))) {
@@ -688,20 +688,22 @@ public class MontbellOrderMain {
 		String[] pis = productInfos.split(itemSplitter);
 		for (String line : pis) {
 			System.out.println("[processing]" + line);
-			String[] pi = line.split(";");
-			String pid = pi[0];
+			// line:商家编码：MTBL_136000-1101581 颜色分类:BK;尺码:XL
+			String[] pi = line.split(" ");
+			String pid = realProductId(pi[0]);
 			if(pid.startsWith("MTBL_")){
 				String[] newP = pid.split("-");
 				pid = newP[1];
 			}
 			driver.get(("JP".equals(type)?MontBellUtil.productUrlPrefix: MontBellUtil.productUrlPrefix_en) + pid);
 			String color = "";
-			if (pi.length > 1) {
-				color = realColorName(pi[1]);
-			}
 			String sizz = "";
-			if (pi.length > 2) {
-				sizz = realSizeName(pi[2]);
+			if (pi.length > 1) {
+				String[] pii = pi[1].split(";");
+				color = realColorName(pii[0]);
+				if (pii.length > 1) {
+					sizz = realSizeName(pii[1]);
+				}
 			}
 			if ("".equals(sizz)) {
 				System.out.println("CANNOT process that..." + line);
@@ -731,6 +733,7 @@ public class MontbellOrderMain {
 					Select dropdown = new Select(we);
 					dropdown.selectByValue("1");
 					has = true;
+					break;
 				}
 			}
 			if(!has){
@@ -912,6 +915,12 @@ public class MontbellOrderMain {
 			} catch (IOException e) {
 			}
 		}
+	}
+	private String realProductId(String pid) {
+		pid = pid.replace("商家编码", "");
+		pid = pid.replace("：", "");
+		pid = pid.replace(":", "");
+		return pid;
 	}
 	
 	private String realColorName(String str){
