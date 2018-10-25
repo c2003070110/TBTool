@@ -27,7 +27,7 @@ public class MizunoSpecialPageShotor {
 		File file = new File(MizunoUtil.rootPathName,
 				MizunoUtil.serieListFileName);
 		List<String> serielList = Lists.newArrayList();
-		if (!file.exists()) {
+		if (file.exists()) {
 			serielList = Files.readLines(file, Charset.forName("UTF-8"));
 		}
 		String fileNameFmt = "%s_specialPage.jpg";
