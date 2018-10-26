@@ -90,6 +90,7 @@ public class MontbellAutoOrder {
 			CrObject obj = new CrObject();
 			int j=0;
 			obj.id = spl[j++];
+			obj.crBrand = spl[j++];
 			String[] splTemp = spl[j++].split(" ");
 			int i=0;
 			obj.numb1 = splTemp[i++];
@@ -258,6 +259,7 @@ public class MontbellAutoOrder {
 			we = driver.findElement(By.cssSelector("input[alt=\"確認画面へ\"]"));
 			we.click();
 		} else {
+			// 上記「連絡先」と同じ住所
 			weList = driver.findElements(By
 					.cssSelector("input[type=\"radio\"]"));
 			for (WebElement we : weList) {
@@ -268,25 +270,18 @@ public class MontbellAutoOrder {
 					break;
 				}
 			}
-			weList = driver.findElements(By.tagName("input"));
-			for (WebElement we : weList) {
-				if ("image".equalsIgnoreCase(we.getAttribute("type"))
-						&& "次へ".equals(we.getAttribute("alt"))) {
-					we.click();
-					break;
-				}
-			}
-			weList = driver.findElements(By.tagName("input"));
-			for (WebElement we : weList) {
-				if ("radio".equalsIgnoreCase(we.getAttribute("type"))
-						&& "payment_type_id_1".equalsIgnoreCase(we
-								.getAttribute("id"))) {
-					we.click();
-					break;
-				}
-			}
+			// next button
+			WebElement we = driver.findElement(By
+					.cssSelector("input[name=\"next_destination\"]"));
+			we.click();
 
-			// add credit card
+			we = driver.findElement(By.cssSelector("input[alt=\"次へ\"]"));
+			we.click();
+			
+			// 支払方法入力
+			we = driver.findElement(By.cssSelector("input[id=\"payment_type_id_1\"]"));
+			we.click();
+			
 			addCreditCard(driver, crId);
 		}
 	}
@@ -543,9 +538,11 @@ public class MontbellAutoOrder {
 	}
 	private Map<String,String> creaditCardBrandMap = Maps.newHashMap();
 	{
-		creaditCardBrandMap.put("jcb", "JCB");
-		creaditCardBrandMap.put("master", "MASTER");
-		creaditCardBrandMap.put("visa", "VISA");
+		creaditCardBrandMap.put("visa", "1");
+		creaditCardBrandMap.put("jcb", "2");
+		creaditCardBrandMap.put("master", "5");
+		creaditCardBrandMap.put("amex", "8");
+		creaditCardBrandMap.put("diners", "9");
 	}
 
 
