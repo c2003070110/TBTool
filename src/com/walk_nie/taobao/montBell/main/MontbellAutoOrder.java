@@ -15,7 +15,9 @@ import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
@@ -26,8 +28,7 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class MontbellAutoOrder {
 	protected BufferedReader stdReader = null;
-	private String inFileNameJP = "./montbell/order-in-japan.txt";
-	private String inFileNameCN = "./montbell/order-in-china.txt";
+	private String inFileName = "./montbell/order-in.txt";
 	private String ooutFileName = "./montbell/order-out.txt";
 	private String crFileName = "./montbell/cr.txt";
 	
@@ -47,7 +48,7 @@ public class MontbellAutoOrder {
 
 	public void orderForJapan() {
 		WebDriver driver = logonForJapan();
-		File tempFile0 = new File(inFileNameJP);
+		File tempFile0 = new File(inFileName);
 		try {
 			orderForJapan(driver, tempFile0);
 		} catch (Exception ex) {
@@ -59,7 +60,7 @@ public class MontbellAutoOrder {
 		
 		WebDriver driver = logonForChina();
 		long updateTime = System.currentTimeMillis();
-		File tempFile0 = new File(inFileNameCN);
+		File tempFile0 = new File(inFileName);
 		System.out.println("[waiting for order info in ]"
 				+ tempFile0.getAbsolutePath());
 		while (true) {
@@ -85,30 +86,41 @@ public class MontbellAutoOrder {
 		}
 		// id/crBrand/1234 5678 9012 123/04/17/123/name1 name2
 		crList = Files.readLines(file, Charset.forName("UTF-8"));
-		for(String str:crList){
+		boolean hasStore = false;
+		for (String str : crList) {
 			String[] spl = str.split("/");
 			CrObject obj = new CrObject();
-			int j=0;
-			obj.id = spl[j++];
+			int j = 0;
+			obj.id = spl[j++].toLowerCase();
+			if (obj.id.equalsIgnoreCase("store")) {
+				crObjList.add(obj);
+				hasStore = true;
+				continue;
+			}
 			obj.crBrand = spl[j++];
 			String[] splTemp = spl[j++].split(" ");
-			int i=0;
+			int i = 0;
 			obj.numb1 = splTemp[i++];
 			obj.numb2 = splTemp[i++];
 			obj.numb3 = splTemp[i++];
 			obj.numb4 = splTemp[i++];
-			
+
 			obj.expiredMon = spl[j++];
 			obj.expiredYear = spl[j++];
 
 			obj.scode = spl[j++];
 
-			i=0;
+			i = 0;
 			splTemp = spl[j++].split(" ");
 			obj.meigi1 = splTemp[i++];
 			obj.meigi2 = splTemp[i++];
-			
+
 			crObjList.add(obj);
+		}
+		if (!hasStore) {
+			CrObject obj = new CrObject();
+			obj.id = "store";
+			crObjList.add(0, obj);
 		}
 	}
 
@@ -204,14 +216,12 @@ public class MontbellAutoOrder {
 	}
 
 	protected void orderForJapan(WebDriver driver, File tempFile0) throws IOException {
-		List<String> orders = Files.readLines(tempFile0,
-				Charset.forName("UTF-8"));
-		int idx = 0;
-		//String taobaoOrderName = orders.get(idx++);
-		String productInfos = orders.get(idx++);
-		String crId = removeEndComma(orders.get(idx++));
+
+		OrderInfo orderInfo = readInOrderInfo(tempFile0);
+		logOrderInfo(orderInfo);
+		
 		try{
-			addItemToCard(driver,productInfos,"JP");
+			addItemToCard(driver,orderInfo,"JP");
 		}catch(Exception ex){
 		}
 		driver.get("https://webshop.montbell.jp/cart");
@@ -225,7 +235,7 @@ public class MontbellAutoOrder {
 			}
 		}
 
-		if ("store".equals(crId.toLowerCase())) {
+		if ("store".equals(orderInfo.crObj.id.toLowerCase())) {
 			// next button
 			weList = driver.findElements(By
 					.cssSelector("input[name=\"next_shop\"]"));
@@ -282,44 +292,46 @@ public class MontbellAutoOrder {
 			we = driver.findElement(By.cssSelector("input[id=\"payment_type_id_1\"]"));
 			we.click();
 			
-			addCreditCard(driver, crId);
+			if(orderInfo.crObj != null){
+				fillCreditCard(driver, orderInfo.crObj);
+			}
 		}
 	}
 
 	protected void orderForChina(WebDriver driver, File tempFile0) throws IOException{
 
-		List<String> votes = Files.readLines(tempFile0,
-				Charset.forName("UTF-8"));
-		int idx = 0;
-		String taobaoOrderName = votes.get(idx++);
-		String productInfos = votes.get(idx++);
-		String nameEn = removeEndComma(votes.get(idx++));
-		String[] names = nameEn.split(" ");
-		String tel = removeEndComma(votes.get(idx++));
-		String state = removeEndComma(votes.get(idx++));
-		state = state.replaceAll("Sheng", "");
-		state = state.replaceAll("Shi", "");
-		state = state.replaceAll(" ", "");
-		String city = removeEndComma(votes.get(idx++));
-		String adr2 = removeEndComma(votes.get(idx++));
-		String adr1 = removeEndComma(votes.get(idx++));
-		String postcode = removeEndComma(votes.get(idx++));
-		String crId = removeEndComma(votes.get(idx++));
+		OrderInfo orderInfo = readInOrderInfo(tempFile0);
+		logOrderInfo(orderInfo);
 		
-		if("".equals(postcode)){
+		if("".equals(orderInfo.postcode)){
 			System.out.println("[ERROR] Order Info NO Correct! PostCode IS NULL! File=" + tempFile0.getAbsolutePath());
 			return;
 		}
 
 		try{
-			addItemToCard(driver,productInfos,"CN");
+			addItemToCard(driver,orderInfo,"CN");
 		}catch(Exception ex){
 			System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 			mywait("Color OR size Selected realdy? ENTER for realdy!");
 		}
 
 		List<WebElement> weList = null;
-		driver.get("https://en.montbell.jp/products/cart/");
+		driver.get("https://en.montbell.jp/products/cart/");			
+		// 等待 是否打开
+		WebDriverWait wait1 = new WebDriverWait(driver,10);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				while (true){
+					try {
+						driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
+						return true;
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		});
 		weList = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
 		for (WebElement we : weList) {
 			if ("PROCEED TO CHECKOUT".equalsIgnoreCase(we
@@ -334,7 +346,22 @@ public class MontbellAutoOrder {
 				we.click();
 				break;
 			}
-		}
+		}	
+		// 等待 是否打开
+		wait1 = new WebDriverWait(driver,10);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				while (true){
+					try {
+						driver.findElements(By.cssSelector("input[name=\"destination_id\"]"));
+						return true;
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		});
 		weList = driver.findElements(By.cssSelector("input[name=\"destination_id\"]"));
 		for (WebElement we : weList) {
 			if ("radio".equalsIgnoreCase(we.getAttribute("type"))) {
@@ -358,15 +385,30 @@ public class MontbellAutoOrder {
 			Thread.sleep(1000*1);
 		} catch (InterruptedException e) {
 		}
+		// 等待 是否打开
+		wait1 = new WebDriverWait(driver,10);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				while (true){
+					try {
+						driver.findElements(By.id("basicInfo"));
+						return true;
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		});
 		WebElement we = driver.findElement(By.id("basicInfo"));
-		we.findElement(By.cssSelector("input[name=\"dest_first_name\"")).sendKeys(names[1]);
-		we.findElement(By.cssSelector("input[name=\"dest_last_name\"")).sendKeys(names[0]);
-		we.findElement(By.cssSelector("input[name=\"dest_address1\"")).sendKeys(adr1);
-		we.findElement(By.cssSelector("input[name=\"dest_address2\"")).sendKeys(adr2);
-		we.findElement(By.cssSelector("input[name=\"dest_city\"")).sendKeys(city);
-		we.findElement(By.cssSelector("input[name=\"dest_state_name\"")).sendKeys(state);
-		we.findElement(By.cssSelector("input[name=\"dest_zip\"")).sendKeys(postcode);
-		we.findElement(By.cssSelector("input[name=\"dest_tel\"")).sendKeys(tel);
+		we.findElement(By.cssSelector("input[name=\"dest_first_name\"")).sendKeys(orderInfo.firstName);
+		we.findElement(By.cssSelector("input[name=\"dest_last_name\"")).sendKeys(orderInfo.lastName);
+		we.findElement(By.cssSelector("input[name=\"dest_address1\"")).sendKeys(orderInfo.adr1);
+		we.findElement(By.cssSelector("input[name=\"dest_address2\"")).sendKeys(orderInfo.adr2);
+		we.findElement(By.cssSelector("input[name=\"dest_city\"")).sendKeys(orderInfo.city);
+		we.findElement(By.cssSelector("input[name=\"dest_state_name\"")).sendKeys(orderInfo.state);
+		we.findElement(By.cssSelector("input[name=\"dest_zip\"")).sendKeys(orderInfo.postcode);
+		we.findElement(By.cssSelector("input[name=\"dest_tel\"")).sendKeys(orderInfo.tel);
 		
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we1 : weList) {
@@ -377,82 +419,84 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
+		// 等待 是否打开
+		wait1 = new WebDriverWait(driver,10);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				while (true){
+					try {
+						driver.findElements(By.id("contents"));
+						return true;
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		});
 		// add credit card
-		addCreditCard(driver, crId);
+		if(orderInfo.crObj != null){
+			fillCreditCard(driver, orderInfo.crObj);
+		}
 		
 		File oFile = new File(ooutFileName);
 		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
 				"yyyy-MM-dd");
 		FileUtils.write(oFile, "-------" + today + "-------\n",
 				Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, taobaoOrderName + "\n",
+		FileUtils.write(oFile, orderInfo.taobaoOrderName + "\n",
 				Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, productInfos + "\n", Charset.forName("UTF-8"),
+		FileUtils.write(oFile, toString(orderInfo.productInfos) + "\n", Charset.forName("UTF-8"),
 				true);
-		FileUtils.write(oFile, nameEn + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, tel + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, state + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, city + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, adr2 + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, adr1 + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, postcode + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.firstName +" " +orderInfo.lastName + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.tel + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.state + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.city + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.adr2 + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.adr1 + "\n", Charset.forName("UTF-8"), true);
+		FileUtils.write(oFile, orderInfo.postcode + "\n", Charset.forName("UTF-8"), true);
 		oFile = null;
 	}
 
-	private void addItemToCard(WebDriver driver, String productInfos,String type) {
+	private void addItemToCard(WebDriver driver, OrderInfo orderInfo,String type) {
 
 		List<WebElement> weList = null;
-		String[] pis = productInfos.split(itemSplitter);
-		for (String line : pis) {
-			System.out.println("[processing]" + line);
-			// line:商家编码：MTBL_136000-1101581 颜色分类:BK;尺码:XL
-			String[] pi = line.split(" ");
-			String pid = realProductId(pi[0]);
-			if(pid.startsWith("MTBL_")){
-				String[] newP = pid.split("-");
-				pid = newP[1];
-			}
-			driver.get(("JP".equals(type)?MontBellUtil.productUrlPrefix: MontBellUtil.productUrlPrefix_en) + pid);
-			String color = "";
-			String sizz = "";
-			if (pi.length > 1) {
-				String[] pii = pi[1].split(";");
-				color = realColorName(pii[0]);
-				if (pii.length > 1) {
-					sizz = realSizeName(pii[1]);
-				}
-			}
-			if ("".equals(sizz)) {
-				System.out.println("CANNOT process that..." + line);
-				mywait("Color OR size Selected realdy? ENTER for realdy!");
-				continue;
-			}
+		for (ProductInfo p : orderInfo.productInfos) {
+			driver.get(("JP".equals(type)?MontBellUtil.productUrlPrefix: MontBellUtil.productUrlPrefix_en) + p.productId);
+			String color = p.colorName;
+			String sizz = p.sizeName;
 			weList = driver.findElements(By.tagName("select"));
-			boolean has = false;
-			for (WebElement we : weList) {
-				if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
-					Select dropdown = new Select(we);
-					dropdown.selectByVisibleText(sizz);
-					has = true;
-					break;
+			boolean hasError = false;
+			try {
+				for (WebElement we : weList) {
+					if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
+						Select dropdown = new Select(we);
+						dropdown.selectByVisibleText(sizz);
+						break;
+					}
 				}
+			} catch (Exception e) {
+				hasError = true;
 			}
-			if(!has){
+			if (!hasError) {
 				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
 			}
-			has = false;
-			weList = driver.findElements(By.tagName("select"));
-			for (WebElement we : weList) {
-				if ((sizz.toUpperCase() + "_" + color.toUpperCase() + "_num").equalsIgnoreCase(we
-						.getAttribute("name"))) {
-					Select dropdown = new Select(we);
-					dropdown.selectByValue("1");
-					has = true;
+			hasError = false;
+			try {
+				for (WebElement we : weList) {
+					if ((sizz.toUpperCase() + "_" + color.toUpperCase() + "_num")
+							.equalsIgnoreCase(we.getAttribute("name"))) {
+						Select dropdown = new Select(we);
+						dropdown.selectByValue("1");
+						break;
+					}
 				}
+			} catch (Exception e) {
+				hasError = true;
 			}
-			if(!has){
+			if(!hasError){
 				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
@@ -472,24 +516,74 @@ public class MontbellAutoOrder {
 			}
 		}
 	}
-
-	private void addCreditCard(WebDriver driver, String crId) {
-		if(crObjList.isEmpty()){
-			return;
+	private OrderInfo readInOrderInfo(File tempFile0) throws IOException {
+		OrderInfo order =  new OrderInfo();
+		List<String> votes = Files.readLines(tempFile0,
+				Charset.forName("UTF-8"));
+		int idx = 0;
+		order.taobaoOrderName = votes.get(idx++);
+		String productInfos = votes.get(idx++);
+		String[] pis = productInfos.split(itemSplitter);
+		for (String line : pis) {
+			ProductInfo pinfo = new ProductInfo();
+			String[] pi = line.split(" ");
+			String pid = realProductId(pi[0]);
+			if (pid.startsWith("MTBL_")) {
+				String[] newP = pid.split("-");
+				pid = newP[1];
+			}
+			pinfo.productId = pid;
+			String color = "";
+			String sizz = "";
+			if (pi.length > 1) {
+				String[] pii = pi[1].split(";");
+				color = realColorName(pii[0]);
+				if (pii.length > 1) {
+					sizz = realSizeName(pii[1]);
+				}
+			}
+			pinfo.colorName = color;
+			pinfo.sizeName = sizz;
+			order.productInfos.add(pinfo);
 		}
-		CrObject crObj = crObjList.get(0);
+		String next = votes.get(idx++);
+		if("store".equalsIgnoreCase(next) || !"".equals(getCrBrand(next))){
+			// order for japan
+			order.crObj = getCrObject(next);
+			return order;
+		}
+		String nameEn = removeEndComma(next);
+		String[] names = nameEn.split(" ");
+		order.firstName = names[1];
+		order.lastName = names[0];
+		order.tel = removeEndComma(votes.get(idx++));
+		String state = removeEndComma(votes.get(idx++));
+		state = state.replaceAll("Sheng", "");
+		state = state.replaceAll("Shi", "");
+		order.state = state.replaceAll(" ", "");
+		order.city = removeEndComma(votes.get(idx++));
+		order.adr2 = removeEndComma(votes.get(idx++));
+		order.adr1 = removeEndComma(votes.get(idx++));
+		order.postcode = removeEndComma(votes.get(idx++));
+		order.crObj = getCrObject(removeEndComma(votes.get(idx++)));
+		return order;
+	}
+
+	private CrObject getCrObject(String crId) {
+		if(crObjList.isEmpty()){
+			return null;
+		}
 		if (StringUtils.isNotEmpty(crId)) {
 			for (CrObject o : crObjList) {
 				if (o.id.equals(crId)) {
-					crObj = o;
-					break;
+					return o;
 				}
 			}
 		}
-		fillCreditCard(driver, crObj);
+		return null;
 	}
 
-	private void fillCreditCard(WebDriver driver,CrObject crObj) {
+	private void fillCreditCard(WebDriver driver, CrObject crObj) {
 		WebElement c = driver.findElement(By.id("contents"));
 
 		List<WebElement> weList = null;
@@ -497,7 +591,7 @@ public class MontbellAutoOrder {
 		for (WebElement we : weList) {
 			if ("card_type_id".equalsIgnoreCase(we.getAttribute("name"))) {
 				Select dropdown = new Select(we);
-				dropdown.selectByVisibleText(getCrBrand(crObj.crBrand));
+				dropdown.selectByValue(getCrBrand(crObj.crBrand));
 				break;
 			}
 		}
@@ -606,5 +700,56 @@ public class MontbellAutoOrder {
 			return str.substring(0,str.length()-1);
 		}
 		return str;
+	}
+
+	private String toString(List<ProductInfo> productInfos) {
+		StringBuffer sb = new StringBuffer();
+		for(ProductInfo pi:productInfos){
+			sb.append(pi.productId);
+			if(!"".equals(pi.colorName)){
+				sb.append(":" + pi.colorName);
+			}
+			if(!"".equals(pi.sizeName)){
+				sb.append(":" + pi.sizeName);
+			}
+			sb.append("#");
+		}
+		return null;
+	}
+
+	private void logOrderInfo(OrderInfo orderInfo) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[taobaoOrderName]" + orderInfo.taobaoOrderName + "\n");
+		sb.append("[firstName]" + orderInfo.firstName + "\n");
+		sb.append("[lastName]" + orderInfo.lastName + "\n");
+		sb.append("[tel]" + orderInfo.tel + "\n");
+		sb.append("[state]" + orderInfo.state + "\n");
+		sb.append("[city]" + orderInfo.city + "\n");
+		sb.append("[adr2]" + orderInfo.adr2 + "\n");
+		sb.append("[adr1]" + orderInfo.adr1 + "\n");
+		sb.append("[postcode]" + orderInfo.postcode + "\n");
+		sb.append("[crId]" + orderInfo.crObj.crBrand + "\n");
+		sb.append("[productInfos]" + toString(orderInfo.productInfos) + "\n");
+		System.out.println(sb.toString());
+	}
+	
+	class OrderInfo{
+		public String taobaoOrderName;
+		public List<ProductInfo> productInfos = Lists.newArrayList();
+		public String firstName;
+		public String lastName;
+		public String tel;
+		public String state;
+		public String city;
+		public String adr2;
+		public String adr1;
+		public String postcode;
+		public CrObject crObj;
+	}
+	class ProductInfo{
+		public String productId;
+		public String sizeName;
+		public String colorName;
+		
 	}
 }
