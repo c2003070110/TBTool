@@ -21,7 +21,7 @@ public class MontbellFreeceBaobeiCreator  {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		String outputFile = "out/montBell_freece_baobei_%s.csv";
-		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
+		String publishedBaobeiFile = "c:/temp/montnell-1023.csv";
 		File file = new File(publishedBaobeiFile);
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);

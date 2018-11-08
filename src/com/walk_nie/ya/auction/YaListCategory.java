@@ -20,6 +20,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.util.NieUtil;
 
 public class YaListCategory {
 
@@ -175,8 +176,7 @@ public class YaListCategory {
 
 	protected void mywait() throws IOException {
 		while (true) {
-			System.out.print("ready for continue? ENTER;N for exit ");
-			String line = getStdReader().readLine().trim();
+			String line = NieUtil.readLineFromSystemIn("ready for continue? ENTER;N for exit ");
 			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
 					|| "".equals(line)) {
 				break;
@@ -184,12 +184,6 @@ public class YaListCategory {
 		}
 	}
 
-	public BufferedReader getStdReader() {
-		if (stdReader == null) {
-			stdReader = new BufferedReader(new InputStreamReader(System.in));
-		}
-		return stdReader;
-	}
 	private  Document urlToDocument(String url)
 			throws ClientProtocolException, IOException {
 

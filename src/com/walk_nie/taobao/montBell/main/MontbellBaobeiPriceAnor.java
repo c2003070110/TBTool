@@ -19,6 +19,7 @@ import org.openqa.selenium.WebElement;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 public class MontbellBaobeiPriceAnor {
 	private static String taobaoUrl = "https://s.taobao.com/search?imgfile=&commend=all&ssid=s5-e&search_type=item&sourceId=tb.index&ie=utf8&q=%s";
@@ -50,10 +51,8 @@ public class MontbellBaobeiPriceAnor {
 					baobeiObj.price);
 			String searchUrl = String.format(taobaoUrl, publisedProductId);
 			WebDriver webDriver = WebDriverUtil.getWebDriver(searchUrl);
-			try {
-				Thread.sleep(1000 * 3);
-			} catch (InterruptedException e) {
-			}
+
+			NieUtil.mySleepBySecond(3);
 			// List<WebElement> reslt =
 			// webDriver.findElements(By.id("list-itemList"));
 			// List<WebElement> reslt =
@@ -61,10 +60,7 @@ public class MontbellBaobeiPriceAnor {
 			List<WebElement> itemsL = webDriver.findElement(
 					By.id("mainsrp-itemlist")).findElements(
 					By.className("items"));
-//			try {
-//				Thread.sleep(1000 * 5);
-//			} catch (InterruptedException e) {
-//			}
+ 
 			List<WebElement> reslt = null;
 			if (itemsL.size() > 1) {
 				reslt = itemsL.get(0).findElements(By.className("item"));

@@ -8,6 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.walk_nie.util.NieUtil;
+
 public class BaobeiDelete {
 
 	/**
@@ -41,10 +43,7 @@ public class BaobeiDelete {
 			el1.findElement(By.id("username")).sendKeys("yiyi2014jp");
 			driver.findElement(By.id("btnNext")).click();
 		}
-		try {
-			Thread.sleep(1000*2);
-		} catch (InterruptedException e) {
-		}
+		NieUtil.mySleepBySecond(2);
 		driver.findElement(By.id("passwd")).sendKeys("dengyi");
 		 driver.findElement(By.id("btnSubmit")).click();
 		return driver;

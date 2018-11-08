@@ -9,9 +9,10 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.google.common.io.Files;
+import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 public class YahooDmmCheckMain {
 
@@ -31,11 +32,7 @@ public class YahooDmmCheckMain {
 
 	protected void check() throws IOException, InterruptedException {
 
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 
 		File tempFile0 = new File(checkFile);
 		List<String> votes = Files.readLines(tempFile0,
@@ -50,7 +47,7 @@ public class YahooDmmCheckMain {
 			driver.get(loginUrl);
 			driver.findElement(By.id("username")).sendKeys(sl[0]);
 			driver.findElement(By.id("btnNext")).click();
-			Thread.sleep(3 * 1000);
+			NieUtil.mySleepBySecond(3);
 			By pswdBy = By.id("passwd");
 			By btnSubmitBy = By.id("btnSubmit");
 			try {

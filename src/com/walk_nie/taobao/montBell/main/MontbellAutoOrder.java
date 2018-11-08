@@ -25,6 +25,7 @@ import com.google.common.io.Files;
 import com.walk_nie.object.CrObject;
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoOrder {
 	protected BufferedReader stdReader = null;
@@ -253,10 +254,8 @@ public class MontbellAutoOrder {
 			dropdown.selectByValue("13");// 東京都
 			we = driver.findElement(By.cssSelector("img[alt=\"受取店舗入力\"]"));
 			we.click();
-			try {
-				Thread.sleep(1000 * 2);
-			} catch (InterruptedException e) {
-			}
+
+			NieUtil.mySleepBySecond(2);
 			we = driver.findElement(By.cssSelector("a[title=\"モンベル 御徒町店を選択する\"]"));
 			we.click();
 
@@ -315,6 +314,7 @@ public class MontbellAutoOrder {
 			mywait("Color OR size Selected realdy? ENTER for realdy!");
 		}
 
+		NieUtil.mySleepBySecond(1);
 		List<WebElement> weList = null;
 		driver.get("https://en.montbell.jp/products/cart/");			
 		// 等待 是否打开
@@ -347,6 +347,7 @@ public class MontbellAutoOrder {
 				break;
 			}
 		}	
+		NieUtil.mySleepBySecond(1);
 		// 等待 是否打开
 		wait1 = new WebDriverWait(driver,10);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -380,11 +381,10 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
+		NieUtil.mySleepBySecond(1);
 		driver.switchTo().alert().accept();
-		try {
-			Thread.sleep(1000*1);
-		} catch (InterruptedException e) {
-		}
+
+		NieUtil.mySleepBySecond(1);
 		// 等待 是否打开
 		wait1 = new WebDriverWait(driver,10);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -419,6 +419,7 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
+		NieUtil.mySleepBySecond(1);
 		// 等待 是否打开
 		wait1 = new WebDriverWait(driver,10);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -478,7 +479,7 @@ public class MontbellAutoOrder {
 			} catch (Exception e) {
 				hasError = true;
 			}
-			if (!hasError) {
+			if (hasError) {
 				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
@@ -496,7 +497,7 @@ public class MontbellAutoOrder {
 			} catch (Exception e) {
 				hasError = true;
 			}
-			if(!hasError){
+			if(hasError){
 				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
@@ -510,10 +511,7 @@ public class MontbellAutoOrder {
 					break;
 				}
 			}
-			try {
-				Thread.sleep(1000*1);
-			} catch (InterruptedException e) {
-			}
+			NieUtil.mySleepBySecond(1);
 		}
 	}
 	private OrderInfo readInOrderInfo(File tempFile0) throws IOException {
@@ -547,7 +545,7 @@ public class MontbellAutoOrder {
 			order.productInfos.add(pinfo);
 		}
 		String next = votes.get(idx++);
-		if("store".equalsIgnoreCase(next) || !"".equals(getCrBrand(next))){
+		if("store".equalsIgnoreCase(next) || "".equals(getCrBrand(next))){
 			// order for japan
 			order.crObj = getCrObject(next);
 			return order;
@@ -714,7 +712,7 @@ public class MontbellAutoOrder {
 			}
 			sb.append("#");
 		}
-		return null;
+		return sb.toString();
 	}
 
 	private void logOrderInfo(OrderInfo orderInfo) {

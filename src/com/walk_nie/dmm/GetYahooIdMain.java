@@ -14,9 +14,10 @@ import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 public class GetYahooIdMain {
 
@@ -33,12 +34,8 @@ public class GetYahooIdMain {
 	}
 
 	public void execute() throws IOException {
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
 
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		int i = 0;
 		while (true) {
 			RegObjInfo regInfo = createRegInfo(i);
@@ -79,10 +76,7 @@ public class GetYahooIdMain {
 				break;
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-				}
+				NieUtil.mySleepBySecond(2);
 			}
 	}
 
@@ -124,10 +118,7 @@ public class GetYahooIdMain {
 					break;
 				}
 			}
-			try {
-				Thread.sleep(1000*1);
-			} catch (InterruptedException e) {
-			}
+			NieUtil.mySleepBySecond(2);
 			// mail box
 			WebElement msgWE = driver.findElement(By.id("msg-list"));
 			list = msgWE.findElements(By.className("subj"));
@@ -182,10 +173,7 @@ public class GetYahooIdMain {
 				}
 			} catch (Exception ex) {
 			}
-			try {
-				Thread.sleep(1000 * 1);
-			} catch (InterruptedException e) {
-			}
+			NieUtil.mySleepBySecond(1);
 		}
 		return mywait("yahoo rand is finished ready for continue? ENTER;N for exit");
 	}

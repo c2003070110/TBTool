@@ -19,11 +19,10 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.google.common.io.Files;
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class VoteMain {
 
@@ -75,20 +74,11 @@ public class VoteMain {
 		Logger.getLogger("org.openqa.selenium").setLevel(
 				java.util.logging.Level.OFF);
 
-		if (System.getProperty("webdriver.chrome.driver")==null || "".equals(System.getProperty("webdriver.chrome.driver"))) {
-			System.setProperty("webdriver.chrome.driver",
-					"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		}
-		if (System.getProperty("webdriver.gecko.driver")==null || "".equals(System.getProperty("webdriver.gecko.driver"))) {
-			System.setProperty("webdriver.gecko.driver",
-					"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
-		}
-
 		FirefoxOptions opts = new FirefoxOptions().setLogLevel(Level.OFF);
 		//DesiredCapabilities capabilities = opts.addTo(DesiredCapabilities
 		//		.firefox());
 		//capabilities.setCapability("marionette", true);
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		driver.manage().window().setPosition(new Point(10, 10));
 		driver.manage().window().setSize(new Dimension(540, 860));
 		// driver.manage().window().maximize() ;

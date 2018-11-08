@@ -10,9 +10,10 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.google.common.io.Files;
+import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 public class DmmRegMain {
 
@@ -61,11 +62,7 @@ public class DmmRegMain {
 
 	protected void reg() throws IOException {
 
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 
 		File tempFile0 = new File(regFile);
 		List<String> votes = Files.readLines(tempFile0,
@@ -140,10 +137,7 @@ public class DmmRegMain {
 			}
 		}
 		driver.get(yUrl);
-		try {
-			Thread.sleep(1000 * 1);
-		} catch (InterruptedException e) {
-		}
+		NieUtil.mySleepBySecond(1);
 		WebElement msgWE = driver.findElement(By.id("msg-list"));
 		submitList = msgWE.findElements(By.className("subj"));
 		WebElement selectedWe1 = null;
@@ -177,10 +171,7 @@ public class DmmRegMain {
 			}
 		}
 		selectedWe1.click();
-		try {
-			Thread.sleep(1000*1);
-		} catch (InterruptedException e) {
-		}
+		NieUtil.mySleepBySecond(1);
 		return true;
 	}
 

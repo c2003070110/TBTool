@@ -14,14 +14,10 @@ public class EmsApply {
 	private WebDriver driver;
 
 	public static void main(String[] args) throws Exception {
-		// C:\Users\niehp\Google ドライブ\tool\chromedriver.exe
 		if(args.length != 1){
-			// arg1 = path of chromedriver.exe;arg2=count 
-			//System.err.println("arg1 = path of chromedriver.exe;arg2=count");
 			System.err.println("arg1=count");
 			return;
 		}
-		//System.setProperty("webdriver.chrome.driver",args[0]);
 		EmsApply ems = new EmsApply();
 		ems.init();
 		
@@ -34,11 +30,6 @@ public class EmsApply {
 	}
 
 	public void init() throws Exception {
-		//driver = new ChromeDriver();
-        //FirefoxProfile profile = new FirefoxProfile(new File(
-        //        "C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/nu29zmti.default"));
-		//driver = new FirefoxDriver(profile);
-		//driver = new HtmlUnitDriver(true);
 		driver = WebDriverUtil.getFirefoxWebDriver();
 		
 		

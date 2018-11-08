@@ -8,10 +8,11 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.dmm.GetYahooIdMain.RegObjInfo;
+import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 public class YahooIdDmmRegMain {
 
@@ -26,13 +27,10 @@ public class YahooIdDmmRegMain {
 	}
 
 	public void execute() throws IOException {
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
+
 		GetYahooIdMain yahoo = new GetYahooIdMain();
 		DmmRegMain dmmReg = new DmmRegMain();
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		int i = 0;
 		while (true) {
 			GetYahooIdMain.RegObjInfo regInfo = yahoo.createRegInfo(i);
@@ -78,10 +76,7 @@ public class YahooIdDmmRegMain {
 				break;
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-				}
+				NieUtil.mySleepBySecond(2);
 			}
 	}
 

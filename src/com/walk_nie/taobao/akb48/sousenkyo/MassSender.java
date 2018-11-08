@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import com.google.common.io.Files;
+import com.walk_nie.util.NieUtil;
 
 public class MassSender {
 
@@ -72,15 +73,15 @@ public class MassSender {
 			robot.keyPress(KeyEvent.VK_V);
 			robot.keyRelease(KeyEvent.VK_CONTROL);
 			robot.keyRelease(KeyEvent.VK_V);
-			Thread.sleep(2000);
+			NieUtil.mySleepBySecond(2);
 			//mysleep(2);
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
 			//mysleep(2);
-			Thread.sleep(1000);
+			NieUtil.mySleepBySecond(1);
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
-			Thread.sleep(1000);
+			NieUtil.mySleepBySecond(1);
 			//mysleep(1);
 			
 			robot.mouseMove(x2, y2);
@@ -98,8 +99,7 @@ public class MassSender {
 			 
 			robot.keyPress(KeyEvent.VK_ENTER);
 			robot.keyRelease(KeyEvent.VK_ENTER);
-			Thread.sleep(2000);
-			
+			NieUtil.mySleepBySecond(2);
 		}
 
 	}

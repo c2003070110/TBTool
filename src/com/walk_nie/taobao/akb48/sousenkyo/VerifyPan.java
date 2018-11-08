@@ -9,11 +9,10 @@ import java.util.logging.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.io.Files;
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class VerifyPan {
 
@@ -32,12 +31,8 @@ public class VerifyPan {
 		List<String> panList = Files.readLines(tempFile,
 				Charset.forName("UTF-8"));
 
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
 		// WebDriver driver = new ChromeDriver();
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		// WebDriver driver = new HtmlUnitDriver();
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(
 				java.util.logging.Level.OFF);

@@ -11,7 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class GetExciteIdMain {
 
@@ -27,13 +28,9 @@ public class GetExciteIdMain {
 	}
 
 	public void execute() throws IOException {
-		System.setProperty("webdriver.chrome.driver",
-				"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-		System.setProperty("webdriver.gecko.driver",
-				"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
 
 		List<String> lines = new ArrayList<String>();
-		WebDriver driver = new FirefoxDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		try {
 			int i=0;
 			while(true){

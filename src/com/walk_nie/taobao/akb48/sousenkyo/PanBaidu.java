@@ -8,8 +8,9 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+
+import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class PanBaidu  {
 
@@ -50,10 +51,8 @@ public class PanBaidu  {
 
     private WebDriver logon(String user, String pass) throws IOException {
     	String panBaiduRootUrl = "http://pan.baidu.com/";
-        System.setProperty("webdriver.chrome.driver", "C:/Users/niehp/Google ドライブ/tool/chromedriver.exe");
-        System.setProperty("webdriver.gecko.driver", "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.16.1.exe");
         //WebDriver driver =  new ChromeDriver();
-        WebDriver driver =  new FirefoxDriver();
+        WebDriver driver =  WebDriverUtil.getFirefoxWebDriver();
         driver.get(panBaiduRootUrl);
         System.out.println("Swtich to USER/PASSWORD");
         mywait();

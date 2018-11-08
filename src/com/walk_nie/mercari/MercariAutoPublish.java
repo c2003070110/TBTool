@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Files;
+import com.walk_nie.util.NieUtil;
 
 public class MercariAutoPublish {
 	private String inFileName = "./mercari/publish-in.txt";
@@ -112,9 +113,9 @@ public class MercariAutoPublish {
 			MercariUtil.mywait("[ERROR]Picture Upload ERROR!upload manually !ENTER when upload finish!");
 		}else{
 			selWe.sendKeys(pictures.get(0));
-			Thread.sleep(5*1000);
+			NieUtil.mySleepBySecond(5);
 			selWe.sendKeys(pictures.get(1));
-			Thread.sleep(5*1000);
+			NieUtil.mySleepBySecond(5);
 			selWe.sendKeys(pictures.get(2));
 		}
 		
@@ -320,4 +321,395 @@ public class MercariAutoPublish {
 		}
 		selWe.click();
 	}
+	/*
+	 url = https://www.mercari.com/jp/search/?sort_order=created_desc&keyword=akb48&category_root=&brand_name=&brand_id=&size_group=&price_min=&price_max=&status_on_sale=1
+	 class="items-box-content clearfix"
+	 <section class="items-box">
+          <a href="https://item.mercari.com/jp/m48008252039/">
+            <figure class="items-box-photo">
+              <img data-src="https://static-mercari-jp-imgtr2.akamaized.net/thumb/photos/m48008252039_1.jpg?1541684983" class="lazyloaded is-higher-height" alt="AKB48 クリアファイル" src="https://static-mercari-jp-imgtr2.akamaized.net/thumb/photos/m48008252039_1.jpg?1541684983">
+                          </figure>
+            <div class="items-box-body">
+              <h3 class="items-box-name font-2">AKB48 クリアファイル</h3>
+              <div class="items-box-num clearfix">
+                <div class="items-box-price font-5">¥ 300</div>
+                                                  <p class="item-box-tax">(税込)</p>
+                              </div>
+            </div>
+          </a>
+        </section>
+        ----detailpage-------https://item.mercari.com/jp/m49934451444/
+        <section class="item-box-container l-single-container">
+  <h1 class="item-name">ルイヴィトン ダミエ 長財布</h1>
+  
+  <div class="item-main-content clearfix">
+    <div class="item-photo">
+      <div class="owl-carousel owl-loaded owl-drag">
+                              
+                                        
+                                        
+                                        
+                        <div class="owl-stage-outer"><div class="owl-stage" style="left: -300px; width: 1200px;"><div class="owl-item" style="width: 300px;"><div class="owl-item-inner is-higher-width">
+              <img data-src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_1.jpg?1541429601" alt="ルイヴィトン ダミエ 長財布" class="owl-lazy" src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_1.jpg?1541429601" style="opacity: 1;">
+            </div></div><div class="owl-item active" style="width: 300px;"><div class="owl-item-inner is-higher-height">
+              <img data-src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_2.jpg?1541429601" alt="ルイヴィトン ダミエ 長財布" class="owl-lazy" src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_2.jpg?1541429601" style="opacity: 1;">
+            </div></div><div class="owl-item" style="width: 300px;"><div class="owl-item-inner is-higher-height">
+              <img data-src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_3.jpg?1541429601" alt="ルイヴィトン ダミエ 長財布" class="owl-lazy" src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_3.jpg?1541429601" style="opacity: 1;">
+            </div></div><div class="owl-item" style="width: 300px;"><div class="owl-item-inner is-higher-height">
+              <img data-src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_4.jpg?1541429601" alt="ルイヴィトン ダミエ 長財布" class="owl-lazy" src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_4.jpg?1541429601" style="opacity: 1;">
+            </div></div></div></div><div class="owl-nav disabled"><div class="owl-prev">prev</div><div class="owl-next">next</div></div><div class="owl-dots"><div class="owl-dot"><span></span>
+            <div class="owl-dot-inner">
+              <img src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_1.jpg?1541429601" class="is-higher-width">
+          </div></div><div class="owl-dot active"><span></span>
+            <div class="owl-dot-inner">
+              <img src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_2.jpg?1541429601" class="is-higher-height">
+          </div></div><div class="owl-dot"><span></span>
+            <div class="owl-dot-inner">
+              <img src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_3.jpg?1541429601" class="is-higher-height">
+          </div></div><div class="owl-dot"><span></span>
+            <div class="owl-dot-inner">
+              <img src="https://static-mercari-jp-imgtr2.akamaized.net/item/detail/orig/photos/m49934451444_4.jpg?1541429601" class="is-higher-height">
+          </div></div></div></div>
+              <div class="item-sold-out-badge"><div>SOLD</div></div>
+          </div>
+
+          <div class="item-price-box text-center visible-sp">
+        <span class="item-price bold">¥ 19,000</span>
+        <span class="item-tax"> (税込)</span>
+                  <span class="item-shipping-fee">送料込み</span>
+              </div>
+            <section class="visible-sp">
+                                                        <div class="item-buy-btn disabled f18-24">売り切れました</div>
+            
+                                  </section>
+        <table class="item-detail-table">
+      <tbody><tr>
+        <th>出品者</th>
+        <td>
+          <a href="https://www.mercari.com/jp/u/577215247/">バナナ</a>
+          <div>
+                          <div class="item-user-ratings">
+                <i class="icon-good"></i>
+                <span>36</span>
+              </div>
+                          <div class="item-user-ratings">
+                <i class="icon-normal"></i>
+                <span>0</span>
+              </div>
+                          <div class="item-user-ratings">
+                <i class="icon-bad"></i>
+                <span>0</span>
+              </div>
+                      </div>
+        </td>
+      </tr>
+      <tr>
+        <th>カテゴリー</th>
+        <td>
+                    <a href="https://www.mercari.com/jp/category/1/"><div>レディース</div></a>
+                                <a href="https://www.mercari.com/jp/category/23/">
+              <div class="item-detail-table-sub-category"><i class="icon-arrow-right"></i> 小物</div>
+            </a>
+                    <a href="https://www.mercari.com/jp/category/241/">
+            <div class="item-detail-table-sub-sub-category"><i class="icon-arrow-right"></i> 長財布</div>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <th>ブランド</th>
+          <td>
+                          <a href="https://www.mercari.com/jp/brand/1326/">
+                <div>
+                  ルイ ヴィトン
+                </div>
+              </a>
+                      </td>
+      </tr>
+            <tr>
+        <th>商品の状態</th>
+        <td>新品、未使用</td>
+      </tr>
+      <tr>
+        <th>配送料の負担</th>
+        <td>送料込み(出品者負担)</td>
+      </tr>
+      <tr>
+        <th>配送の方法</th>
+        <td>ゆうゆうメルカリ便</td>
+      </tr>
+              <tr>
+          <th>配送元地域</th>
+          <td><a href="https://www.mercari.com/jp/area/23/">愛知県</a></td>
+        </tr>
+      
+              <tr>
+          <th>発送日の目安</th>
+          <td>1~2日で発送</td>
+        </tr>
+      
+          </tbody></table>
+  </div>
+
+    <div class="item-price-box text-center">
+    <span class="item-price bold">¥ 19,000</span>
+    <span class="item-tax"> (税込)</span>
+          <span class="item-shipping-fee">送料込み</span>
+      </div>
+
+                            <div class="item-buy-btn disabled f18-24">売り切れました</div>
+      
+          
+    <div class="item-description f14">
+    <p class="item-description-inner">ご覧頂きましてありがとうございます。
+プレゼントで頂いた物です、使用する機会がなく、使っていません。
+
+商品詳細
+[状態]新品未使用
+[素材] PVC
+[備考] 「Made in France」 製造番号: SP1918
+[サイズ] 11※17※2
+[ランク] N
+[付属品] 布保存袋
+[購入元] プレゼント
+
+※状態やランクにつきましては目安としてお考え頂きます様お願い致します。
+※取り扱い商品のほとんどが中古品の為、全ての状態のお伝えが難しい場合が           ございます。神経質な方はご購入をお控え頂きます様お願い致します。
+※本物の商品ですのでご安心してお買い物をお楽しみください。
+※他にもブランド品を多数出品していますので、ご覧いただければ光栄です。
+
+ランク参考
+Nーー新品や新古品などの完璧な超美品。
+NAーー未使用品でダメージ感が無い、美品の中古品
+Aーーダメージをほとんど感じない、美品の中古品
+ABーー目立たないダメージが僅かにある程度の、良品の中古品
+Bーー若干の使用感があり若干のダメージがある、一般的な中古品といった印    象の商品
+BCーー多少の使用感がありダメージ感のある、程度の低い中古品
+Cーーかなりの使用感があり酷いダメージや欠陥があるが、使用は可能な中古品
+CDーー酷いダメージや欠品欠損のある、使用に問題が出るような中古品
+Dーー修理などが必要な使用困難な中古品(ジャンク品)
+
+
+120</p>
+  </div>
+
+    <div class="item-button-container clearfix">
+      <div class="item-button-left">
+                            <button type="button" name="like!" data-toggle="like" data-id="m49934451444" data-ga="element" data-ga-category="LIKE" data-ga-label="like!" class="item-button item-button-like">
+            <i class="icon-like-border"></i>
+            <span>いいね!</span>
+            <span data-num="like" class="fade-in-down">7</span>
+          </button>
+
+                    <a href="" data-modal="report-item" data-open="modal" class="item-button item-button-report clearfix">
+            <i class="icon-flag"></i>
+            <span>不適切な商品の報告</span>
+          </a>
+
+          <input name="like_add_url" value="https://www.mercari.com/jp/like/add/m49934451444/" type="hidden">
+          <input name="like_del_url" value="https://www.mercari.com/jp/like/delete/m49934451444/" type="hidden">
+          <input name="__csrf_value" value="8b694422410d6f020d3ed34432c060dd495bfaf18bc60677c850f56fbc79e6ae4c1b5f7ec70178396056daf587c4a0f1fb1b6965a8385131e0c766db028f42bf5" type="hidden">
+              </div>
+      <div class="item-button-right">
+        <a href="https://www.mercari.com/jp/safe/description/" target="_blank">
+          <i class="icon-lock"></i>
+          <span>あんしん・あんぜんへの取り組み</span>
+        </a>
+      </div>
+    </div>
+</section>
+
+<div class="item-detail-message">
+  <div class="message-container">
+      <div class="message-content">
+      
+      <ul class="message-items">
+                  <li class="clearfix">
+                          <a href="https://www.mercari.com/jp/u/766736075/" class="message-user">
+                <figure>
+                                    <div>
+                    <img src="//static-mercari-jp-imgtr2.akamaized.net/thumb/members/766736075.jpg?1539354867" alt="">
+                  </div>
+                                    <figcaption class="bold">
+                    山口
+                  </figcaption>
+                </figure>
+                                              </a>
+            
+                        <div class="message-body">
+              <div class="message-body-text">すみませんですが、これは12000円いいですか？</div>
+              <div class="message-icons clearfix">
+                                <time class="message-icon-left">
+                  <i class="icon-time"></i>
+                  <span>2 日前</span>
+                </time>
+                                  <div class="message-icon-right">
+                                                              <form action="https://www.mercari.com/jp/comment/report/m49934451444/1834096255/" method="POST">
+                        <button type="submit"><i class="icon-flag"></i></button>
+                                                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                                              </form>
+                                                                              </div>
+                              </div>
+              <i class="icon-balloon"></i>
+            </div>
+          </li>
+                  <li class="clearfix">
+                          <a href="https://www.mercari.com/jp/u/699952571/" class="message-user">
+                <figure>
+                                    <div>
+                    <img src="//static-mercari-jp-imgtr2.akamaized.net/thumb/members/699952571.jpg?1540983530" alt="">
+                  </div>
+                                    <figcaption class="bold">
+                    サチ
+                  </figcaption>
+                </figure>
+                                              </a>
+            
+                        <div class="message-body">
+              <div class="message-body-text">こんにちは、はじめまして。<br>
+コメント失礼致します。<br>
+即決、19000円で譲って頂けないでしょうか？<br>
+よろしくお願い致します。</div>
+              <div class="message-icons clearfix">
+                                <time class="message-icon-left">
+                  <i class="icon-time"></i>
+                  <span>2 日前</span>
+                </time>
+                                  <div class="message-icon-right">
+                                                              <form action="https://www.mercari.com/jp/comment/report/m49934451444/1834946323/" method="POST">
+                        <button type="submit"><i class="icon-flag"></i></button>
+                                                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                                              </form>
+                                                                              </div>
+                              </div>
+              <i class="icon-balloon"></i>
+            </div>
+          </li>
+                  <li class="clearfix">
+                          <a href="https://www.mercari.com/jp/u/766736075/" class="message-user">
+                <figure>
+                                    <div>
+                    <img src="//static-mercari-jp-imgtr2.akamaized.net/thumb/members/766736075.jpg?1539354867" alt="">
+                  </div>
+                                    <figcaption class="bold">
+                    山口
+                  </figcaption>
+                </figure>
+                                              </a>
+            
+                        <div class="message-body">
+              <div class="message-body-text">15000円いいですか？</div>
+              <div class="message-icons clearfix">
+                                <time class="message-icon-left">
+                  <i class="icon-time"></i>
+                  <span>2 日前</span>
+                </time>
+                                  <div class="message-icon-right">
+                                                              <form action="https://www.mercari.com/jp/comment/report/m49934451444/1834960116/" method="POST">
+                        <button type="submit"><i class="icon-flag"></i></button>
+                                                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                                              </form>
+                                                                              </div>
+                              </div>
+              <i class="icon-balloon"></i>
+            </div>
+          </li>
+                  <li class="clearfix">
+                          <a href="https://www.mercari.com/jp/u/577215247/" class="message-user">
+                <figure>
+                                    <div>
+                    <img src="//static-mercari-jp-imgtr2.akamaized.net/thumb/members/577215247.jpg?1537336302" alt="">
+                  </div>
+                                    <figcaption class="bold">
+                    バナナ
+                  </figcaption>
+                </figure>
+                                                  <div class="message-is-seller ">出品者</div>
+                              </a>
+            
+                        <div class="message-body">
+              <div class="message-body-text">金額を変更しました。よろしくお願いいたします。</div>
+              <div class="message-icons clearfix">
+                                <time class="message-icon-left">
+                  <i class="icon-time"></i>
+                  <span>2 日前</span>
+                </time>
+                                  <div class="message-icon-right">
+                                                              <form action="https://www.mercari.com/jp/comment/report/m49934451444/1835431921/" method="POST">
+                        <button type="submit"><i class="icon-flag"></i></button>
+                                                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                                              </form>
+                                                                              </div>
+                              </div>
+              <i class="icon-balloon"></i>
+            </div>
+          </li>
+                  <li class="clearfix">
+                          <a href="https://www.mercari.com/jp/u/577215247/" class="message-user">
+                <figure>
+                                    <div>
+                    <img src="//static-mercari-jp-imgtr2.akamaized.net/thumb/members/577215247.jpg?1537336302" alt="">
+                  </div>
+                                    <figcaption class="bold">
+                    バナナ
+                  </figcaption>
+                </figure>
+                                                  <div class="message-is-seller ">出品者</div>
+                              </a>
+            
+                        <div class="message-body">
+              <div class="message-body-text">申し訳ありません，15000円は無理です。</div>
+              <div class="message-icons clearfix">
+                                <time class="message-icon-left">
+                  <i class="icon-time"></i>
+                  <span>2 日前</span>
+                </time>
+                                  <div class="message-icon-right">
+                                                              <form action="https://www.mercari.com/jp/comment/report/m49934451444/1835433522/" method="POST">
+                        <button type="submit"><i class="icon-flag"></i></button>
+                                                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                                              </form>
+                                                                              </div>
+                              </div>
+              <i class="icon-balloon"></i>
+            </div>
+          </li>
+              </ul>
+    </div>
+            <div class="message-content">
+      <form action="https://www.mercari.com/jp/comment/add/" method="POST" class="message-form">
+        <p>相手のことを考え丁寧なコメントを心がけましょう。不快な言葉遣いなどは利用制限や退会処分となることがあります。</p>
+        <input name="item_id" value="m49934451444" type="hidden">
+                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                <textarea type="text" name="body" value="" class="textarea-default" disabled=""></textarea>
+        <button type="submit" class="message-submit btn-default btn-gray" disabled="">
+                      <span>売り切れのためコメントできません</span>
+                  </button>
+      </form>
+    </div>
+  <aside class="modal" data-modal="delete-comment" data-close="modal">
+    <div class="modal-inner modal-banner">
+      <div class="modal-body">
+        <div class="modal-head bold">確認</div>
+        <div data-comment="body"></div>
+        <br>
+        本当にこのコメントを削除してよろしいですか？
+      </div>
+
+      <form action="https://www.mercari.com/jp/comment/delete/" method="POST">
+        <div class="clearfix">
+          <div class="modal-btn modal-btn-cancel" data-close="modal">キャンセル</div>
+          <button type="submit" class="modal-btn modal-btn-submit">
+            削除する
+          </button>
+        </div>
+        <input name="item_id" value="m49934451444" type="hidden">
+        <input name="comment_id" value="" type="hidden">
+                  <input name="redirect_url_key" value="item_detail" type="hidden">
+                <input name="__csrf_value" value="8b694422410d6f020d3ed34432c060dd495bfaf18bc60677c850f56fbc79e6ae4c1b5f7ec70178396056daf587c4a0f1fb1b6965a8385131e0c766db028f42bf5" type="hidden">
+      </form>
+    </div>
+  </aside>
+  </div>
+</div>
+	 */
 }
