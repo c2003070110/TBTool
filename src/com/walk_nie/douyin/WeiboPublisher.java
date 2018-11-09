@@ -1,15 +1,12 @@
 package com.walk_nie.douyin;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,7 +17,7 @@ import com.walk_nie.util.NieUtil;
 
 public class WeiboPublisher {
 
-	public void execute(File srcFolder) throws Exception {
+	public void publish(File srcFolder) throws Exception {
 		// 
 		List<PublishObject> objList = parsePublishInfoFromFolder(srcFolder);
 		WebDriver driver = weiboLogon();
@@ -47,7 +44,7 @@ public class WeiboPublisher {
 			}});
 		for(File file:files){
 			String ext = getFileExtention(file);
-			if(!ext.endsWith(".txt")){
+			if(!ext.endsWith("txt")){
 				continue;
 			}
 			PublishObject obj = new PublishObject();
@@ -60,7 +57,8 @@ public class WeiboPublisher {
 			obj.txtContent = sb.toString();
 			for(File file1:files){
 				String name1 = getFileWithoutExtention(file1);
-				if(name1.startsWith(name)){
+				String ext1 = getFileExtention(file1);
+				if(name1.startsWith(name) && !ext1.endsWith("txt")){
 					obj.multimediaContext.add(file1);
 				}
 			}
@@ -109,11 +107,15 @@ public class WeiboPublisher {
 		}
 		WebElement elMain = driver.findElement(By.id("plc_main"));
 		// fill txt
+		String despTxt = "#日本# #抖音#";
+		if(StringUtils.isNotEmpty(obj.txtContent)){
+			despTxt += obj.txtContent;
+		}
 		List<WebElement> elInputs1 = elMain.findElements(By.tagName("input"));
 		for (WebElement el : elInputs1) {
 			String attr = el.getAttribute("action-type");
 			if (attr != null && attr.equals("inputTitle")) {
-				el.sendKeys(obj.txtContent);
+				el.sendKeys(despTxt);
 				break;
 			}
 		}
@@ -134,7 +136,7 @@ public class WeiboPublisher {
 		}
 	}
 
-	private WebDriver weiboLogon() {
+	private WebDriver weiboLogon() throws IOException {
 
 		String rootUrl = "https://www.weibo.com/";
 		// WebDriver driver = new ChromeDriver();
@@ -148,11 +150,11 @@ public class WeiboPublisher {
 		for (WebElement el : elInputs) {
 			if ("loginname".equals(el.getAttribute("id"))) {
 				el.clear();
-				el.sendKeys("XXXX");
+				el.sendKeys("nhp12@sina.com");
 			}
 			if ("password".equals(el.getAttribute("type"))) {
 				el.clear();
-				el.sendKeys("XXXX");
+				el.sendKeys("nhp12345");
 			}
 		}
 		List<WebElement> elas = elLogin.findElements(By.tagName("a"));
@@ -162,8 +164,7 @@ public class WeiboPublisher {
 			}
 		}
 
-		NieUtil.mySleepBySecond(2);
-		// TODO Logon weibo
+		NieUtil.readLineFromSystemIn("Weibo login is finished? ENTER For already");
 		return driver;
 	}
 
