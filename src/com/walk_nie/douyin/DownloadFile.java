@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
  
 /**
- * 根据视频下载链接 下载视频 后缀为 .mp4 等
+ * 
  * 
  * @author lenovo
  *
@@ -49,7 +49,7 @@ public class DownloadFile {
  
  
 	/**
-	 * 程序入口
+	 * 
 	 * @param urlStr
 	 */
 	public void run(String urlStr) {
