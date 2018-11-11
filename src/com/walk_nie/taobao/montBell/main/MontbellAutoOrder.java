@@ -106,7 +106,7 @@ public class MontbellAutoOrder {
 			obj.numb3 = splTemp[i++];
 			obj.numb4 = splTemp[i++];
 
-			obj.expiredMon = spl[j++];
+			obj.expiredMon = Integer.parseInt(spl[j++]) +"";
 			obj.expiredYear = spl[j++];
 
 			obj.scode = spl[j++];
