@@ -149,6 +149,8 @@ public class DouYinToWeibo {
 		
 	}
 	private static DouYinToWeibo self = null;
+	private DouYinDownloader downloader = new DouYinDownloader();
+	private WeiboPublisher publisher = new WeiboPublisher();
 	public static DouYinToWeibo getInstance() {
 		if(self == null){
 			self = new DouYinToWeibo();
@@ -161,10 +163,8 @@ public class DouYinToWeibo {
 		String outFilePath = String.format(outputFile,
 				DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
 		File outFolder = new File(outFilePath);
-		DouYinDownloader douyinDownload = new DouYinDownloader();
-		douyinDownload.downloadByURL(douyinUrl, outFolder);
+		downloader.downloadByURL(douyinUrl, outFolder);
 
-		WeiboPublisher publisher = new WeiboPublisher();
 		publisher.publish(outFolder);
 	}
 

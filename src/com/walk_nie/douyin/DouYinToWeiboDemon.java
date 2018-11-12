@@ -13,7 +13,7 @@ public class DouYinToWeiboDemon {
 	}
 	protected void execute() throws Exception {
 
-		String qrPath = "itchat4j/"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
+		String qrPath = "douyin/"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
 		IMsgHandlerFace msgHandler = new MyMsgHandlerFace(); // 实现IMsgHandlerFace接口的类
 		Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
 		wechat.start();

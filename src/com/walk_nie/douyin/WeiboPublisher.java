@@ -109,7 +109,8 @@ public class WeiboPublisher {
 		// fill txt
 		String despTxt = "#日本# #抖音#";
 		if(StringUtils.isNotEmpty(obj.txtContent)){
-			despTxt += obj.txtContent;
+			// FIXME 
+			//despTxt += obj.txtContent;
 		}
 		List<WebElement> elInputs1 = elMain.findElements(By.tagName("input"));
 		for (WebElement el : elInputs1) {
@@ -153,11 +154,11 @@ public class WeiboPublisher {
 		for (WebElement el : elInputs) {
 			if ("loginname".equals(el.getAttribute("id"))) {
 				el.clear();
-				el.sendKeys("nhp12@sina.com");
+				el.sendKeys("XXXX");
 			}
 			if ("password".equals(el.getAttribute("type"))) {
 				el.clear();
-				el.sendKeys("nhp12345");
+				el.sendKeys("XXXX");
 			}
 		}
 		List<WebElement> elas = elLogin.findElements(By.tagName("a"));
@@ -173,12 +174,22 @@ public class WeiboPublisher {
 
 	private boolean hadLogon() {
 		try{
-			// TODO
-			List<WebElement> es = driver.findElements(By.className("XX"));
+			List<WebElement> es = driver.findElements(By.className("gn_name"));
 			if(es == null || es.isEmpty()){
 				return false;
 			}
 			// 
+			for(WebElement e:es){
+				if(!e.getTagName().toLowerCase().equals("a")){
+					continue;
+				}
+				List<WebElement> es1 = e.findElements(By.className("S_txt1"));
+				for(WebElement e1:es1){
+					if(e.getText().toLowerCase().equals("宅男A在日本")){
+						return true;
+					}
+				}
+			}
 			return true;
 		}catch(Exception e){
 		}

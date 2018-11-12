@@ -36,10 +36,7 @@ public class DouYinDownloader {
 		File outFile = new File(outFilePath);
 		
 		List<String> videoSrcLinks = parseVideoSrcLinksFile(file,outFile);
-		for (int i = 0; i < videoSrcLinks.size(); i++) {
-			String line1 = videoSrcLinks.get(i);
-			FileUtils.write(new File(outFile, i + ".txt"), line1, "UTF-8");
-		}
+		
 		downloadVideo(videoSrcLinks,outFile);
 	}
 	public void downloadByURL(String urlStr, File outFolder) throws IOException{
@@ -66,6 +63,10 @@ public class DouYinDownloader {
 			rslt.add(url);
 			downLoadFromUrl(url, new File(outFolder, i + ".mp4"));
 			NieUtil.mySleepBySecond(4);
+		}
+		for (int i = 0; i < videoSrcLinks.size(); i++) {
+			String line1 = rslt.get(i);
+			FileUtils.write(new File(outFolder, i + ".txt"), line1, "UTF-8");
 		}
 		driver.close();
 		//driver.quit();
