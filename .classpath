@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/javamail-141.jar"/>
 	<classpathentry kind="lib" path="lib/jsonic-1.3.0.jar" sourcepath="lib/jsonic-1.3.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/itchat4j-1.1.0-jar-with-dependencies.jar" sourcepath="lib/itchat4j-1.1.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
