@@ -42,9 +42,15 @@ public class DouYinDownloader {
 		}
 		downloadVideo(videoSrcLinks,outFile);
 	}
+	public void downloadByURL(String urlStr, File outFolder) throws IOException{
+
+		List<String> videoSrcLinks = Lists.newArrayList();
+		videoSrcLinks.add(urlStr);
+		downloadVideo(videoSrcLinks,outFolder);
+	}
 
 	
-	private List<String> downloadVideo(List<String> videoSrcLinks, File outFile) throws IOException {
+	private List<String> downloadVideo(List<String> videoSrcLinks, File outFolder) throws IOException {
 		List<String> rslt = Lists.newArrayList();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 
@@ -58,7 +64,7 @@ public class DouYinDownloader {
 			NieUtil.mySleepBySecond(4);
 			String url = driver.findElement(By.cssSelector("a.btn.btn-success")).getAttribute("href").toString();
 			rslt.add(url);
-			downLoadFromUrl(url, new File(outFile, i + ".mp4"));
+			downLoadFromUrl(url, new File(outFolder, i + ".mp4"));
 			NieUtil.mySleepBySecond(4);
 		}
 		driver.close();
@@ -77,7 +83,7 @@ public class DouYinDownloader {
 		}
 		return rslt;
 	}
-	public  void downLoadFromUrl(String urlStr, File saveFile) throws IOException {
+	private  void downLoadFromUrl(String urlStr, File saveFile) throws IOException {
 		System.out.println("[Downloading]" + urlStr);
 		URL url = new URL(urlStr);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -98,7 +104,7 @@ public class DouYinDownloader {
 		}
 	}
  
-	public  byte[] readInputStream(InputStream inputStream) throws IOException {
+	private  byte[] readInputStream(InputStream inputStream) throws IOException {
 		byte[] buffer = new byte[1024];
 		int len = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

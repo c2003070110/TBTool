@@ -3,8 +3,10 @@ package com.walk_nie.douyin;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.util.NieUtil;
 
@@ -16,7 +18,7 @@ public class DouYinToWeibo {
 	public static void main(String[] args) throws Exception {
 		new DouYinToWeibo().execute();
 	}
-	protected void execute() throws Exception {
+	public void execute() throws Exception {
 		while (true) {
 			try {
 				//
@@ -40,6 +42,7 @@ public class DouYinToWeibo {
 			}
 		}
 	}
+	
 	private int choiceTodo() {
 		int type = 0;
 		try {
@@ -140,6 +143,29 @@ public class DouYinToWeibo {
 			stdReader = new BufferedReader(new InputStreamReader(System.in));
 		}
 		return stdReader;
+	}
+	
+	private DouYinToWeibo(){
+		
+	}
+	private static DouYinToWeibo self = null;
+	public static DouYinToWeibo getInstance() {
+		if(self == null){
+			self = new DouYinToWeibo();
+		}
+		return self;
+	}
+	public void downloadAndPublish(String douyinUrl) throws Exception {
+
+		String outputFile = "douyin/v_%s";
+		String outFilePath = String.format(outputFile,
+				DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
+		File outFolder = new File(outFilePath);
+		DouYinDownloader douyinDownload = new DouYinDownloader();
+		douyinDownload.downloadByURL(douyinUrl, outFolder);
+
+		WeiboPublisher publisher = new WeiboPublisher();
+		publisher.publish(outFolder);
 	}
 
 }

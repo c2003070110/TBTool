@@ -16,13 +16,13 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieUtil;
 
 public class WeiboPublisher {
-
+	private static WebDriver driver = null;
 	public void publish(File srcFolder) throws Exception {
 		// 
 		List<PublishObject> objList = parsePublishInfoFromFolder(srcFolder);
-		WebDriver driver = weiboLogon();
+		weiboLogon();
 		for(PublishObject obj:objList){
-			publishToWeibo(driver,obj);
+			publishToWeibo(obj);
 			NieUtil.mySleepBySecond(60);
 		}
 	}
@@ -67,7 +67,7 @@ public class WeiboPublisher {
 		}
 		return objList;
 	}
-	protected void publishToWeibo(WebDriver driver,PublishObject obj) throws Exception {
+	protected void publishToWeibo(PublishObject obj) throws Exception {
 		
 		// upload picture or video
 		for(File f:obj.multimediaContext){
@@ -138,9 +138,12 @@ public class WeiboPublisher {
 
 	private WebDriver weiboLogon() throws IOException {
 
+		if(driver != null && hadLogon()){
+			return driver;
+		}
 		String rootUrl = "https://www.weibo.com/";
 		// WebDriver driver = new ChromeDriver();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		driver = WebDriverUtil.getFirefoxWebDriver();
 		driver.get(rootUrl);
 
 		NieUtil.mySleepBySecond(10);
@@ -168,6 +171,19 @@ public class WeiboPublisher {
 		return driver;
 	}
 
+	private boolean hadLogon() {
+		try{
+			// TODO
+			List<WebElement> es = driver.findElements(By.className("XX"));
+			if(es == null || es.isEmpty()){
+				return false;
+			}
+			// 
+			return true;
+		}catch(Exception e){
+		}
+		return false;
+	}
 	private boolean isVideoFile(File f) {
 		String exd = getFileExtention(f);
 		if ("mp4".equalsIgnoreCase(exd) || "flv".equalsIgnoreCase(exd)) {
