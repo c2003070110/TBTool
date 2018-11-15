@@ -27,7 +27,10 @@ public class DouYinToWeibo {
 				if (todoType == 0) {
 					File outFolder = generateOutFolder();
 					// "douyin/douyin-in.txt"
-					File file = new File(NieConfig.getConfig("douyin.download.url.filepath"));
+					File file = new File(
+							NieConfig.getConfig("douyin.root.folder")
+									+ NieConfig
+											.getConfig("douyin.download.url.filepath"));
 					downloader.downloadByFile(file, outFolder);
 				}
 				if (todoType == 1) {
@@ -40,7 +43,8 @@ public class DouYinToWeibo {
 				}
 				if (todoType == 3) {
 					File outFolder = generateOutFolder();
-					File file = new File(NieConfig.getConfig("douyin.download.url.filepath"));
+					File file = new File(NieConfig.getConfig("douyin.root.folder")
+							+ NieConfig.getConfig("douyin.download.url.filepath"));
 					
 					downloader.downloadByFile(file, outFolder);
 					

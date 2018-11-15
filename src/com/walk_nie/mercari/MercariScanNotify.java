@@ -124,15 +124,15 @@ public class MercariScanNotify {
 	private void notify(List<MercariObject> objList) {
 		String to = NieConfig.getConfig("mercari.notify.email.to");
 		String from = NieConfig.getConfig("mercari.notify.email.from");
-		String username = NieConfig.getConfig("mail.user.id");
-		String password = NieConfig.getConfig("mail.user.password");
+		final String username = NieConfig.getConfig("mercari.notify.mail.user.id");
+		final String password = NieConfig.getConfig("mercari.notify.mail.user.password");
 
 		String charset = "UTF-8";
 		String encoding = "base64";
 
 		Properties props = new Properties();
-		props.put("mail.smtp.host", NieConfig.getConfig("mail.smtp.host"));
-		props.put("mail.smtp.port", NieConfig.getConfig("mail.smtp.port"));
+		props.put("mail.smtp.host", NieConfig.getConfig("mercari.notify.mail.smtp.host"));
+		props.put("mail.smtp.port", NieConfig.getConfig("mercari.notify.mail.smtp.port"));
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", true);
 		props.put("mail.smtp.connectiontimeout", "10000");

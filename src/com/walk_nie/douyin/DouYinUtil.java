@@ -16,7 +16,7 @@ import com.walk_nie.util.NieConfig;
 public class DouYinUtil {
 	
 	public static void recordFailureURL(List<String> urls) {
-		File file = new File(NieConfig.getConfig("douyin.failure.url"));
+		File file = new File(NieConfig.getConfig("douyin.root.folder") + NieConfig.getConfig("douyin.failure.url.filename"));
 		try {
 			String fmt = "[FAIL][%s]%s";
 			String dt = DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy/MM/dd HH:mm:ss");
@@ -32,7 +32,7 @@ public class DouYinUtil {
 	}
 
 	public static void recordFailureURL(String url) {
-		File file = new File(NieConfig.getConfig("douyin.failure.url"));
+		File file = new File(NieConfig.getConfig("douyin.root.folder") + NieConfig.getConfig("douyin.failure.url.filename"));
 		try {
 			String content = String.format("[FAIL][%s]%s",
 					DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy/MM/dd HH:mm:ss"), url);
@@ -43,7 +43,7 @@ public class DouYinUtil {
 	}
 
 	public static void recordFailureVideo(String videoFilePath) {
-		File file = new File(NieConfig.getConfig("douyin.failure.video"));
+		File file = new File(NieConfig.getConfig("douyin.root.folder") + NieConfig.getConfig("douyin.failure.video.filename"));
 		try {
 			String content = String.format("[FAIL][%s]%s",
 					DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy/MM/dd HH:mm:ss"), videoFilePath);

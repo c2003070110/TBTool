@@ -28,11 +28,11 @@ public class NieConfig {
 		}
 	}
 
-	public static List<String> getConfigByPrefix(String keyPrefix) {
+	public static List<String> getConfigByPrefix(final String keyPrefix) {
 		if (propertiesMap.isEmpty()) {
 			init();
 		}
-		List<String> list = Lists.newArrayList();
+		final List<String> list = Lists.newArrayList();
 		propertiesMap.forEach(new BiConsumer<Object, Object>(){
 			@Override
 			public void accept(Object key, Object val) {
