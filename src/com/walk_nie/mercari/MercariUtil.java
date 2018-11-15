@@ -15,6 +15,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieConfig;
 
 public class MercariUtil {
 
@@ -43,10 +44,10 @@ public class MercariUtil {
 			}
 		}
 		if (emailWe != null) {
-			emailWe.sendKeys("niehpjp@yahoo.co.jp");
+			emailWe.sendKeys(NieConfig.getConfig("mercari.user.id"));
 		}
 		if (pswdWe != null) {
-			pswdWe.sendKeys("nhp12345");
+			pswdWe.sendKeys(NieConfig.getConfig("mercari.user.password"));
 		}
 		return driver;
 	}
