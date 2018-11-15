@@ -13,20 +13,26 @@ import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class WeiboPublisher {
 	private static WebDriver driver = null;
-	public void publish(File srcFolder) throws Exception {
-		// 
+
+	public void publish(File srcFolder) {
+		//
 		List<PublishObject> objList = parsePublishInfoFromFolder(srcFolder);
 		weiboLogon();
-		for(PublishObject obj:objList){
-			publishToWeibo(obj);
+		for (PublishObject obj : objList) {
+			try {
+				publishToWeibo(obj);
+			} catch (Exception e) {
+				DouYinUtil.recordFailureVideo(obj.file.getAbsolutePath());
+			}
 			NieUtil.mySleepBySecond(60);
 		}
 	}
-	private List<PublishObject> parsePublishInfoFromFolder(File srcFolder) throws IOException {
+	private List<PublishObject> parsePublishInfoFromFolder(File srcFolder) {
 		
 		List<PublishObject> objList = Lists.newArrayList();
 		File[] files = srcFolder.listFiles(new FilenameFilter(){
@@ -48,8 +54,13 @@ public class WeiboPublisher {
 				continue;
 			}
 			PublishObject obj = new PublishObject();
+			obj.file = file;
 			String name = getFileWithoutExtention(file);
-			List<String> lines = FileUtils.readLines(file, "UTF-8");
+			List<String> lines = Lists.newArrayList();;
+			try {
+				lines = FileUtils.readLines(file, "UTF-8");
+			} catch (IOException e) {
+			}
 			StringBuffer sb = new StringBuffer();
 			for(String line :lines){
 				sb.append(line).append("\n");
@@ -107,7 +118,8 @@ public class WeiboPublisher {
 		}
 		WebElement elMain = driver.findElement(By.id("plc_main"));
 		// fill txt
-		String despTxt = "#日本# #抖音#";
+		//String despTxt = "#日本# #抖音#";
+		String despTxt = NieConfig.getConfig("weibo.douyin.keywords");
 		if(StringUtils.isNotEmpty(obj.txtContent)){
 			// FIXME 
 			//despTxt += obj.txtContent;
@@ -137,7 +149,7 @@ public class WeiboPublisher {
 		}
 	}
 
-	private WebDriver weiboLogon() throws IOException {
+	private WebDriver weiboLogon() {
 
 		if(driver != null && hadLogon()){
 			return driver;
@@ -154,11 +166,11 @@ public class WeiboPublisher {
 		for (WebElement el : elInputs) {
 			if ("loginname".equals(el.getAttribute("id"))) {
 				el.clear();
-				el.sendKeys("XXXX");
+				el.sendKeys(NieConfig.getConfig("weibo.user.id"));
 			}
 			if ("password".equals(el.getAttribute("type"))) {
 				el.clear();
-				el.sendKeys("XXXX");
+				el.sendKeys(NieConfig.getConfig("weibo.user.password"));
 			}
 		}
 		List<WebElement> elas = elLogin.findElements(By.tagName("a"));
@@ -185,7 +197,8 @@ public class WeiboPublisher {
 				}
 				List<WebElement> es1 = e.findElements(By.className("S_txt1"));
 				for(WebElement e1:es1){
-					if(e.getText().toLowerCase().equals("宅男A在日本")){
+					// FIXME
+					if(e1.getText().toLowerCase().equals(NieConfig.getConfig("weibo.user.name"))){
 						return true;
 					}
 				}
@@ -218,6 +231,7 @@ public class WeiboPublisher {
 	class PublishObject{
 		String txtContent ="";
 		List<File> multimediaContext = Lists.newArrayList();
+		File file ;
 	}
 
 }

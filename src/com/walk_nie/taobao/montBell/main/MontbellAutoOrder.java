@@ -25,6 +25,7 @@ import com.google.common.io.Files;
 import com.walk_nie.object.CrObject;
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoOrder {
@@ -86,7 +87,8 @@ public class MontbellAutoOrder {
 			return;
 		}
 		// id/crBrand/1234 5678 9012 123/04/17/123/name1 name2
-		crList = Files.readLines(file, Charset.forName("UTF-8"));
+		String prefix = "montbell.cr.";
+		crList = NieConfig.getConfigByPrefix(prefix);
 		boolean hasStore = false;
 		for (String str : crList) {
 			String[] spl = str.split("/");
@@ -136,7 +138,7 @@ public class MontbellAutoOrder {
 		for (WebElement we : submitList) {
 			if ("text".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("login_user_id".equals(we.getAttribute("name"))) {
-					we.sendKeys("niehpjp");
+					we.sendKeys(NieConfig.getConfig("montbell.user.id"));
 					break;
 				}
 			}
@@ -144,7 +146,8 @@ public class MontbellAutoOrder {
 		for (WebElement we : submitList) {
 			if ("password".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("login_user_password".equals(we.getAttribute("name"))) {
-					we.sendKeys("mnt12345");
+					// "mnt12345"
+					we.sendKeys(NieConfig.getConfig("montbell.user.password"));
 					break;
 				}
 			}
@@ -181,7 +184,7 @@ public class MontbellAutoOrder {
 		for (WebElement we : submitList) {
 			if ("text".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("login_user_id".equals(we.getAttribute("name"))) {
-					we.sendKeys("niehpjp");
+					we.sendKeys(NieConfig.getConfig("montbell.user.id"));
 					break;
 				}
 			}
@@ -189,7 +192,7 @@ public class MontbellAutoOrder {
 		for (WebElement we : submitList) {
 			if ("password".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("login_user_password".equals(we.getAttribute("name"))) {
-					we.sendKeys("mnt12345");
+					we.sendKeys(NieConfig.getConfig("montbell.user.password"));
 					break;
 				}
 			}

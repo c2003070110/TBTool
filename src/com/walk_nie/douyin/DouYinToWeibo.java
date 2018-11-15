@@ -8,6 +8,7 @@ import java.util.Calendar;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
 
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class DouYinToWeibo {
@@ -16,7 +17,7 @@ public class DouYinToWeibo {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		new DouYinToWeibo().execute();
+		DouYinToWeibo.getInstance().execute();
 	}
 	public void execute() throws Exception {
 		while (true) {
@@ -24,18 +25,26 @@ public class DouYinToWeibo {
 				//
 				int todoType = choiceTodo();
 				if (todoType == 0) {
-					DouYinDownloader douyinDownload = new DouYinDownloader();
-					File file = new File("douyin/douyin-in.txt");
-					douyinDownload.downloadByFile(file);
+					File outFolder = generateOutFolder();
+					// "douyin/douyin-in.txt"
+					File file = new File(NieConfig.getConfig("douyin.download.url.filepath"));
+					downloader.downloadByFile(file, outFolder);
 				}
 				if (todoType == 1) {
 					mergeVideo();
 				}
 				if (todoType == 2) {
-					WeiboPublisher publisher = new WeiboPublisher();
 					String folder = NieUtil.readLineFromSystemIn("Please input the folder name");
-					File file = new File("douyin/" + folder);
+					File file = new File(NieConfig.getConfig("douyin.root.folder") + folder);
 					publisher.publish(file);
+				}
+				if (todoType == 3) {
+					File outFolder = generateOutFolder();
+					File file = new File(NieConfig.getConfig("douyin.download.url.filepath"));
+					
+					downloader.downloadByFile(file, outFolder);
+					
+					publisher.publish(outFolder);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -47,7 +56,7 @@ public class DouYinToWeibo {
 		int type = 0;
 		try {
 			System.out.println("Type of todo : ");
-			System.out.println("0:日本抖音视频下载;\n" + "1:合并视频;\n2:发布视频到weibo;\n" + "3:...;\n");
+			System.out.println("0:日本抖音视频下载;\n" + "1:合并视频;\n2:发布视频到weibo;\n" + "3:下载 +发布...;\n");
 
 			stdReader = getStdReader();
 			while (true) {
@@ -159,13 +168,22 @@ public class DouYinToWeibo {
 	}
 	public void downloadAndPublish(String douyinUrl) throws Exception {
 
-		String outputFile = "douyin/v_%s";
-		String outFilePath = String.format(outputFile,
-				DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
-		File outFolder = new File(outFilePath);
+		File outFolder = generateOutFolder();
 		downloader.downloadByURL(douyinUrl, outFolder);
 
 		publisher.publish(outFolder);
+	}
+	
+	private File generateOutFolder(){
+
+		String outputFile = NieConfig.getConfig("douyin.root.folder") + "/v_%s";
+		String outFilePath = String.format(outputFile,
+				DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
+		File outFolder = new File(outFilePath);
+		if(!outFolder.exists()){
+			outFolder.mkdirs();
+		}
+		return outFolder;
 	}
 
 }

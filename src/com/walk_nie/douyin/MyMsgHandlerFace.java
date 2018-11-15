@@ -7,7 +7,7 @@ public class MyMsgHandlerFace  implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(BaseMsg msg) {
-		String from = msg.getFromUserName();
+		//String from = msg.getFromUserName();
 		//if(!from.equals("@1142eb2367243ba37ef5d5a7b94775afa93cf9fc6d0d065bb3e40d22d8022da4")){
 			// only!
 		//	return null;

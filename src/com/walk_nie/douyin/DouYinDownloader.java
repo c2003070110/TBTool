@@ -7,12 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -22,36 +20,44 @@ import com.walk_nie.util.NieUtil;
  
 /**
  * 
- * 
- * @author lenovo
- *
  */
 public class DouYinDownloader {
+	private static WebDriver driver = null;
 	
-	public void downloadByFile(File file) throws IOException{
+	public void downloadByFile(File file, File outFolder) throws IOException {
 		// video urls is stored in file
-		String outputFile = "douyin/v_%s";
-		String outFilePath = String.format(outputFile,
-				DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
-		File outFile = new File(outFilePath);
-		
-		List<String> videoSrcLinks = parseVideoSrcLinksFile(file,outFile);
-		
-		downloadVideo(videoSrcLinks,outFile);
+
+		List<String> videoSrcLinks = parseVideoSrcLinksFile(file, outFolder);
+
+		try {
+			downloadVideo(videoSrcLinks, outFolder);
+		} catch (Exception e1) {
+			DouYinUtil.recordFailureURL(videoSrcLinks);
+			e1.printStackTrace();
+		}
 	}
-	public void downloadByURL(String urlStr, File outFolder) throws IOException{
+
+	public void downloadByURL(String urlStr, File outFolder) {
 
 		List<String> videoSrcLinks = Lists.newArrayList();
 		videoSrcLinks.add(urlStr);
-		downloadVideo(videoSrcLinks,outFolder);
+		try {
+			downloadVideo(videoSrcLinks, outFolder);
+		} catch (Exception e) {
+			NieUtil.mySleepBySecond(60);
+			try {
+				downloadVideo(videoSrcLinks, outFolder);
+			} catch (Exception e1) {
+				DouYinUtil.recordFailureURL(urlStr);
+				e1.printStackTrace();
+			}
+		}
 	}
-
 	
 	private List<String> downloadVideo(List<String> videoSrcLinks, File outFolder) throws IOException {
 		List<String> rslt = Lists.newArrayList();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-
-		driver.get("http://douyin.iiilab.com/");
+		
+		activateDriver("http://douyin.iiilab.com/");
 		
 		for (int i = 0; i < videoSrcLinks.size(); i++) {
 			String line = videoSrcLinks.get(i);
@@ -62,17 +68,30 @@ public class DouYinDownloader {
 			String url = driver.findElement(By.cssSelector("a.btn.btn-success")).getAttribute("href").toString();
 			rslt.add(url);
 			downLoadFromUrl(url, new File(outFolder, i + ".mp4"));
-			NieUtil.mySleepBySecond(4);
+			NieUtil.mySleepBySecond(3);
 		}
 		for (int i = 0; i < videoSrcLinks.size(); i++) {
 			String line1 = rslt.get(i);
 			FileUtils.write(new File(outFolder, i + ".txt"), line1, "UTF-8");
 		}
-		driver.close();
-		//driver.quit();
+
 		return rslt;
 	}
 
+	private void activateDriver(String url) {
+		try {
+			driver.get(url);
+		} catch (Exception e) {
+			try {
+				driver.close();
+			} catch (Exception e1) {
+			}
+			NieUtil.mySleepBySecond(5);
+			driver = WebDriverUtil.getFirefoxWebDriver();
+			driver.get(url);
+		}
+	}
+	
 	private List<String> parseVideoSrcLinksFile(File file, File outFile) throws IOException {
 		List<String> rslt = Lists.newArrayList();
 		List<String> lines = FileUtils.readLines(file, "UTF-8");

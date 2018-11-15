@@ -6,13 +6,17 @@ import java.io.InputStreamReader;
 
 public class NieUtil {
 
-    public static String readLineFromSystemIn(String hint) throws IOException {
+    public static String readLineFromSystemIn(String hint) {
         System.out.println(hint);
         BufferedReader rd = new BufferedReader(new InputStreamReader(System.in));
         String line = null;
-        while ((line = rd.readLine()) == null) {
-            System.out.println("Please type the valid value again!");
-        }
+        try {
+			while ((line = rd.readLine()) == null) {
+			    System.out.println("Please type the valid value again!");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         return line;
     }
 
