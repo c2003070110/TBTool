@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 
 import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
 
@@ -641,5 +642,59 @@ public class MontBellUtil {
 			}
 		}
 		return null;
+	}
+	
+	public static TaobaoOrderProductInfo readTaobaoProductInfo(String line){
+		TaobaoOrderProductInfo productInfo = new TaobaoOrderProductInfo();
+
+		String[] pi = line.split(" ");
+		String pid = realProductId(pi[0]);
+		if (pid.startsWith("MTBL_")) {
+			String[] newP = pid.split("-");
+			pid = newP[1];
+		}
+		productInfo.productId = pid;
+		String color = "";
+		String sizz = "";
+		if (pi.length > 1) {
+			String[] pii = pi[1].split(";");
+			color = realColorName(pii[0]);
+			if (pii.length > 1) {
+				sizz = realSizeName(pii[1]);
+			}
+		}
+		productInfo.colorName = color;
+		productInfo.sizeName = sizz;
+		
+		return productInfo;
+	}
+	private static String realProductId(String pid) {
+		pid = pid.replace("商家编码", "");
+		pid = pid.replace("：", "");
+		pid = pid.replace(":", "");
+		return pid;
+	}
+	
+	private static String realColorName(String str){
+
+		String color = "";
+		if (str == null) {
+			return color;
+		}
+		color = str.replace("颜色分类:", "");
+		color = color.replace("颜色分类：", "");
+		return color.trim();
+	}
+	private static String realSizeName(String str){
+
+		String sizz = "";
+		if (str == null) {
+			return sizz;
+		}
+		sizz = str.replace("尺码:", "");
+		sizz = sizz.replace("尺码：", "");
+		sizz = sizz.replace("鞋码：", "");
+		sizz = sizz.replace("鞋码:", "");
+		return sizz.trim();
 	}
 }

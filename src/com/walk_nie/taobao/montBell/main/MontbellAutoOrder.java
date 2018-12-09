@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -24,6 +25,8 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.walk_nie.object.CrObject;
 import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.taobao.object.TaobaoOrderInfo;
+import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -34,7 +37,7 @@ public class MontbellAutoOrder {
 	private String ooutFileName = "./montbell/order-out.txt";
 	private String crFileName = "./montbell/cr.txt";
 	
-	private String itemSplitter ="#";
+	private String itemSplitter =",";
 	
 	private WebDriver driver = null;
 	private List<CrObject> crObjList = Lists.newArrayList();
@@ -170,6 +173,7 @@ public class MontbellAutoOrder {
 		}
 		
 		driver.get("https://en.montbell.jp/login/");
+		driver.manage().window().setSize(new Dimension(920, 960));
 
 		List<WebElement> submitList = driver.findElements(By.tagName("input"));
 		for (WebElement we : submitList) {
@@ -221,7 +225,7 @@ public class MontbellAutoOrder {
 
 	protected void orderForJapan(WebDriver driver, File tempFile0) throws IOException {
 
-		OrderInfo orderInfo = readInOrderInfo(tempFile0);
+		TaobaoOrderInfo orderInfo = readInOrderInfo(tempFile0);
 		logOrderInfo(orderInfo);
 		
 		try{
@@ -302,7 +306,7 @@ public class MontbellAutoOrder {
 
 	protected void orderForChina(WebDriver driver, File tempFile0) throws IOException{
 
-		OrderInfo orderInfo = readInOrderInfo(tempFile0);
+		TaobaoOrderInfo orderInfo = readInOrderInfo(tempFile0);
 		logOrderInfo(orderInfo);
 		
 		if("".equals(orderInfo.postcode)){
@@ -462,10 +466,10 @@ public class MontbellAutoOrder {
 		oFile = null;
 	}
 
-	private void addItemToCard(WebDriver driver, OrderInfo orderInfo,String type) {
+	private void addItemToCard(WebDriver driver, TaobaoOrderInfo orderInfo,String type) {
 
 		List<WebElement> weList = null;
-		for (ProductInfo p : orderInfo.productInfos) {
+		for (TaobaoOrderProductInfo p : orderInfo.productInfos) {
 			driver.get(("JP".equals(type)?MontBellUtil.productUrlPrefix: MontBellUtil.productUrlPrefix_en) + p.productId);
 			String color = p.colorName;
 			String sizz = p.sizeName;
@@ -517,8 +521,8 @@ public class MontbellAutoOrder {
 			NieUtil.mySleepBySecond(1);
 		}
 	}
-	private OrderInfo readInOrderInfo(File tempFile0) throws IOException {
-		OrderInfo order =  new OrderInfo();
+	private TaobaoOrderInfo readInOrderInfo(File tempFile0) throws IOException {
+		TaobaoOrderInfo order =  new TaobaoOrderInfo();
 		List<String> votes = Files.readLines(tempFile0,
 				Charset.forName("UTF-8"));
 		int idx = 0;
@@ -526,25 +530,8 @@ public class MontbellAutoOrder {
 		String productInfos = votes.get(idx++);
 		String[] pis = productInfos.split(itemSplitter);
 		for (String line : pis) {
-			ProductInfo pinfo = new ProductInfo();
-			String[] pi = line.split(" ");
-			String pid = realProductId(pi[0]);
-			if (pid.startsWith("MTBL_")) {
-				String[] newP = pid.split("-");
-				pid = newP[1];
-			}
-			pinfo.productId = pid;
-			String color = "";
-			String sizz = "";
-			if (pi.length > 1) {
-				String[] pii = pi[1].split(";");
-				color = realColorName(pii[0]);
-				if (pii.length > 1) {
-					sizz = realSizeName(pii[1]);
-				}
-			}
-			pinfo.colorName = color;
-			pinfo.sizeName = sizz;
+			TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(line);
+			
 			order.productInfos.add(pinfo);
 		}
 		String next = votes.get(idx++);
@@ -663,35 +650,6 @@ public class MontbellAutoOrder {
 			}
 		}
 	}
-	private String realProductId(String pid) {
-		pid = pid.replace("商家编码", "");
-		pid = pid.replace("：", "");
-		pid = pid.replace(":", "");
-		return pid;
-	}
-	
-	private String realColorName(String str){
-
-		String color = "";
-		if (str == null) {
-			return color;
-		}
-		color = str.replace("颜色分类:", "");
-		color = color.replace("颜色分类：", "");
-		return color.trim();
-	}
-	private String realSizeName(String str){
-
-		String sizz = "";
-		if (str == null) {
-			return sizz;
-		}
-		sizz = str.replace("尺码:", "");
-		sizz = sizz.replace("尺码：", "");
-		sizz = sizz.replace("鞋码：", "");
-		sizz = sizz.replace("鞋码:", "");
-		return sizz.trim();
-	}
 
 	private String removeEndComma(String str) {
 		if(str == null){
@@ -703,9 +661,9 @@ public class MontbellAutoOrder {
 		return str;
 	}
 
-	private String toString(List<ProductInfo> productInfos) {
+	private String toString(List<TaobaoOrderProductInfo> productInfos) {
 		StringBuffer sb = new StringBuffer();
-		for(ProductInfo pi:productInfos){
+		for(TaobaoOrderProductInfo pi:productInfos){
 			sb.append(pi.productId);
 			if(!"".equals(pi.colorName)){
 				sb.append(":" + pi.colorName);
@@ -718,7 +676,7 @@ public class MontbellAutoOrder {
 		return sb.toString();
 	}
 
-	private void logOrderInfo(OrderInfo orderInfo) {
+	private void logOrderInfo(TaobaoOrderInfo orderInfo) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[taobaoOrderName]" + orderInfo.taobaoOrderName + "\n");
 		sb.append("[firstName]" + orderInfo.firstName + "\n");
@@ -734,23 +692,4 @@ public class MontbellAutoOrder {
 		System.out.println(sb.toString());
 	}
 	
-	class OrderInfo{
-		public String taobaoOrderName;
-		public List<ProductInfo> productInfos = Lists.newArrayList();
-		public String firstName;
-		public String lastName;
-		public String tel;
-		public String state;
-		public String city;
-		public String adr2;
-		public String adr1;
-		public String postcode;
-		public CrObject crObj;
-	}
-	class ProductInfo{
-		public String productId;
-		public String sizeName;
-		public String colorName;
-		
-	}
 }

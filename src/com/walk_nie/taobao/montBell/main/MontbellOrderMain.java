@@ -24,6 +24,8 @@ import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderObject;
+import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
+import com.walk_nie.util.NieConfig;
 
 public class MontbellOrderMain {
 	protected BufferedReader stdReader = null;
@@ -67,23 +69,19 @@ public class MontbellOrderMain {
 	}
 
 	private void stockCheck() throws Exception {
-		String productId = "";
-		System.out.println("Please Input the Product ID : ");
-
-		stdReader = getStdReader();
-		while (true) {
-			String line = stdReader.readLine().trim();
-			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
-					|| "".equals(line)) {
-				break;
-			} else if (!"".equalsIgnoreCase(line)) {
-				productId = line;
-				break;
-			}
+		
+		String target = NieConfig.getConfig("montbell.stock.check.target");
+		String itemSplitter =",";
+		String[] pis = target.split(itemSplitter);
+		 List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
+		for (String line : pis) {
+			TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(line);
+			
+			productInfos.add(pinfo);
 		}
 
 		MontbellStockChecker stockChecker = new MontbellStockChecker();
-		stockChecker.processByProductId(productId);
+		stockChecker.processByTaobaoOrderProduct(productInfos);
 	}
 
 	private void toPinYin() throws Exception {

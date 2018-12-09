@@ -13,7 +13,7 @@ public class MyMsgHandlerFace  implements IMsgHandlerFace {
 		//	return null;
 		//}
 		String context = msg.getContent();
-		DouYinToWeibo singl = DouYinToWeibo.getInstance();
+		DouYinToMain singl = DouYinToMain.getInstance();
 		try {
 			singl.downloadAndPublish(context);
 		} catch (Exception e) {

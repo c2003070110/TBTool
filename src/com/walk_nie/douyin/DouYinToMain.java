@@ -3,6 +3,7 @@ package com.walk_nie.douyin;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Calendar;
 
 import org.apache.commons.io.FileUtils;
@@ -11,13 +12,13 @@ import org.apache.http.client.utils.DateUtils;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
-public class DouYinToWeibo {
+public class DouYinToMain {
 	/**
 	 * @param args
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		DouYinToWeibo.getInstance().execute();
+		DouYinToMain.getInstance().execute();
 	}
 	public void execute() throws Exception {
 		while (true) {
@@ -26,12 +27,21 @@ public class DouYinToWeibo {
 				int todoType = choiceTodo();
 				if (todoType == 0) {
 					File outFolder = generateOutFolder();
-					// "douyin/douyin-in.txt"
-					File file = new File(
-							NieConfig.getConfig("douyin.root.folder")
-									+ NieConfig
-											.getConfig("douyin.download.url.filepath"));
-					downloader.downloadByFile(file, outFolder);
+					String f = NieConfig
+							.getConfig("douyin.download.url.filepath");
+					if (f.startsWith("http")) {
+						URL u = new URL(f);
+						File file = new File("tmp.txt");
+						FileUtils.copyURLToFile(u, file);
+						
+						downloader.downloadByFile(file, outFolder);
+						file.deleteOnExit();
+					} else {
+						// "douyin/douyin-in.txt"
+						File file = new File(
+								NieConfig.getConfig("douyin.root.folder") + f);
+						downloader.downloadByFile(file, outFolder);
+					}
 				}
 				if (todoType == 1) {
 					mergeVideo();
@@ -158,15 +168,15 @@ public class DouYinToWeibo {
 		return stdReader;
 	}
 	
-	private DouYinToWeibo(){
+	private DouYinToMain(){
 		
 	}
-	private static DouYinToWeibo self = null;
+	private static DouYinToMain self = null;
 	private DouYinDownloader downloader = new DouYinDownloader();
 	private WeiboPublisher publisher = new WeiboPublisher();
-	public static DouYinToWeibo getInstance() {
+	public static DouYinToMain getInstance() {
 		if(self == null){
-			self = new DouYinToWeibo();
+			self = new DouYinToMain();
 		}
 		return self;
 	}
