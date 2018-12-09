@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -24,6 +26,7 @@ public class WeiboPublisher {
 		List<PublishObject> objList = parsePublishInfoFromFolder(srcFolder);
 		weiboLogon();
 		for (PublishObject obj : objList) {
+			System.out.println("[Publish File]" + obj.file.getAbsolutePath());
 			try {
 				publishToWeibo(obj);
 			} catch (Exception e) {
@@ -158,6 +161,9 @@ public class WeiboPublisher {
 		// WebDriver driver = new ChromeDriver();
 		driver = WebDriverUtil.getFirefoxWebDriver();
 		driver.get(rootUrl);
+		driver.manage().window().setSize(new Dimension(920, 960));
+		driver.manage().window().setPosition(new Point(10, 10));
+
 
 		NieUtil.mySleepBySecond(10);
 		

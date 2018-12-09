@@ -26,6 +26,7 @@ public class DouYinToMain {
 				//
 				int todoType = choiceTodo();
 				if (todoType == 0) {
+					// download video by url
 					File outFolder = generateOutFolder();
 					String f = NieConfig
 							.getConfig("douyin.download.url.filepath");
@@ -47,8 +48,10 @@ public class DouYinToMain {
 					mergeVideo();
 				}
 				if (todoType == 2) {
+					// publish to weibo
 					String folder = NieUtil.readLineFromSystemIn("Please input the folder name");
 					File file = new File(NieConfig.getConfig("douyin.root.folder") + folder);
+					System.out.println("[Publish Folder]" + file.getCanonicalPath());
 					publisher.publish(file);
 				}
 				if (todoType == 3) {

@@ -379,7 +379,7 @@ public class MontbellStockChecker {
 		String fmt2 = "[PRODUCT:%s][SIZES:%-6s][COLOR:%-6s][STOCK:%s]";
 		String fmt3 = "[PRODUCT:%s][COLOR:%-6s][STOCK:%s]";
 		String fmt4 = "[PRODUCT:%s][SIZE:%-6s][STOCK:%s]";
-		List<String> stockLines = Lists.newArrayList();
+		List<StockObject> stocks = Lists.newArrayList();
 		for (TaobaoOrderProductInfo pinfo : productInfos) {
 			String productId = pinfo.productId;
 			List<StockObject> stockListMontbell = getMontbellStockInfo(productId);
@@ -389,9 +389,14 @@ public class MontbellStockChecker {
 					return arg0.colorName.compareTo(arg1.colorName);
 				}
 			});
+			stocks.addAll(stockListMontbell);
+		}
+		List<String> stockLines = Lists.newArrayList();
+		for (TaobaoOrderProductInfo pinfo : productInfos) {
+			String productId = pinfo.productId;
 			if (!StringUtil.isBlank(pinfo.colorName)
 					|| !StringUtil.isBlank(pinfo.sizeName)) {
-				for (StockObject st : stockListMontbell) {
+				for (StockObject st : stocks) {
 					if (!StringUtil.isBlank(pinfo.colorName)
 							&& !StringUtil.isBlank(pinfo.sizeName)
 							&& st.colorName.equals(pinfo.colorName)
@@ -423,16 +428,16 @@ public class MontbellStockChecker {
 				}
 			} else {
 
-				for (StockObject stockObj : stockListMontbell) {
+				for (StockObject stockObj : stocks) {
 					String line = String.format(fmt, productId,
 							stockObj.colorName, stockObj.sizeName,
 							stockObj.stockStatus);
 					stockLines.add(line);
 					System.out.println(line);
 				}
-				if (stockListMontbell.get(0).sizeName != null
-						&& !"".equals(stockListMontbell.get(0).sizeName)) {
-					Collections.sort(stockListMontbell,
+				if (stocks.get(0).sizeName != null
+						&& !"".equals(stocks.get(0).sizeName)) {
+					Collections.sort(stocks,
 							new Comparator<StockObject>() {
 								@Override
 								public int compare(StockObject arg0,
@@ -441,7 +446,7 @@ public class MontbellStockChecker {
 											.compareTo(arg1.sizeName);
 								}
 							});
-					for (StockObject stockObj : stockListMontbell) {
+					for (StockObject stockObj : stocks) {
 						String line = String.format(fmt2, productId,
 								stockObj.sizeName, stockObj.colorName,
 								stockObj.stockStatus);
