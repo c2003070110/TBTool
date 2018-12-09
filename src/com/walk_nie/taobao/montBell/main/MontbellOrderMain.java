@@ -29,13 +29,10 @@ import com.walk_nie.util.NieConfig;
 
 public class MontbellOrderMain {
 	protected BufferedReader stdReader = null;
-	//private String inOrderDir = "./montbell/";
-	//private String pinyinInFileName = "./montbell/pinyin-in.txt";
-	//private String pinyoutInFileName = "./montbell/pinyin-out.txt";
 	private String outFileName = "./montbell/taobao-out.txt";
 	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
 	
-	private String itemSplitter ="#";
+	private String itemSplitter =",";
 	
 	public static void main(String[] args) throws Exception {
 		new MontbellOrderMain().process();

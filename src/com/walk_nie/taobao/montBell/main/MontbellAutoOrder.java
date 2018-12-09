@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -174,6 +175,7 @@ public class MontbellAutoOrder {
 		
 		driver.get("https://en.montbell.jp/login/");
 		driver.manage().window().setSize(new Dimension(920, 960));
+		driver.manage().window().setPosition(new Point(10, 10));
 
 		List<WebElement> submitList = driver.findElements(By.tagName("input"));
 		for (WebElement we : submitList) {
