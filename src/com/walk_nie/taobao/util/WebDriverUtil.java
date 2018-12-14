@@ -154,6 +154,13 @@ public class WebDriverUtil  {
 		FileUtils.copyFile(screenshot, new File(saveTo));
 	}
 
+    public static void screenShot(WebDriver driver,String saveTo) throws ClientProtocolException, IOException {
+           
+        //Get entire page screenshot
+        File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        FileUtils.copyFile(screenshot, new File(saveTo));
+    }
+
     public static void screenShot(WebDriver driver,List<WebElement> elements,String saveTo) throws ClientProtocolException, IOException {
            
         //Get entire page screenshot

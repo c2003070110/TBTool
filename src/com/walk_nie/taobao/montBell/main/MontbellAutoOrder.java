@@ -330,12 +330,10 @@ public class MontbellAutoOrder {
 		List<WebElement> weList = null;
 		driver.get("https://en.montbell.jp/products/cart/");
 		
-		// TODO element name=?
-		List<WebElement> elementsShot = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
 		String saveToShot = screenShotFolder + "/" + DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMdd")
 				+ orderInfo.taobaoOrderName + ".jpg";
 		// take screenshot
-		WebDriverUtil.screenShot(driver, elementsShot, saveToShot);
+		WebDriverUtil.screenShot(driver, saveToShot);
 		
 		// 等待 是否打开
 		WebDriverWait wait1 = new WebDriverWait(driver,10);
