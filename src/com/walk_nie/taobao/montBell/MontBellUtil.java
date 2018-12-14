@@ -485,13 +485,13 @@ public class MontBellUtil {
 
     public static void composeBaobeiPictureStatus(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors ) {
         
-		String picStatus = TaobaoUtil.composeBaobeiPictureStatus(item.colorList, item.pictureNameList, taobaoColors);
+		String picStatus = TaobaoUtil.composeBaobeiPictureStatus(item.pictureNameList, item.colorList, taobaoColors);
 
         obj.picture_status ="\"" + picStatus + "\""  ;
     }
 
     public static void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj,List<String> taobaoColors) {
-        String picture = TaobaoUtil.composeBaobeiPicture(item.colorList, item.pictureNameList, taobaoColors);;
+        String picture = TaobaoUtil.composeBaobeiPicture(item.pictureNameList, item.colorList, taobaoColors);;
 
         obj.picture = "\"" + picture + "\"" ;
     }

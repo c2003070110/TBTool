@@ -36,7 +36,8 @@ public class MontbellAutoOrder {
 	protected BufferedReader stdReader = null;
 	private String inFileName = "./montbell/order-in.txt";
 	private String ooutFileName = "./montbell/order-out.txt";
-	private String crFileName = "./montbell/cr.txt";
+	//private String crFileName = "./montbell/cr.txt";
+	private String screenShotFolder = "./montbell/orderShot";
 	
 	private String itemSplitter =",";
 	
@@ -85,14 +86,14 @@ public class MontbellAutoOrder {
 
 	private void readInCrObject() throws IOException {
 
-		List<String> crList = Lists.newArrayList();
-		File file = new File(crFileName);
-		if (!file.exists()) {
-			return;
-		}
+//		List<String> crList = Lists.newArrayList();
+//		File file = new File(crFileName);
+//		if (!file.exists()) {
+//			return;
+//		}
 		// id/crBrand/1234 5678 9012 123/04/17/123/name1 name2
 		String prefix = "montbell.cr.";
-		crList = NieConfig.getConfigByPrefix(prefix);
+		List<String> crList = NieConfig.getConfigByPrefix(prefix);
 		boolean hasStore = false;
 		for (String str : crList) {
 			String[] spl = str.split("/");
@@ -137,6 +138,8 @@ public class MontbellAutoOrder {
 		} else {
 			driver = WebDriverUtil.getFirefoxWebDriver();
 		}
+		driver.manage().window().setSize(new Dimension(960, 960));
+		driver.manage().window().setPosition(new Point(10, 10));
 		driver.get("https://www.montbell.jp/login/");
 		List<WebElement> submitList = driver.findElements(By.tagName("input"));
 		for (WebElement we : submitList) {
@@ -150,7 +153,7 @@ public class MontbellAutoOrder {
 		for (WebElement we : submitList) {
 			if ("password".equalsIgnoreCase(we.getAttribute("type"))) {
 				if ("login_user_password".equals(we.getAttribute("name"))) {
-					// "mnt12345"
+				
 					we.sendKeys(NieConfig.getConfig("montbell.user.password"));
 					break;
 				}
@@ -174,7 +177,7 @@ public class MontbellAutoOrder {
 		}
 		
 		driver.get("https://en.montbell.jp/login/");
-		driver.manage().window().setSize(new Dimension(920, 960));
+		driver.manage().window().setSize(new Dimension(960, 960));
 		driver.manage().window().setPosition(new Point(10, 10));
 
 		List<WebElement> submitList = driver.findElements(By.tagName("input"));
@@ -325,7 +328,15 @@ public class MontbellAutoOrder {
 
 		NieUtil.mySleepBySecond(1);
 		List<WebElement> weList = null;
-		driver.get("https://en.montbell.jp/products/cart/");			
+		driver.get("https://en.montbell.jp/products/cart/");
+		
+		// TODO element name=?
+		List<WebElement> elementsShot = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
+		String saveToShot = screenShotFolder + "/" + DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMdd")
+				+ orderInfo.taobaoOrderName + ".jpg";
+		// take screenshot
+		WebDriverUtil.screenShot(driver, elementsShot, saveToShot);
+		
 		// 等待 是否打开
 		WebDriverWait wait1 = new WebDriverWait(driver,10);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -488,6 +499,7 @@ public class MontbellAutoOrder {
 			} catch (Exception e) {
 				hasError = true;
 			}
+			NieUtil.mySleepBySecond(2);
 			if (hasError) {
 				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
@@ -520,7 +532,6 @@ public class MontbellAutoOrder {
 					break;
 				}
 			}
-			NieUtil.mySleepBySecond(1);
 		}
 	}
 	private TaobaoOrderInfo readInOrderInfo(File tempFile0) throws IOException {

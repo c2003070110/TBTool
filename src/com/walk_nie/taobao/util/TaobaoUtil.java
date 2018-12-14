@@ -1049,7 +1049,7 @@ public class TaobaoUtil {
 		return cateProps;
 	}
 
-	public static String composeBaobeiPictureStatus(List<String> baobeiColorList, List<String> baobeiPictureNameList,
+	public static String composeBaobeiPictureStatus( List<String> baobeiPictureNameList,List<String> baobeiColorList,
 			List<String> taobaoColors) {
 
 		String picStatus = "";
@@ -1060,18 +1060,20 @@ public class TaobaoUtil {
 				break;
 			picStatus += "2;";
 		}
-		int maxColorLen = Math.min(baobeiColorList.size(), taobaoColors.size());
-		// 销售属性图片
-		for (int i = 0; i < maxColorLen; i++) {
-			if (baobeiPictureNameList.size() == baobeiColorList.size()) {
-				// color picture
-				picStatus += "2;";
+		if (baobeiColorList != null && !baobeiColorList.isEmpty()) {
+			int maxColorLen = Math.min(baobeiColorList.size(), taobaoColors.size());
+			// 销售属性图片
+			for (int i = 0; i < maxColorLen; i++) {
+				if (baobeiPictureNameList.size() == baobeiColorList.size()) {
+					// color picture
+					picStatus += "2;";
+				}
 			}
 		}
 		return picStatus;
 	}
 
-	public static String composeBaobeiPicture(List<String> baobeiColorList, List<String> baobeiPictureNameList,
+	public static String composeBaobeiPicture(List<String> baobeiPictureNameList,List<String> baobeiColorList, 
 			List<String> taobaoColors) {
 		String picture = "";
 		// picture
@@ -1082,12 +1084,14 @@ public class TaobaoUtil {
 				break;
 			picture += baobeiPictureNameList.get(i) + ":1:" + i + ":|;";
 		}
-		int maxColorLen = Math.min(baobeiColorList.size(), taobaoColors.size());
-		// 销售属性图片
-		for (int i = 0; i < maxColorLen; i++) {
-			if (baobeiPictureNameList.size() == baobeiColorList.size()) {
-				// color picture
-				picture += baobeiPictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) + "|;";
+		if (baobeiColorList != null && !baobeiColorList.isEmpty()) {
+			int maxColorLen = Math.min(baobeiColorList.size(), taobaoColors.size());
+			// 销售属性图片
+			for (int i = 0; i < maxColorLen; i++) {
+				if (baobeiPictureNameList.size() == baobeiColorList.size()) {
+					// color picture
+					picture += baobeiPictureNameList.get(i) + ":2:0:1627207:" + taobaoColors.get(i) + "|;";
+				}
 			}
 		}
 

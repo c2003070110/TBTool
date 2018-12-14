@@ -184,7 +184,7 @@ public  class MizunoBaobeiProducer extends BaseBaobeiProducer {
 		List<String> baobeiPictureNameList = Lists.newArrayList();
 		baobeiPictureNameList.addAll(item.colorPicLocalNameList);
 		baobeiPictureNameList.addAll(item.dressOnPicLocalNameList);
-		str += TaobaoUtil.composeBaobeiPicture(item.colorNameList, baobeiPictureNameList, taobaoColors);
+		str += TaobaoUtil.composeBaobeiPicture(baobeiPictureNameList, item.colorNameList, taobaoColors);
 		obj.picture = "\"" + str + "\"";
 	}
 
@@ -193,7 +193,7 @@ public  class MizunoBaobeiProducer extends BaseBaobeiProducer {
 		List<String> baobeiPictureNameList = Lists.newArrayList();
 		baobeiPictureNameList.addAll(item.colorPicLocalNameList);
 		baobeiPictureNameList.addAll(item.dressOnPicLocalNameList);
-		str += TaobaoUtil.composeBaobeiPictureStatus(item.colorNameList, baobeiPictureNameList, taobaoColors);
+		str += TaobaoUtil.composeBaobeiPictureStatus(baobeiPictureNameList,item.colorNameList,  taobaoColors);
 		obj.picture_status = "\"" + str + "\"";
 	}
 

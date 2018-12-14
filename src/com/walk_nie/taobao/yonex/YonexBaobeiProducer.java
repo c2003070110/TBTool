@@ -160,13 +160,13 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiPicture(GoodsObject item, BaobeiPublishObject obj) {
 		String str = "";
-		str += TaobaoUtil.composeBaobeiPicture(item.colorList, item.pictureNameList, taobaoColors);
+		str += TaobaoUtil.composeBaobeiPicture(item.pictureNameList, item.colorList, taobaoColors);
 		obj.picture = "\"" + str + "\"";
 	}
 
 	private void composeBaobeiPictureStatus(GoodsObject item, BaobeiPublishObject obj) {
 		String str = "";
-		str += TaobaoUtil.composeBaobeiPictureStatus(item.colorList, item.pictureNameList, taobaoColors);
+		str += TaobaoUtil.composeBaobeiPictureStatus(item.pictureNameList, item.colorList, taobaoColors);
 		obj.picture_status = "\"" + str + "\"";
 	}
 
