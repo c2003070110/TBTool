@@ -12,7 +12,6 @@ import org.openqa.selenium.WebElement;
 import com.google.common.collect.Lists;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.WebDriverUtil;
-import com.walk_nie.util.NieConfig;
 
 public class WacomProductParser extends BaseBaobeiParser {
 
@@ -67,7 +66,7 @@ public class WacomProductParser extends BaseBaobeiParser {
 		List<WebElement> wesTr = we.findElements(By.tagName("tr"));
 		for (WebElement wetemp : wesTr) {
 			List<WebElement> wesTd = wetemp.findElements(By.tagName("td"));
-			if (wesTd.get(0).getText().equals("")) {
+			if (wesTd.get(0).getText().indexOf("質量") != -1) {
 				goodsObj.weight = toWeiget(wesTd.get(1).getText());
 				toExtraWeight(goodsObj);
 			}
@@ -138,13 +137,13 @@ public class WacomProductParser extends BaseBaobeiParser {
 	private void screenshotProductSpecDesp(WebDriver webDriver, WacomProductObject goodsObj, WebElement weSpec)
 			throws IOException {
 
-		String fileNameFmt = "detail_%s.png";
+		String fileNameFmt = "spec_%s.png";
 		String fileName = String.format(fileNameFmt, goodsObj.productId);
-		File despFile = new File(NieConfig.getConfig("wacom.root.folder"), fileName);
+		File despFile = new File(WacomUtil.getPictureRootFolder(), fileName);
 		if (!despFile.exists()) {
 			List<WebElement> ele = Lists.newArrayList();
 			ele.add(weSpec);
-			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), WebDriverUtil.watermark_montbell);
+			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), WebDriverUtil.watermark_common);
 		}
 		goodsObj.specScreenShotPicFile = despFile.getAbsolutePath();
 	}

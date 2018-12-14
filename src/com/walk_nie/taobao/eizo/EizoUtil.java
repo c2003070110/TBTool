@@ -1,15 +1,15 @@
-package com.walk_nie.taobao.wacom;
+package com.walk_nie.taobao.eizo;
 
 import org.jsoup.helper.StringUtil;
 
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.util.NieConfig;
 
-public class WacomUtil {
+public class EizoUtil {
 
-	public static String convertToCNYWithEmsFee(WacomProductObject item) {
-		double curencyRate = Double.parseDouble(NieConfig.getConfig("wacom.currency.rate"));
-		double benefitRate = Double.parseDouble(NieConfig.getConfig("wacom.benefit.rate"));
+	public static String convertToCNYWithEmsFee(EizoProductObject item) {
+		double curencyRate = Double.parseDouble(NieConfig.getConfig("eizo.currency.rate"));
+		double benefitRate = Double.parseDouble(NieConfig.getConfig("eizo.benefit.rate"));
 		String priceStr = item.priceJPY;
 		try {
 			int price = Integer.parseInt(priceStr);
@@ -25,7 +25,7 @@ public class WacomUtil {
 	}
 	public static String getPictureRootFolder() {
 
-		return NieConfig.getConfig("wacom.out.root.folder") + "/" + NieConfig.getConfig("wacom.picture.folder");
+		return NieConfig.getConfig("eizo.out.root.folder") + "/" + NieConfig.getConfig("eizo.picture.folder");
 	}
 
     public static String composeBaoyouMiaoshu() {
@@ -40,7 +40,7 @@ public class WacomUtil {
         return detailSB.toString();
     }
 
-	public static String composeProductInfoMiaoshu(WacomProductObject item) {
+	public static String composeProductInfoMiaoshu(EizoProductObject item) {
 		StringBuffer detailSB = new StringBuffer();
 		if (StringUtil.isBlank(item.detailScreenShotPicFile) && StringUtil.isBlank(item.specScreenShotPicFile)) {
 

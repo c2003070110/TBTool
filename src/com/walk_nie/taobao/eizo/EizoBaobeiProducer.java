@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.wacom;
+package com.walk_nie.taobao.eizo;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,17 +18,17 @@ import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.util.NieConfig;
 
-public class WacomBaobeiProducer extends BaseBaobeiProducer {
+public class EizoBaobeiProducer extends BaseBaobeiProducer {
 
 	public void process() {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");
-			List<WacomProductObject> itemIdList = Lists.newArrayList();
+			List<EizoProductObject> itemIdList = Lists.newArrayList();
 
-			List<String> productUrls = NieConfig.getConfigByPrefix("wacom.parse.product.url.");
+			List<String> productUrls = NieConfig.getConfigByPrefix("eizo.parse.product.url.");
 			if (!productUrls.isEmpty()) {
-				WacomProductParser parser = new WacomProductParser();
+				EizoProductParser parser = new EizoProductParser();
 				parser.setPublishedbaobeiList(this.publishedbaobeiList);
 				itemIdList = parser.scanItemByProductUrlList(productUrls);
 			}
@@ -43,7 +43,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 			downloadAndCopyPicture(itemIdList, taobaoPicFolder);
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-			for (WacomProductObject obj : itemIdList) {
+			for (EizoProductObject obj : itemIdList) {
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -59,13 +59,13 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		}
 	}
 
-	protected void writeOut(BufferedWriter priceBw, WacomProductObject item) throws Exception {
+	protected void writeOut(BufferedWriter priceBw, EizoProductObject item) throws Exception {
 
 		priceBw.write(composeBaobeiLine(item));
 		priceBw.flush();
 	}
 
-	protected String composeBaobeiLine(WacomProductObject item) throws Exception {
+	protected String composeBaobeiLine(EizoProductObject item) throws Exception {
 
 		BaobeiPublishObject obj = new BaobeiPublishObject();
 		BaobeiUtil.setBaobeiCommonInfo(obj);
@@ -78,7 +78,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		// 省
 		obj.location_state = "\"日本\"";
 		// 宝贝价格
-		obj.price = WacomUtil.convertToCNYWithEmsFee(item);
+		obj.price = EizoUtil.convertToCNYWithEmsFee(item);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "99";
@@ -100,7 +100,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		// 销售属性组合
 		composeBaobeiSkuProps(item, obj);
 		// 商家编码
-		obj.outer_id = "WACOM_" + item.kataban + "-" + item.productId;
+		obj.outer_id = "EIZO_" + item.categoryName + "-" + item.kataban;
 		// 销售属性别名
 		composeBaobeiPropAlias(item, obj);
 		// 商品条形码
@@ -129,58 +129,59 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
 
-	private void composeBaobeiTitle(WacomProductObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮 Wacom";
+	private void composeBaobeiTitle(EizoProductObject item, BaobeiPublishObject baobei) {
+		String title = "日本直邮 Eizo";
 
 		title += " " + item.productName;
-		baobei.title = "\"" + title + "\"";
+	
+		baobei.title = "\"" +title + "\"";
 	}
 
-	protected void composeBaobeiCateProps(WacomProductObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiCateProps(EizoProductObject item, BaobeiPublishObject baobei) {
 		// cateProps
 		// 宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		String cateProps = "";
 
-		obj.cateProps = "\"" + cateProps + "\"";
+		baobei.cateProps = "\"" +cateProps + "\"";
 	}
 
-	protected void composeBaobeiSkuProps(WacomProductObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiSkuProps(EizoProductObject item, BaobeiPublishObject obj) {
 		// skuProps
 		// 销售属性组合：0:0::1627207:-1001;20509:28381;0:0::1627207:-1001;20509:28313;0:0::1627207:-1001;20509:28314;0:0::1627207:-1001;20509:28315;0:0::1627207:-1001;20509:28316;0:0::1627207:-1001;20509:28317;0:0::1627207:-1001;20509:28319;0:0::1627207:-1002;20509:28381;0:0::1627207:-1002;20509:28313;0:0::1627207:-1002;20509:28314;0:0::1627207:-1002;20509:28315;0:0::1627207:-1002;20509:28316;0:0::1627207:-1002;20509:28317;0:0::1627207:-1002;20509:28319;0:0::1627207:-1003;20509:28381;0:0::1627207:-1003;20509:28313;0:0::1627207:-1003;20509:28314;0:0::1627207:-1003;20509:28315;0:0::1627207:-1003;20509:28316;0:0::1627207:-1003;20509:28317;0:0::1627207:-1003;20509:28319;0:0::1627207:-1004;20509:28381;0:0::1627207:-1004;20509:28313;0:0::1627207:-1004;20509:28314;0:0::1627207:-1004;20509:28315;0:0::1627207:-1004;20509:28316;0:0::1627207:-1004;20509:28317;0:0::1627207:-1004;20509:28319;0:0::1627207:-1005;20509:28381;0:0::1627207:-1005;20509:28313;0:0::1627207:-1005;20509:28314;0:0::1627207:-1005;20509:28315;0:0::1627207:-1005;20509:28316;0:0::1627207:-1005;20509:28317;0:0::1627207:-1005;20509:28319;0:0::1627207:-1006;20509:28381;0:0::1627207:-1006;20509:28313;0:0::1627207:-1006;20509:28314;0:0::1627207:-1006;20509:28315;0:0::1627207:-1006;20509:28316;0:0::1627207:-1006;20509:28317;0:0::1627207:-1006;20509:28319;0:0::1627207:-1007;20509:28381;0:0::1627207:-1007;20509:28313;0:0::1627207:-1007;20509:28314;0:0::1627207:-1007;20509:28315;0:0::1627207:-1007;20509:28316;0:0::1627207:-1007;20509:28317;0:0::1627207:-1007;20509:28319;0:0::1627207:-1008;20509:28381;0:0::1627207:-1008;20509:28313;0:0::1627207:-1008;20509:28314;0:0::1627207:-1008;20509:28315;0:0::1627207:-1008;20509:28316;0:0::1627207:-1008;20509:28317;0:0::1627207:-1008;20509:28319;0:0::1627207:-1009;20509:28381;0:0::1627207:-1009;20509:28313;0:0::1627207:-1009;20509:28314;0:0::1627207:-1009;20509:28315;0:0::1627207:-1009;20509:28316;0:0::1627207:-1009;20509:28317;0:0::1627207:-1009;20509:28319;
 		String skuProps = "";
 
-		obj.skuProps = "\"" + skuProps + "\"";
+		obj.skuProps = "\"" +skuProps + "\"";
 	}
 
-	private void composeBaobeiInputValues(WacomProductObject item, BaobeiPublishObject obj) {
-		String inputValues = item.productId + "," + obj.price + ",";
+	private void composeBaobeiInputValues(EizoProductObject item, BaobeiPublishObject obj) {
+		String inputValues = "";
 
 		obj.inputValues = "\"" + inputValues + "\"";
 	}
 
-	protected void composeBaobeiPropAlias(WacomProductObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiPropAlias(EizoProductObject item, BaobeiPublishObject obj) {
 		// propAlias
 		// 销售属性别名：20509:28381:size1;20509:28313:size2;20509:28314:size3;20509:28315:size4;20509:28316:size5;20509:28317:size6;20509:28319:size7
 		String propAlias = "";
 		// 销售属性别名
 
-		obj.propAlias = "\"" + propAlias + "\"";
+		obj.propAlias = "\"" +propAlias + "\"";
 	}
 
-	protected void composeBaobeiInputCustomCpv(WacomProductObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiInputCustomCpv(EizoProductObject item, BaobeiPublishObject obj) {
 		String inputCustomCpv = "";
 		// 自定义属性值
-		obj.input_custom_cpv = "\"" + inputCustomCpv + "\"";
+		obj.input_custom_cpv = "\"" +inputCustomCpv + "\"";
 	}
 
-	protected void composeBaobeiMiaoshu(WacomProductObject item, BaobeiPublishObject obj) {
+	protected void composeBaobeiMiaoshu(EizoProductObject item, BaobeiPublishObject obj) {
 		StringBuffer detailSB = new StringBuffer();
 		
 		// 包邮
-		detailSB.append(WacomUtil.composeBaoyouMiaoshu());
+		detailSB.append(EizoUtil.composeBaoyouMiaoshu());
 
 		// 宝贝描述
-		detailSB.append(WacomUtil.composeProductInfoMiaoshu(item));
+		detailSB.append(EizoUtil.composeProductInfoMiaoshu(item));
 
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
 		obj.description = "\"" + detailSB.toString() + extraMiaoshu1 + "\"";
@@ -188,36 +189,36 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 	
 	@Override
 	public BaseBaobeiParser getParser() {
-		return new WacomProductParser();
+		return new EizoProductParser();
 	}
 
-	protected void composeBaobeiPictureStatus(WacomProductObject item, BaobeiPublishObject publishedBaobei) {
+	protected void composeBaobeiPictureStatus(EizoProductObject item, BaobeiPublishObject publishedBaobei) {
 		String picStatus = TaobaoUtil.composeBaobeiPictureStatus(item.taobaoMainPicNameList, null, null);
 
 		publishedBaobei.picture_status = "\"" + picStatus + "\"";
 	}
 
-	protected void composeBaobeiPicture(WacomProductObject item, BaobeiPublishObject publishedBaobei) {
+	protected void composeBaobeiPicture(EizoProductObject item, BaobeiPublishObject publishedBaobei) {
 		String picture = TaobaoUtil.composeBaobeiPicture(item.taobaoMainPicNameList, null, null);
 
 		publishedBaobei.picture = "\"" + picture + "\"";
 	}
 
-	private void downloadAndCopyPicture(List<WacomProductObject> itemIdList, String taobaoPicFolder)
+	private void downloadAndCopyPicture(List<EizoProductObject> itemIdList, String taobaoPicFolder)
 			throws IOException {
 
-		String picRoot = WacomUtil.getPictureRootFolder();
-		for (WacomProductObject obj : itemIdList) {
+		String picRoot = EizoUtil.getPictureRootFolder();
+		for (EizoProductObject obj : itemIdList) {
 			int i = 0;
 			for (String picUrl : obj.productGalaryPicUrlList) {
-				String picName = obj.productId + "_" + i;
+				String picName = obj.kataban + "_" + i;
 				File saveTo;
 				saveTo = TaobaoUtil.downloadPicture(picRoot, picUrl, picName);
 				obj.taobaoMainPicNameList.add(picName);
 				obj.productGalaryPicFileList.add(saveTo.getCanonicalPath());
 				i++;
 			}
-			TaobaoUtil.copyFiles(obj.taobaoMainPicNameList, WacomUtil.getPictureRootFolder(), taobaoPicFolder);
+			TaobaoUtil.copyFiles(obj.taobaoMainPicNameList, EizoUtil.getPictureRootFolder(), taobaoPicFolder);
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.wacom;
+package com.walk_nie.taobao.eizo;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,23 +13,23 @@ import com.walk_nie.util.NieConfig;
 /**
  *
  */
-public class WacomBaobeiCreator {
+public class EizoBaobeiCreator {
 
 	public static void main(String[] args) throws ClientProtocolException, IOException {
-		new WacomBaobeiCreator().process();
+		new EizoBaobeiCreator().process();
 
 		System.exit(0);
 	}
 
 	public void process() throws IOException {
 
-		String outputFile = "out/wacom_baobei_%s.csv";
-		File file = new File(NieConfig.getConfig("wacom.taobao.pulishedbaibei.filepath"));
+		String outputFile = "out/eizo_baobei_%s.csv";
+		File file = new File(NieConfig.getConfig("eizo.taobao.pulishedbaibei.filepath"));
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil.readInPublishedBaobei(file);
 		//
 		//double currencyRate = 0.060 + 0.005;
 		//double benefitRate = 0.15;
-		WacomBaobeiProducer db = new WacomBaobeiProducer();
+		EizoBaobeiProducer db = new EizoBaobeiProducer();
 		db.setOutputFile(outputFile)
 				//.setCurrencyRate(currencyRate)
 				//.setBenefitRate(benefitRate)
