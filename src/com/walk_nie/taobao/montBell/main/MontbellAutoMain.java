@@ -27,15 +27,15 @@ import com.walk_nie.taobao.object.OrderObject;
 import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.util.NieConfig;
 
-public class MontbellOrderMain {
+public class MontbellAutoMain {
 	protected BufferedReader stdReader = null;
-	private String outFileName = "./montbell/taobao-out.txt";
-	private String outOrderMemoFileName = "./montbell/taobao-order-memo.txt";
+	private String outFileName = NieConfig.getConfig("montbell.out.root.folder") + "/taobao-out.txt";
+	private String outOrderMemoFileName = NieConfig.getConfig("montbell.out.root.folder") + "/taobao-order-memo.txt";
 	
 	private String itemSplitter =",";
 	
 	public static void main(String[] args) throws Exception {
-		new MontbellOrderMain().process();
+		new MontbellAutoMain().process();
 	}
 
 	public void process() throws Exception {
@@ -65,16 +65,21 @@ public class MontbellOrderMain {
 		}
 	}
 
+
 	private void stockCheck() throws Exception {
-		
-		String target = NieConfig.getConfig("montbell.stock.check.target");
-		String itemSplitter =",";
-		String[] pis = target.split(itemSplitter);
-		 List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
-		for (String line : pis) {
-			TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(line);
-			
-			productInfos.add(pinfo);
+
+		List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
+		List<String> targets = NieConfig
+				.getConfigByPrefix("montbell.stock.check.target");
+		for (String target : targets) {
+			String itemSplitter = ",";
+			String[] pis = target.split(itemSplitter);
+			for (String line : pis) {
+				TaobaoOrderProductInfo pinfo = MontBellUtil
+						.readTaobaoProductInfo(line);
+
+				productInfos.add(pinfo);
+			}
 		}
 
 		MontbellStockChecker stockChecker = new MontbellStockChecker();

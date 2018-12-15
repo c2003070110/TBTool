@@ -14,10 +14,9 @@ import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.walk_nie.util.NieConfig;
 
 public class MontbellPinyinMain {
-	private String inFileName = "C:/Users/niehp/Google ドライブ/tool/SeleniumAuto/montbell/pinyin-in.txt";
-	private String outFileName = "C:/Users/niehp/Google ドライブ/tool/SeleniumAuto/montbell/pinyin-out.txt";
 
 	public static void main(String[] args) throws Exception {
 		new MontbellPinyinMain().process();
@@ -36,7 +35,7 @@ public class MontbellPinyinMain {
 			}
 		}
 		*/
-		File tempFile0 = new File(inFileName);
+		File tempFile0 = new File(NieConfig.getConfig("montbell.out.root.folder"),"pinyin-in.txt");
 		pinyin(tempFile0);
 	}
 
@@ -93,10 +92,10 @@ public class MontbellPinyinMain {
 
 		// String fileName = String.format("pinyin-%d.txt",
 		// System.currentTimeMillis());
-		File oFile = new File(outFileName);
-		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-MM-dd");
-		FileUtils.write(oFile, "-------" + today + "-------\n",
+		File oFile = new File(NieConfig.getConfig("montbell.out.root.folder"),"pinyin-out.txt");
+		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
+				"yyyy_MM_dd_HH_mm_ss");
+		FileUtils.write(oFile, "-------" + now + "-------\n",
 				Charset.forName("UTF-8"), true);
 		for (String str : outputList) {
 			FileUtils.write(oFile, str + "\n", Charset.forName("UTF-8"), true);

@@ -18,6 +18,7 @@ import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.util.NieConfig;
 
 
 
@@ -27,7 +28,7 @@ public class MontBellUtil {
 	public static String spececialCateId ="1402017494";//2018 autumn&winter!
 	public static String spececialProductId ="182";//2018 autumn&winter!
 
-    public static String rootPathName = "out/MontBell/";
+    public static String rootPathName = NieConfig.getConfig("montbell.out.root.folder") ;
     public static String sizeTipFileName = "sizeTipList.txt";
     
     public static String urlPrefix = "http://webshop.montbell.jp";

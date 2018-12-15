@@ -269,6 +269,10 @@ public class MontbellStockChecker {
 		scanStock(stockObjList, url);
 		url = MontBellUtil.productUrlPrefix_fo + productId;
 		scanStock(stockObjList, url);
+		
+		for (StockObject st : stockObjList) {
+			st.productId = productId;
+		}
 
 		return stockObjList;
 	}
@@ -305,6 +309,9 @@ public class MontbellStockChecker {
 					colorEle = div;
 					break;
 				}
+			}
+			if (colorEle == null) {
+				continue;
 			}
 			Elements colors = colorEle.select("table.dataTbl").select("tr");
 			for (int j = 1; j < colors.size(); j++) {
@@ -374,18 +381,25 @@ public class MontbellStockChecker {
 
 	public void processByTaobaoOrderProduct(
 			List<TaobaoOrderProductInfo> productInfos) throws Exception {
-		String outFile =  "StockCheck-%s.txt";
-		String fmt = "[PRODUCT:%s][COLOR:%-6s][SIZE:%-6s][STOCK:%s]";
-		String fmt2 = "[PRODUCT:%s][SIZES:%-6s][COLOR:%-6s][STOCK:%s]";
-		String fmt3 = "[PRODUCT:%s][COLOR:%-6s][STOCK:%s]";
-		String fmt4 = "[PRODUCT:%s][SIZE:%-6s][STOCK:%s]";
+		String fmt =  "[PRODUCT:%s][PRICE:%6s][COLOR:%-6s][SIZE:%-6s][STOCK:%s]";
+		String fmt2 = "[PRODUCT:%s][PRICE:%6s][SIZES:%-6s][COLOR:%-6s][STOCK:%s]";
+		String fmt3 = "[PRODUCT:%s][PRICE:%6s][COLOR:%-6s][STOCK:%s]";
+		String fmt4 = "[PRODUCT:%s][PRICE:%6s][SIZE:%-6s][STOCK:%s]";
 		List<StockObject> stocks = Lists.newArrayList();
+		List<String> productIds = Lists.newArrayList();
 		for (TaobaoOrderProductInfo pinfo : productInfos) {
 			String productId = pinfo.productId;
+			if(productIds.contains(productId)){
+				continue;
+			}
+			productIds.add(productId);
 			List<StockObject> stockListMontbell = getMontbellStockInfo(productId);
 			Collections.sort(stockListMontbell, new Comparator<StockObject>() {
 				@Override
 				public int compare(StockObject arg0, StockObject arg1) {
+					if(arg0.productId.compareTo(arg1.productId) !=0){
+						return arg0.productId.compareTo(arg1.productId);
+					}
 					return arg0.colorName.compareTo(arg1.colorName);
 				}
 			});
@@ -394,15 +408,19 @@ public class MontbellStockChecker {
 		List<String> stockLines = Lists.newArrayList();
 		for (TaobaoOrderProductInfo pinfo : productInfos) {
 			String productId = pinfo.productId;
-			if (!StringUtil.isBlank(pinfo.colorName)
-					|| !StringUtil.isBlank(pinfo.sizeName)) {
-				for (StockObject st : stocks) {
+			for (StockObject st : stocks) {
+				if (!productId.equals(st.productId)) {
+					continue;
+				}
+				if (!StringUtil.isBlank(pinfo.colorName)
+						|| !StringUtil.isBlank(pinfo.sizeName)) {
 					if (!StringUtil.isBlank(pinfo.colorName)
 							&& !StringUtil.isBlank(pinfo.sizeName)
 							&& st.colorName.equals(pinfo.colorName)
 							&& st.sizeName.equals(pinfo.sizeName)) {
 						String line = String.format(fmt, productId,
-								st.colorName, st.sizeName, st.stockStatus);
+								st.priceJPY, st.colorName, st.sizeName,
+								st.stockStatus);
 						stockLines.add(line);
 						System.out.println(line);
 						continue;
@@ -411,7 +429,7 @@ public class MontbellStockChecker {
 							&& StringUtil.isBlank(pinfo.sizeName)
 							&& st.colorName.equals(pinfo.colorName)) {
 						String line = String.format(fmt3, productId,
-								st.colorName,  st.stockStatus);
+								st.priceJPY, st.colorName, st.stockStatus);
 						stockLines.add(line);
 						System.out.println(line);
 						continue;
@@ -420,44 +438,40 @@ public class MontbellStockChecker {
 							&& !StringUtil.isBlank(pinfo.sizeName)
 							&& st.sizeName.equals(pinfo.sizeName)) {
 						String line = String.format(fmt4, productId,
-								 st.sizeName, st.stockStatus);
+								st.priceJPY, st.sizeName, st.stockStatus);
 						stockLines.add(line);
 						System.out.println(line);
 						continue;
 					}
-				}
-			} else {
+				} else {
 
-				for (StockObject stockObj : stocks) {
-					String line = String.format(fmt, productId,
-							stockObj.colorName, stockObj.sizeName,
-							stockObj.stockStatus);
+					String line = String.format(fmt, productId, st.priceJPY,
+							st.colorName, st.sizeName, st.stockStatus);
 					stockLines.add(line);
 					System.out.println(line);
-				}
-				if (stocks.get(0).sizeName != null
-						&& !"".equals(stocks.get(0).sizeName)) {
-					Collections.sort(stocks,
-							new Comparator<StockObject>() {
-								@Override
-								public int compare(StockObject arg0,
-										StockObject arg1) {
-									return arg0.sizeName
-											.compareTo(arg1.sizeName);
-								}
-							});
-					for (StockObject stockObj : stocks) {
-						String line = String.format(fmt2, productId,
-								stockObj.sizeName, stockObj.colorName,
-								stockObj.stockStatus);
-						stockLines.add(line);
-						System.out.println(line);
+					if (stocks.get(0).sizeName != null
+							&& !"".equals(stocks.get(0).sizeName)) {
+						Collections.sort(stocks, new Comparator<StockObject>() {
+							@Override
+							public int compare(StockObject arg0,
+									StockObject arg1) {
+								return arg0.sizeName.compareTo(arg1.sizeName);
+							}
+						});
+						String line2 = String.format(fmt2, productId,
+								st.priceJPY, st.sizeName, st.colorName,
+								st.stockStatus);
+						stockLines.add(line2);
+						System.out.println(line2);
 					}
 				}
 			}
 		}
-		String fileName = String.format(outFile, DateUtils.formatDate(Calendar
-				.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
+		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
+				"yyyy_MM_dd_HH_mm_ss");
+		stockLines.add(0,"-------" + now + "-------");
+
+		String fileName =  "StockCheck.txt";
 		FileUtils.writeLines(new File(MontBellUtil.rootPathName, fileName),
 				stockLines);
 	}

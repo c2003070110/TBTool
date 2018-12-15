@@ -13,9 +13,10 @@ import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.montBell.GoodsObject;
 import com.walk_nie.taobao.montBell.MontbellProductParser;
 import com.walk_nie.taobao.montBell.StockObject;
+import com.walk_nie.util.NieConfig;
 
 public class GoodDetailAnalizer {
-	private String outFileName = "./montbell/analizy_%s.txt";
+	private String outFileName = NieConfig.getConfig("montbell.out.root.folder") + "/analizy_%s.txt";
 
 	/**
 	 * @param args

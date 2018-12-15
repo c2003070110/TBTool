@@ -34,10 +34,9 @@ import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoOrder {
 	protected BufferedReader stdReader = null;
-	private String inFileName = "./montbell/order-in.txt";
-	private String ooutFileName = "./montbell/order-out.txt";
-	//private String crFileName = "./montbell/cr.txt";
-	private String screenShotFolder = "./montbell/orderShot";
+	private String inFileName = NieConfig.getConfig("montbell.out.root.folder") + "/order-in.txt";
+	private String ooutFileName = NieConfig.getConfig("montbell.out.root.folder") + "/order-out.txt";
+	private String screenShotFolder = NieConfig.getConfig("montbell.out.root.folder") + "/orderShot";
 	
 	private String itemSplitter =",";
 	
@@ -330,7 +329,7 @@ public class MontbellAutoOrder {
 		List<WebElement> weList = null;
 		driver.get("https://en.montbell.jp/products/cart/");
 		
-		String saveToShot = screenShotFolder + "/" + DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMdd")
+		String saveToShot = screenShotFolder + "/" + DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
 				+ orderInfo.taobaoOrderName + ".jpg";
 		// take screenshot
 		WebDriverUtil.screenShot(driver, saveToShot);
@@ -459,9 +458,9 @@ public class MontbellAutoOrder {
 		}
 		
 		File oFile = new File(ooutFileName);
-		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-MM-dd");
-		FileUtils.write(oFile, "-------" + today + "-------\n",
+		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
+				"yyyy_MM_dd_HH_mm_ss");
+		FileUtils.write(oFile, "-------" + now + "-------\n",
 				Charset.forName("UTF-8"), true);
 		FileUtils.write(oFile, orderInfo.taobaoOrderName + "\n",
 				Charset.forName("UTF-8"), true);
@@ -497,7 +496,6 @@ public class MontbellAutoOrder {
 			} catch (Exception e) {
 				hasError = true;
 			}
-			NieUtil.mySleepBySecond(2);
 			if (hasError) {
 				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
@@ -521,6 +519,7 @@ public class MontbellAutoOrder {
 				mywait("Color OR size Selected realdy? ENTER for realdy!");
 				continue;
 			}
+			NieUtil.mySleepBySecond(2);
 
 			weList = driver.findElements(By.tagName("img"));
 			for (WebElement we : weList) {

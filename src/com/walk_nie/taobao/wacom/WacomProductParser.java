@@ -35,7 +35,7 @@ public class WacomProductParser extends BaseBaobeiParser {
 	public void scanSingleItem(WacomProductObject goodsObj) throws IOException {
 		String url = goodsObj.productUrl;
 
-		String query = url.substring(goodsObj.productUrl.lastIndexOf("?"));
+		String query = url.substring(goodsObj.productUrl.lastIndexOf("?")+1);
 		String[] sp = query.split("=");
 		for (int i = 0; i < sp.length; i++) {
 			if (sp[i].equals("product_id")) {
@@ -143,7 +143,7 @@ public class WacomProductParser extends BaseBaobeiParser {
 		if (!despFile.exists()) {
 			List<WebElement> ele = Lists.newArrayList();
 			ele.add(weSpec);
-			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), WebDriverUtil.watermark_common);
+			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
 		}
 		goodsObj.specScreenShotPicFile = despFile.getAbsolutePath();
 	}
@@ -155,7 +155,7 @@ public class WacomProductParser extends BaseBaobeiParser {
 		if (price.indexOf("～") > 0) {
 			price = price.substring(price.indexOf("～") + 1);
 		}
-		goodsObj.priceJPY = price;
+		goodsObj.priceJPY = price.trim();
 	}
 
 }
