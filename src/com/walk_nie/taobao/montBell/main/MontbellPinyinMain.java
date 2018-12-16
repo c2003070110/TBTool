@@ -94,7 +94,7 @@ public class MontbellPinyinMain {
 		// System.currentTimeMillis());
 		File oFile = new File(NieConfig.getConfig("montbell.out.root.folder"),"pinyin-out.txt");
 		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy_MM_dd_HH_mm_ss");
+				"yyyy-MM-dd HH_mm_ss");
 		FileUtils.write(oFile, "-------" + now + "-------\n",
 				Charset.forName("UTF-8"), true);
 		for (String str : outputList) {

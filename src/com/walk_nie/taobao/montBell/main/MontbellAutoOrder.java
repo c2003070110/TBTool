@@ -34,9 +34,8 @@ import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoOrder {
 	protected BufferedReader stdReader = null;
-	private String inFileName = NieConfig.getConfig("montbell.out.root.folder") + "/order-in.txt";
-	private String ooutFileName = NieConfig.getConfig("montbell.out.root.folder") + "/order-out.txt";
-	private String screenShotFolder = NieConfig.getConfig("montbell.out.root.folder") + "/orderShot";
+	private String inFileName = "order-in.txt";
+	private String ooutFileName ="order-out.txt";
 	
 	private String itemSplitter =",";
 	
@@ -54,7 +53,7 @@ public class MontbellAutoOrder {
 
 	public void orderForJapan() {
 		WebDriver driver = logonForJapan();
-		File tempFile0 = new File(inFileName);
+		File tempFile0 = new File(NieConfig.getConfig("montbell.out.root.folder"),inFileName);
 		try {
 			orderForJapan(driver, tempFile0);
 		} catch (Exception ex) {
@@ -66,7 +65,7 @@ public class MontbellAutoOrder {
 		
 		WebDriver driver = logonForChina();
 		long updateTime = System.currentTimeMillis();
-		File tempFile0 = new File(inFileName);
+		File tempFile0 = new File(NieConfig.getConfig("montbell.out.root.folder"),inFileName);
 		System.out.println("[waiting for order info in ]"
 				+ tempFile0.getAbsolutePath());
 		while (true) {
@@ -329,10 +328,10 @@ public class MontbellAutoOrder {
 		List<WebElement> weList = null;
 		driver.get("https://en.montbell.jp/products/cart/");
 		
-		String saveToShot = screenShotFolder + "/" + DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
-				+ orderInfo.taobaoOrderName + ".jpg";
+		File saveToShotF = new File(NieConfig.getConfig("montbell.out.root.folder") + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
+				+ orderInfo.taobaoOrderName + ".jpg");
 		// take screenshot
-		WebDriverUtil.screenShot(driver, saveToShot);
+		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 		
 		// 等待 是否打开
 		WebDriverWait wait1 = new WebDriverWait(driver,10);
@@ -457,9 +456,9 @@ public class MontbellAutoOrder {
 			fillCreditCard(driver, orderInfo.crObj);
 		}
 		
-		File oFile = new File(ooutFileName);
+		File oFile = new File(NieConfig.getConfig("montbell.out.root.folder"),ooutFileName);
 		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy_MM_dd_HH_mm_ss");
+				"yyyy-MM-dd HH_mm_ss");
 		FileUtils.write(oFile, "-------" + now + "-------\n",
 				Charset.forName("UTF-8"), true);
 		FileUtils.write(oFile, orderInfo.taobaoOrderName + "\n",

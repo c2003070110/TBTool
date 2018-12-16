@@ -25,7 +25,7 @@ public class WacomProductParser extends BaseBaobeiParser {
 	}
 
 	public WacomProductObject scanSingleItem(String url) throws IOException {
-
+		System.out.println("[INFO][URL]" + url);
 		WacomProductObject obj = new WacomProductObject();
 		obj.productUrl = url;
 		scanSingleItem(obj);
@@ -53,7 +53,7 @@ public class WacomProductParser extends BaseBaobeiParser {
 		toRealPrice(goodsObj);
 		goodsObj.kataban = we.findElement(By.cssSelector("span[id=\"product_code_default\"]")).getText();
 
-		we = weRoot.findElement(By.cssSelector("div[id=\"detailphotobloc\"]"));
+		we = weRoot.findElement(By.cssSelector("div[id=\"detailphotobloc\"][class=\"pc\"]"));
 		List<WebElement> wes = we.findElements(By.cssSelector("a[rel=\"expansion\"]"));
 		for (WebElement wetemp : wes) {
 			String href = wetemp.getAttribute("href");
@@ -65,9 +65,15 @@ public class WacomProductParser extends BaseBaobeiParser {
 		we = weRoot.findElement(By.cssSelector("table[class=\"new_spec\"]"));
 		List<WebElement> wesTr = we.findElements(By.tagName("tr"));
 		for (WebElement wetemp : wesTr) {
-			List<WebElement> wesTd = wetemp.findElements(By.tagName("td"));
-			if (wesTd.get(0).getText().indexOf("質量") != -1) {
-				goodsObj.weight = toWeiget(wesTd.get(1).getText());
+			WebElement wesTh = null;
+			try {
+				wesTh = wetemp.findElement(By.tagName("th"));
+			} catch (Exception e) {
+				wesTh = wetemp.findElement(By.tagName("td"));
+			}
+			WebElement wesTd = wetemp.findElement(By.tagName("td"));
+			if (wesTh.getText().indexOf("質量") != -1) {
+				goodsObj.weight = toWeiget(wesTd.getText());
 				toExtraWeight(goodsObj);
 			}
 		}
@@ -95,41 +101,45 @@ public class WacomProductParser extends BaseBaobeiParser {
 	}
 
 	private int toWeiget(String text) {
-		String str = text.replace(" ", "");
-		str = text.replace("本体", "");
-		str = text.replace("スタンド", "");
-		str = text.replace("約", "");
-		if (str.indexOf("/") > 0) {
-			String[] ww = str.split("/");
-			int wi = 0;
-			for (String w : ww) {
-				if (ww[0].toLowerCase().endsWith("kg")) {
-					String wq = w.replace("kg", "");
+		try {
+			String str = text.replace(" ", "");
+			str = str.replace("本体", "");
+			str = str.replace("スタンド", "");
+			str = str.replace("約", "");
+			if (str.indexOf("/") > 0) {
+				String[] ww = str.split("/");
+				int wi = 0;
+				for (String w : ww) {
+					if (ww[0].toLowerCase().endsWith("kg")) {
+						String wq = w.replace("kg", "");
+						wq = wq.replace("Kg", "");
+						wq = wq.replace("KG", "");
+						wi += (int) (Double.parseDouble(wq) * 1000);
+						continue;
+					}
+					if (ww[0].toLowerCase().endsWith("g")) {
+						String wq = w.replace("g", "");
+						wq = wq.replace("G", "");
+						wi += Integer.parseInt(wq);
+						continue;
+					}
+				}
+				return wi;
+			} else {
+				if (str.toLowerCase().endsWith("kg")) {
+					String wq = str.replace("kg", "");
 					wq = wq.replace("Kg", "");
 					wq = wq.replace("KG", "");
-					wi += Integer.parseInt(wq) * 1000;
-					continue;
+					return (int) (Double.parseDouble(wq) * 1000);
 				}
-				if (ww[0].toLowerCase().endsWith("g")) {
-					String wq = w.replace("g", "");
+				if (str.toLowerCase().endsWith("g")) {
+					String wq = str.replace("g", "");
 					wq = wq.replace("G", "");
-					wi += Integer.parseInt(wq);
-					continue;
+					return Integer.parseInt(wq);
 				}
 			}
-			return wi;
-		} else {
-			if (str.toLowerCase().endsWith("kg")) {
-				String wq = str.replace("kg", "");
-				wq = wq.replace("Kg", "");
-				wq = wq.replace("KG", "");
-				return Integer.parseInt(wq) * 1000;
-			}
-			if (str.toLowerCase().endsWith("g")) {
-				String wq = str.replace("g", "");
-				wq = wq.replace("G", "");
-				return Integer.parseInt(wq);
-			}
+		} catch (Exception e) {
+			System.out.println("[ERROR][WEIGHT][STR]" + text);
 		}
 		return 99999;
 	}

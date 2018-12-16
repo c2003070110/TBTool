@@ -72,9 +72,9 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
 		// 宝贝类目
-		obj.cid = "50014798";
+		obj.cid = "110511";
 		// 店铺类目
-		obj.seller_cids = "1372086392";
+		obj.seller_cids = "1423155503";
 		// 省
 		obj.location_state = "\"日本\"";
 		// 宝贝价格
@@ -84,10 +84,10 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		obj.num = "99";
 
 		// 邮费模版ID
-		// obj.postage_id = "1780373930";
+		obj.postage_id = "13528017580";
 
 		// 用户输入ID串;
-		obj.inputPids = "\"13021751,6103476,1627207\"";
+		//obj.inputPids = "\"13021751,6103476,1627207\"";
 
 		// 用户输入名-值对
 		composeBaobeiInputValues(item, obj);
@@ -117,12 +117,12 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		obj.sub_stock_type = "1";
 
 		// 闪电发货
-		obj.is_lighting_consigment = "80";
+		obj.is_lighting_consigment = "16";
 		// 新品
-		obj.is_xinpin = "247";
+		obj.is_xinpin = "244";
 
 		// 商品资质
-		obj.qualification = "%7B%7D";
+		obj.qualification = "%7B%20%20%7D";
 		// 增加商品资质
 		obj.add_qualification = "0";
 
@@ -130,16 +130,17 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(WacomProductObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮 Wacom";
+		String title = "日本直邮代购 Wacom";
 
 		title += " " + item.productName;
+		title += " " + item.kataban;
+		title += " 包邮";
 		baobei.title = "\"" + title + "\"";
 	}
 
 	protected void composeBaobeiCateProps(WacomProductObject item, BaobeiPublishObject obj) {
-		// cateProps
-		// 宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
 		String cateProps = "";
+		cateProps = "20000:414950093;20879:21456;29029:22041";
 
 		obj.cateProps = "\"" + cateProps + "\"";
 	}
@@ -153,7 +154,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiInputValues(WacomProductObject item, BaobeiPublishObject obj) {
-		String inputValues = item.productId + "," + obj.price + ",";
+		String inputValues = "";
 
 		obj.inputValues = "\"" + inputValues + "\"";
 	}
@@ -211,8 +212,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 			int i = 0;
 			for (String picUrl : obj.productGalaryPicUrlList) {
 				String picName = obj.productId + "_" + i;
-				File saveTo;
-				saveTo = TaobaoUtil.downloadPicture(picRoot, picUrl, picName);
+				File saveTo = TaobaoUtil.downloadPicture(picRoot, picUrl, picName);
 				obj.taobaoMainPicNameList.add(picName);
 				obj.productGalaryPicFileList.add(saveTo.getCanonicalPath());
 				i++;

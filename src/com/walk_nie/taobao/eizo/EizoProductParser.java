@@ -26,7 +26,7 @@ public class EizoProductParser extends BaseBaobeiParser {
 	}
 
 	public EizoProductObject scanSingleItem(String url) throws IOException {
-
+		System.out.println("[INFO][URL]" + url);
 		EizoProductObject obj = new EizoProductObject();
 		obj.productUrl = url;
 		scanSingleItem(obj);
@@ -49,6 +49,9 @@ public class EizoProductParser extends BaseBaobeiParser {
 		} catch (Exception e) {
 
 		}
+		if (StringUtil.isBlank(goodsObj.storeUrl)) {
+			return;
+		}
 		goodsObj.productGalaryPicUrlList.add(
 				"https://www.eizo.co.jp/products/" + goodsObj.categoryName + "/" + goodsObj.kataban + "/photo_big.jpg");
 
@@ -68,34 +71,42 @@ public class EizoProductParser extends BaseBaobeiParser {
 				goodsObj.productName = w.getAttribute("alt");
 			}
 		}
-		screenshotProductDetalDesp(webDriver, goodsObj, we);
 		
 		we = weRoot.findElement(By.cssSelector("div[id=\"tab01_content\"]"));
 		screenshotProductDetalDesp(webDriver, goodsObj, we);
 
-		if (!StringUtil.isBlank(goodsObj.storeUrl)) {
+		webDriver.get(goodsObj.storeUrl);
+		
+		weRoot = webDriver.findElement(By.cssSelector("div[class=\"detailsArea\"]"));
 
-			webDriver.get(goodsObj.storeUrl);
-			
-			weRoot = webDriver.findElement(By.cssSelector("div[class=\"detailsArea\"]"));
-			
-			we = weRoot.findElement(By.tagName("table"));
-			List<WebElement> wesTr = we.findElements(By.tagName("tr"));
-			for (WebElement wetemp : wesTr) {
-				List<WebElement> wesTd = wetemp.findElements(By.tagName("td"));
-
-				if (wesTd.get(0).getText().indexOf("販売価格（税込）") != -1) {
-					goodsObj.priceOrg = wesTd.get(1).getText();
-					toRealPrice(goodsObj);
-				}
-				if (wesTd.get(0).getText().indexOf("質量") != -1) {
-					goodsObj.weight = toWeiget(wesTd.get(1).getText());
-					toExtraWeight(goodsObj);
-				}
+		we = weRoot.findElement(By.tagName("table"));
+		List<WebElement> wesTr = we.findElements(By.tagName("tr"));
+		for (WebElement wetemp : wesTr) {
+			List<WebElement> wesTd = wetemp.findElements(By.tagName("td"));
+			if (wesTd.get(0).getText().indexOf("販売価格（税込）") != -1) {
+				goodsObj.priceOrg = wesTd.get(1).getText();
+				toRealPrice(goodsObj);
+				break;
 			}
-			we = webDriver.findElement(By.cssSelector("div[class=\"spec\"]"));
-			screenshotProductSpecDesp(webDriver, goodsObj, we);
 		}
+		we = webDriver.findElement(By.cssSelector("div[id=\"spec\"]"));
+		wesTr = we.findElements(By.tagName("tr"));
+		for (WebElement wetemp : wesTr) {
+			WebElement wesTh = null;
+			try {
+				wesTh = wetemp.findElement(By.tagName("th"));
+			} catch (Exception e) {
+				wesTh = wetemp.findElement(By.tagName("td"));
+			}
+			WebElement wesTd = wetemp.findElement(By.tagName("td"));
+			if (wesTh.getText().equals("質量")) {
+				goodsObj.weight = toWeiget(wesTd.getText());
+				toExtraWeight(goodsObj);
+				break;
+			}
+		}
+		
+		screenshotProductSpecDesp(webDriver, goodsObj, we);
 	}
 
 	private void toExtraWeight(EizoProductObject goodsObj) {
@@ -119,41 +130,46 @@ public class EizoProductParser extends BaseBaobeiParser {
 	}
 
 	private int toWeiget(String text) {
-		String str = text.replace(" ", "");
-		str = text.replace("本体", "");
-		str = text.replace("スタンド", "");
-		str = text.replace("約", "");
-		if (str.indexOf("/") > 0) {
-			String[] ww = str.split("/");
-			int wi = 0;
-			for (String w : ww) {
-				if (ww[0].toLowerCase().endsWith("kg")) {
-					String wq = w.replace("kg", "");
+		try {
+			String str = text.replaceAll(" ", "");
+			str = str.replaceAll(" ", "");
+			str = str.replace("本体", "");
+			str = str.replace("スタンド", "");
+			str = str.replace("約", "");
+			if (str.indexOf("/") > 0) {
+				String[] ww = str.split("/");
+				int wi = 0;
+				for (String w : ww) {
+					if (ww[0].toLowerCase().endsWith("kg")) {
+						String wq = w.replace("kg", "");
+						wq = wq.replace("Kg", "");
+						wq = wq.replace("KG", "");
+						wi += (int) (Double.parseDouble(wq) * 1000);
+						continue;
+					}
+					if (ww[0].toLowerCase().endsWith("g")) {
+						String wq = w.replace("g", "");
+						wq = wq.replace("G", "");
+						wi += Integer.parseInt(wq);
+						continue;
+					}
+				}
+				return wi;
+			} else {
+				if (str.toLowerCase().endsWith("kg")) {
+					String wq = str.replace("kg", "");
 					wq = wq.replace("Kg", "");
 					wq = wq.replace("KG", "");
-					wi += Integer.parseInt(wq) * 1000;
-					continue;
+					return (int) (Double.parseDouble(wq) * 1000);
 				}
-				if (ww[0].toLowerCase().endsWith("g")) {
-					String wq = w.replace("g", "");
+				if (str.toLowerCase().endsWith("g")) {
+					String wq = str.replace("g", "");
 					wq = wq.replace("G", "");
-					wi += Integer.parseInt(wq);
-					continue;
+					return Integer.parseInt(wq);
 				}
 			}
-			return wi;
-		} else {
-			if (str.toLowerCase().endsWith("kg")) {
-				String wq = str.replace("kg", "");
-				wq = wq.replace("Kg", "");
-				wq = wq.replace("KG", "");
-				return Integer.parseInt(wq) * 1000;
-			}
-			if (str.toLowerCase().endsWith("g")) {
-				String wq = str.replace("g", "");
-				wq = wq.replace("G", "");
-				return Integer.parseInt(wq);
-			}
+		} catch (Exception e) {
+			System.out.println("[ERROR][WEIGHT][STR]" + text);
 		}
 		return 99999;
 	}
@@ -167,7 +183,7 @@ public class EizoProductParser extends BaseBaobeiParser {
 		if (!despFile.exists()) {
 			List<WebElement> ele = Lists.newArrayList();
 			ele.add(we);
-			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), WebDriverUtil.watermark_common);
+			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
 		}
 		goodsObj.specScreenShotPicFile = despFile.getAbsolutePath();
 	}
@@ -181,7 +197,7 @@ public class EizoProductParser extends BaseBaobeiParser {
 		if (!despFile.exists()) {
 			List<WebElement> ele = Lists.newArrayList();
 			ele.add(we);
-			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), WebDriverUtil.watermark_common);
+			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
 		}
 		goodsObj.specScreenShotPicFile = despFile.getAbsolutePath();
 	}
