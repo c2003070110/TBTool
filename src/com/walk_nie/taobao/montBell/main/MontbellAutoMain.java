@@ -24,7 +24,6 @@ import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderObject;
-import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.util.NieConfig;
 
 public class MontbellAutoMain {
@@ -59,31 +58,38 @@ public class MontbellAutoMain {
 				if (todoType == 4) {
 					stockCheck();
 				}
+				if (todoType == 5) {
+					stockCheckByInputId();
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
 	}
+	private void stockCheckByInputId() throws Exception {
+		String productId = "";
+		System.out.println("Please Input the Product ID : ");
 
-
-	private void stockCheck() throws Exception {
-
-		List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
-		List<String> targets = NieConfig
-				.getConfigByPrefix("montbell.stock.check.target");
-		for (String target : targets) {
-			String itemSplitter = ",";
-			String[] pis = target.split(itemSplitter);
-			for (String line : pis) {
-				TaobaoOrderProductInfo pinfo = MontBellUtil
-						.readTaobaoProductInfo(line);
-
-				productInfos.add(pinfo);
+		stdReader = getStdReader();
+		while (true) {
+			String line = stdReader.readLine().trim();
+			if ("\r\n".equalsIgnoreCase(line) || "\n".equalsIgnoreCase(line)
+					|| "".equals(line)) {
+				break;
+			} else if (!"".equalsIgnoreCase(line)) {
+				productId = line;
+				break;
 			}
 		}
 
 		MontbellStockChecker stockChecker = new MontbellStockChecker();
-		stockChecker.processByTaobaoOrderProduct(productInfos);
+		stockChecker.processByProductId(productId);
+	}
+
+
+	private void stockCheck() throws Exception {
+		MontbellStockChecker stockChecker = new MontbellStockChecker();
+		stockChecker.processByTaobaoOrderProduct();
 	}
 
 	private void toPinYin() throws Exception {
@@ -343,8 +349,10 @@ public class MontbellAutoMain {
 		int type = 0;
 		try {
 			System.out.println("Type of todo : ");
-			System.out.println("0:Get From Taobao Order;\n" + "1:Order（CHINA);\n2:Order（JAPAN);\n3:to PinYin;\n"
-			                   + "4:stock check.\n5..;\n");
+			System.out.println("0:Get From Taobao Order;\n"
+					+ "1:Order（CHINA);\n 2:Order（JAPAN);\n 3:to PinYin;\n"
+			        + "4:stock check; \n 5:stock check By input id;\n"
+	        		+ "6..;\n");
 
 			stdReader = getStdReader();
 			while (true) {
@@ -363,6 +371,9 @@ public class MontbellAutoMain {
 					break;
 				} else if ("4".equals(line.trim())) {
 					type = 4;
+					break;
+				} else if ("5".equals(line.trim())) {
+					type = 5;
 					break;
 				} else {
 					System.out.println("Listed number only!");

@@ -2,6 +2,7 @@ package com.walk_nie.taobao.montBell.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,14 +19,18 @@ import org.jsoup.select.Elements;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.util.NieConfig;
 
 public class MontbellStockChecker {
+	private String inFileName = "StockCheck-in.txt";
+	private String outFileName = "StockCheck-out.txt";
 
 	public static void main(String[] args) throws Exception {
 		if (args.length == 0) {
@@ -36,7 +41,7 @@ public class MontbellStockChecker {
 	}
 
 	public void processByProductId(String productId) throws Exception {
-		String outFile = "StockCheck-%s-%s.txt";
+
 		List<StockObject> stockListMontbell = getMontbellStockInfo(productId);
 		Collections.sort(stockListMontbell, new Comparator<StockObject>() {
 			@Override
@@ -68,10 +73,12 @@ public class MontbellStockChecker {
 				System.out.println(line);
 			}
 		}
-		String fileName = String.format(outFile, productId, DateUtils
-				.formatDate(Calendar.getInstance().getTime(),
-						"yyyy_MM_dd_HH_mm_ss"));
-		FileUtils.writeLines(new File(MontBellUtil.rootPathName, fileName),
+		
+		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
+				"yyyy/MM/dd HH:mm:ss");
+		stockLines.add(0,"-------" + now + "-------");
+
+		FileUtils.writeLines(new File(MontBellUtil.rootPathName, outFileName),
 				stockLines);
 	}
 
@@ -379,7 +386,28 @@ public class MontbellStockChecker {
 		}
 	}
 
-	public void processByTaobaoOrderProduct(
+	public void processByTaobaoOrderProduct() throws Exception {
+
+		List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
+		List<String> targets = Files.readLines(
+				new File(NieConfig.getConfig("montbell.out.root.folder"), inFileName),
+				Charset.forName("UTF-8"));
+		for (String target : targets) {
+			if (target.startsWith("#")) {
+				continue;
+			}
+			String itemSplitter = ",";
+			String[] pis = target.split(itemSplitter);
+			for (String line : pis) {
+				TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(line);
+
+				productInfos.add(pinfo);
+			}
+		}
+		processByTaobaoOrderProduct(productInfos);
+	}
+
+	private void processByTaobaoOrderProduct(
 			List<TaobaoOrderProductInfo> productInfos) throws Exception {
 		String fmt =  "[PRODUCT:%s][PRICE:%6s][COLOR:%-6s][SIZE:%-6s][STOCK:%s]";
 		String fmt2 = "[PRODUCT:%s][PRICE:%6s][SIZES:%-6s][COLOR:%-6s][STOCK:%s]";
@@ -468,11 +496,10 @@ public class MontbellStockChecker {
 			}
 		}
 		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy_MM_dd_HH_mm_ss");
+				"yyyy/MM/dd HH:mm:ss");
 		stockLines.add(0,"-------" + now + "-------");
 
-		String fileName =  "StockCheck.txt";
-		FileUtils.writeLines(new File(MontBellUtil.rootPathName, fileName),
+		FileUtils.writeLines(new File(MontBellUtil.rootPathName, outFileName),
 				stockLines);
 	}
 }
