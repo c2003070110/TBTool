@@ -3,8 +3,10 @@ package com.walk_nie.taobao.eizo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -42,6 +44,7 @@ public class EizoProductParser extends BaseBaobeiParser {
 
 		WebDriver webDriver = WebDriverUtil.getWebDriver(url);
 		WebElement weRoot = webDriver.findElement(By.cssSelector("div[id=\"content\"]"));
+System.out.println("[DEBUG][1]" + DateUtils.formatDate(Calendar.getInstance().getTime(),"yyyy-MM-dd HH:mm:ss.SSS"));
 
 		try {
 			WebElement we = weRoot.findElement(By.cssSelector("ul[id=\"direct\"]"));
@@ -55,16 +58,17 @@ public class EizoProductParser extends BaseBaobeiParser {
 		goodsObj.productGalaryPicUrlList.add(
 				"https://www.eizo.co.jp/products/" + goodsObj.categoryName + "/" + goodsObj.kataban + "/photo_big.jpg");
 
-		WebElement we = weRoot.findElement(By.cssSelector("div[id=\"product_photo\"]"));
-		List<WebElement> wes = we.findElements(By.cssSelector("img[class=\"transparent\"]"));
-		for (WebElement wetemp : wes) {
-			String href = wetemp.getAttribute("src");
-			if (!goodsObj.productGalaryPicUrlList.contains(href)) {
-				goodsObj.productGalaryPicUrlList.add(href);
-			}
-		}
-		we = weRoot.findElement(By.cssSelector("div[id=\"spec_area\"]"));
-		wes = we.findElements(By.cssSelector("div[class=\"title\"]"));
+//		WebElement we = weRoot.findElement(By.cssSelector("div[id=\"product_photo\"]"));
+//		List<WebElement> wes = we.findElements(By.cssSelector("img[class=\"transparent\"]"));
+//		for (WebElement wetemp : wes) {
+//			String href = wetemp.getAttribute("src");
+//			if (!goodsObj.productGalaryPicUrlList.contains(href)) {
+//				goodsObj.productGalaryPicUrlList.add(href);
+//			}
+//		}
+System.out.println("[DEBUG][2]" + DateUtils.formatDate(Calendar.getInstance().getTime(),"yyyy-MM-dd HH:mm:ss.SSS"));
+		WebElement we = weRoot.findElement(By.cssSelector("div[id=\"spec_area\"]"));
+		List<WebElement> wes = we.findElements(By.cssSelector("div[class=\"title\"]"));
 		if(!wes.isEmpty()){
 			for (WebElement wetemp : wes) {
 				WebElement w = wetemp.findElement(By.tagName("img"));
@@ -73,6 +77,7 @@ public class EizoProductParser extends BaseBaobeiParser {
 		}
 		
 		we = weRoot.findElement(By.cssSelector("div[id=\"tab01_content\"]"));
+System.out.println("[DEBUG][3]" + DateUtils.formatDate(Calendar.getInstance().getTime(),"yyyy-MM-dd HH:mm:ss.SSS"));
 		screenshotProductDetalDesp(webDriver, goodsObj, we);
 
 		webDriver.get(goodsObj.storeUrl);
@@ -140,6 +145,9 @@ public class EizoProductParser extends BaseBaobeiParser {
 				String[] ww = str.split("/");
 				int wi = 0;
 				for (String w : ww) {
+					if(!w.toLowerCase().endsWith("kg") || !w.toLowerCase().endsWith("g")){
+						w = w.substring(0, w.toLowerCase().lastIndexOf("g")+1);
+					}
 					if (ww[0].toLowerCase().endsWith("kg")) {
 						String wq = w.replace("kg", "");
 						wq = wq.replace("Kg", "");
@@ -156,6 +164,9 @@ public class EizoProductParser extends BaseBaobeiParser {
 				}
 				return wi;
 			} else {
+				if(!str.toLowerCase().endsWith("kg") || !str.toLowerCase().endsWith("g")){
+					str = str.substring(0, str.toLowerCase().lastIndexOf("g")+1);
+				}
 				if (str.toLowerCase().endsWith("kg")) {
 					String wq = str.replace("kg", "");
 					wq = wq.replace("Kg", "");
@@ -185,7 +196,7 @@ public class EizoProductParser extends BaseBaobeiParser {
 			ele.add(we);
 			WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
 		}
-		goodsObj.specScreenShotPicFile = despFile.getAbsolutePath();
+		goodsObj.detailScreenShotPicFile = despFile.getAbsolutePath();
 	}
 
 	private void screenshotProductSpecDesp(WebDriver webDriver, EizoProductObject goodsObj, WebElement we)
@@ -204,12 +215,15 @@ public class EizoProductParser extends BaseBaobeiParser {
 
 	private void toRealPrice(EizoProductObject goodsObj) {
 		String price = goodsObj.priceOrg.replace("￥", "");
+		if (price.indexOf("(") != -1) {
+			price = price.substring(0, price.indexOf("("));
+		}
 		price = price.replace("(税込)", "");
 		price = price.replace(",", "");
 		if (price.indexOf("～") > 0) {
 			price = price.substring(price.indexOf("～") + 1);
 		}
-		goodsObj.priceJPY = price;
+		goodsObj.priceJPY = price.trim();
 	}
 
 }

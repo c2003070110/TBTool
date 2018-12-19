@@ -74,7 +74,7 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
 		// 宝贝类目
-		obj.cid = "50014798";
+		obj.cid = "110502";
 		// 店铺类目
 		obj.seller_cids = "1423155504";
 		// 省
@@ -133,7 +133,8 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiTitle(EizoProductObject item, BaobeiPublishObject baobei) {
 		String title = "日本直邮代购 艺卓/Eizo";
-
+		
+		title += " " + getCategoryName(item.categoryName);
 		title += " " + item.productName;
 		title += " 包邮";
 	
@@ -204,19 +205,22 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 		publishedBaobei.picture = "\"" + picture + "\"";
 	}
 
-	private void downloadAndCopyPicture(List<EizoProductObject> itemIdList, String taobaoPicFolder)
-			throws IOException {
+	private void downloadAndCopyPicture(List<EizoProductObject> itemIdList, String taobaoPicFolder) throws IOException
+			 {
 
 		String picRoot = EizoUtil.getPictureRootFolder();
 		for (EizoProductObject obj : itemIdList) {
 			int i = 0;
 			for (String picUrl : obj.productGalaryPicUrlList) {
 				String picName = obj.kataban + "_" + i;
-				File saveTo;
-				saveTo = TaobaoUtil.downloadPicture(picRoot, picUrl, picName);
-				obj.taobaoMainPicNameList.add(picName);
-				obj.productGalaryPicFileList.add(saveTo.getCanonicalPath());
-				i++;
+				try {
+					File saveTo = TaobaoUtil.downloadPicture(picRoot, picUrl, picName);
+					obj.taobaoMainPicNameList.add(picName);
+					obj.productGalaryPicFileList.add(saveTo.getCanonicalPath());
+					i++;
+				} catch (Exception e) {
+					System.out.println("[ERROR][DOWNLOAD]" + picUrl);
+				}
 			}
 			TaobaoUtil.copyFiles(obj.taobaoMainPicNameList, EizoUtil.getPictureRootFolder(), taobaoPicFolder);
 		}
@@ -238,5 +242,22 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 		}
 		return outputList;
 	}
+
+	private String getCategoryName(String nm) {
+		if("lcd".equals(nm)){
+			return "FlexScan";
+		}
+		if("ce".equals(nm)){
+			return "ColorEdge";
+		}
+		return "Not Support";
+	}
+// cateProps
+//	20000:42797655;20879:21456;21299:27023;21433:79940;28099:220706768;29029:78185;29652:78181;29656:80020;122216427:41892234;122276283:3250781
+// inputPids
+//	10016,20000
+	// inputValues
+//	CG319X,EIZO/艺卓;型号*;CG319X
+
 
 }

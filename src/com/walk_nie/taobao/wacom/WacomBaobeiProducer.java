@@ -149,7 +149,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(WacomProductObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮代购 ";
+		String title = "日本直邮代购";
 
 		title += " " + item.productName;
 		title += " " + item.kataban;
