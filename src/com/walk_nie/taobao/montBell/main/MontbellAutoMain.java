@@ -350,9 +350,9 @@ public class MontbellAutoMain {
 		try {
 			System.out.println("Type of todo : ");
 			System.out.println("0:Get From Taobao Order;\n"
-					+ "1:Order（CHINA);\n 2:Order（JAPAN);\n 3:to PinYin;\n"
-			        + "4:stock check; \n 5:stock check By input id;\n"
-	        		+ "6..;\n");
+					+ " 1:Order（CHINA);\n 2:Order（JAPAN);\n 3:to PinYin;\n"
+			        + " 4:stock check; \n 5:stock check By input id;\n"
+	        		+ " 6..;\n");
 
 			stdReader = getStdReader();
 			while (true) {

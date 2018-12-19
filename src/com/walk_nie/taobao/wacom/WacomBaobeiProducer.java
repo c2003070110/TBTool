@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.client.utils.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
@@ -25,8 +27,8 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		try {
 			System.out.println("-------- START --------");
 			List<WacomProductObject> itemIdList = Lists.newArrayList();
-
-			List<String> productUrls = NieConfig.getConfigByPrefix("wacom.parse.product.url.");
+			
+			List<String> productUrls = readProductUrls();
 			if (!productUrls.isEmpty()) {
 				WacomProductParser parser = new WacomProductParser();
 				parser.setPublishedbaobeiList(this.publishedbaobeiList);
@@ -57,6 +59,23 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 					e.printStackTrace();
 				}
 		}
+	}
+
+	private List<String> readProductUrls() throws IOException {
+		String scanFile = NieConfig.getConfig("wacom.scan.url.file");
+
+		List<String> adrs = Files.readLines(new File(scanFile), Charset.forName("UTF-8"));
+		List<String> outputList = Lists.newArrayList();
+		for (String line : adrs) {
+			if ("".equals(line)) {
+				continue;
+			}
+			if (line.startsWith("#")) {
+				continue;
+			}
+			outputList.add(line);
+		}
+		return outputList;
 	}
 
 	protected void writeOut(BufferedWriter priceBw, WacomProductObject item) throws Exception {
@@ -112,7 +131,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		// 自定义属性值
 		composeBaobeiInputCustomCpv(item, obj);
 		// 宝贝卖点
-		// MontBellUtil.composeBaobeiSubtitle(item, obj);
+
 		// 库存计数
 		obj.sub_stock_type = "1";
 
@@ -130,7 +149,7 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(WacomProductObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮代购 Wacom";
+		String title = "日本直邮代购 ";
 
 		title += " " + item.productName;
 		title += " " + item.kataban;

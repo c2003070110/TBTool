@@ -338,14 +338,13 @@ public class MontbellAutoOrder {
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
-				while (true){
-					try {
-						driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
-						return true;
-					} catch (Exception e) {
+				try {
+					driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
+					return true;
+				} catch (Exception e) {
 
-					}
 				}
+				return false;
 			}
 		});
 		weList = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
@@ -369,14 +368,13 @@ public class MontbellAutoOrder {
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
-				while (true){
-					try {
-						driver.findElements(By.cssSelector("input[name=\"destination_id\"]"));
-						return true;
-					} catch (Exception e) {
-
-					}
+				try {
+					driver.findElements(By
+							.cssSelector("input[name=\"destination_id\"]"));
+					return true;
+				} catch (Exception e) {
 				}
+				return false;
 			}
 		});
 		weList = driver.findElements(By.cssSelector("input[name=\"destination_id\"]"));
@@ -406,14 +404,12 @@ public class MontbellAutoOrder {
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
-				while (true){
-					try {
-						driver.findElements(By.id("basicInfo"));
-						return true;
-					} catch (Exception e) {
-
-					}
+				try {
+					driver.findElements(By.id("basicInfo"));
+					return true;
+				} catch (Exception e) {
 				}
+				return false;
 			}
 		});
 		WebElement we = driver.findElement(By.id("basicInfo"));

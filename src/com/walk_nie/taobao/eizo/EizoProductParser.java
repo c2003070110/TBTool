@@ -37,8 +37,8 @@ public class EizoProductParser extends BaseBaobeiParser {
 		String url = goodsObj.productUrl;
 
 		String[] sp = url.split("/");
-		goodsObj.kataban = sp[sp.length - 1];
-		goodsObj.categoryName = sp[sp.length - 2];
+		goodsObj.kataban = sp[sp.length - 2];
+		goodsObj.categoryName = sp[sp.length - 3];
 
 		WebDriver webDriver = WebDriverUtil.getWebDriver(url);
 		WebElement weRoot = webDriver.findElement(By.cssSelector("div[id=\"content\"]"));

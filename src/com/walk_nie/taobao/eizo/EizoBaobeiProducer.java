@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.client.utils.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
@@ -26,7 +28,7 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 			System.out.println("-------- START --------");
 			List<EizoProductObject> itemIdList = Lists.newArrayList();
 
-			List<String> productUrls = NieConfig.getConfigByPrefix("eizo.parse.product.url.");
+			List<String> productUrls = readProductUrls();
 			if (!productUrls.isEmpty()) {
 				EizoProductParser parser = new EizoProductParser();
 				parser.setPublishedbaobeiList(this.publishedbaobeiList);
@@ -218,6 +220,23 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 			}
 			TaobaoUtil.copyFiles(obj.taobaoMainPicNameList, EizoUtil.getPictureRootFolder(), taobaoPicFolder);
 		}
+	}
+
+	private List<String> readProductUrls() throws IOException {
+		String scanFile = NieConfig.getConfig("eizo.scan.url.file");
+
+		List<String> adrs = Files.readLines(new File(scanFile), Charset.forName("UTF-8"));
+		List<String> outputList = Lists.newArrayList();
+		for (String line : adrs) {
+			if ("".equals(line)) {
+				continue;
+			}
+			if (line.startsWith("#")) {
+				continue;
+			}
+			outputList.add(line);
+		}
+		return outputList;
 	}
 
 }
