@@ -5,16 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
@@ -24,12 +20,12 @@ import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderObject;
-import com.walk_nie.util.NieConfig;
+import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoMain {
 	protected BufferedReader stdReader = null;
-	private String outFileName = NieConfig.getConfig("montbell.out.root.folder") + "/taobao-out.txt";
-	private String outOrderMemoFileName = NieConfig.getConfig("montbell.out.root.folder") + "/taobao-order-memo.txt";
+	private String outFileName =  "taobao-out.txt";
+	private String outOrderMemoFileName = "taobao-order-memo.txt";
 	
 	private String itemSplitter =",";
 	
@@ -203,22 +199,11 @@ public class MontbellAutoMain {
 			montbellOrderList.add(postCd);
 			montbellOrderList.add("------------");
 		}
-		File oFile = new File(outFileName);
-		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-MM-dd");
-		FileUtils.write(oFile, "-------" + today + "-------\n",
-				Charset.forName("UTF-8"), true);
-		for (String str : montbellOrderList) {
-			FileUtils.write(oFile, str + "\n", Charset.forName("UTF-8"), true);
-		}
-		File outOrderMemoFileName1 = new File(outOrderMemoFileName);
+		File oFile = new File(MontBellUtil.rootPathName, outFileName);
+		NieUtil.appendToFile(oFile, montbellOrderList);
+		File outOrderMemoFileName1 = new File(MontBellUtil.rootPathName, outOrderMemoFileName);
 		System.out.println("Write The Result To " + outOrderMemoFileName1.getCanonicalPath());
-		FileUtils.write(outOrderMemoFileName1, "-------" + today + "-------\n",
-				Charset.forName("UTF-8"), true);
-		for (String str : orderHis) {
-			FileUtils.write(outOrderMemoFileName1, str + "\n", Charset.forName("UTF-8"), true);
-		}
-		oFile = null;
+		NieUtil.appendToFile(outOrderMemoFileName1, orderHis);
 	}
 
 	private String anlynizeStock(String productId, String itemAttr) throws Exception {

@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
@@ -53,7 +52,7 @@ public class MontbellAutoOrder {
 
 	public void orderForJapan() {
 		WebDriver driver = logonForJapan();
-		File tempFile0 = new File(NieConfig.getConfig("montbell.out.root.folder"),inFileName);
+		File tempFile0 = new File(MontBellUtil.rootPathName, inFileName);
 		try {
 			orderForJapan(driver, tempFile0);
 		} catch (Exception ex) {
@@ -65,7 +64,7 @@ public class MontbellAutoOrder {
 		
 		WebDriver driver = logonForChina();
 		long updateTime = System.currentTimeMillis();
-		File tempFile0 = new File(NieConfig.getConfig("montbell.out.root.folder"),inFileName);
+		File tempFile0 = new File(MontBellUtil.rootPathName, inFileName);
 		System.out.println("[waiting for order info in ]"
 				+ tempFile0.getAbsolutePath());
 		while (true) {
@@ -328,7 +327,7 @@ public class MontbellAutoOrder {
 		List<WebElement> weList = null;
 		driver.get("https://en.montbell.jp/products/cart/");
 		
-		File saveToShotF = new File(NieConfig.getConfig("montbell.out.root.folder") + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
+		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
 				+ orderInfo.taobaoOrderName + ".jpg");
 		// take screenshot
 		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
@@ -434,17 +433,16 @@ public class MontbellAutoOrder {
 		NieUtil.mySleepBySecond(1);
 		// 等待 是否打开
 		wait1 = new WebDriverWait(driver,10);
-		wait1.until(new ExpectedCondition<Boolean>(){
+		wait1.until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
-				while (true){
-					try {
-						driver.findElements(By.id("contents"));
-						return true;
-					} catch (Exception e) {
+				try {
+					driver.findElements(By.id("contents"));
+					return true;
+				} catch (Exception e) {
 
-					}
 				}
+				return false;
 			}
 		});
 		// add credit card
@@ -452,23 +450,18 @@ public class MontbellAutoOrder {
 			fillCreditCard(driver, orderInfo.crObj);
 		}
 		
-		File oFile = new File(NieConfig.getConfig("montbell.out.root.folder"),ooutFileName);
-		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-MM-dd HH_mm_ss");
-		FileUtils.write(oFile, "-------" + now + "-------\n",
-				Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.taobaoOrderName + "\n",
-				Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, toString(orderInfo.productInfos) + "\n", Charset.forName("UTF-8"),
-				true);
-		FileUtils.write(oFile, orderInfo.firstName +" " +orderInfo.lastName + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.tel + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.state + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.city + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.adr2 + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.adr1 + "\n", Charset.forName("UTF-8"), true);
-		FileUtils.write(oFile, orderInfo.postcode + "\n", Charset.forName("UTF-8"), true);
-		oFile = null;
+		File oFile = new File(MontBellUtil.rootPathName,ooutFileName);
+		List<String> lines = Lists.newArrayList();
+		lines.add(orderInfo.taobaoOrderName);
+		lines.add(toString(orderInfo.productInfos));
+		lines.add(orderInfo.firstName +" " +orderInfo.lastName);
+		lines.add(orderInfo.tel);
+		lines.add(orderInfo.state);
+		lines.add(orderInfo.city);
+		lines.add(orderInfo.adr2);
+		lines.add(orderInfo.adr1);
+		lines.add(orderInfo.postcode);
+		NieUtil.appendToFile(oFile, lines);
 	}
 
 	private void addItemToCard(WebDriver driver, TaobaoOrderInfo orderInfo,String type) {

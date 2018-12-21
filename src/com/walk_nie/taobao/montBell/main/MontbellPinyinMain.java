@@ -3,18 +3,15 @@ package com.walk_nie.taobao.montBell.main;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.http.client.utils.DateUtils;
 
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.walk_nie.util.NieConfig;
+import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.util.NieUtil;
 
 public class MontbellPinyinMain {
 
@@ -35,7 +32,7 @@ public class MontbellPinyinMain {
 			}
 		}
 		*/
-		File tempFile0 = new File(NieConfig.getConfig("montbell.out.root.folder"),"pinyin-in.txt");
+		File tempFile0 = new File(MontBellUtil.rootPathName, "pinyin-in.txt");
 		pinyin(tempFile0);
 	}
 
@@ -92,14 +89,7 @@ public class MontbellPinyinMain {
 
 		// String fileName = String.format("pinyin-%d.txt",
 		// System.currentTimeMillis());
-		File oFile = new File(NieConfig.getConfig("montbell.out.root.folder"),"pinyin-out.txt");
-		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-MM-dd HH_mm_ss");
-		FileUtils.write(oFile, "-------" + now + "-------\n",
-				Charset.forName("UTF-8"), true);
-		for (String str : outputList) {
-			FileUtils.write(oFile, str + "\n", Charset.forName("UTF-8"), true);
-		}
-		oFile = null;
+		File oFile = new File(MontBellUtil.rootPathName, "pinyin-out.txt");
+		NieUtil.appendToFile(oFile, outputList);
 	}
 }

@@ -26,7 +26,7 @@ import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
-import com.walk_nie.util.NieConfig;
+import com.walk_nie.util.NieUtil;
 
 public class MontbellStockChecker {
 	private String inFileName = "StockCheck-in.txt";
@@ -74,12 +74,8 @@ public class MontbellStockChecker {
 			}
 		}
 		
-		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy/MM/dd HH:mm:ss");
-		stockLines.add(0,"-------" + now + "-------");
-
-		FileUtils.writeLines(new File(MontBellUtil.rootPathName, outFileName),
-				stockLines);
+		File oFile = new File(MontBellUtil.rootPathName,outFileName);
+		NieUtil.appendToFile(oFile, stockLines);
 	}
 
 	public void processByFile() throws Exception {
@@ -390,7 +386,7 @@ public class MontbellStockChecker {
 
 		List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
 		List<String> targets = Files.readLines(
-				new File(NieConfig.getConfig("montbell.out.root.folder"), inFileName),
+				new File(MontBellUtil.rootPathName, inFileName),
 				Charset.forName("UTF-8"));
 		for (String target : targets) {
 			if (target.startsWith("#")) {
@@ -495,11 +491,7 @@ public class MontbellStockChecker {
 				}
 			}
 		}
-		String now = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy/MM/dd HH:mm:ss");
-		stockLines.add(0,"-------" + now + "-------");
-
-		FileUtils.writeLines(new File(MontBellUtil.rootPathName, outFileName),
-				stockLines);
+		File oFile = new File(MontBellUtil.rootPathName,outFileName);
+		NieUtil.appendToFile(oFile,stockLines);
 	}
 }

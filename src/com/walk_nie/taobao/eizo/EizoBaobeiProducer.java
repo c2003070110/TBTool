@@ -89,7 +89,7 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 		obj.postage_id = "13528017580";
 
 		// 用户输入ID串;
-		// obj.inputPids = "\"13021751,6103476,1627207\"";
+		obj.inputPids = "\"10016,20000\"";
 
 		// 用户输入名-值对
 		composeBaobeiInputValues(item, obj);
@@ -132,7 +132,7 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(EizoProductObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮代购 艺卓/Eizo";
+		String title = "日本直邮代购 EIZO/艺卓";
 		
 		title += " " + getCategoryName(item.categoryName);
 		title += " " + item.productName;
@@ -144,7 +144,10 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 	protected void composeBaobeiCateProps(EizoProductObject item, BaobeiPublishObject baobei) {
 		// cateProps
 		String cateProps = "";
-
+		cateProps += "20000:42797655;";
+		cateProps += "20879:21456;21299:27023;21433:79940;";
+		cateProps += "28099:220706768;29029:78185;29652:78181;29656:80020;";
+		cateProps += "122216427:41892234;122276283:3250781";
 		baobei.cateProps = "\"" +cateProps + "\"";
 	}
 
@@ -157,6 +160,9 @@ public class EizoBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiInputValues(EizoProductObject item, BaobeiPublishObject obj) {
 		String inputValues = "";
+		inputValues += item.kataban;
+		inputValues += ",EIZO/艺卓;型号*;";
+		inputValues += item.kataban;
 
 		obj.inputValues = "\"" + inputValues + "\"";
 	}

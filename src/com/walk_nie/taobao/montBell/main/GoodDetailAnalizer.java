@@ -11,12 +11,12 @@ import org.apache.http.client.utils.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.montBell.GoodsObject;
+import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.montBell.MontbellProductParser;
 import com.walk_nie.taobao.montBell.StockObject;
-import com.walk_nie.util.NieConfig;
 
 public class GoodDetailAnalizer {
-	private String outFileName = NieConfig.getConfig("montbell.out.root.folder") + "/analizy_%s.txt";
+	private String outFileName = "analizy_%s.txt";
 
 	/**
 	 * @param args
@@ -42,7 +42,7 @@ public class GoodDetailAnalizer {
 
 		String outFilePath = String.format(outFileName, DateUtils.formatDate(
 				Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
-		File oFile = new File(outFilePath);
+		File oFile = new File(MontBellUtil.rootPathName, outFilePath);
 		String fmt = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s";
 		String str = String.format(fmt, "分类ID",
 			    "商品ID", "商品名", "价格",
