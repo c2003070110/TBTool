@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
 
+import com.google.common.io.Files;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
@@ -28,20 +31,22 @@ public class DouYinToMain {
 				if (todoType == 0) {
 					// download video by url
 					File outFolder = generateOutFolder();
-					String f = NieConfig
-							.getConfig("douyin.download.url.filepath");
-					if (f.startsWith("http")) {
-						URL u = new URL(f);
-						File file = new File("tmp.txt");
-						FileUtils.copyURLToFile(u, file);
-						
-						downloader.downloadByFile(file, outFolder);
-						file.deleteOnExit();
-					} else {
-						// "douyin/douyin-in.txt"
-						File file = new File(
-								NieConfig.getConfig("douyin.root.folder") + f);
-						downloader.downloadByFile(file, outFolder);
+					// "douyin/douyin-in.txt"
+					File inFile = new File(
+							NieConfig.getConfig("douyin.root.folder") ,"douyin-in.txt");
+					List<String> lines = Files.readLines(inFile,
+							Charset.forName("UTF-8"));
+					for(String line :lines ){
+						if (line.startsWith("http")) {
+							URL u = new URL(line);
+							File file = new File("tmp.txt");
+							FileUtils.copyURLToFile(u, file);
+							
+							downloader.downloadByFile(file, outFolder);
+							file.deleteOnExit();
+						} else {
+							downloader.downloadByURL(line, outFolder);
+						}
 					}
 				}
 				if (todoType == 1) {
