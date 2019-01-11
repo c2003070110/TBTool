@@ -472,40 +472,52 @@ public class MontbellAutoOrder {
 			String color = p.colorName;
 			String sizz = p.sizeName;
 			weList = driver.findElements(By.tagName("select"));
-			boolean hasError = false;
-			try {
+			if (sizz.equals("-") || sizz.equals("选我没错")) {
+				// NONE size choice
 				for (WebElement we : weList) {
-					if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
-						Select dropdown = new Select(we);
-						dropdown.selectByVisibleText(sizz);
-						break;
-					}
-				}
-			} catch (Exception e) {
-				hasError = true;
-			}
-			if (hasError) {
-				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
-				mywait("Color OR size Selected realdy? ENTER for realdy!");
-				continue;
-			}
-			hasError = false;
-			try {
-				for (WebElement we : weList) {
-					if ((sizz.toUpperCase() + "_" + color.toUpperCase() + "_num")
+					if (("_" + color.toUpperCase() + "_num")
 							.equalsIgnoreCase(we.getAttribute("name"))) {
 						Select dropdown = new Select(we);
 						dropdown.selectByValue("1");
 						break;
 					}
 				}
-			} catch (Exception e) {
-				hasError = true;
-			}
-			if(hasError){
-				System.out.println("[ERROR] cannt select color OR size! selected by manually!");
-				mywait("Color OR size Selected realdy? ENTER for realdy!");
-				continue;
+			} else {
+				boolean hasError = false;
+				try {
+					for (WebElement we : weList) {
+						if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
+							Select dropdown = new Select(we);
+							dropdown.selectByVisibleText(sizz);
+							break;
+						}
+					}
+				} catch (Exception e) {
+					hasError = true;
+				}
+				if (hasError) {
+					System.out.println("[ERROR] cannt select color OR size! selected by manually!");
+					mywait("Color OR size Selected realdy? ENTER for realdy!");
+					continue;
+				}
+				hasError = false;
+				try {
+					for (WebElement we : weList) {
+						if ((sizz.toUpperCase() + "_" + color.toUpperCase() + "_num")
+								.equalsIgnoreCase(we.getAttribute("name"))) {
+							Select dropdown = new Select(we);
+							dropdown.selectByValue("1");
+							break;
+						}
+					}
+				} catch (Exception e) {
+					hasError = true;
+				}
+				if(hasError){
+					System.out.println("[ERROR] cannt select color OR size! selected by manually!");
+					mywait("Color OR size Selected realdy? ENTER for realdy!");
+					continue;
+				}
 			}
 			NieUtil.mySleepBySecond(2);
 
@@ -662,14 +674,14 @@ public class MontbellAutoOrder {
 	private String toString(List<TaobaoOrderProductInfo> productInfos) {
 		StringBuffer sb = new StringBuffer();
 		for(TaobaoOrderProductInfo pi:productInfos){
-			sb.append(pi.productId);
+			sb.append("商家编码：MTBL_" + pi.productId);
 			if(!"".equals(pi.colorName)){
-				sb.append(":" + pi.colorName);
+				sb.append(" 颜色分类:" + pi.colorName);
 			}
 			if(!"".equals(pi.sizeName)){
-				sb.append(":" + pi.sizeName);
+				sb.append(" 尺码:" + pi.sizeName);
 			}
-			sb.append("#");
+			sb.append(itemSplitter);
 		}
 		return sb.toString();
 	}
