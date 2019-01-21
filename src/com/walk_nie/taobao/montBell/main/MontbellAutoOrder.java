@@ -472,11 +472,22 @@ public class MontbellAutoOrder {
 			String color = p.colorName;
 			String sizz = p.sizeName;
 			weList = driver.findElements(By.tagName("select"));
-			if (sizz.equals("-") || sizz.equals("选我没错")) {
+			boolean nosizzFlag = sizz.equals("-") || sizz.equals("－") || sizz.equals("选我没错");
+			boolean nocolrFlag = color.equals("-") || color.equals("－") || color.equals("选我没错");
+			String selKey = "";
+			if(!nosizzFlag){
+				selKey = sizz;
+			}
+			selKey += "_";
+			if(!nocolrFlag){
+				selKey += color;
+			}
+			selKey += "_";
+			selKey += "num";
+			if (nosizzFlag) {
 				// NONE size choice
 				for (WebElement we : weList) {
-					if (("_" + color.toUpperCase() + "_num")
-							.equalsIgnoreCase(we.getAttribute("name"))) {
+					if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
 						Select dropdown = new Select(we);
 						dropdown.selectByValue("1");
 						break;
@@ -503,8 +514,7 @@ public class MontbellAutoOrder {
 				hasError = false;
 				try {
 					for (WebElement we : weList) {
-						if ((sizz.toUpperCase() + "_" + color.toUpperCase() + "_num")
-								.equalsIgnoreCase(we.getAttribute("name"))) {
+						if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
 							Select dropdown = new Select(we);
 							dropdown.selectByValue("1");
 							break;
