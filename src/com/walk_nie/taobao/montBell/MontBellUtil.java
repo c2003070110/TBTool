@@ -5,14 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -662,17 +658,16 @@ public class MontBellUtil {
 		productInfo.productId = pid;
 		String color = "";
 		String sizz = "";
+		String qtty = "1";
 		if (pi.length > 1) {
 			String[] pii = pi[1].split(";");
 			color = realColorName(pii[0]);
 			if (pii.length > 1) {
 				sizz = realSizeName(pii[1]);
 			}
-		}
-		String qtty = "1";
-		if (pi.length > 2) {
-			String[] pii = pi[2].split(";");
-			qtty = realQtty(pii[0]);
+			if (pii.length > 2) {
+				qtty = realQtty(pii[2]);
+			}
 		}
 		productInfo.colorName = color;
 		productInfo.sizeName = sizz;
@@ -686,9 +681,11 @@ public class MontBellUtil {
 		if (str == null) {
 			return qtty;
 		}
-		// TODO real quantity
-		qtty = str.replace("颜色分类:", "");
-		qtty = qtty.replace("颜色分类：", "");
+		//  real quantity
+		qtty = str.replace("数量", "");
+		qtty = qtty.replace(":", "");
+		qtty = qtty.replace("：", "");
+		qtty = qtty.replaceAll(" ", "");
 		return qtty.trim();
 	}
 	
@@ -705,8 +702,10 @@ public class MontBellUtil {
 		if (str == null) {
 			return color;
 		}
-		color = str.replace("颜色分类:", "");
-		color = color.replace("颜色分类：", "");
+		color = str.replace("颜色分类", "");
+		color = color.replace("：", "");
+		color = color.replace(":", "");
+		color = color.replaceAll(" ", "");
 		return color.trim();
 	}
 	private static String realSizeName(String str){
@@ -715,10 +714,11 @@ public class MontBellUtil {
 		if (str == null) {
 			return sizz;
 		}
-		sizz = str.replace("尺码:", "");
-		sizz = sizz.replace("尺码：", "");
-		sizz = sizz.replace("鞋码：", "");
-		sizz = sizz.replace("鞋码:", "");
+		sizz = str.replace("尺码", "");
+		sizz = sizz.replace("鞋码", "");
+		sizz = sizz.replace("：", "");
+		sizz = sizz.replace(":", "");
+		sizz = sizz.replaceAll(" ", "");
 		return sizz.trim();
 	}
 }

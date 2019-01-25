@@ -235,12 +235,12 @@ public class MontbellAutoOrder {
 			addItemToCard(driver,orderInfo,"JP");
 		}catch(Exception ex){
 		}
-		driver.get("https://webshop.montbell.jp/cart");
-		
-		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
-				+ orderInfo.taobaoOrderName + ".jpg");
-		// take screenshot
-		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
+
+//		driver.get("https://webshop.montbell.jp/cart");
+//		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
+//				+ orderInfo.taobaoOrderName + ".jpg");
+//		// take screenshot
+//		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 		
 		List<WebElement> weList = null;
 		weList = driver.findElements(By.tagName("input[type=\"image\"]"));
@@ -332,12 +332,6 @@ public class MontbellAutoOrder {
 
 		NieUtil.mySleepBySecond(1);
 		List<WebElement> weList = null;
-		driver.get("https://en.montbell.jp/products/cart/");
-		
-		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
-				+ orderInfo.taobaoOrderName + ".jpg");
-		// take screenshot
-		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 		
 		// 等待 是否打开
 		WebDriverWait wait1 = new WebDriverWait(driver,10);
@@ -419,14 +413,30 @@ public class MontbellAutoOrder {
 			}
 		});
 		WebElement we = driver.findElement(By.id("basicInfo"));
-		we.findElement(By.cssSelector("input[name=\"dest_first_name\"")).sendKeys(orderInfo.firstName);
-		we.findElement(By.cssSelector("input[name=\"dest_last_name\"")).sendKeys(orderInfo.lastName);
-		we.findElement(By.cssSelector("input[name=\"dest_address1\"")).sendKeys(orderInfo.adr1);
-		we.findElement(By.cssSelector("input[name=\"dest_address2\"")).sendKeys(orderInfo.adr2);
-		we.findElement(By.cssSelector("input[name=\"dest_city\"")).sendKeys(orderInfo.city);
-		we.findElement(By.cssSelector("input[name=\"dest_state_name\"")).sendKeys(orderInfo.state);
-		we.findElement(By.cssSelector("input[name=\"dest_zip\"")).sendKeys(orderInfo.postcode);
-		we.findElement(By.cssSelector("input[name=\"dest_tel\"")).sendKeys(orderInfo.tel);
+		WebElement actWe = we.findElement(By.cssSelector("input[name=\"dest_first_name\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.firstName);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_last_name\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.lastName);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_address1\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.adr1);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_address2\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.adr2);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_city\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.city);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_state_name\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.state);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_zip\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.postcode);
+		actWe = we.findElement(By.cssSelector("input[name=\"dest_tel\""));
+		actWe.clear();
+		actWe.sendKeys(orderInfo.tel);
 		
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we1 : weList) {
@@ -479,12 +489,14 @@ public class MontbellAutoOrder {
 
 	private void addItemToCard(WebDriver driver, TaobaoOrderInfo orderInfo,String type) {
 
+		clearShoppingCart(driver, type);
 		for (TaobaoOrderProductInfo p : orderInfo.productInfos) {
 			try {
 				driver.get(("JP".equals(type) ? MontBellUtil.productUrlPrefix : MontBellUtil.productUrlPrefix_en)
 						+ p.productId);
 				addItemToCardNrst(driver, p);
 			} catch (Exception e) {
+				e.printStackTrace();
 				driver.get(("JP".equals(type) ? MontBellUtil.productUrlPrefix_fo : MontBellUtil.productUrlPrefix_en_fo)
 						+ p.productId);
 				addItemToCardNrst(driver, p);
@@ -689,15 +701,18 @@ public class MontbellAutoOrder {
 	private String toProductInfoString(List<TaobaoOrderProductInfo> productInfos) {
 		StringBuffer sb = new StringBuffer();
 		for(TaobaoOrderProductInfo pi:productInfos){
-			sb.append("商家编码：MTBL_" + pi.productId);
+			sb.append("商家编码：MTBL_XX-" + pi.productId);
+			sb.append(" ");
 			if(!"".equals(pi.colorName)){
-				sb.append(" 颜色分类:" + pi.colorName);
+				sb.append("颜色分类:" + pi.colorName);
+				sb.append(";");
 			}
 			if(!"".equals(pi.sizeName)){
-				sb.append(" 尺码:" + pi.sizeName);
+				sb.append("尺码:" + pi.sizeName);
+				sb.append(";");
 			}
 			if(!"".equals(pi.qtty)){
-				sb.append(" " + pi.qtty);
+				sb.append("数量：" + pi.qtty);
 			}
 			sb.append(itemSplitter);
 		}
@@ -745,15 +760,19 @@ public class MontbellAutoOrder {
 			WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 
 			// remove from cart
-			while (true) {
-				try {
-					List<WebElement> weList = driver.findElements(By.cssSelector("input[Alt=\"削除\"]"));
-					if (weList != null && !weList.isEmpty()) {
-						weList.get(0).click();
-					}
-				} catch (Exception e) {
-					break;
+			clearShoppingCart(driver, "JP");
+		}
+	}
+	private void clearShoppingCart(WebDriver driver,String type) {
+		driver.get(("JP".equals(type) ? "https://webshop.montbell.jp/cart" : "https://en.montbell.jp/products/cart/"));
+		while (true) {
+			try {
+				List<WebElement> weList = driver.findElements(By.cssSelector("input[Alt=\"削除\"]"));
+				if (weList != null && !weList.isEmpty()) {
+					weList.get(0).click();
 				}
+			} catch (Exception e) {
+				break;
 			}
 		}
 	}
