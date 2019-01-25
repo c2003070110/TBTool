@@ -35,6 +35,7 @@ public class MontbellAutoOrder {
 	protected BufferedReader stdReader = null;
 	private String inFileName = "order-in.txt";
 	private String ooutFileName ="order-out.txt";
+	private String ooutFileNameForShot ="order-out-shot.txt";
 	
 	private String itemSplitter =",";
 	
@@ -235,6 +236,12 @@ public class MontbellAutoOrder {
 		}catch(Exception ex){
 		}
 		driver.get("https://webshop.montbell.jp/cart");
+		
+		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
+				+ orderInfo.taobaoOrderName + ".jpg");
+		// take screenshot
+		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
+		
 		List<WebElement> weList = null;
 		weList = driver.findElements(By.tagName("input[type=\"image\"]"));
 		for (WebElement we : weList) {
@@ -453,7 +460,7 @@ public class MontbellAutoOrder {
 		File oFile = new File(MontBellUtil.rootPathName,ooutFileName);
 		List<String> lines = Lists.newArrayList();
 		lines.add(orderInfo.taobaoOrderName);
-		lines.add(toString(orderInfo.productInfos));
+		lines.add(toProductInfoString(orderInfo.productInfos));
 		lines.add(orderInfo.firstName +" " +orderInfo.lastName);
 		lines.add(orderInfo.tel);
 		lines.add(orderInfo.state);
@@ -462,76 +469,28 @@ public class MontbellAutoOrder {
 		lines.add(orderInfo.adr1);
 		lines.add(orderInfo.postcode);
 		NieUtil.appendToFile(oFile, lines);
+		
+		File oFileS = new File(MontBellUtil.rootPathName,ooutFileNameForShot);
+		lines = Lists.newArrayList();
+		String yyyyMMdd = DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss");
+		lines.add(String.format("%s\t%s\t%s",yyyyMMdd, orderInfo.taobaoOrderName, toProductInfoString(orderInfo.productInfos)));
+		NieUtil.appendToFile(oFileS, lines);
 	}
 
 	private void addItemToCard(WebDriver driver, TaobaoOrderInfo orderInfo,String type) {
 
-		List<WebElement> weList = null;
 		for (TaobaoOrderProductInfo p : orderInfo.productInfos) {
-			driver.get(("JP".equals(type)?MontBellUtil.productUrlPrefix: MontBellUtil.productUrlPrefix_en) + p.productId);
-			String color = p.colorName;
-			String sizz = p.sizeName;
-			weList = driver.findElements(By.tagName("select"));
-			boolean nosizzFlag = sizz.equals("-") || sizz.equals("－") || sizz.equals("选我没错");
-			boolean nocolrFlag = color.equals("-") || color.equals("－") || color.equals("选我没错");
-			String selKey = "";
-			if(!nosizzFlag){
-				selKey = sizz;
+			try {
+				driver.get(("JP".equals(type) ? MontBellUtil.productUrlPrefix : MontBellUtil.productUrlPrefix_en)
+						+ p.productId);
+				addItemToCardNrst(driver, p);
+			} catch (Exception e) {
+				driver.get(("JP".equals(type) ? MontBellUtil.productUrlPrefix_fo : MontBellUtil.productUrlPrefix_en_fo)
+						+ p.productId);
+				addItemToCardNrst(driver, p);
 			}
-			selKey += "_";
-			if(!nocolrFlag){
-				selKey += color;
-			}
-			selKey += "_";
-			selKey += "num";
-			if (nosizzFlag) {
-				// NONE size choice
-				for (WebElement we : weList) {
-					if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
-						Select dropdown = new Select(we);
-						dropdown.selectByValue("1");
-						break;
-					}
-				}
-			} else {
-				boolean hasError = false;
-				try {
-					for (WebElement we : weList) {
-						if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
-							Select dropdown = new Select(we);
-							dropdown.selectByVisibleText(sizz);
-							break;
-						}
-					}
-				} catch (Exception e) {
-					hasError = true;
-				}
-				if (hasError) {
-					System.out.println("[ERROR] cannt select color OR size! selected by manually!");
-					mywait("Color OR size Selected realdy? ENTER for realdy!");
-					continue;
-				}
-				hasError = false;
-				try {
-					for (WebElement we : weList) {
-						if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
-							Select dropdown = new Select(we);
-							dropdown.selectByValue("1");
-							break;
-						}
-					}
-				} catch (Exception e) {
-					hasError = true;
-				}
-				if(hasError){
-					System.out.println("[ERROR] cannt select color OR size! selected by manually!");
-					mywait("Color OR size Selected realdy? ENTER for realdy!");
-					continue;
-				}
-			}
-			NieUtil.mySleepBySecond(2);
-
-			weList = driver.findElements(By.tagName("img"));
+			
+			List<WebElement> weList = driver.findElements(By.tagName("img"));
 			for (WebElement we : weList) {
 				if ("cart_in".equalsIgnoreCase(we
 						.getAttribute("name"))) {
@@ -540,6 +499,52 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
+	}
+
+	private void addItemToCardNrst(WebDriver driver, TaobaoOrderProductInfo p) {
+
+		List<WebElement> weList = null;
+		String color = p.colorName;
+		String sizz = p.sizeName;
+		weList = driver.findElements(By.tagName("select"));
+		boolean nosizzFlag = sizz.equals("-") || sizz.equals("－") || sizz.equals("选我没错");
+		boolean nocolrFlag = color.equals("-") || color.equals("－") || color.equals("选我没错");
+		String selKey = "";
+		if (!nosizzFlag) {
+			selKey = sizz;
+		}
+		selKey += "_";
+		if (!nocolrFlag) {
+			selKey += color;
+		}
+		selKey += "_";
+		selKey += "num";
+		if (nosizzFlag) {
+			// NONE size choice
+			for (WebElement we : weList) {
+				if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
+					Select dropdown = new Select(we);
+					dropdown.selectByValue(p.qtty);
+					break;
+				}
+			}
+		} else {
+			for (WebElement we : weList) {
+				if ("sel_size".equalsIgnoreCase(we.getAttribute("name"))) {
+					Select dropdown = new Select(we);
+					dropdown.selectByVisibleText(sizz);
+					break;
+				}
+			}
+			for (WebElement we : weList) {
+				if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
+					Select dropdown = new Select(we);
+					dropdown.selectByValue(p.qtty);
+					break;
+				}
+			}
+		}
+		NieUtil.mySleepBySecond(2);
 	}
 	private TaobaoOrderInfo readInOrderInfo(File tempFile0) throws IOException {
 		TaobaoOrderInfo order =  new TaobaoOrderInfo();
@@ -681,7 +686,7 @@ public class MontbellAutoOrder {
 		return str;
 	}
 
-	private String toString(List<TaobaoOrderProductInfo> productInfos) {
+	private String toProductInfoString(List<TaobaoOrderProductInfo> productInfos) {
 		StringBuffer sb = new StringBuffer();
 		for(TaobaoOrderProductInfo pi:productInfos){
 			sb.append("商家编码：MTBL_" + pi.productId);
@@ -690,6 +695,9 @@ public class MontbellAutoOrder {
 			}
 			if(!"".equals(pi.sizeName)){
 				sb.append(" 尺码:" + pi.sizeName);
+			}
+			if(!"".equals(pi.qtty)){
+				sb.append(" " + pi.qtty);
 			}
 			sb.append(itemSplitter);
 		}
@@ -708,8 +716,45 @@ public class MontbellAutoOrder {
 		sb.append("[adr1]" + orderInfo.adr1 + "\n");
 		sb.append("[postcode]" + orderInfo.postcode + "\n");
 		sb.append("[crId]" + orderInfo.crObj.crBrand + "\n");
-		sb.append("[productInfos]" + toString(orderInfo.productInfos) + "\n");
+		sb.append("[productInfos]" + toProductInfoString(orderInfo.productInfos) + "\n");
 		System.out.println(sb.toString());
 	}
-	
+
+	public void screenShotShoppingCart() throws IOException {
+		WebDriver driver = logonForJapan();
+		String ordersFile = NieConfig.getConfig("montbell.order.screenshot.file");
+		List<String> orderLines = Files.readLines(new File(MontBellUtil.rootPathName, ordersFile),
+				Charset.forName("UTF-8"));
+
+		for (String line : orderLines) {
+			String[] splits = line.split("\t");
+			TaobaoOrderInfo orderInfo = new TaobaoOrderInfo();
+			String yyyyMMdd = splits[0];
+			orderInfo.taobaoOrderName = splits[1];
+			String[] pis = splits[2].split(itemSplitter);
+			for (String pi : pis) {
+				TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(pi);
+				orderInfo.productInfos.add(pinfo);
+			}
+			// add to card
+			addItemToCard(driver, orderInfo, "JP");
+
+			File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot",
+					yyyyMMdd + orderInfo.taobaoOrderName + ".jpg");
+			// take screenshot
+			WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
+
+			// remove from cart
+			while (true) {
+				try {
+					List<WebElement> weList = driver.findElements(By.cssSelector("input[Alt=\"削除\"]"));
+					if (weList != null && !weList.isEmpty()) {
+						weList.get(0).click();
+					}
+				} catch (Exception e) {
+					break;
+				}
+			}
+		}
+	}
 }

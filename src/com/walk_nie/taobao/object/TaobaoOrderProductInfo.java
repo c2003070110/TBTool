@@ -6,5 +6,6 @@ public class TaobaoOrderProductInfo {
 	public String productId;
 	public String sizeName;
 	public String colorName;
+	public String qtty;
 	 
 }

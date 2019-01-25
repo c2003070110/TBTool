@@ -51,6 +51,7 @@ public class MontBellUtil {
     public static String productUrlPrefix = "http://webshop.montbell.jp/goods/disp.php?product_id=";
     public static String productUrlPrefix_en = "https://en.montbell.jp/products/goods/disp.php?product_id=";
     public static String productUrlPrefix_fo = "http://webshop.montbell.jp/goods/disp_fo.php?product_id=";
+    public static String productUrlPrefix_en_fo = "https://en.montbell.jp/products/goods/disp_fo.php?product_id=";
 
     public static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
 
@@ -668,11 +669,29 @@ public class MontBellUtil {
 				sizz = realSizeName(pii[1]);
 			}
 		}
+		String qtty = "1";
+		if (pi.length > 2) {
+			String[] pii = pi[2].split(";");
+			qtty = realQtty(pii[0]);
+		}
 		productInfo.colorName = color;
 		productInfo.sizeName = sizz;
+		productInfo.qtty = qtty;
 		
 		return productInfo;
 	}
+	private static String realQtty(String str) {
+
+		String qtty = "";
+		if (str == null) {
+			return qtty;
+		}
+		// TODO real quantity
+		qtty = str.replace("颜色分类:", "");
+		qtty = qtty.replace("颜色分类：", "");
+		return qtty.trim();
+	}
+	
 	private static String realProductId(String pid) {
 		pid = pid.replace("商家编码", "");
 		pid = pid.replace("：", "");

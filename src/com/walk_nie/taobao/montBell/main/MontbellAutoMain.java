@@ -57,6 +57,9 @@ public class MontbellAutoMain {
 				if (todoType == 5) {
 					stockCheckByInputId();
 				}
+				if (todoType == 6) {
+					montbellAutoOrder.screenShotShoppingCart();
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -334,10 +337,11 @@ public class MontbellAutoMain {
 		int type = 0;
 		try {
 			System.out.println("Type of todo : ");
-			System.out.println("0:Get From Taobao Order;\n"
+			System.out.println(" 0:Get From Taobao Order;\n"
 					+ " 1:Order（CHINA);\n 2:Order（JAPAN);\n 3:to PinYin;\n"
 			        + " 4:stock check; \n 5:stock check By input id;\n"
-	        		+ " 6..;\n");
+	        		+ " 6:screenShot shopping card..;\n"
+    		        + " 7..;\n");
 
 			stdReader = getStdReader();
 			while (true) {
@@ -359,6 +363,9 @@ public class MontbellAutoMain {
 					break;
 				} else if ("5".equals(line.trim())) {
 					type = 5;
+					break;
+				} else if ("6".equals(line.trim())) {
+					type = 6;
 					break;
 				} else {
 					System.out.println("Listed number only!");
