@@ -329,6 +329,11 @@ public class MontbellAutoOrder {
 			System.out.println("[ERROR] cannt select color OR size! selected by manually!");
 			mywait("Color OR size Selected realdy? ENTER for realdy!");
 		}
+		driver.get("https://en.montbell.jp/products/cart/");
+		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
+				+ orderInfo.taobaoOrderName + ".jpg");
+		// take screenshot
+		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 
 		NieUtil.mySleepBySecond(1);
 		List<WebElement> weList = null;
@@ -492,13 +497,17 @@ public class MontbellAutoOrder {
 		clearShoppingCart(driver, type);
 		for (TaobaoOrderProductInfo p : orderInfo.productInfos) {
 			try {
-				driver.get(("JP".equals(type) ? MontBellUtil.productUrlPrefix : MontBellUtil.productUrlPrefix_en)
-						+ p.productId);
+				String url = "JP".equals(type) ? MontBellUtil.productUrlPrefix
+						: MontBellUtil.productUrlPrefix_en;
+				url = url + p.productId;
+				driver.get(url);
 				addItemToCardNrst(driver, p);
 			} catch (Exception e) {
 				e.printStackTrace();
-				driver.get(("JP".equals(type) ? MontBellUtil.productUrlPrefix_fo : MontBellUtil.productUrlPrefix_en_fo)
-						+ p.productId);
+				String url = "JP".equals(type) ? MontBellUtil.productUrlPrefix_fo
+						: MontBellUtil.productUrlPrefix_en_fo;
+				url = url + p.productId;
+				driver.get(url);
 				addItemToCardNrst(driver, p);
 			}
 			
@@ -767,7 +776,12 @@ public class MontbellAutoOrder {
 		driver.get(("JP".equals(type) ? "https://webshop.montbell.jp/cart" : "https://en.montbell.jp/products/cart/"));
 		while (true) {
 			try {
-				List<WebElement> weList = driver.findElements(By.cssSelector("input[Alt=\"削除\"]"));
+				List<WebElement> weList = "JP".equals(type)  
+						? (driver.findElements(By.cssSelector("input[Alt=\"削除\"]")))
+						: (driver.findElements(By.cssSelector("input[Alt=\"Remove\"]")));
+				if(weList == null || weList.isEmpty()){
+					break;
+				}
 				if (weList != null && !weList.isEmpty()) {
 					weList.get(0).click();
 				}
