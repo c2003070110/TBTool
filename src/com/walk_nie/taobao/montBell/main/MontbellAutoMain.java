@@ -17,9 +17,9 @@ import com.beust.jcommander.internal.Lists;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.walk_nie.taobao.montBell.MontBellUtil;
-import com.walk_nie.taobao.montBell.StockObject;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderObject;
+import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoMain {

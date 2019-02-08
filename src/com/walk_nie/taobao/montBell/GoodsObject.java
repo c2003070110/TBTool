@@ -3,6 +3,9 @@ package com.walk_nie.taobao.montBell;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.object.StockObject;
+
 
 public class GoodsObject {
 	public CategoryObject cateogryObj = new CategoryObject();
@@ -20,14 +23,14 @@ public class GoodsObject {
 	public int weight = 0;
     public int weightExtra = 0;
 	public String detailScreenShotPicFile = "";
-	public List<String> sizeTipPics = new ArrayList<String>();
-	public List<String> sizeList = new ArrayList<String>();
-	public List<String> colorList = new ArrayList<String>();
-	public List<String> pictureNameList = new ArrayList<String>();
+	public List<String> sizeTipPics = Lists.newArrayList();
+	public List<String> sizeList = Lists.newArrayList();
+	public List<String> colorList = Lists.newArrayList();
+	public List<String> pictureNameList = Lists.newArrayList();
 	
-	public List<String> dressOnPics = new ArrayList<String>();
-    //public List<String> pictureUrlList = new ArrayList<String>();
-    //public List<String> pictureLocalList = new ArrayList<String>();
+	public List<String> dressOnPics = Lists.newArrayList();
+    //public List<String> pictureUrlList = Lists.newArrayList();
+    //public List<String> pictureLocalList = Lists.newArrayList();
 	
 	public String materialOrg = "";// 素材
 	public String weightOrg = "";// 平均重量
@@ -36,7 +39,7 @@ public class GoodsObject {
 	public String specialOrg = "";// 特長
 	public String functionOrg = ""; // 機能
 
-	public List<StockObject> stockList = new ArrayList<StockObject>();
+	public List<StockObject> stockList = Lists.newArrayList();
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();

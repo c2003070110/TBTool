@@ -13,7 +13,7 @@ import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.montBell.GoodsObject;
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.montBell.MontbellProductParser;
-import com.walk_nie.taobao.montBell.StockObject;
+import com.walk_nie.taobao.object.StockObject;
 
 public class GoodDetailAnalizer {
 	private String outFileName = "analizy_%s.txt";

@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 
 import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.util.NieConfig;

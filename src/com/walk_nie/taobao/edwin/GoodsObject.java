@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.taobao.object.StockObject;
 
 public class GoodsObject {
 	public String brandCd = "";

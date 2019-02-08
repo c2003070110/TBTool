@@ -23,12 +23,14 @@ public class AmazonGoodsObject {
     public String priceOrg;
     public String price;
     
-    public String productUrl;
+    //public String productUrl;
+    public long weightItem = 0;
+    public long weightShipment = 0;
 
 	public List<StockObject> stockList = Lists.newArrayList();
 	
-	//public List<String> sizeNameList = Lists.newArrayList();
-	//public List<String> colorNameList = Lists.newArrayList();
+	public List<String> sizeNameList = Lists.newArrayList();
+	public List<String> colorNameList = Lists.newArrayList();
 	//public List<String> colorPicUrlList = new ArrayList<String>();
     //public List<String> colorPicLocalNameList = Lists.newArrayList();
 	

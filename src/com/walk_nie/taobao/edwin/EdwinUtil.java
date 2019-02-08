@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class EdwinUtil {
