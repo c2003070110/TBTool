@@ -29,19 +29,15 @@ public class AsicsShoesBaobeiProducer  extends BaseBaobeiProducer{
 			 
 			if (itemIdList.isEmpty())
 				return;
-			String outFilePathPrice = String.format(outputFile, DateUtils
-					.formatDate(Calendar.getInstance().getTime(),
-							"yyyy_MM_dd_HH_mm_ss"));
-			File csvFile = new File(outFilePathPrice);
 			priceBw = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(csvFile), "UTF-16"));
+					new FileOutputStream(outputFile), "UTF-16"));
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             for (AsicsShoesObject obj : itemIdList) {
                 AsicsShoesUtil.downloadPicture(obj,  AsicsShoesUtil.rootPathName);
             }
             
-			String picFolder = TaobaoUtil.getPictureFolder(csvFile);
+			String picFolder = TaobaoUtil.getPictureFolder(outputFile);
 			
 			for (AsicsShoesObject obj : itemIdList) {
                 TaobaoUtil.copyFiles(obj.picNameList,MontBellUtil.rootPathName, picFolder);

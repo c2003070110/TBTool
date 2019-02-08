@@ -6,10 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.List;
-
-import org.apache.http.client.utils.DateUtils;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Files;
@@ -28,16 +25,29 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 	private int categoryType = 0;
 	private List<String> taobaoColors = Lists.newArrayList();
 	{
-		taobaoColors.add("-1001");taobaoColors.add("-1002");taobaoColors.add("-1003");taobaoColors.add("-1004");
-		taobaoColors.add("-1005");taobaoColors.add("-1006");taobaoColors.add("-1007");taobaoColors.add("-1008");
-		taobaoColors.add("-1009");taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
+		taobaoColors.add("-1001");
+		taobaoColors.add("-1002");
+		taobaoColors.add("-1003");
+		taobaoColors.add("-1004");
+		taobaoColors.add("-1005");
+		taobaoColors.add("-1006");
+		taobaoColors.add("-1007");
+		taobaoColors.add("-1008");
+		taobaoColors.add("-1009");
+		taobaoColors.add("-1010");
+		taobaoColors.add("-1011");
+		taobaoColors.add("-1012");
 	}
 
 	private List<String> taobaoSizes = Lists.newArrayList();
 	{
 		// XS,S,M,L,XL,XXL,
-		taobaoSizes.add("28313");taobaoSizes.add("28314");taobaoSizes.add("28315");taobaoSizes.add("28316");
-		taobaoSizes.add("28317");taobaoSizes.add("28318");
+		taobaoSizes.add("28313");
+		taobaoSizes.add("28314");
+		taobaoSizes.add("28315");
+		taobaoSizes.add("28316");
+		taobaoSizes.add("28317");
+		taobaoSizes.add("28318");
 	}
 
 	public void process() {
@@ -50,16 +60,14 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 			List<GoodsObject> itemIdList = ((YonexProductParser) getParser()).setCategoryType(categoryType).scanItem();
 			if (itemIdList.isEmpty())
 				return;
-			String outFilePathPrice = String.format(outputFile,
-					DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
-			File csvFile = new File(outFilePathPrice);
-			priceBw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-16"));
+
+			priceBw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-16"));
 
 			for (GoodsObject obj : itemIdList) {
 				downloadPicture(obj, YonexUtil.getPictureSavePath(obj));
 			}
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
+			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				// FIXME 鞋码 -> Discard
 				obj.sizeList.clear();
@@ -203,8 +211,7 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		String str = "20000:84533669;";
 
 		// 宝贝属性
-		str += TaobaoUtil.composeBaobeiCateProps(item.colorList, item.sizeList, taobaoColors, taobaoSizes,
-				"20509");
+		str += TaobaoUtil.composeBaobeiCateProps(item.colorList, item.sizeList, taobaoColors, taobaoSizes, "20509");
 
 		obj.cateProps = "\"" + str + "\"";
 	}
@@ -255,14 +262,15 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		String title = "日本直邮 Yonex/尤尼克斯";
 		title += item.title + " " + item.kataban;
 		title += " " + translateTitle(item);
-		//title += " 包邮";
-		if(item.producePlace.equals("日本"))title +=  " " + item.producePlace + "制";
+		// title += " 包邮";
+		if (item.producePlace.equals("日本"))
+			title += " " + item.producePlace + "制";
 		obj.title = "\"" + title + "\"";
 	}
 
 	private String translateTitle(GoodsObject goodsObj) {
 		if (goodsObj.categoryType == 1) {
-			return "羽毛球拍" ;
+			return "羽毛球拍";
 		} else if (goodsObj.categoryType == 2) {
 			return "羽毛球鞋";
 		} else if (goodsObj.categoryType == 3) {
@@ -292,11 +300,13 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 
 	private Object composeDressOnMiaoshu(GoodsObject item) {
 		StringBuffer detailSB = new StringBuffer();
-		detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
-		detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+		detailSB.append(
+				"<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
+		detailSB.append(
+				"<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
 		for (String pic : item.pictureList) {
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
-					+ pic + "\"/></p>");
+			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + pic
+					+ "\"/></p>");
 		}
 		detailSB.append("</div>");
 		return detailSB.toString();
@@ -305,17 +315,14 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 	private String composeDetailScreenShot(GoodsObject item) {
 
 		StringBuffer detailSB = new StringBuffer();
-		detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
-		detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+		detailSB.append(
+				"<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
+		detailSB.append(
+				"<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
 		detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
 				+ item.detailScreenShotPicFile + "\"/></p>");
 		detailSB.append("</div>");
 		return detailSB.toString();
-	}
-
-	public YonexBaobeiProducer setOutputFile(String outputFile) {
-		this.outputFile = outputFile;
-		return this;
 	}
 
 	public YonexBaobeiProducer setCategoryType(int categoryType) {

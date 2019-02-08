@@ -12,9 +12,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class AkasuguProductParser {
+public class AkasuguProductParser extends BaseBaobeiParser {
 	// change me!!
 	double rate = 0.080;
 	// private final static double benefitRate = 0.001;

@@ -16,12 +16,14 @@ import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
+import com.walk_nie.taobao.support.BaseBaobeiParser;
+import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class AkasuguBaobeiProducer {
+public class AkasuguBaobeiProducer extends BaseBaobeiProducer{
 	
 	private String taobeiTemplateFile = "";
-	private String publishedBaobeiFile = "";
+	//private String publishedBaobeiFile = "";
 	private String miaoshuTemplateFile = "";
 	private String outputFile = "";
 	
@@ -240,11 +242,6 @@ public class AkasuguBaobeiProducer {
 		return this;
 	}
 
-	public AkasuguBaobeiProducer setPublishedBaobeiFile(String publishedBaobeiFile) {
-		this.publishedBaobeiFile = publishedBaobeiFile;
-		return this;
-	}
-
 	public AkasuguBaobeiProducer setMiaoshuTemplateFile(
 			String miaoshuTemplateFile) {
 		this.miaoshuTemplateFile = miaoshuTemplateFile;
@@ -254,10 +251,9 @@ public class AkasuguBaobeiProducer {
 	public String getMiaoshuTemplateFile() {
 		return this.miaoshuTemplateFile;
 	}
-
-	public AkasuguBaobeiProducer setOutputFile(String outputFile) {
-		this.outputFile = outputFile;
-		return this;
+	@Override
+	public BaseBaobeiParser getParser() {
+		return new AkasuguProductParser();
 	}
 
 }

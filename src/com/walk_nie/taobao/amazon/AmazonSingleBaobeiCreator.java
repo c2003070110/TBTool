@@ -1,4 +1,4 @@
-package com.walk_nie.taobao.montBell.clothes;
+package com.walk_nie.taobao.amazon;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,34 +8,27 @@ import java.util.List;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 
-import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
+import com.walk_nie.util.NieConfig;
 /**
- * 水杯
- *
  */
-public class MontbellCapHatBaobeiCreator  {
+public class AmazonSingleBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
-		new MontbellCapHatBaobeiCreator().process();
+		new AmazonSingleBaobeiCreator().process();
 		System.exit(0);
 	}
 	public void process() throws IOException{
-		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("caphat_baobei_%s.csv",
+		File outFile = new File(NieConfig.getConfig("amazon.out.root.folder"), 
+				String.format("baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
-		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
-		File file = new File(publishedBaobeiFile);
-		List<BaobeiPublishObject> baobeiList = BaobeiUtil
-				.readInPublishedBaobei(file);
-		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.08;
-		MontbellCapHatBaobeiProducer db = new MontbellCapHatBaobeiProducer();
+		AmazonSingleBaobeiProducer db = new AmazonSingleBaobeiProducer();
 		db
                 .addScanCategory("103000") //  防寒キャップ/ハット/耳あて
                 .addScanCategory("102000") // ハット 
@@ -45,10 +38,9 @@ public class MontbellCapHatBaobeiCreator  {
                 .addScanCategory("1151100") //  バラクラバ
                 .addScanCategory("") //  
                 
-                .setOutputFile(outputFile)
+                .setOutputFile(outFile)
                 .setCurrencyRate(currencyRate)
                 .setBenefitRate(benefitRate)
-                .setPublishedbaobeiList(baobeiList)
                 .process();
 
 	}

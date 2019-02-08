@@ -5,11 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
@@ -39,12 +37,8 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
                 System.out.println("-------- FINISH--------");
                 return;
             }
-
-            String outFilePathPrice = String.format(outputFile,
-                    DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyy_MM_dd_HH_mm_ss"));
-            File csvFile = new File(outFilePathPrice);
             
-            priceBw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile),
+            priceBw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile),
                     "UTF-16"));
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 

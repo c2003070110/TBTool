@@ -1,8 +1,13 @@
 package com.walk_nie.taobao.edwin;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.utils.DateUtils;
+
+import com.walk_nie.util.NieConfig;
 /**
  * edwin
  *
@@ -24,7 +29,10 @@ public class EdwinManBaobeiCreator  {
 	}
 	public void processEdwinMan() throws IOException{
 
-		String outputFile = "out/edwin_man_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("edwin.out.root.folder"), 
+				String.format("edwin_man_baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 		//String publishedBaobeiFile = "c:/temp/edwin-all.csv";
 		//File file = new File(publishedBaobeiFile);
 		//List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -58,7 +66,10 @@ public class EdwinManBaobeiCreator  {
 	}
 	public void processEdwinWoman() throws IOException{
 
-		String outputFile = "out/edwin_woman_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("edwin.out.root.folder"), 
+				String.format("woman_baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 		//String publishedBaobeiFile = "c:/temp/edwin-all.csv";
 		//File file = new File(publishedBaobeiFile);
 		//List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -82,7 +93,10 @@ public class EdwinManBaobeiCreator  {
 	}
 	public void processLeeMan() throws IOException{
 
-		String outputFile = "out/lee_man_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("edwin.out.root.folder"), 
+				String.format("lee_man_baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 		//String publishedBaobeiFile = "c:/temp/edwin-all.csv";
 		//File file = new File(publishedBaobeiFile);
 		//List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -121,7 +135,10 @@ public class EdwinManBaobeiCreator  {
 	}
 	public void processLeeWoman() throws IOException{
 
-		String outputFile = "out/lee_woman_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("edwin.out.root.folder"), 
+				String.format("lee_woman_baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 		//String publishedBaobeiFile = "c:/temp/edwin-all.csv";
 		//File file = new File(publishedBaobeiFile);
 		//List<BaobeiPublishObject> baobeiList = BaobeiUtil
@@ -154,7 +171,10 @@ public class EdwinManBaobeiCreator  {
 
 	public void processSomethingWoman() throws IOException{
 
-		String outputFile = "out/something_woman_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("edwin.out.root.folder"), 
+				String.format("something_woman_baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 		//String publishedBaobeiFile = "c:/temp/edwin-all.csv";
 		//File file = new File(publishedBaobeiFile);
 		//List<BaobeiPublishObject> baobeiList = BaobeiUtil

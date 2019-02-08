@@ -1,5 +1,6 @@
 package com.walk_nie.taobao.support;
 
+import java.io.File;
 import java.util.List;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
@@ -15,7 +16,7 @@ public abstract class BaseBaobeiProducer {
 	protected List<BaobeiPublishObject> toUpdatebaobeiList = null;
 	protected List<BaobeiPublishObject> publishedbaobeiList = null;
 
-	protected String outputFile = "";
+	protected File outputFile = null;
 	// protected String publishedBaobeiFile = "";
 
 	protected double currencyRate;
@@ -73,7 +74,7 @@ public abstract class BaseBaobeiProducer {
 	// return this;
 	// }
 
-	public BaseBaobeiProducer setOutputFile(String outputFile) {
+	public BaseBaobeiProducer setOutputFile(File outputFile) {
 		this.outputFile = outputFile;
 		return this;
 	}

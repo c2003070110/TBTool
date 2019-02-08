@@ -99,12 +99,8 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 			}
             if (itemIdList.isEmpty())
                 return;
-            String outFilePathPrice = String.format(outputFile, DateUtils
-                    .formatDate(Calendar.getInstance().getTime(),
-                            "yyyy_MM_dd_HH_mm_ss"));
-            File csvFile = new File(outFilePathPrice);
             priceBw = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(csvFile), "UTF-16"));
+                    new FileOutputStream(outputFile), "UTF-16"));
 
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             String pictureOutputRoot = EdwinUtil.rootPathName
@@ -112,7 +108,7 @@ public class EdwinManBaobeiProducer extends BaseBaobeiProducer{
 			for (GoodsObject obj : itemIdList) {
 				EdwinUtil.downloadPicture(obj, pictureOutputRoot);
 			}
-			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
+			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.colorPictureFileNameList,
 						pictureOutputRoot, taobaoPicFolder);

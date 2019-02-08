@@ -2,9 +2,11 @@ package com.walk_nie.taobao.wacom;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
@@ -23,7 +25,10 @@ public class WacomBaobeiCreator {
 
 	public void process() throws IOException {
 
-		String outputFile = "out/wacom_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("wacom.out.root.folder"), 
+				String.format("baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 		File file = new File(NieConfig.getConfig("wacom.taobao.pulishedbaibei.filepath"));
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil.readInPublishedBaobei(file);
 		//

@@ -1,8 +1,13 @@
 package com.walk_nie.taobao.yonex;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.utils.DateUtils;
+
+import com.walk_nie.util.NieConfig;
 
 public class YonexBadminRacquetBaobeiCreator  {
 
@@ -11,12 +16,15 @@ public class YonexBadminRacquetBaobeiCreator  {
 
 		//String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";
 		//String miaoshuTemplateFile = "in/yonex_badmin_miaoshu_template.html";
-		String outputFile = "out/yonex_badmin_racquet_baobei_%s.csv";
+		File outputFile = new File(NieConfig.getConfig("yonex.out.root.folder"), 
+				String.format("badmin_racquet_baobei_%s.csv",
+						DateUtils.formatDate(Calendar.getInstance().getTime(), 
+								"yyyy_MM_dd_HH_mm_ss")));
 
 		YonexBaobeiProducer db = new YonexBaobeiProducer();
 		db
-				.setOutputFile(outputFile)
 				.setCategoryType(1)
+				.setOutputFile(outputFile)
 				.process();
 
 		System.exit(0);

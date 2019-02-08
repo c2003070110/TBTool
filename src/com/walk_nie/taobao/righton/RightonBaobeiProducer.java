@@ -94,18 +94,14 @@ public class RightonBaobeiProducer extends BaseBaobeiProducer {
 
 	protected void writeOut(BufferedWriter priceBw, List<GoodsObject> productObjList) throws IOException {
 
-		String outFilePathPrice = String.format(outputFile, DateUtils
-				.formatDate(Calendar.getInstance().getTime(),
-						"yyyy_MM_dd_HH_mm_ss"));
-		File csvFile = new File(outFilePathPrice);
 		priceBw = new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(csvFile), "UTF-16"));
+				new FileOutputStream(outputFile), "UTF-16"));
 		for(GoodsObject productObj : productObjList){
 			downloadPicture(productObj, RightonUtil.getPictureSavePath(productObj));
 		}
 
 		priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-		String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
+		String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 
 		for (GoodsObject productObj : productObjList) {
 			TaobaoUtil.copyFiles(productObj.colorPicLocalNameList, RightonUtil.getPictureSavePath(productObj),
@@ -332,10 +328,6 @@ public class RightonBaobeiProducer extends BaseBaobeiProducer {
 		return detailSB.toString();
 	}
 
-	public RightonBaobeiProducer setOutputFile(String outputFile) {
-		this.outputFile = outputFile;
-		return this;
-	}
 	@Override
 	public BaseBaobeiParser getParser() {
 		return new RightonParser();

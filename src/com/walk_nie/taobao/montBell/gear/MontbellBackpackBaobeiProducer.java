@@ -1,14 +1,11 @@
 package com.walk_nie.taobao.montBell.gear;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
@@ -61,13 +58,9 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
                 itemIdList = parer.scanItem(scanCategoryIds);    
             }
             if (itemIdList.isEmpty())
-                return;
-            String outFilePathPrice = String.format(outputFile, DateUtils
-                    .formatDate(Calendar.getInstance().getTime(),
-                            "yyyy_MM_dd_HH_mm_ss"));
-            File csvFile = new File(outFilePathPrice);
+                return; 
             priceBw = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(csvFile), "UTF-16"));
+                    new FileOutputStream(outputFile), "UTF-16"));
 
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             
@@ -75,7 +68,7 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
 				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
 						+ "/" + obj.cateogryObj.categoryId);
 			}
-			String taobaoPicFolder = TaobaoUtil.getPictureFolder(csvFile);
+			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
 						MontBellUtil.rootPathName + "/"
@@ -103,8 +96,8 @@ public class MontbellBackpackBaobeiProducer extends BaseBaobeiProducer{
     }
     protected String composeBaobeiLine(GoodsObject item) throws Exception {
         
-		BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
-				item, this.publishedbaobeiList);
+		//BaobeiPublishObject publishedBaobei = MontBellUtil.getPublishedBaobei(
+		//		item, this.publishedbaobeiList);
 
 //		if (publishedBaobei != null) {
 //			return super.updatePublishedBaobei(item,publishedBaobei);
