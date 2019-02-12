@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.io.Files;
 import com.walk_nie.util.NieConfig;
 /**
@@ -25,8 +26,9 @@ public class AmazonSingleBaobeiCreator  {
 				String.format("baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
+		List<String> urls = Lists.newArrayList();
 		File tempFile0 = new File(NieConfig.getConfig("amazon.root.folder"), "urls-in.txt");
-		List<String> urls = Files.readLines(tempFile0, Charset.forName("UTF-8"));
+		urls = Files.readLines(tempFile0, Charset.forName("UTF-8"));
 		//
 		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.08;

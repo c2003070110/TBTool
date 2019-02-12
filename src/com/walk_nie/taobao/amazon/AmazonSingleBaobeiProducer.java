@@ -5,19 +5,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.util.NieConfig;
 
 public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
     
@@ -64,16 +64,21 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
                     new FileOutputStream(outputFile), "UTF-16"));
 
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
-            
+            String pictureOutFolder = NieConfig.getConfig("amazon.root.out.picture.folder");
 			for (AmazonGoodsObject obj : itemIdList) {
-				//MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-				//		+ "/" + obj.cateogryObj.categoryId);
+				downloadPicture(obj, pictureOutFolder);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (AmazonGoodsObject obj : itemIdList) {
-				//TaobaoUtil.copyFiles(obj.pictureNameList,
-				//		MontBellUtil.rootPathName + "/"
-				//				+ obj.cateogryObj.categoryId, taobaoPicFolder);
+				List<String> list = Lists.newArrayList();
+				if (obj.stockList.isEmpty()) {
+					for (StockObject st : obj.stockList) {
+						list.add(st.colorPicLocalName);
+					}
+				}
+				list.addAll(obj.googsPicLocalNameList);
+				TaobaoUtil.copyFiles(list, pictureOutFolder, taobaoPicFolder);
+				
 				writeOut(priceBw, obj);
 			}
             System.out.println("-------- FINISH--------");
@@ -89,42 +94,87 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
         }
     }
 
-    protected void writeOut(BufferedWriter priceBw, AmazonGoodsObject item)
+	private void downloadPicture(AmazonGoodsObject goods, String outFilePath) {
+		if (goods.stockList.isEmpty()) {
+			for (StockObject st : goods.stockList) {
+				String picName = goods.asin + "-color_" + st.colorName;
+				if(goods.colorNameList.contains(picName)){
+					continue;
+				}
+				String fileExtends = getFileExtends(st.colorPicUrl);
+				goods.colorNameList.add(picName);
+				try {
+					Files.copy(new File(st.colorPicUrl), new File(outFilePath, picName + "." + fileExtends));
+					st.colorPicLocalName = picName;
+				} catch (IOException e) {
+				}
+			}
+		}
+		if (goods.googsPicUrlList.isEmpty()) {
+			int i = 1;
+			for (String str : goods.googsPicUrlList) {
+				String picName = goods.asin + "-Other_" + i;
+				String fileExtends = getFileExtends(str);
+				i++;
+				try {
+					Files.copy(new File(str), new File(outFilePath, picName + "." + fileExtends));
+					goods.googsPicLocalNameList.add(picName);
+				} catch (IOException e) {
+				}
+			}
+		}
+		if (goods.googsVideoUrlList.isEmpty()) {
+			int i = 1;
+			for (String str : goods.googsVideoUrlList) {
+				String fileExtends = getFileExtends(str);
+				String picName = goods.asin + "-Vedio_" + i;
+				i++;
+				try {
+					Files.copy(new File(str), new File(outFilePath, picName + "." + fileExtends));
+					goods.googsVideoLocalNameList.add(picName);
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+	private String getFileExtends(String fileName){
+		int i = fileName.lastIndexOf(".");
+		return fileName.substring(i+1);
+	}
+
+	protected void writeOut(BufferedWriter priceBw, AmazonGoodsObject item)
             throws Exception {
         
         priceBw.write(composeBaobeiLine(item));
         priceBw.flush();
     }
     protected String composeBaobeiLine(AmazonGoodsObject item) throws Exception {
-        
- 
-//		if (publishedBaobei != null) {
-//			return super.updatePublishedBaobei(item,publishedBaobei);
-//		}
-		
+   	
         BaobeiPublishObject obj = new BaobeiPublishObject();
         BaobeiUtil.setBaobeiCommonInfo(obj);
 		// 宝贝名称
 		composeBaobeiTitle(item, obj);
         // 宝贝类目
 		// 户外其他服装
-        obj.cid =  "50015396";
+        obj.cid =  "";
         // 店铺类目
-        obj.seller_cids =  "1372086391";
+        obj.seller_cids =  "";
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
-        //obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
-        //obj.price = item.priceCNY;
+        int emsFee = TaobaoUtil.getEmsFee(item.weightShipment + (item.weightShipment-item.weightItem));
+        double priceCNY = (item.priceJPY + emsFee) * currencyRate;
+		priceCNY = priceCNY + priceCNY * benefitRate;
+        obj.price = String.valueOf(Math.round(priceCNY));
+        
         // 宝贝数量
         obj.num = "99";
 		
-        // 邮费模版ID
-        //obj.postage_id = MontBellUtil.composePostageId(item);
+        // 邮费模版ID TODO mianyou
+        obj.postage_id = "";
         
         // 用户输入ID串;
-        //obj.inputPids = "\"20000,13021751,6103476,1627207\"";
-		obj.inputPids = "\"13021751,6103476\"";
+		obj.inputPids = "";
         
         // 用户输入名-值对
         composeBaobeiInputValues(item, obj);
@@ -137,11 +187,11 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
         // 销售属性组合
         composeBaobeiSkuProps(item, obj);
         // 商家编码
-        //obj.outer_id = "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
+        obj.outer_id = "AMZ_" + item.asin;
         // 销售属性别名
         composeBaobeiPropAlias(item, obj);
         // 商品条形码
-        //obj.barcode = item.sku;
+        obj.barcode = item.sku;
 		// 图片状态
 		composeBaobeiPictureStatus(item,obj);
 		// 新图片
@@ -160,17 +210,13 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
-    private void composeBaobeiTitle(AmazonGoodsObject item,
+    protected void composeBaobeiTitle(AmazonGoodsObject item,
             BaobeiPublishObject baobei) {
         String title = "";
   
-        //if(!StringUtil.isBlank(item.titleEn)){
-        //    title += " " + item.titleEn ;
-        //}
-        //title += " " + item.productId;
-        //if(!StringUtil.isBlank(item.gender)){
-        //    title += " " + item.gender;
-        //}
+        title += "日本直邮  ";
+        title += item.titleJP + " ";
+       
         baobei.title =  "\"" + title + "\"";
     }
     protected void composeBaobeiCateProps(AmazonGoodsObject item, BaobeiPublishObject obj) {
@@ -208,31 +254,13 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
 					skuProps += obj.price + ":" + num + ":" + ":1627207" + ":"
 							+ taobaoColors.get(i) + ";20509:"
 							+ taobaoSizes.get(j) + ";";
-					// skuProps += "20509:" + taobaoSizes.get(j) +":"+ obj.price
-					// + ":9999" + ":" + ":1627207" + ":" + taobaoColors.get(i)
-					// + ";";
 				}
 			}
 		}
         obj.skuProps =skuProps;
     }
 
-	private String getStock(AmazonGoodsObject item, String colorName, String sizeName) {
-
-		boolean isStock = false;
-		boolean isSkipColor = StringUtil.isBlank(colorName);
-		boolean isSkipSize = StringUtil.isBlank(sizeName);
-		for (StockObject stockObj : item.stockList) {
-			if ((isSkipColor || stockObj.colorName.equals(colorName))
-					&& (isSkipSize || stockObj.sizeName.equals(sizeName))) {
-				isStock = stockObj.isStock;
-				break;
-			}
-		}
-		return isStock ? "99" : "0";
-	}
-
-	private void composeBaobeiInputValues(AmazonGoodsObject item,
+	protected void composeBaobeiInputValues(AmazonGoodsObject item,
 			BaobeiPublishObject obj) {
         // ダウンジャケット MONTBELL,1101464,1234,GRL;颜色分类;GML
         String inputValues = "";
@@ -269,29 +297,71 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
     
 	protected  void composeBaobeiMiaoshu(AmazonGoodsObject item, BaobeiPublishObject obj) {
         StringBuffer detailSB = new StringBuffer();
-        // 包邮
-        //detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         
-        // 宝贝描述
-        //detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
-
-        // 尺寸描述
-        //detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        // 包邮
+        detailSB.append(Miaoshu_baoyou(item));
         
         // 着装图片
-        //detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
+        detailSB.append(Miaoshu_itemDesp(item));
         
-        //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
-        obj.description =  "\"" + detailSB.toString()  +extraMiaoshu1+ "\"";
+        
+        obj.description =  "\"" + detailSB.toString()  + extraMiaoshu1 + "\"";
     }
 
 	protected void composeBaobeiPictureStatus(AmazonGoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
+		String picStatus = TaobaoUtil.composeBaobeiPictureStatus(item.googsPicLocalNameList, item.colorNameList, this.taobaoColors);
+
+		publishedBaobei.picture_status ="\"" + picStatus + "\""  ;
 	}
 
 	protected void composeBaobeiPicture(AmazonGoodsObject item,
 			BaobeiPublishObject publishedBaobei) {
+        String picture = TaobaoUtil.composeBaobeiPicture(item.googsPicLocalNameList, item.colorNameList, this.taobaoColors);
+
+        publishedBaobei.picture = "\"" + picture + "\"" ;
+	}
+
+	private String getStock(AmazonGoodsObject item, String colorName, String sizeName) {
+
+		boolean isStock = false;
+		boolean isSkipColor = StringUtil.isBlank(colorName);
+		boolean isSkipSize = StringUtil.isBlank(sizeName);
+		for (StockObject stockObj : item.stockList) {
+			if ((isSkipColor || stockObj.colorName.equals(colorName))
+					&& (isSkipSize || stockObj.sizeName.equals(sizeName))) {
+				isStock = stockObj.isStock;
+				break;
+			}
+		}
+		return isStock ? "99" : "0";
+	}
+
+	private Object Miaoshu_baoyou(AmazonGoodsObject item) {
+        StringBuffer detailSB = new StringBuffer();
+        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
+        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+        // TODO baoyou
+        // TODO baoshui
+        detailSB.append("<p style=\"text-indent:2.0em;\">直邮是 日本发货到你家，时效快但<span style=\";color:red;font-weight:bold\">关税买家承担！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">如果不幸被海关查到，由买家报关通关，不能报关的买家，请不要下单！！！！</span></p>");
+        detailSB.append("</div>");
+        return detailSB.toString();
+	}
+
+	private Object Miaoshu_itemDesp(AmazonGoodsObject item) {
+		StringBuffer detailSB = new StringBuffer();
+		if (!item.detailScreenShotPicFile.isEmpty()) {
+            detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝图片</h3>");
+            detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+            for(String pic:item.detailScreenShotPicFile){
+                detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + pic + "\"/></p>");    
+            }
+            detailSB.append("</div>");
+		}
+		return detailSB.toString();
 	}
 
     public AmazonSingleBaobeiProducer addUrl(String url) {

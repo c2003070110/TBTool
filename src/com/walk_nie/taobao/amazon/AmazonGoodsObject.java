@@ -7,6 +7,8 @@ import com.walk_nie.taobao.object.StockObject;
 
 public class AmazonGoodsObject {
     public String asin;
+    public String sku;
+    public String jlanCd;
     public String kataban;//品番
     public String goodsNo;
     
@@ -21,11 +23,12 @@ public class AmazonGoodsObject {
     //public String subTitle;
     
     public String priceOrg;
-    public String price;
+    public long priceJPY;
+    public long price;
     
     //public String productUrl;
-    public long weightItem = 0;
-    public long weightShipment = 0;
+    public int weightItem = 0;
+    public int weightShipment = 0;
 
 	public List<StockObject> stockList = Lists.newArrayList();
 	
@@ -35,6 +38,9 @@ public class AmazonGoodsObject {
     //public List<String> colorPicLocalNameList = Lists.newArrayList();
 	
 	//public List<String> pictureNameList = new ArrayList<String>();
+
+	public List<String> googsVideoUrlList = Lists.newArrayList();
+    public List<String> googsVideoLocalNameList = Lists.newArrayList();
 	
 	public List<String> googsPicUrlList = Lists.newArrayList();
     public List<String> googsPicLocalNameList = Lists.newArrayList();
