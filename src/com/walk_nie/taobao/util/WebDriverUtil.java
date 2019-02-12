@@ -49,6 +49,16 @@ public class WebDriverUtil  {
 		return new FirefoxDriver();
 	}
 
+	public static WebDriver getIEWebDriver() {
+		System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
+		System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+		System.setProperty("webdriver.ie.driver", ieDriverPath);
+        DesiredCapabilities cap = DesiredCapabilities.internetExplorer();
+        cap.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+
+		return new InternetExplorerDriver(cap);
+	}
+
     public static WebDriver getWebDriver(String url) {
         System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);

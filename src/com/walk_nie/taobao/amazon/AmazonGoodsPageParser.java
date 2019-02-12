@@ -37,7 +37,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		return goodsList;
 	}
 
-	public AmazonGoodsObject scanItemUrl(String url) {
+	public AmazonGoodsObject scanItemUrl(String url) throws IOException {
 		AmazonGoodsObject obj = new AmazonGoodsObject();
 		String[] urlSplits = url.split("/");
 		for(int i=0;i<urlSplits.length;i++){
@@ -79,46 +79,57 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 				obj.googsVideoUrlList.add(we.getAttribute("src"));
 			}
 		}
-		ivLiWE = ivTopWE.findElement(By.cssSelector("li[id=\"iv360TabHeading\"]"));
-		if (ivLiWE != null) {
-			ivLiWE.click();
-		}
+//		ivLiWE = ivTopWE.findElement(By.cssSelector("li[id=\"iv360TabHeading\"]"));
+//		if (ivLiWE != null) {
+//			ivLiWE.click();
+//		}
 		ivLiWE = ivTopWE.findElement(By.cssSelector("li[id=\"ivImagesTabHeading\"]"));
 		if (ivLiWE != null) {
 			ivLiWE.click();
 			WebElement ivTabTopWE = ivTopWE.findElement(By.cssSelector("div[id=\"ivImagesTab\"]"));
-			List<WebElement> thumbColsWES = ivTabTopWE.findElements(By.cssSelector("li[id=\"ivThumbColumn\"]"));
+			WebElement thumbColsWE = ivTabTopWE.findElement(By.cssSelector("div[id=\"ivThumbColumn\"]"));
+			List<WebElement> thumbColsWES = thumbColsWE.findElements(By.tagName("div"));
 			for(WebElement wet : thumbColsWES){
+				String id = wet.getAttribute("id");
+				if(StringUtil.isBlank(id) || !id.startsWith("ivImage_")){
+					continue;
+				}
+					
 				wet.click();
 				WebElement ivTopWET = webDriver.findElement(By.cssSelector("div[id=\"iv-tab-view-container\"]"));
 				WebElement ivTabTopWET = ivTopWET.findElement(By.cssSelector("div[id=\"ivImagesTab\"]"));
-				WebElement aWE = ivTabTopWET.findElement(By.cssSelector("div[id=\"ivMain\"]")).findElement(By.tagName("a"));
+				WebElement aWE = ivTabTopWET.findElement(By.cssSelector("div[id=\"ivMain\"]")).findElement(By.tagName("img"));
 				obj.googsPicUrlList.add(aWE.getAttribute("src"));
 			}
 		}
 	}
 
 	private void parseProductDescription(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) {
-
+		int i=2;
+		try {
+			WebElement aplusWE = topLvlWE
+					.findElement(By.cssSelector("div[id=\"descriptionAndDetails\"]"));
+			snapShotDetailDisp(obj, webDriver, i++, aplusWE);
+		} catch (Exception ignore) {}
 		try {
 			WebElement aplusWE = topLvlWE
 					.findElement(By.cssSelector("div[id=\"dpx-aplus-product-description_feature_div\"]"));
-
-			String fileNameFmt = "%s_detail_2.png";
-			String fileName = String.format(fileNameFmt, obj.asin);
-			snapShotDetailDisp(obj, webDriver, fileName, aplusWE);
-		} catch (Exception ignore) {
-
-		}
+			snapShotDetailDisp(obj, webDriver, i++, aplusWE);
+		} catch (Exception ignore) {}
+		try {
+			WebElement aplusWE = topLvlWE
+					.findElement(By.cssSelector("div[id=\"aplus_feature_div\"]"));
+			snapShotDetailDisp(obj, webDriver, i++, aplusWE);
+		} catch (Exception ignore) {}
 	}
 
-	private void parseCenterCol(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) {
+	private void parseCenterCol(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) throws IOException {
 
 		WebElement centerWE = topLvlWE.findElement(By.cssSelector("div[id=\"centerCol\"]"));
 		
-		obj.titleOrg = centerWE.findElement(By.cssSelector("div[id=\"productTitle\"]")).getText();
+		obj.titleOrg = centerWE.findElement(By.cssSelector("span[id=\"productTitle\"]")).getText();
 		
-		obj.priceOrg = centerWE.findElement(By.cssSelector("div[id=\"priceblock_ourprice\"]")).getText();
+		obj.priceOrg = centerWE.findElement(By.cssSelector("span[id=\"priceblock_ourprice\"]")).getText();
 		String price = obj.priceOrg.replace("税", "");
 		price = price.replaceAll("￥", "");
 		price = price.replaceAll(",", "");
@@ -134,27 +145,34 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		} catch (Exception ignore) {
 
 		}
-		//
-		String fileNameFmt = "%s_detail_1.png";
-		String fileName = String.format(fileNameFmt, obj.asin);
-		snapShotDetailDisp(obj,webDriver,fileName, featurebulletsWE);
+		snapShotDetailDisp(obj,webDriver,1, featurebulletsWE);
 	}
 	
-	private void snapShotDetailDisp(AmazonGoodsObject obj, WebDriver webDriver, String fileName, WebElement we) {
+	private void snapShotDetailDisp(AmazonGoodsObject obj, WebDriver webDriver, int pos, WebElement we) throws IOException {
 
+		String fileNameFmt = "%s_detail_%d.png";
+		String fileName = String.format(fileNameFmt, obj.asin, pos);
+		
 		String pictureOutFolder = NieConfig.getConfig("amazon.root.out.picture.folder");
 		File despFile = new File(pictureOutFolder, fileName);
-		try {
-			WebDriverUtil.screenShotV2(webDriver, we, despFile.getAbsolutePath(), WebDriverUtil.watermark_montbell);
+			WebDriverUtil.screenShotV2(webDriver, we, despFile.getAbsolutePath(), null);
 			obj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
-		} catch (IOException ignore) {
-		}
 	}
  
 
 	private void parseASIN(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) {
 
-		WebElement dtlGridFeatherWE = topLvlWE.findElement(By.cssSelector("div[id=\"product-details-grid_feature_div\"]"));
+		WebElement dtlGridFeatherWE = null;
+		try{
+			dtlGridFeatherWE =topLvlWE.findElement(By.cssSelector("div[id=\"product-details-grid_feature_div\"]"));
+		} catch (Exception e) {
+			try{
+			dtlGridFeatherWE =topLvlWE.findElement(By.cssSelector("div[id=\"detail-bullets_feature_div\"]"));
+			} catch (Exception e1) {
+				dtlGridFeatherWE =topLvlWE.findElement(By.cssSelector("div[id=\"prodDetails\"]"));
+			}
+		}
+		 
 
 		List<WebElement> trWES = dtlGridFeatherWE.findElements(By.tagName("tr"));
 		for (WebElement we : trWES) {
@@ -191,7 +209,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 
 	private WebDriver getWebDriver(String url) {
 		if(!testWebDriver()){
-			openWebDriver();
+			driver = openWebDriver();
 		}
 		driver.get(url);
 		return driver;
@@ -214,7 +232,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 	}
 
 	private WebDriver openWebDriver() {
-		return WebDriverUtil.getFirefoxWebDriver();
+		return WebDriverUtil.getIEWebDriver();
 	}
 	private WebDriver driver = null;
 

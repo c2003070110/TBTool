@@ -60,6 +60,9 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
             }
             if (itemIdList.isEmpty())
                 return;
+            if(!outputFile.getParentFile().exists()){
+            	outputFile.getParentFile().mkdirs();
+            }
             priceBw = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(outputFile), "UTF-16"));
 
