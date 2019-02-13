@@ -496,14 +496,18 @@ public class MontbellAutoOrder {
 
 		clearShoppingCart(driver, type);
 		for (TaobaoOrderProductInfo p : orderInfo.productInfos) {
+			boolean addCardResult = false;
 			try {
 				String url = "JP".equals(type) ? MontBellUtil.productUrlPrefix
 						: MontBellUtil.productUrlPrefix_en;
 				url = url + p.productId;
 				driver.get(url);
-				addItemToCardNrst(driver, p);
+				addCardResult = addItemToCardNrst(driver, p);
 			} catch (Exception e) {
 				e.printStackTrace();
+				addCardResult = false;
+			}
+			if(!addCardResult){
 				String url = "JP".equals(type) ? MontBellUtil.productUrlPrefix_fo
 						: MontBellUtil.productUrlPrefix_en_fo;
 				url = url + p.productId;
@@ -522,8 +526,9 @@ public class MontbellAutoOrder {
 		}
 	}
 
-	private void addItemToCardNrst(WebDriver driver, TaobaoOrderProductInfo p) {
+	private boolean addItemToCardNrst(WebDriver driver, TaobaoOrderProductInfo p) {
 
+		boolean reslt = false;
 		List<WebElement> weList = null;
 		String color = p.colorName;
 		String sizz = p.sizeName;
@@ -546,6 +551,7 @@ public class MontbellAutoOrder {
 				if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
 					Select dropdown = new Select(we);
 					dropdown.selectByValue(p.qtty);
+					reslt = true;
 					break;
 				}
 			}
@@ -561,11 +567,13 @@ public class MontbellAutoOrder {
 				if (selKey.equalsIgnoreCase(we.getAttribute("name"))) {
 					Select dropdown = new Select(we);
 					dropdown.selectByValue(p.qtty);
+					reslt = true;
 					break;
 				}
 			}
 		}
 		NieUtil.mySleepBySecond(2);
+		return reslt;
 	}
 	private TaobaoOrderInfo readInOrderInfo(File tempFile0) throws IOException {
 		TaobaoOrderInfo order =  new TaobaoOrderInfo();
