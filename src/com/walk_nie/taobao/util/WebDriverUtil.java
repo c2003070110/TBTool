@@ -107,18 +107,28 @@ public class WebDriverUtil  {
         return doc;
     }
 
+	public static void screenShotV2(File screenshot, WebElement element, String saveTo, String pathToWaterMarkPNG)
+			throws IOException {
+		List<WebElement> elements = Lists.newArrayList();
+		elements.add(element);
+		screenShotV2(screenshot, elements, saveTo, pathToWaterMarkPNG);
+	}
+
 	public static void screenShotV2(WebDriver driver, WebElement element, String saveTo, String pathToWaterMarkPNG)
 			throws IOException {
 		List<WebElement> elements = Lists.newArrayList();
 		elements.add(element);
 		screenShotV2(driver, elements, saveTo, pathToWaterMarkPNG);
 	}
-
 	public static void screenShotV2(WebDriver driver, List<WebElement> elements,
 			String saveTo,String pathToWaterMarkPNG) throws IOException {
+		File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		screenShotV2(screenshot, elements, saveTo, pathToWaterMarkPNG);
+	}
+
+	public static void screenShotV2(File screenshot , List<WebElement> elements,
+			String saveTo,String pathToWaterMarkPNG) throws IOException {
 		String picSuffix = "png";
-		File screenshot = ((TakesScreenshot) driver)
-				.getScreenshotAs(OutputType.FILE);
 		BufferedImage fullImg = ImageIO.read(screenshot);
 		List<BufferedImage> childImages = Lists.newArrayList();
 		int maxW=0,ttlHeight=0;

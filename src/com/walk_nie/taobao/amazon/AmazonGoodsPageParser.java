@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.jsoup.helper.StringUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -22,6 +24,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		List<AmazonGoodsObject> goodsList = new ArrayList<AmazonGoodsObject>();
 		for (String url : urls) {
 			AmazonGoodsObject obj = scanItemUrl(url);
+			
 			if(obj != null){
 				goodsList.add(obj);
 				for (StockObject st : obj.stockList) {
@@ -39,6 +42,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 
 	public AmazonGoodsObject scanItemUrl(String url) throws IOException {
 		AmazonGoodsObject obj = new AmazonGoodsObject();
+		obj.url = url;
 		String[] urlSplits = url.split("/");
 		for(int i=0;i<urlSplits.length;i++){
 			if(urlSplits[i].equals("dp") && i<urlSplits.length){
@@ -46,25 +50,27 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 				break;
 			}
 		}
-		WebDriver webDriver = getWebDriver(url);
+		
+		getWebDriver(url);
+		
 		WebElement topLvlWE = webDriver.findElement(By.cssSelector("div[id=\"dp-container\"]"));
 		
 		// parse first!!
-		parseASIN(webDriver,topLvlWE,obj);
+		parseASIN(topLvlWE,obj);
 
 		// title price 
-		parseCenterCol(webDriver,topLvlWE,obj);
+		parseCenterCol(topLvlWE,obj);
 		
 		// screen shot description
-		parseProductDescription(webDriver,topLvlWE,obj);
+		parseProductDescription(topLvlWE,obj);
 		
 		// video picture
-		parseLeftCol(webDriver,topLvlWE,obj);
+		parseLeftCol(topLvlWE,obj);
 		
 		return obj;
 	}
 
-	private void parseLeftCol(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) {
+	private void parseLeftCol(WebElement topLvlWE, AmazonGoodsObject obj) {
 		WebElement topWE = topLvlWE.findElement(By.cssSelector("div[id=\"leftCol\"]"));
 		WebElement we = topWE.findElement(By.cssSelector("div[id=\"main-image-container\"]"));
 		we.click();
@@ -104,26 +110,31 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		}
 	}
 
-	private void parseProductDescription(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) {
+	private void parseProductDescription(WebElement topLvlWE, AmazonGoodsObject obj) {
+		
+		getWebDriverForFullScreenShot(obj.url);
+		File screenshot = ((TakesScreenshot) webDriverForFullScreenShot).getScreenshotAs(OutputType.FILE);
+		topLvlWE = webDriverForFullScreenShot.findElement(By.cssSelector("div[id=\"dp-container\"]"));
+		
 		int i=2;
 		try {
 			WebElement aplusWE = topLvlWE
 					.findElement(By.cssSelector("div[id=\"descriptionAndDetails\"]"));
-			snapShotDetailDisp(obj, webDriver, i++, aplusWE);
+			snapShotDetailDisp(obj, screenshot, i++, aplusWE);
 		} catch (Exception ignore) {}
 		try {
 			WebElement aplusWE = topLvlWE
 					.findElement(By.cssSelector("div[id=\"dpx-aplus-product-description_feature_div\"]"));
-			snapShotDetailDisp(obj, webDriver, i++, aplusWE);
+			snapShotDetailDisp(obj, screenshot, i++, aplusWE);
 		} catch (Exception ignore) {}
 		try {
 			WebElement aplusWE = topLvlWE
 					.findElement(By.cssSelector("div[id=\"aplus_feature_div\"]"));
-			snapShotDetailDisp(obj, webDriver, i++, aplusWE);
+			snapShotDetailDisp(obj, screenshot, i++, aplusWE);
 		} catch (Exception ignore) {}
 	}
 
-	private void parseCenterCol(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) throws IOException {
+	private void parseCenterCol(WebElement topLvlWE, AmazonGoodsObject obj) throws IOException {
 
 		WebElement centerWE = topLvlWE.findElement(By.cssSelector("div[id=\"centerCol\"]"));
 		
@@ -145,34 +156,39 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		} catch (Exception ignore) {
 
 		}
-		snapShotDetailDisp(obj,webDriver,1, featurebulletsWE);
+		snapShotDetailDisp(obj, 1, featurebulletsWE);
 	}
 	
-	private void snapShotDetailDisp(AmazonGoodsObject obj, WebDriver webDriver, int pos, WebElement we) throws IOException {
+	private void snapShotDetailDisp(AmazonGoodsObject obj, File screenshot, int pos, WebElement we) throws IOException {
+
+		String fileNameFmt = "%s_detail_%d.png";
+		String fileName = String.format(fileNameFmt, obj.asin, pos);
+
+		String pictureOutFolder = NieConfig.getConfig("amazon.root.out.picture.folder");
+		File despFile = new File(pictureOutFolder, fileName);
+		WebDriverUtil.screenShotV2(screenshot, we, despFile.getAbsolutePath(), null);
+		obj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+	}
+ 
+	
+	private void snapShotDetailDisp(AmazonGoodsObject obj, int pos, WebElement we) throws IOException {
 
 		String fileNameFmt = "%s_detail_%d.png";
 		String fileName = String.format(fileNameFmt, obj.asin, pos);
 		
 		String pictureOutFolder = NieConfig.getConfig("amazon.root.out.picture.folder");
 		File despFile = new File(pictureOutFolder, fileName);
-			WebDriverUtil.screenShotV2(webDriver, we, despFile.getAbsolutePath(), null);
-			obj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		WebDriverUtil.screenShotV2(webDriver, we, despFile.getAbsolutePath(), null);
+		obj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
 	}
  
 
-	private void parseASIN(WebDriver webDriver, WebElement topLvlWE, AmazonGoodsObject obj) {
+	private void parseASIN(WebElement topLvlWE, AmazonGoodsObject obj) {
 
-		WebElement dtlGridFeatherWE = null;
-		try{
-			dtlGridFeatherWE =topLvlWE.findElement(By.cssSelector("div[id=\"product-details-grid_feature_div\"]"));
-		} catch (Exception e) {
-			try{
-			dtlGridFeatherWE =topLvlWE.findElement(By.cssSelector("div[id=\"detail-bullets_feature_div\"]"));
-			} catch (Exception e1) {
-				dtlGridFeatherWE =topLvlWE.findElement(By.cssSelector("div[id=\"prodDetails\"]"));
-			}
-		}
-		 
+		WebElement dtlGridFeatherWE = getWebElementByCssSelectors(topLvlWE,
+				"div[id=\"product-details-grid_feature_div\"]", 
+				"div[id=\"detail-bullets_feature_div\"]",
+				"div[id=\"prodDetails\"]");
 
 		List<WebElement> trWES = dtlGridFeatherWE.findElements(By.tagName("tr"));
 		for (WebElement we : trWES) {
@@ -195,6 +211,17 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		}
 	}
 
+	private WebElement getWebElementByCssSelectors(WebElement topLvlWE, String... cssSelectors) {
+		for(String cssSelector:cssSelectors){
+			try{
+				return topLvlWE.findElement(By.cssSelector(cssSelector));
+			} catch (Exception e) {
+				continue;
+			}
+		}
+		return null;
+	}
+
 	private int toWeight(String text) {
 		String str = text.replaceAll(" ", "");
 		str = str.toLowerCase();
@@ -207,23 +234,24 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		return Integer.parseInt(str) * b;
 	}
 
+	private WebDriver webDriver = null;
 	private WebDriver getWebDriver(String url) {
 		if(!testWebDriver()){
-			driver = openWebDriver();
+			webDriver = openWebDriver();
 		}
-		driver.get(url);
-		return driver;
+		webDriver.get(url);
+		return webDriver;
 	}
 
 	private boolean testWebDriver() {
-		if(driver == null){
+		if(webDriver == null){
 			return false;
 		}
 		try{
-			driver.get("https://www.amazon.co.jp");
+			webDriver.get("https://www.amazon.co.jp");
 		}catch(Exception e){
 			try{
-				driver.close();
+				webDriver.close();
 			}catch(Exception ex){
 			}
 			return false;
@@ -232,8 +260,36 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 	}
 
 	private WebDriver openWebDriver() {
+		return WebDriverUtil.getFirefoxWebDriver();
+	}
+	
+	private WebDriver webDriverForFullScreenShot = null;
+	private WebDriver getWebDriverForFullScreenShot(String url) {
+		if(!testWebDriverForFullScreenShot()){
+			webDriverForFullScreenShot = openWebDriverForFullScreenShot();
+		}
+		webDriverForFullScreenShot.get(url);
+		return webDriverForFullScreenShot;
+	}
+
+	private boolean testWebDriverForFullScreenShot() {
+		if(webDriverForFullScreenShot == null){
+			return false;
+		}
+		try{
+			webDriverForFullScreenShot.get("https://www.amazon.co.jp");
+		}catch(Exception e){
+			try{
+				webDriverForFullScreenShot.close();
+			}catch(Exception ex){
+			}
+			return false;
+		}
+		return true;
+	}
+
+	private WebDriver openWebDriverForFullScreenShot() {
 		return WebDriverUtil.getIEWebDriver();
 	}
-	private WebDriver driver = null;
 
 }

@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 import com.walk_nie.taobao.object.StockObject;
 
 public class AmazonGoodsObject {
+    public String url;
+    
     public String asin;
     public String sku;
     public String jlanCd;

@@ -218,6 +218,10 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
         String title = "";
   
         title += "日本直邮  ";
+        if(!item.googsVideoUrlList.isEmpty()){
+            title += "[V] ";
+        }
+        
         title += item.titleJP + " ";
        
         baobei.title =  "\"" + title + "\"";
