@@ -285,7 +285,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 						WebDriverUtil.watermark_montbell);
 			}
 		}
-		goodsObj.detailScreenShotPicFile = despFile.getAbsolutePath();
+		goodsObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
 	}
 
 	protected void processProductSizeTable(GoodsObject goodsObj, Element rootEl)

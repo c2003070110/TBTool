@@ -22,7 +22,7 @@ public class MontbellTrekkingPolesBaobeiCreator  {
 
 		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("trekkingpole_kidsbaby_%s.csv",
+				String.format("trekkingpole_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";

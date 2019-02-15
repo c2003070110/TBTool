@@ -40,7 +40,7 @@ public class MontbellCupsBaobeiCreator  {
                 .addScanCategory("321100") //  保温・保冷ボトル
                 
                 .addScanCategory("321300") //  ソフトボトル
-                .addScanCategory("") //  
+                .addScanCategory("") // cookware
                 .addScanCategory("") //  
                 
                 .setOutputFile(outputFile)

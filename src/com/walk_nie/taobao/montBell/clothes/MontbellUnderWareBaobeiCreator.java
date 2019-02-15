@@ -23,9 +23,8 @@ public class MontbellUnderWareBaobeiCreator  {
 	}
 	public void process() throws IOException{
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("synthetic_underware_%s.csv",
+				String.format("underware_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
@@ -39,7 +38,6 @@ public class MontbellUnderWareBaobeiCreator  {
 		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
 		db
                 .addScanCategory("75200") // スーパーメリノウール（厚手／エクスペディション）
-                
                 .addScanCategory("75100") // スーパーメリノウール（中厚手／ミドルウエイト）
                 .addScanCategory("75000") // スーパーメリノウール（薄手／ライトウエイト）
                 .addScanCategory("71200") // ジオライン（厚手／エクスペディション）
@@ -48,6 +46,8 @@ public class MontbellUnderWareBaobeiCreator  {
                 .addScanCategory("73000") // ジオライン（薄手／クールメッシュ）
                 .addScanCategory("78000") // ジオライン（薄手／シェイプ）
                 .addScanCategory("76000") // スペリオルシルク（薄手）
+                .addScanCategory("") // zeoline shape
+                .addScanCategory("") // zeoline cool mesh
                 
                 .addScanCategory("71700") // ウエストウォーマー
                 

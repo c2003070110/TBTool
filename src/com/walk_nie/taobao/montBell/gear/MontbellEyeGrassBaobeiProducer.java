@@ -260,13 +260,14 @@ public class MontbellEyeGrassBaobeiProducer extends BaseBaobeiProducer {
 	private String composeBaobeiMiaoshu(GoodsObject item) throws IOException {
 
 		StringBuffer detailSB = new StringBuffer();
-		String productInfo = item.detailScreenShotPicFile;
-		if (!StringUtil.isBlank(item.detailScreenShotPicFile)) {
+		if (!item.detailScreenShotPicFile.isEmpty()) {
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+			for (String productInfo : item.detailScreenShotPicFile) {
 			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;\" src=\"FILE:///"
 					+ productInfo + "\"/></p>");
 			detailSB.append("</div>");
+			}
 		}
 		StringBuffer sizeTips = new StringBuffer();
 		if (!item.sizeTipPics.isEmpty()) {

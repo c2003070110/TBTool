@@ -22,9 +22,8 @@ public class MontbellTShirtBaobeiCreator  {
 	}
 	public void process() throws IOException{
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("synthetic_tshirt_%s.csv",
+				String.format("tshirt_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
@@ -33,20 +32,21 @@ public class MontbellTShirtBaobeiCreator  {
 				.readInPublishedBaobei(file);
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.05;
+		double benefitRate = 0.08;
 		MontbellTShirtBaobeiProducer db = new MontbellTShirtBaobeiProducer();
 		db
-//        		.addScanCategory("46500") // 天然素材<メリノウールプラス>
-//        		.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
-//                .addScanCategory("44000") // 機能素材<ウイックロンクール>
-//                .addScanCategory("45500") // 機能素材<ウイックロンZEO>
-//                .addScanCategory("42000") // 機能素材<ウイックロン>
-//                .addScanCategory("31100") // 半袖シャツ＜薄手＞
+        		.addScanCategory("46500") // 天然素材<メリノウールプラス>
+                .addScanCategory("45500") // 機能素材<ウイックロンZEO>
+                .addScanCategory("42000") // 機能素材<ウイックロン>
+                .addScanCategory("44000") // 機能素材<ウイックロンクール>
+                .addScanCategory("") // cotton
+        		//.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
+                //.addScanCategory("31100") // 半袖シャツ＜薄手＞
                 
-                .addScanCategory("32300") // 長袖シャツ＜厚手＞
-                .addScanCategory("32200") // 長袖シャツ＜中厚手＞
-                .addScanCategory("32100") // 長袖シャツ＜薄手＞
-                .addScanCategory("31500") // スウェットシャツ＆パーカ
+                //.addScanCategory("32300") // 長袖シャツ＜厚手＞
+                //.addScanCategory("32200") // 長袖シャツ＜中厚手＞
+                //.addScanCategory("32100") // 長袖シャツ＜薄手＞
+                //.addScanCategory("31500") // スウェットシャツ＆パーカ
                 //.addScanCategory("31400") // 作務衣
                 //.addScanCategory("31200") // 3半袖シャツ＜中厚手＞
                 

@@ -25,7 +25,6 @@ public class MontbellDownBaobeiCreator  {
 	}
 	public void process() throws IOException{
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		File outputFile = new File(MontBellUtil.rootPathName, 
 				String.format("down_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 

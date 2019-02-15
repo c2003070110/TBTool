@@ -12,19 +12,22 @@ import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 
-public class MontbellHardShellBaobeiCreator  {
+/**
+ * 高山 gao han deng shan
+ *
+ */
+public class MontbellAlpineBaobeiCreator  {
 
 	public static void main(String[] args) throws ClientProtocolException,
 			IOException {
-		new MontbellHardShellBaobeiCreator().process();
+		new MontbellAlpineBaobeiCreator().process();
 
 		System.exit(0);
 	}
 	public void process() throws IOException{
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("hardshell_baobei_%s.csv",
+				String.format("alpine_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
@@ -34,7 +37,7 @@ public class MontbellHardShellBaobeiCreator  {
 		//
 		double currencyRate = 0.060 + 0.005;
 		double benefitRate = 0.05;
-		MontbellHardShellBaobeiProducer db = new MontbellHardShellBaobeiProducer();
+		MontbellAlpineBaobeiProducer db = new MontbellAlpineBaobeiProducer();
 		db
                 .addScanCategory("142000") // ハードシェル>ジャケット（保温材入り）
                 .addScanCategory("141000") // ハードシェル>ジャケット（保温材なし）

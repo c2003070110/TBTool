@@ -4,7 +4,7 @@ import com.walk_nie.taobao.montBell.clothes.MontbellCapHatBaobeiCreator;
 import com.walk_nie.taobao.montBell.clothes.MontbellDownBaobeiCreator;
 import com.walk_nie.taobao.montBell.clothes.MontbellFreeceBaobeiCreator;
 import com.walk_nie.taobao.montBell.clothes.MontbellGlovesBaobeiCreator;
-import com.walk_nie.taobao.montBell.clothes.MontbellHardShellBaobeiCreator;
+import com.walk_nie.taobao.montBell.clothes.MontbellAlpineBaobeiCreator;
 import com.walk_nie.taobao.montBell.clothes.MontbellRainShellBaobeiCreator;
 import com.walk_nie.taobao.montBell.clothes.MontbellSoftShellBaobeiCreator;
 import com.walk_nie.taobao.montBell.clothes.MontbellTShirtBaobeiCreator;
@@ -36,7 +36,7 @@ public class Montbell18SpringSummer {
 		new MontbellDownBaobeiCreator().process();
 		new MontbellFreeceBaobeiCreator().process();
 		new MontbellGlovesBaobeiCreator().process();
-		new MontbellHardShellBaobeiCreator().process();
+		new MontbellAlpineBaobeiCreator().process();
 		new MontbellRainShellBaobeiCreator().process();
 		new MontbellSoftShellBaobeiCreator().process();
 		new MontbellUnderWareBaobeiCreator().process();

@@ -27,15 +27,9 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		// taobaoColors.add("-1004");taobaoColors.add("-1005");taobaoColors.add("-1006");
 		// taobaoColors.add("-1007");taobaoColors.add("-1008");taobaoColors.add("-1009");
 		// taobaoColors.add("-1010");taobaoColors.add("-1011");taobaoColors.add("-1012");
-		taobaoColors.add("3741675");
-		taobaoColors.add("3574624");
-		taobaoColors.add("3579132");
-		taobaoColors.add("3614432");
-		taobaoColors.add("28635738");
-		taobaoColors.add("28635737");
-		taobaoColors.add("7928402");
-		taobaoColors.add("	");
-		taobaoColors.add("366446425");
+		taobaoColors.add("3741675");taobaoColors.add("3574624");taobaoColors.add("3579132");
+		taobaoColors.add("3614432");taobaoColors.add("28635738");taobaoColors.add("28635737");
+		taobaoColors.add("7928402");taobaoColors.add("	");taobaoColors.add("366446425");
 	}
 	// private List<String> taobaoSizes = Lists.newArrayList();
 	// {
@@ -46,12 +40,8 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 	private List<String> taobaoSizes = Lists.newArrayList();
 	{
 		// XS,S,M,L,XL,XXL,
-		taobaoSizes.add("28313");
-		taobaoSizes.add("28314");
-		taobaoSizes.add("28315");
-		taobaoSizes.add("28316");
-		taobaoSizes.add("28317");
-		taobaoSizes.add("28318");
+		taobaoSizes.add("28313");taobaoSizes.add("28314");taobaoSizes.add("28315");
+		taobaoSizes.add("28316");taobaoSizes.add("28317");taobaoSizes.add("28318");
 		taobaoSizes.add("3727387");
 	}
 
@@ -336,10 +326,10 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
         detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         
         // 宝贝描述
-        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
 
         // 尺寸描述
-        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
         
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));

@@ -110,10 +110,10 @@ public class MontBellUtil {
         return detailSB.toString();
     }
 
-	public static String composeSizeTipMiaoshu(List<String> sizeTipPics) {
+	public static String composeSizeTipMiaoshu(GoodsObject item) {
 
 		StringBuffer detailSB = new StringBuffer();
-		if (!sizeTipPics.isEmpty()) {
+		if (!item.sizeTipPics.isEmpty()) {
 			
             detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">尺寸参考</h3>");
             detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
@@ -123,7 +123,7 @@ public class MontBellUtil {
             //detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得奖励:全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
             //detailSB.append("<p style=\"text-indent:2.0em;\">晒图包含了 <span style=\";color:red;font-weight:bold\">自己身材，衣服size，合适否</span>  100%奖励！！！</p>");
             //detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">请踊跃参与！！</span></p>");
-            for(String sizeTip:sizeTipPics){
+            for(String sizeTip:item.sizeTipPics){
                 detailSB.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + sizeTip + "\"/></p>");    
             }
             
@@ -131,13 +131,19 @@ public class MontBellUtil {
 		}
 		return detailSB.toString();
 	}
-	public static String composeProductInfoMiaoshu(String productInfo) {
+	public static String composeProductInfoMiaoshu(GoodsObject item) {
 		StringBuffer detailSB = new StringBuffer();
-		if (!StringUtil.isBlank(productInfo)) {
+		if (!item.detailScreenShotPicFile.isEmpty() || !item.specialPageScreenShotPicFile.isEmpty()) {
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
-					+ productInfo + "\"/></p>");
+            for(String pic:item.detailScreenShotPicFile){
+				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
+						+ pic + "\"/></p>");
+            }
+            for(String pic:item.specialPageScreenShotPicFile){
+				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
+						+ pic + "\"/></p>");
+            }
 			detailSB.append("</div>");
 		}
 		return detailSB.toString();

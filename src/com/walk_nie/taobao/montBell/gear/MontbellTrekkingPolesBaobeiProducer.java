@@ -257,10 +257,10 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         
         // 宝贝描述
-        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
 
         // 尺寸描述
-        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
         
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));

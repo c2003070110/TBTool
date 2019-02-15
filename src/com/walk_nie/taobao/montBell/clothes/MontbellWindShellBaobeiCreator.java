@@ -23,7 +23,7 @@ public class MontbellWindShellBaobeiCreator  {
 	public void process() throws IOException{
 
 		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("synthetic_windshell_%s.csv",
+				String.format("windshell_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";
@@ -32,7 +32,7 @@ public class MontbellWindShellBaobeiCreator  {
 				.readInPublishedBaobei(file);
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.05;
+		double benefitRate = 0.08;
 		MontbellWindShellBaobeiProducer db = new MontbellWindShellBaobeiProducer();
 		db
                 .addScanCategory("11500") // 超軽量ウインドブレーカー

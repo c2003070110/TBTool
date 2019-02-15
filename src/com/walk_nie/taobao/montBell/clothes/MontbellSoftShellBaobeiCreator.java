@@ -22,9 +22,8 @@ public class MontbellSoftShellBaobeiCreator  {
 	}
 	public void process() throws IOException{
 
-		//String miaoshuTemplateFile = "in/montBell_miaoshu_template.html";
 		File outputFile = new File(MontBellUtil.rootPathName, 
-				String.format("hardshell_softshell_%s.csv",
+				String.format("softshell_baobei_%s.csv",
 						DateUtils.formatDate(Calendar.getInstance().getTime(), 
 								"yyyy_MM_dd_HH_mm_ss")));
 		String publishedBaobeiFile = "c:/temp/montbell-all.csv";

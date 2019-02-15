@@ -89,7 +89,7 @@ public class GoodDetailAnalizer {
 		return str;
 	}
 
-	private List<String> getDownCategorys() {
+	protected List<String> getDownCategorys() {
 		List<String> categoryIds = Lists.newArrayList();
 		categoryIds.add("131000"); // ダウンジャケット
 		categoryIds.add("137000"); // ダウンジャケット（軽量シリーズ）
@@ -115,7 +115,7 @@ public class GoodDetailAnalizer {
 		return categoryIds;
 	}
 
-	private List<String> getShellCategorys() {
+	protected List<String> getShellCategorys() {
 		List<String> categoryIds = Lists.newArrayList();
 		categoryIds.add("142000"); // ハードシェル>ジャケット（保温材入り）
         categoryIds.add("141000"); // ハードシェル>ジャケット（保温材なし）
@@ -150,7 +150,7 @@ public class GoodDetailAnalizer {
 		return categoryIds;
 	}
 
-	private List<String> getTShirtCategorys() {
+	protected List<String> getTShirtCategorys() {
 		List<String> categoryIds = Lists.newArrayList();
 		categoryIds.add("46500"); // 天然素材<メリノウールプラス>
 		categoryIds.add("45550"); // 機能素材<ウイックロンZEOサーマル>

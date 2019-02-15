@@ -18,7 +18,7 @@ import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 
-public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
+public class MontbellAlpineBaobeiProducer extends BaseBaobeiProducer {
 
 	private List<String> scanCategoryIds = Lists.newArrayList();
 	private List<String> taobaoColors = Lists.newArrayList();
@@ -423,7 +423,7 @@ public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
 		obj.input_custom_cpv = inputCustomCpv;
 	}
 
-	public MontbellHardShellBaobeiProducer addScanCategory(String scanCategoryId) {
+	public MontbellAlpineBaobeiProducer addScanCategory(String scanCategoryId) {
 
 		this.scanCategoryIds.add(scanCategoryId);
 		return this;
@@ -442,10 +442,10 @@ public class MontbellHardShellBaobeiProducer extends BaseBaobeiProducer {
         detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         
         // 宝贝描述
-        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item.detailScreenShotPicFile));
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
 
         // 尺寸描述
-        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
         
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));

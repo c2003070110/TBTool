@@ -1,6 +1,5 @@
 package com.walk_nie.taobao.montBell;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
@@ -22,7 +21,9 @@ public class GoodsObject {
 	public String brand = "";
 	public int weight = 0;
     public int weightExtra = 0;
-	public String detailScreenShotPicFile = "";
+	//public String detailScreenShotPicFile = "";
+	public List<String> detailScreenShotPicFile = Lists.newArrayList();
+	public List<String> specialPageScreenShotPicFile = Lists.newArrayList();
 	public List<String> sizeTipPics = Lists.newArrayList();
 	public List<String> sizeList = Lists.newArrayList();
 	public List<String> colorList = Lists.newArrayList();

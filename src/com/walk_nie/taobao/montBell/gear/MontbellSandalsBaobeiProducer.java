@@ -252,7 +252,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
         // 包邮
         detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
         // 尺寸描述
-        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item.sizeTipPics));
+        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
         
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
