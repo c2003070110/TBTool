@@ -16,6 +16,7 @@ import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
+import com.walk_nie.util.NieUtil;
 
 public class AmazonGoodsPageParser extends BaseBaobeiParser {
 
@@ -62,7 +63,8 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		parseCenterCol(topLvlWE,obj);
 		
 		// screen shot description
-		parseProductDescription(topLvlWE,obj);
+		// TODO
+		//parseProductDescription(topLvlWE,obj);
 		
 		// video picture
 		parseLeftCol(topLvlWE,obj);
@@ -102,9 +104,11 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 				}
 					
 				wet.click();
+				NieUtil.mySleepBySecond(1);
 				WebElement ivTopWET = webDriver.findElement(By.cssSelector("div[id=\"iv-tab-view-container\"]"));
 				WebElement ivTabTopWET = ivTopWET.findElement(By.cssSelector("div[id=\"ivImagesTab\"]"));
-				WebElement aWE = ivTabTopWET.findElement(By.cssSelector("div[id=\"ivMain\"]")).findElement(By.tagName("img"));
+				WebElement ivMWET = ivTabTopWET.findElement(By.cssSelector("div[id=\"ivMain\"]"));
+				WebElement aWE = ivMWET.findElement(By.tagName("img"));
 				obj.googsPicUrlList.add(aWE.getAttribute("src"));
 			}
 		}
@@ -139,7 +143,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		WebElement centerWE = topLvlWE.findElement(By.cssSelector("div[id=\"centerCol\"]"));
 		
 		obj.titleOrg = centerWE.findElement(By.cssSelector("span[id=\"productTitle\"]")).getText();
-		
+		obj.titleJP = obj.titleOrg ;
 		obj.priceOrg = centerWE.findElement(By.cssSelector("span[id=\"priceblock_ourprice\"]")).getText();
 		String price = obj.priceOrg.replace("税", "");
 		price = price.replaceAll("￥", "");
@@ -156,7 +160,8 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		} catch (Exception ignore) {
 
 		}
-		snapShotDetailDisp(obj, 1, featurebulletsWE);
+		// TODO
+		//snapShotDetailDisp(obj, 1, featurebulletsWE);
 	}
 	
 	private void snapShotDetailDisp(AmazonGoodsObject obj, File screenshot, int pos, WebElement we) throws IOException {
@@ -203,11 +208,15 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 				obj.weightShipment = toWeight(tdWES.get(1).getText());
 			}
 		}
-		if (obj.weightItem == 0) {
-			obj.weightItem = obj.weightShipment;
-		}
-		if (obj.weightShipment == 0) {
+		if (obj.weightItem != 0 && obj.weightShipment != 0) {
+			// nothing.
+		}else if (obj.weightItem == 0 && obj.weightShipment != 0) {
+			obj.weightItem = 200;
+		} else if (obj.weightItem != 0 && obj.weightShipment == 0) {
 			obj.weightShipment = obj.weightItem;
+		}else {
+			obj.weightShipment = 0;
+			obj.weightItem = 0;
 		}
 	}
 
@@ -229,9 +238,9 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 		if(str.endsWith("kg")){
 			b = 1000;
 		}
-		str = str.replace("g", "");
 		str = str.replace("kg", "");
-		return Integer.parseInt(str) * b;
+		str = str.replace("g", "");
+		return (int)Double.parseDouble(str) * b;
 	}
 
 	private WebDriver webDriver = null;

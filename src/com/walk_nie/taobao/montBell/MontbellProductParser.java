@@ -653,6 +653,8 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		String price = goodsObj.priceOrg.replace("価格 ¥", "");
 		price = price.replace(" +税", "");
 		price = price.replace("アウトレット", "");
+		price = price.replace("価格", "");
+		price = price.replace("¥", "");
 		price = price.replace(",", "");
 		if (price.indexOf("～") > 0) {
 			price = price.substring(price.indexOf("～") + 1);

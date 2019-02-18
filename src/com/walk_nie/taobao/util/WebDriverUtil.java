@@ -39,7 +39,7 @@ public class WebDriverUtil  {
 
     private static WebDriver driver = null;
     public static String watermark_common = "in/watermark0.png";
-    public static String watermark_montbell = "in/watermark.png";
+    public static String watermark_montbell = "in/watermark4.png";
 
 	public static WebDriver getFirefoxWebDriver() {
 		System.setProperty("webdriver.gecko.driver", firefoxDriverPath);

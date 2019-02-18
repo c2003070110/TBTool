@@ -98,35 +98,35 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
     }
 
 	private void downloadPicture(AmazonGoodsObject goods, String outFilePath) {
-		if (goods.stockList.isEmpty()) {
+		if (!goods.stockList.isEmpty()) {
 			for (StockObject st : goods.stockList) {
 				String picName = goods.asin + "-color_" + st.colorName;
 				if(goods.colorNameList.contains(picName)){
 					continue;
 				}
-				String fileExtends = getFileExtends(st.colorPicUrl);
 				goods.colorNameList.add(picName);
 				try {
-					Files.copy(new File(st.colorPicUrl), new File(outFilePath, picName + "." + fileExtends));
+					TaobaoUtil.downloadPicture(outFilePath, st.colorPicUrl, picName);
 					st.colorPicLocalName = picName;
 				} catch (IOException e) {
 				}
 			}
 		}
-		if (goods.googsPicUrlList.isEmpty()) {
+		if (!goods.googsPicUrlList.isEmpty()) {
 			int i = 1;
 			for (String str : goods.googsPicUrlList) {
 				String picName = goods.asin + "-Other_" + i;
-				String fileExtends = getFileExtends(str);
 				i++;
 				try {
-					Files.copy(new File(str), new File(outFilePath, picName + "." + fileExtends));
+					TaobaoUtil.downloadPicture(outFilePath, str, picName);
+					//Files.copy(new File(str), new File(outFilePath, picName + "." + fileExtends));
 					goods.googsPicLocalNameList.add(picName);
 				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
-		if (goods.googsVideoUrlList.isEmpty()) {
+		if (!goods.googsVideoUrlList.isEmpty()) {
 			int i = 1;
 			for (String str : goods.googsVideoUrlList) {
 				String fileExtends = getFileExtends(str);
@@ -136,6 +136,7 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
 					Files.copy(new File(str), new File(outFilePath, picName + "." + fileExtends));
 					goods.googsVideoLocalNameList.add(picName);
 				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -218,6 +219,9 @@ public class AmazonSingleBaobeiProducer extends BaseBaobeiProducer{
         String title = "";
   
         title += "日本直邮  ";
+        if(item.weightShipment ==0){
+            title += "[W] ";
+        }
         if(!item.googsVideoUrlList.isEmpty()){
             title += "[V] ";
         }
