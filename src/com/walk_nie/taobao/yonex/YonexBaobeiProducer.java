@@ -250,6 +250,7 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 				break;
 			}
 		}
+		// TODO 包邮 -> price + emsFee
 		obj.price = "\"" + str + "\"";
 	}
 
@@ -286,7 +287,7 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 		StringBuffer detailSB = new StringBuffer();
 
 		// 宝贝描述
-		if (!"".equals(item.detailScreenShotPicFile)) {
+		if (!item.detailScreenShotPicFiles.isEmpty()) {
 			detailSB.append(composeDetailScreenShot(item));
 		}
 		// 着装图片
@@ -319,8 +320,10 @@ public class YonexBaobeiProducer extends BaseBaobeiProducer {
 				"<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 		detailSB.append(
 				"<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-		detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
-				+ item.detailScreenShotPicFile + "\"/></p>");
+		for (String str : item.detailScreenShotPicFiles) {
+			detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + str
+					+ "\"/></p>");
+		}
 		detailSB.append("</div>");
 		return detailSB.toString();
 	}

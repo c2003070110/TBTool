@@ -29,7 +29,7 @@ public class GoodsObject {
 	public String producePlace;
 	public String producePlaceOrg;
 	
-	public String detailScreenShotPicFile = "";
+	public List<String> detailScreenShotPicFiles = Lists.newArrayList();
 	
 	public List<String> sizeList = Lists.newArrayList();
 	public List<String> colorList = Lists.newArrayList();

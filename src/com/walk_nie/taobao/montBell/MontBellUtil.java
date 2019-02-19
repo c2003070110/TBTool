@@ -29,7 +29,7 @@ public class MontBellUtil {
 	public static String spececialCateId ="1402017494";//2018 autumn&winter!
 	public static String spececialProductId ="182";//2018 autumn&winter!
 
-    public static String rootPathName = NieConfig.getConfig("montbell.out.root.folder") ;
+    public static String rootPathName = NieConfig.getConfig("montbell.work.root.folder");
     public static String sizeTipFileName = "sizeTipList.txt";
     
     public static String urlPrefix = "http://webshop.montbell.jp";

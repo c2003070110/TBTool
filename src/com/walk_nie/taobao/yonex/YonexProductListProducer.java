@@ -11,14 +11,14 @@ import org.apache.commons.io.FileUtils;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 
 public class YonexProductListProducer {
-	// 0:all;1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
-	private int categoryType = 0;    
 
 	public static void main(String[] args) {
-		new YonexProductListProducer().process();
+		YonexProductListProducer producer = new YonexProductListProducer();
+		// 0:all;1:badminton racquets;2:badminton shoes;3:tennis racquets;4:tennis shoes;
+		producer.process(0);
 	}
 	
-	public void process() {
+	public void process(int categoryType) {
 		BufferedWriter priceBw = null;
 		try {
 			System.out.println("-------- START --------");

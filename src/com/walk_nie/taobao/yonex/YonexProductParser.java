@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import com.google.common.collect.Lists;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.taobao.util.WebDriverSingleton;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class YonexProductParser extends BaseBaobeiParser {
@@ -128,16 +129,17 @@ public class YonexProductParser extends BaseBaobeiParser {
 	}
 	
 	private void screenshotProductDetailDesp(GoodsObject obj) throws IOException {
+		// TODO 
 		String fileNameFmt = "detail_%s.png";
 		String fileName = String.format(fileNameFmt, obj.kataban);
 		File despFile = new File(YonexUtil.getPictureSavePath(obj), fileName);
 		if (!despFile.exists()) {
-			WebDriver webDriver = WebDriverUtil.getWebDriver(obj.productUrl);
+			WebDriver webDriver = WebDriverSingleton.getWebDriverForFullScreenShot(obj.productUrl);
 			List<WebElement> ele = webDriver.findElements(By.className("specArea"));
 
 			if (!ele.isEmpty()) {
 				WebDriverUtil.screenShotV2(webDriver, ele, despFile.getAbsolutePath(), null);
-				obj.detailScreenShotPicFile = despFile.getAbsolutePath();
+				obj.detailScreenShotPicFiles.add( despFile.getAbsolutePath());
 			}
 		}
 	}

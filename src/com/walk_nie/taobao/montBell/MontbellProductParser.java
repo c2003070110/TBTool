@@ -88,6 +88,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
 		scanSingleItemForSize(goodsObj, mainRightEle);
 		scanSingleItemForColor(goodsObj, mainRightEle);
+		scanSingleItemForBelongCategories(goodsObj, doc);
 		scanSingleItemForDetailInfo(goodsObj, doc);
 
 		screenshotProductDetailDesp(goodsObj);
@@ -96,6 +97,36 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		Element mainLeftEle = doc.select("div.leftCont").get(0);
 
 		processProductDressOnPicture(goodsObj, mainLeftEle);
+	}
+
+	private void scanSingleItemForBelongCategories(GoodsObject goodsObj, Document doc) {
+		Elements els = doc.select("div#category").select("a");
+		String key ="category=";
+		for (int j = 0; j < els.size(); j++) {
+			String href  = els.get(j).attr("href");
+			if(href.indexOf(key) == -1){
+				continue;
+			}
+			String str = href.substring(href.indexOf(key) + key.length());
+			int f = str.indexOf("&");
+			int l = f != -1 ? f : str.length();
+			goodsObj.cateogryIdList.add(str.substring(0, l));
+		}
+		
+		// category detail description picture
+		String parentFolder = MontBellUtil.rootPathName + "/categoryPicture";
+		for(String cateId:goodsObj.cateogryIdList){
+			File f = new File(parentFolder,cateId +".jpg");
+			if(f.exists()){
+				goodsObj.specialPageScreenShotPicFile.add(f.getAbsolutePath());
+				continue;
+			}
+			f = new File(parentFolder,cateId +".png");
+			if(f.exists()){
+				goodsObj.specialPageScreenShotPicFile.add(f.getAbsolutePath());
+				continue;
+			}
+		}
 	}
 
 	private void scanSingleItemForDetailInfo(GoodsObject goodsObj, Document doc) {
@@ -506,6 +537,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		for (Element goodsElement : goods) {
 			GoodsObject goodsObj = new GoodsObject();
 			goodsObj.cateogryObj = category;
+			goodsObj.cateogryIdList.add(category.categoryId);
 
 			Elements ttl = goodsElement.select(".ttlType03");
 			goodsObj.titleOrg = ttl.text();

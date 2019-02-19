@@ -1,10 +1,11 @@
 package com.walk_nie.taobao.yonex;
 
+import com.walk_nie.util.NieConfig;
 
 public class YonexUtil {
-	public static String productListFile = "res/YonexProductList.txt";
-	public static String priceListFile = "res/YonexCNYPrice.txt";
-    public static String rootPathName = "out/Yonex/";
+    public static String rootPathName = NieConfig.getConfig("yonex.work.root.folder") ;
+	public static String productListFile = rootPathName  + "/YonexProductList.txt";
+	public static String priceListFile = rootPathName + "/YonexCNYPrice.txt";
     public static String urlPrefix = "http://www.yonex.co.jp";
 
 

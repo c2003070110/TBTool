@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 
 import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
+import com.walk_nie.taobao.util.WebDriverSingleton;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -116,7 +117,7 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 
 	private void parseProductDescription(WebElement topLvlWE, AmazonGoodsObject obj) {
 		
-		getWebDriverForFullScreenShot(obj.url);
+		WebDriver webDriverForFullScreenShot = WebDriverSingleton.getWebDriverForFullScreenShot(obj.url);
 		File screenshot = ((TakesScreenshot) webDriverForFullScreenShot).getScreenshotAs(OutputType.FILE);
 		topLvlWE = webDriverForFullScreenShot.findElement(By.cssSelector("div[id=\"dp-container\"]"));
 		
@@ -270,35 +271,6 @@ public class AmazonGoodsPageParser extends BaseBaobeiParser {
 
 	private WebDriver openWebDriver() {
 		return WebDriverUtil.getFirefoxWebDriver();
-	}
-	
-	private WebDriver webDriverForFullScreenShot = null;
-	private WebDriver getWebDriverForFullScreenShot(String url) {
-		if(!testWebDriverForFullScreenShot()){
-			webDriverForFullScreenShot = openWebDriverForFullScreenShot();
-		}
-		webDriverForFullScreenShot.get(url);
-		return webDriverForFullScreenShot;
-	}
-
-	private boolean testWebDriverForFullScreenShot() {
-		if(webDriverForFullScreenShot == null){
-			return false;
-		}
-		try{
-			webDriverForFullScreenShot.get("https://www.amazon.co.jp");
-		}catch(Exception e){
-			try{
-				webDriverForFullScreenShot.close();
-			}catch(Exception ex){
-			}
-			return false;
-		}
-		return true;
-	}
-
-	private WebDriver openWebDriverForFullScreenShot() {
-		return WebDriverUtil.getIEWebDriver();
 	}
 
 }

@@ -8,6 +8,7 @@ import com.walk_nie.taobao.object.StockObject;
 
 public class GoodsObject {
 	public CategoryObject cateogryObj = new CategoryObject();
+	public List<String> cateogryIdList = Lists.newArrayList();
 	public String titleOrg = "";
     public String titleJP = "";
     public String titleCN = "";
