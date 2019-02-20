@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -88,7 +87,7 @@ public class MangazenkanProductParser {
 		return goodsList;
 	}
 
-	private List<MangazenkanGoodsObject> scanItemByRankNow(String url) throws ClientProtocolException, IOException {
+	private List<MangazenkanGoodsObject> scanItemByRankNow(String url) throws  IOException {
 		List<MangazenkanGoodsObject> goodsList = new ArrayList<MangazenkanGoodsObject>();
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
 		Elements itemEls = doc.select("div#content").select("li").select("a");
@@ -103,7 +102,7 @@ public class MangazenkanProductParser {
 		return goodsList;
 	}
 
-	private List<MangazenkanGoodsObject> scanItemByMediarize(String url) throws ClientProtocolException, IOException {
+	private List<MangazenkanGoodsObject> scanItemByMediarize(String url) throws  IOException {
 		List<MangazenkanGoodsObject> goodsList = new ArrayList<MangazenkanGoodsObject>();
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
 		Elements itemEls = doc.select("table.book-cover-grid").select("td").select("a");
@@ -131,7 +130,7 @@ public class MangazenkanProductParser {
 		return goodsList;
 	}
 
-	protected MangazenkanGoodsObject parseBook(String href) throws ClientProtocolException, IOException {
+	protected MangazenkanGoodsObject parseBook(String href) throws  IOException {
 		String productId = href.substring(href.lastIndexOf("/"));
 		if (productId.lastIndexOf(".") < 0) {
 			return null;

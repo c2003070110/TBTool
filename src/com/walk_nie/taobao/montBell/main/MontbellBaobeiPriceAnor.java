@@ -8,7 +8,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
@@ -24,7 +24,7 @@ import com.walk_nie.util.NieUtil;
 public class MontbellBaobeiPriceAnor {
 	private static String taobaoUrl = "https://s.taobao.com/search?imgfile=&commend=all&ssid=s5-e&search_type=item&sourceId=tb.index&ie=utf8&q=%s";
 
-	public static void main(String[] args) throws ClientProtocolException,
+	public static void main(String[] args) throws 
 			IOException {
 
 		String outputPath = "out/montBell_price";
@@ -75,7 +75,7 @@ public class MontbellBaobeiPriceAnor {
 	}
 
 	public static void screenShot(WebDriver driver, List<WebElement> elements,
-			String saveTo) throws ClientProtocolException, IOException {
+			String saveTo) throws  IOException {
 
 		// Get entire page screenshot
 		File screenshot = ((TakesScreenshot) driver)

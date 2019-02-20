@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -33,7 +33,7 @@ public class MontbellSizeGetor  {
 	private static Map<String,String> sizePictureMap = Maps.newHashMap();
 	private static List<String> sizePictureList = Lists.newArrayList();
 
-	public static void main(String[] args) throws ClientProtocolException,
+	public static void main(String[] args) throws 
 			IOException {
 
 //		MontbellProductParser parser = new MontbellProductParser();
@@ -46,7 +46,7 @@ public class MontbellSizeGetor  {
 //		downloadSizePicture();
 		screenShot();
 	}
-	protected static void screenShot() throws ClientProtocolException, IOException {
+	protected static void screenShot() throws  IOException {
 
 		//FirefoxProfile profile = new FirefoxProfile(new File("C:/Users/niehp/AppData/Roaming/Mozilla/Firefox/Profiles/nu29zmti.default"));
 		WebDriver driver = new FirefoxDriver();
@@ -81,7 +81,7 @@ public class MontbellSizeGetor  {
 		FileUtils.copyFile(screenshot, new File("c:\\temp\\GoogleLogo_screenshot.png"));
 	}
 
-	protected static void downloadSizePicture() throws ClientProtocolException, IOException {
+	protected static void downloadSizePicture() throws  IOException {
 
 		int i = 0;
 		for (String picSrc : sizePictureList) {
@@ -93,7 +93,7 @@ public class MontbellSizeGetor  {
 		
 	}
 
-	protected static void scanSize(List<GoodsObject> goodsList) throws ClientProtocolException, IOException {
+	protected static void scanSize(List<GoodsObject> goodsList) throws  IOException {
 		for (GoodsObject goods : goodsList) {
 			String url = MontBellUtil.productUrlPrefix  + goods.productId;
 			Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
@@ -116,7 +116,7 @@ public class MontbellSizeGetor  {
 	}
 
 	protected static void scanItem(List<GoodsObject> goodsList,
-			CategoryObject category) throws ClientProtocolException, IOException {
+			CategoryObject category) throws  IOException {
 		String cateogryUrl = MontBellUtil.categoryUrlPrefix + category.categoryId;
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
 		Elements goods = doc.select("div.unit");

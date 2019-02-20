@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.util.NieConfig;
@@ -16,7 +15,7 @@ public class EdwinManBaobeiCreator  {
 	double currencyRate = 0.061 + 0.005;
 	double benefitRate = 0.05;
 
-	public static void main(String[] args) throws ClientProtocolException,
+	public static void main(String[] args) throws 
 			IOException {
 		EdwinManBaobeiCreator creator = new EdwinManBaobeiCreator();
 		//creator.processEdwinMan();

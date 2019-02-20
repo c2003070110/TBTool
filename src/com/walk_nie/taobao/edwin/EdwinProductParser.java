@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -318,8 +317,6 @@ public class EdwinProductParser extends BaseBaobeiParser {
 				WebDriverUtil.screenShotV2(webDriver, toPicElements,
 						despFile.getAbsolutePath(),
 						WebDriverUtil.watermark_common);
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

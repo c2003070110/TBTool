@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -181,14 +180,14 @@ public class WebDriverUtil  {
 		FileUtils.copyFile(screenshot, new File(saveTo));
 	}
 
-    public static void screenShot(WebDriver driver,String saveTo) throws ClientProtocolException, IOException {
+    public static void screenShot(WebDriver driver,String saveTo) throws IOException {
            
         //Get entire page screenshot
         File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(screenshot, new File(saveTo));
     }
 
-    public static void screenShot(WebDriver driver,List<WebElement> elements,String saveTo) throws ClientProtocolException, IOException {
+    public static void screenShot(WebDriver driver,List<WebElement> elements,String saveTo) throws IOException {
            
         //Get entire page screenshot
         File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);

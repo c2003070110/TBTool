@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,7 +22,7 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 public class EarphoneBaobeiParser extends KakakuBaobeiParser {
     String rootPathName = "out/kakaku/";
 
-    protected void parseItemSpec(Document doc, String itemUrl, KakakuObject obj) throws ClientProtocolException, IOException {
+    protected void parseItemSpec(Document doc, String itemUrl, KakakuObject obj) throws IOException {
         obj.spec  = new SpecObject();
         
         super.parseItemBasicSpec(doc,  obj);
@@ -44,7 +43,7 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
     }
 
     @Override
-    protected void parseMakerSite(KakakuObject kakakuObj) throws ClientProtocolException, IOException {
+    protected void parseMakerSite(KakakuObject kakakuObj) throws IOException {
         
         if (StringUtil.isBlank(kakakuObj.spec.productInfoUrl)
                 && StringUtil.isBlank(kakakuObj.spec.specInfoUrl)) {
@@ -65,7 +64,7 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
         }
     }
 
-    private void parseMakerForDenon(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+    private void parseMakerForDenon(KakakuObject kakakuObj, String specUrl) throws IOException {
        String fileNameFmt = "detail_%s.png";
         String fileName = String.format(fileNameFmt, kakakuObj.id);
         File despFile = new File(rootPathName, fileName);
@@ -84,7 +83,7 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
     }
 
 	private void parseMakerForYamaha(KakakuObject kakakuObj, String specUrl)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		String fileNameFmt = "detail_%s_%d.png";
 		int i = 0;
 		String fileName = String.format(fileNameFmt, kakakuObj.id, i);
@@ -120,7 +119,7 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
 		}
 	}
 
-    private void parseMakerForPioneer(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+    private void parseMakerForPioneer(KakakuObject kakakuObj, String specUrl) throws  IOException {
         String fileNameFmt = "detail_%s.png";
         String fileName = String.format(fileNameFmt, kakakuObj.id);
         File despFile = new File(rootPathName, fileName);
@@ -140,7 +139,7 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
 		}
     }
 
-    private void parseMakerForJVC(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+    private void parseMakerForJVC(KakakuObject kakakuObj, String specUrl) throws IOException {
         String fileNameFmt = "detail_%s.png";
         String fileName = String.format(fileNameFmt, kakakuObj.id);
         File despFile = new File(rootPathName, fileName);
@@ -156,7 +155,7 @@ public class EarphoneBaobeiParser extends KakakuBaobeiParser {
 		}
     }
 
-    private void parseMakerForAudioTechnica(KakakuObject kakakuObj, String specUrl) throws ClientProtocolException, IOException {
+    private void parseMakerForAudioTechnica(KakakuObject kakakuObj, String specUrl) throws IOException {
 
         Document doc = TaobaoUtil.urlToDocumentByUTF8(specUrl);
         Elements picSelect = doc.select("table#photo_selecter").select("img");

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -53,7 +52,7 @@ public class KakakuUtil {
 		
 	}
 
-	public static void parseItemPrice(Document doc, KakakuObject obj) throws ClientProtocolException, IOException {
+	public static void parseItemPrice(Document doc, KakakuObject obj) throws  IOException {
 
 		double minPrice = beatufyPrice(doc.select("#priceBox")
 				.select("#minPrice").select("a").text());
@@ -217,7 +216,7 @@ public class KakakuUtil {
 	}
 
 	public static Document urlToDocumentKakaku(String url)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		return TaobaoUtil.urlToDocument(url, "shift_jis");
 	}
 

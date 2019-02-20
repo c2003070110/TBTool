@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
+
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -186,7 +186,7 @@ public class RightonParser extends BaseBaobeiParser{
 	}
 	
 	private void downloadAndSaveSizeTable(GoodsObject goodsObj, String picUrl)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		String tmp = picUrl.substring(picUrl.lastIndexOf("/"));
 		String pictureName = "sizeTable_" + tmp;
 

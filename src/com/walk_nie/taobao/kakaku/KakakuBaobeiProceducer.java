@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
-
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
@@ -83,7 +81,7 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
     }
 
     private void downloadPicture(KakakuObject obj, String picFolder)
-            throws ClientProtocolException, IOException {
+            throws  IOException {
         int idx = 0;
         for (String picUrl : obj.pictureUrlList) {
             TaobaoUtil.downloadPicture(picFolder, picUrl, obj.pictureNameList.get(idx));
@@ -203,6 +201,6 @@ public abstract class KakakuBaobeiProceducer extends BaseBaobeiProducer {
     // throws IOException;
     //
     // protected abstract void parsePictureFromMaker(KakakuObject obj)
-    // throws ClientProtocolException, IOException;
+    // throws  IOException;
 
 }

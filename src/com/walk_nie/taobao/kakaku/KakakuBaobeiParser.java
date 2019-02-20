@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -124,7 +123,7 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         return list;
     }
 
-    private KakakuObject parseDetail(KakakuObject objT) throws ClientProtocolException, IOException {
+    private KakakuObject parseDetail(KakakuObject objT) throws  IOException {
         KakakuObject obj = new KakakuObject();
         obj.id = objT.id;
         String itemUrl = KakakuUtil.kakakuUrlPrefix + objT.id;
@@ -179,7 +178,7 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
         }
     }
     protected void parseItemVariation(Document doc, KakakuObject obj)
-            throws ClientProtocolException, IOException {
+            throws  IOException {
 
         Elements variation = doc.select("div").select("#productInfoBox")
                 .select(".variation");
@@ -221,8 +220,8 @@ public abstract class KakakuBaobeiParser  extends BaseBaobeiParser{
     }
 
     protected abstract void parseItemSpec(Document doc, String itemUrl,
-            KakakuObject obj) throws ClientProtocolException, IOException;
+            KakakuObject obj) throws  IOException;
     
     protected abstract boolean isAllowToBaobei(KakakuObject kakakuObj);
-    protected abstract void parseMakerSite(KakakuObject kakakuObj)throws ClientProtocolException, IOException;
+    protected abstract void parseMakerSite(KakakuObject kakakuObj)throws  IOException;
 }

@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -17,8 +17,7 @@ import com.walk_nie.taobao.util.TaobaoUtil;
 
 public class YonexFindJPYPrice  {
 
-	public static void main(String[] args) throws ClientProtocolException,
-			IOException {
+	public static void main(String[] args) throws IOException {
 		
 		String url = "http://search.rakuten.co.jp/search/inshop-mall/%s/-/sid.207677-st.A";
 		String outFmt = "%s\t%s\t%s\t%s\t%s";

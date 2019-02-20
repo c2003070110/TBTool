@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,7 +23,7 @@ public class AsicsShoesParser  extends BaseBaobeiParser{
     
     private String rootPathName = "out/asicsShoes/";
 
-    public List<AsicsShoesObject> parse(List<String> urls) throws ClientProtocolException, IOException{
+    public List<AsicsShoesObject> parse(List<String> urls) throws IOException{
         List<AsicsShoesObject> prodList = Lists.newArrayList();
 
         for (String url : urls) {
@@ -38,7 +37,7 @@ public class AsicsShoesParser  extends BaseBaobeiParser{
         
         return prodList;
     }
-    protected void parseCategory(List<AsicsShoesObject> prodList, String url) throws ClientProtocolException, IOException {
+    protected void parseCategory(List<AsicsShoesObject> prodList, String url) throws IOException {
         Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
         Elements prodEls = doc.select("div.container").select("div.product-list").select("div.gridProduct");
         for(Element rootEl :prodEls){
@@ -54,13 +53,13 @@ public class AsicsShoesParser  extends BaseBaobeiParser{
             prodList.add(prodObj);
         }
     }
-    protected void parseProducts(List<AsicsShoesObject> prodList) throws ClientProtocolException, IOException {
+    protected void parseProducts(List<AsicsShoesObject> prodList) throws IOException {
         for(AsicsShoesObject prod :prodList){
             parseProduct(prod);
         }
     }
     
-    protected void parseProduct(AsicsShoesObject prodObj) throws ClientProtocolException, IOException {
+    protected void parseProduct(AsicsShoesObject prodObj) throws IOException {
         Document doc = TaobaoUtil.urlToDocumentByUTF8(urlPrefix + prodObj.prodUrl);
         Element headerEl = doc.select("div.container").select("div.nm").get(0);
         
@@ -107,7 +106,7 @@ public class AsicsShoesParser  extends BaseBaobeiParser{
         screenshotProductDetailDesp(prodObj);
     }
 
-    protected void screenshotProductDetailDesp(AsicsShoesObject prodObj) throws ClientProtocolException, IOException {
+    protected void screenshotProductDetailDesp(AsicsShoesObject prodObj) throws IOException {
         String fileNameFmt = "detail_%s.png";
         String fileName = String.format(fileNameFmt, prodObj.kataban);
         File despFile = new File(rootPathName, fileName);

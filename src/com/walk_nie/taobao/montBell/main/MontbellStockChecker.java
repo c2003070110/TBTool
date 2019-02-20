@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
+
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
@@ -280,7 +280,7 @@ public class MontbellStockChecker {
 		return stockObjList;
 	}
 
-	private void scanStock(List<StockObject> stockList, String url) throws ClientProtocolException, IOException
+	private void scanStock(List<StockObject> stockList, String url) throws  IOException
 			{
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(url);
 		Element mainRightEle = null;

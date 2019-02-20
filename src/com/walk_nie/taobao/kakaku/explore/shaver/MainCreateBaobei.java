@@ -3,7 +3,6 @@ package com.walk_nie.taobao.kakaku.explore.shaver;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -241,7 +240,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 
 	@Override
 	protected void parseItemSpec(Document doc, String itemUrl, KakakuObject obj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		obj.spec = new SpecObject();
 
 		super.parseItemBasicSpec(doc, obj);
@@ -269,7 +268,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 
 	@Override
 	protected void parsePictureFromMaker(KakakuObject obj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 
 		if (StringUtil.isBlank(obj.spec.productInfoUrl)
 				&& StringUtil.isBlank(obj.spec.specInfoUrl)) {
@@ -302,7 +301,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 
 
 	private String getExtraBaobeiMiaoshuFromPanasonic(KakakuObject item,
-			String specUrl) throws ClientProtocolException, IOException {
+			String specUrl) throws  IOException {
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(specUrl);
 		Elements spec = doc.select("table.specs-table");
 		if(spec.isEmpty()){
@@ -328,7 +327,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 	}
 
 	private void parsePictureFromPhilips(KakakuObject obj, String specUrl)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		Document doc = KakakuUtil.urlToDocumentKakaku(specUrl);
 		Elements picSelect = doc.select("div").select("#ca-container")
 				.select("img");

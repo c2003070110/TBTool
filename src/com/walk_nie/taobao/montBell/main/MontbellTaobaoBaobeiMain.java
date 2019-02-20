@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
+
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
@@ -17,7 +17,7 @@ import com.walk_nie.taobao.util.BaobeiUtil;
 public class MontbellTaobaoBaobeiMain {
 	String publishedBaobeiFile = "C:/temp/montbell-down-20171112.csv";
 
-	public static void main(String[] args) throws ClientProtocolException, IOException {
+	public static void main(String[] args) throws  IOException {
 		new MontbellTaobaoBaobeiMain().process();
 	}
 

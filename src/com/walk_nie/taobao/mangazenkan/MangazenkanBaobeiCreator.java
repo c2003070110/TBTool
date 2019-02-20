@@ -2,13 +2,9 @@ package com.walk_nie.taobao.mangazenkan;
 
 import java.io.IOException;
 
-import org.apache.http.client.ClientProtocolException;
-
-
 public class MangazenkanBaobeiCreator  {
 
-	public static void main(String[] args) throws ClientProtocolException,
-			IOException {
+	public static void main(String[] args) throws IOException {
 
 		String taobeiTemplateFile = "in/manga_baobeiTemplate.csv";
 		String miaoshuTemplateFile = "in/mangazenkan_miaoshu_template.html";

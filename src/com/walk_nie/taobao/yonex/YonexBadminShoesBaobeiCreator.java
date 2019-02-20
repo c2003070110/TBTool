@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-import org.apache.http.client.ClientProtocolException;
+
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.util.NieConfig;
 
 public class YonexBadminShoesBaobeiCreator  {
 
-	public static void main(String[] args) throws ClientProtocolException,
+	public static void main(String[] args) throws 
 			IOException {
 
 		//String taobeiTemplateFile = "in/yonex_badmin_pad_baobeiTemplate.csv";

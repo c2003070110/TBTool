@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.util.NieConfig;
 
 public class AsicsShoesBaobeiCreator  {
 
-	public static void main(String[] args) throws ClientProtocolException,
-			IOException {
+	public static void main(String[] args) throws IOException {
 
 		//String taobeiTemplateFile = "in/asicsShoes_baobeiTemplate.csv";
 		//String miaoshuTemplateFile = "in/asicsShoes_miaoshu_template.html";

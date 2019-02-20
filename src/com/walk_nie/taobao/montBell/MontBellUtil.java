@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
+
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -449,7 +449,7 @@ public class MontBellUtil {
         return categoryList;
     }
 
-    protected void scanCategory() throws ClientProtocolException, IOException {
+    protected void scanCategory() throws  IOException {
         List<String> categoryList = new ArrayList<String>();
         String rootCategoryUrl = "http://webshop.montbell.jp/goods/?c=1";
         categoryList.add("ギア:1");
@@ -463,7 +463,7 @@ public class MontBellUtil {
     }
 
     public static void scanCategory(List<String> categoryList, String parantCategoryUrl)
-            throws ClientProtocolException, IOException {
+            throws  IOException {
         Document doc = TaobaoUtil.urlToDocumentByUTF8(parantCategoryUrl);
         Elements elements03 = doc.select("ul").select("li.level03Off");
         if (!elements03.isEmpty()) {

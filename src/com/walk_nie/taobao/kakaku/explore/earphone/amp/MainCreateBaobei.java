@@ -3,7 +3,6 @@ package com.walk_nie.taobao.kakaku.explore.earphone.amp;
 import java.io.IOException;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -94,7 +93,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		}
 	}
 	@Override
-	protected void parseItemSpec(Document doc, String itemUrl, KakakuObject obj) throws ClientProtocolException, IOException {
+	protected void parseItemSpec(Document doc, String itemUrl, KakakuObject obj) throws IOException {
 		obj.spec  = new SpecObject();
 		
 		super.parseItemBasicSpec(doc,  obj);
@@ -115,7 +114,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 	}
 
 	@Override
-	protected void parsePictureFromMaker(KakakuObject obj) throws ClientProtocolException, IOException {
+	protected void parsePictureFromMaker(KakakuObject obj) throws  IOException {
 
 		if (StringUtil.isBlank(obj.spec.productInfoUrl)
 				&& StringUtil.isBlank(obj.spec.specInfoUrl)) {
@@ -140,7 +139,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 		return "";
 	}
 
-	private void parsePictureFromAudioTechnica(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
+	private void parsePictureFromAudioTechnica(KakakuObject obj, String specUrl) throws  IOException {
 		Document doc = KakakuUtil.urlToDocumentKakaku(specUrl);
 		Elements picSelect = doc.select("table").select("#photo_selecter").select("img");
 		int idx = 1;
@@ -151,7 +150,7 @@ public class MainCreateBaobei extends AbstractCreateBaobei {
 			idx++;
 		}
 	}
-	private void parsePictureFromDenon(KakakuObject obj, String specUrl) throws ClientProtocolException, IOException {
+	private void parsePictureFromDenon(KakakuObject obj, String specUrl) throws IOException {
 		Document doc = KakakuUtil.urlToDocumentKakaku(specUrl);
 		Elements picSelect = doc.select("div").select(".prodNav").select("li");
 		int idx = 1;

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
+
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -15,7 +15,7 @@ import com.walk_nie.taobao.util.BaobeiUtil;
 
 public class MontbellUnderWareBaobeiCreator  {
 
-	public static void main(String[] args) throws ClientProtocolException,
+	public static void main(String[] args) throws 
 			IOException {
 		new MontbellUnderWareBaobeiCreator().process();
 

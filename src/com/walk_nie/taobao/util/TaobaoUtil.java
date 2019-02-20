@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -37,7 +37,7 @@ public class TaobaoUtil {
 	}
 
 	public static Document urlToDocument(String url,String charset)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 
 		System.out.println("[START]parse URL = " + url);
 		
@@ -613,7 +613,7 @@ public class TaobaoUtil {
 	}
 
 	public static File downloadPicture(String pathName, String pictureUrl,
-			String picName,String pathToWaterMarkPNG) throws ClientProtocolException, IOException {
+			String picName,String pathToWaterMarkPNG) throws  IOException {
 
 		//String photoName = "out/" + itemType;
 		File path = new File(pathName);
@@ -665,7 +665,7 @@ public class TaobaoUtil {
 	}
 
 	public static File downloadPicture(String pathName, String pictureUrl,
-			String picName) throws ClientProtocolException, IOException {
+			String picName) throws  IOException {
 		return downloadPicture(pathName, pictureUrl, picName, null);
 	}
     

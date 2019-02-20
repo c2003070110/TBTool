@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,7 +56,7 @@ public class YaListCategory {
 		FileUtils.writeLines(outFile, "UTF-8", endCategoryIdList, true);
 	}
 
-	private void processMidCategory(String url) throws ClientProtocolException, IOException {
+	private void processMidCategory(String url) throws IOException {
 		String cateId =getCategoryIdFromUrl(url);
 		if(StringUtil.isBlank(cateId)){
 			return;
@@ -185,8 +184,7 @@ public class YaListCategory {
 	}
 
 	private  Document urlToDocument(String url)
-			throws ClientProtocolException, IOException {
-
+			throws IOException {
 	
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpUriRequest req = new HttpGet(url);

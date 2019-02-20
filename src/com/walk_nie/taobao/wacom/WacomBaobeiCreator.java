@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.object.BaobeiPublishObject;
@@ -17,7 +16,7 @@ import com.walk_nie.util.NieConfig;
  */
 public class WacomBaobeiCreator {
 
-	public static void main(String[] args) throws ClientProtocolException, IOException {
+	public static void main(String[] args) throws IOException {
 		new WacomBaobeiCreator().process();
 
 		System.exit(0);

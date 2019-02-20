@@ -2,8 +2,6 @@ package com.walk_nie.taobao.kakaku.explore.earphone.amp;
 
 import java.io.IOException;
 
-import org.apache.http.client.ClientProtocolException;
-
 import com.walk_nie.taobao.kakaku.AbstractMainListItemId;
 import com.walk_nie.taobao.kakaku.KakakuObject;
 import com.walk_nie.taobao.kakaku.KakakuUtil;
@@ -32,7 +30,7 @@ public class MainListItemId extends AbstractMainListItemId {
 	}
 	@Override
 	protected boolean isAllowToParse(KakakuObject obj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		return true;
 	}
 

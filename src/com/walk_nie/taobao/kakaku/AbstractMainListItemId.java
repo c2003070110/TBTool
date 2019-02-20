@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -149,7 +148,7 @@ public abstract class AbstractMainListItemId {
 
 	protected abstract String translateMaker(String maker) ;
 	
-	protected abstract boolean isAllowToParse(KakakuObject obj) throws ClientProtocolException, IOException;
+	protected abstract boolean isAllowToParse(KakakuObject obj) throws  IOException;
 
 	private boolean isPublished(KakakuObject kakakuObj) {
 		for(BaobeiPublishObject baobei :publishedBaobei){

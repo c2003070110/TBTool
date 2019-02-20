@@ -2,7 +2,6 @@ package com.walk_nie.taobao.kakaku.explore.earphone;
 
 import java.io.IOException;
 
-import org.apache.http.client.ClientProtocolException;
 import org.jsoup.nodes.Document;
 
 import com.walk_nie.taobao.kakaku.AbstractMainListItemId;
@@ -36,7 +35,7 @@ public class MainListItemId  extends AbstractMainListItemId {
 	}
 	
 	@Override
-	protected boolean isAllowToParse(KakakuObject obj) throws ClientProtocolException, IOException {
+	protected boolean isAllowToParse(KakakuObject obj) throws  IOException {
 		String itemUrl = KakakuUtil.kakakuUrlPrefix + obj.id;
 		Document doc = KakakuUtil.urlToDocumentKakaku(itemUrl);
 		KakakuUtil.parseItemPrice(doc, obj);

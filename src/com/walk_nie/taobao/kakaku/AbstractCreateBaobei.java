@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
@@ -199,7 +198,7 @@ public abstract class AbstractCreateBaobei {
 		return false;
 	}
 
-	private KakakuObject readItemIn(KakakuObject objT) throws ClientProtocolException,
+	private KakakuObject readItemIn(KakakuObject objT) throws 
 			IOException {
 		KakakuObject obj = new KakakuObject();
 		obj.id = objT.id;
@@ -220,7 +219,7 @@ public abstract class AbstractCreateBaobei {
 	}
 
 	public void parseItemVariation(Document doc, KakakuObject obj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 
 		Elements variation = doc.select("div").select("#productInfoBox")
 				.select(".variation");
@@ -261,10 +260,10 @@ public abstract class AbstractCreateBaobei {
 	}
 
 	protected abstract void parseItemSpec(Document doc, String itemUrl,
-			KakakuObject obj) throws ClientProtocolException, IOException;
+			KakakuObject obj) throws  IOException;
 
 	protected void parsePicture(KakakuObject obj)
-			throws ClientProtocolException, IOException {
+			throws  IOException {
 		String pictureUrlFmt = "http://img1.kakaku.k-img.com/images/productimage/fullscale/%s.jpg";
 		if (!obj.colorList.isEmpty()) {
 			for (KakakuObject color : obj.colorList) {
@@ -294,7 +293,7 @@ public abstract class AbstractCreateBaobei {
 
 
 	protected abstract void parsePictureFromMaker(KakakuObject obj)
-			throws ClientProtocolException, IOException;
+			throws  IOException;
 	
     protected void setToUpdateBaobeiList(List<BaobeiPublishObject> baobeiList){
         toUpdatebaobeiList = baobeiList;
