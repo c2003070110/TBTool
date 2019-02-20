@@ -27,9 +27,30 @@ public class TaobaoDianAnor {
 		anor.anorForkeyword();
 		System.exit(0);
 	}
+	
 	public void anorForkeyword() throws IOException {
 		String outputPath = NieConfig.getConfig("taobao.work.folder") +  "/dianAnor";
+		File root = new File(outputPath);
+		if (!root.exists()) {
+			root.mkdir();
+		}
 		File keywordFile = new File(NieConfig.getConfig("taobao.dianAnor.keyword.infile"));
+		long updateTime = System.currentTimeMillis();
+		while (true) {
+			if (updateTime < keywordFile.lastModified()) {
+				updateTime = keywordFile.lastModified();
+				try{
+					doAnor(root,keywordFile);
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+				System.out.println("[waiting for keyword in ]"
+						+ keywordFile.getAbsolutePath());
+			}
+		}
+	}
+	private void doAnor(File root, File keywordFile) throws IOException {
+
 		List<String> keys = Files.readLines(keywordFile, Charset.forName("UTF-8"));
 		
 		if(keys == null || keys.isEmpty()){
@@ -37,10 +58,6 @@ public class TaobaoDianAnor {
 			return;
 		}
 
-		File root = new File(outputPath);
-		if (!root.exists()) {
-			root.mkdir();
-		}
 		String yyyyMMdd = DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMdd");
 		String fileNameFmt = "%s-%s.png";
 		for (String k : keys) {
