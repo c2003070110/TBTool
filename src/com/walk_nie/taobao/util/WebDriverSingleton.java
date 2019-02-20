@@ -64,7 +64,7 @@ public class WebDriverSingleton  {
 			return false;
 		}
 		try{
-			webDriver.get("https://www.amazon.co.jp");
+			webDriver.get("https://www.yahoo.co.jp");
 		}catch(Exception e){
 			try{
 				webDriver.close();
