@@ -44,6 +44,7 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 
 			} else {
 				MontbellProductParser parer = new MontbellProductParser();
+				parer.scanFOFlag = false;
 				parer.setPublishedbaobeiList(this.publishedbaobeiList);
 				itemIdList = parer.scanItem(scanCategoryIds);
 			}
@@ -56,12 +57,12 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -147,8 +148,8 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "\"日本直邮";
-		title += " 拼邮包税";
+		String title = "\"日本拼邮包税";
+		//title += " 拼邮包税";
 		title += " MontBell 户外凉鞋";
 		if (!StringUtil.isBlank(item.titleEn)) {
 			title += " " + item.titleEn;

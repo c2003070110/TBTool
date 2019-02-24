@@ -52,8 +52,13 @@ public class MontBellUtil {
 
     public static String colorNameDefault ="选我没错";
     public static String sizeNameDefault ="选我没错";
+    public static String getWebShopPicFolder(GoodsObject goods) {
+    	return  MontBellUtil.rootPathName
+				+ "/webshoppic/" + goods.cateogryObj.categoryId;
+    }
     
-    public static void downloadPicture(GoodsObject goods,String outFilePath) {
+    public static void downloadPicture(GoodsObject goods) {
+		String outFilePath = getWebShopPicFolder(goods);
     	if(goods.colorList.isEmpty()){
     		int i=1;
     		for(String dressOnPic :goods.dressOnPics){
@@ -105,6 +110,7 @@ public class MontBellUtil {
         detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">直邮是 日本发货到你家，时效快但<span style=\";color:red;font-weight:bold\">关税买家承担！</span></p>");
         if(yunFee == 0){
         	detailSB.append("<p style=\"text-indent:2.0em;\">本宝贝还可以<span style=\";color:red;font-weight:bold\">拼邮包税! 包税! 包税!</span></p>");
         	detailSB.append("<p style=\"text-indent:2.0em;\">本宝贝还可以<span style=\";color:red;font-weight:bold\">拼邮免邮! 免邮! 免邮!</span></p>");
@@ -207,7 +213,7 @@ public class MontBellUtil {
 
 	public static String composeOuter_id(GoodsObject item) {
 		if (item.cateogryObj.categoryId == null || "".equals(item.cateogryObj.categoryId)) {
-			return "MTBL_" + item.productId;
+			return "\"MTBL_" + item.productId + "\"";
 		}
 		return "\"" + "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId + "\"" ;
 	}

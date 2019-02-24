@@ -63,15 +63,13 @@ public class MontbellShoeBaobeiProducer extends BaseBaobeiProducer{
 				// FIXME 鞋码 -> Discard
 				obj.sizeList.clear();
 				obj.sizeList.add("鞋码留言 厘米单位");
-				
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName + "/"
-								+ obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
             System.out.println("-------- FINISH--------");

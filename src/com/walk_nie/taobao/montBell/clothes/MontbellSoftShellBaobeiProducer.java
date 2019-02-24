@@ -69,14 +69,12 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -298,9 +296,9 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
             title += " " + item.titleEn ;
         }
 		title += " " + item.productId;
-        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
-        }
+        //if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+        //    title += MontBellUtil.spececialProductId ;
+        //}
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}
@@ -438,7 +436,7 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
         StringBuffer detailSB = new StringBuffer();
 
         // 包邮
-        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        detailSB.append(MontBellUtil.composePingyouMiaoshu(40));
         // 关税
 		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
         

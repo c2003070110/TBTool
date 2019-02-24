@@ -67,14 +67,12 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName+ "/"
-						+ obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName+ "/"
-								+ obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -187,8 +185,8 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "\"日本直邮";
-		title += "拼邮包税免邮";
+		String title = "\"日本";
+		title += "拼邮免邮";
 		//title += "" + item.titleCN;
 		title += " MontBell";
 		if (item.titleOrg.indexOf("Tシャツ") > 0) {
@@ -227,15 +225,15 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		}
 		if("71200".equals(categoryId)){
 			//  ジオライン（厚手／エクスペディション）
-			title += " 厚手 ZEO LINE";
+			title += " 厚手 ZEOLINE";
 		}
 		if("71100".equals(categoryId)){
 			//  ジオライン（中厚手／ミドルウエイト）
-			title += " 中厚 ZEO LINE";
+			title += " 中厚 ZEOLINE";
 		}
 		if("71000".equals(categoryId)){
 			//  ジオライン（薄手／ライトウエイト）
-			title += " 薄手 ZEO LINE";
+			title += " 薄手 ZEOLINE";
 		}
 		if("71700".equals(categoryId)){
 			//  ウエストウォーマー
@@ -249,9 +247,9 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 //            title += " " + item.titleEn ;
 //        }
 		title += " " + item.productId;
-        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
-        }
+//        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+//            title += MontBellUtil.spececialProductId ;
+//        }
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}

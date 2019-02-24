@@ -60,14 +60,12 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -252,7 +250,7 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
         }
 		title += " " + item.productId;
         if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
+            //title += MontBellUtil.spececialProductId ;
         }
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;

@@ -37,7 +37,6 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
 	public List<GoodsObject> scanItem(List<String> categoryIds)
 			throws IOException {
-		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
 		for (String categoryId : categoryIds) {
 			if (StringUtil.isBlank(categoryId))
 				continue;
@@ -46,6 +45,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 			scanEnglishByCategory(categoryObj);
 		}
 
+		List<GoodsObject> goodsList = new ArrayList<GoodsObject>();
 		for (String categoryId : categoryIds) {
 			if (StringUtil.isBlank(categoryId))
 				continue;
@@ -71,10 +71,10 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
 		String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
 		scanSingleItem(goodsObj, url);
-		if (scanFOFlag) {
+		//if (scanFOFlag) {
 			url = MontBellUtil.productUrlPrefix_fo + goodsObj.productId;
 			scanSingleItem(goodsObj, url);
-		}
+		//}
 	}
 
 	public void scanSingleItem(GoodsObject goodsObj, String url)
@@ -298,7 +298,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		String fileNameFmt = "detail_%s.png";
 		//String fileNameFmt = "detail_%s.jpg";
 		String fileName = String.format(fileNameFmt, goodsObj.productId);
-		File despFile = new File(MontBellUtil.rootPathName + "/"
+		File despFile = new File(MontBellUtil.rootPathName + "/webshoppic/"
 				+ goodsObj.cateogryObj.categoryId, fileName);
 		if (!despFile.exists()) {
 			String url = MontBellUtil.productUrlPrefix + goodsObj.productId;
@@ -610,6 +610,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 		title = title.replaceAll("Lining", "");
 		title = title.replaceAll(" LINING", "");
 		title = title.replaceAll("Merino Wool", "羊毛");
+		title = title.replaceAll("GORE-TEX", "GTX");
 		//title = title.replaceAll(" ", "");
 		title = title.trim();
 		return title;

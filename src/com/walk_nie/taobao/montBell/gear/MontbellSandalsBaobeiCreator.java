@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -30,8 +29,8 @@ public class MontbellSandalsBaobeiCreator {
 		List<BaobeiPublishObject> baobeiList = BaobeiUtil
 				.readInPublishedBaobei(file);
 		//
-		double currencyRate = 0.061 + 0.004;
-		double benefitRate = 0.08;
+		double currencyRate = 0.060 + 0.005;
+		double benefitRate = 0.05;
 		MontbellSandalsBaobeiProducer db = new MontbellSandalsBaobeiProducer();
 		db.addScanCategory("242000")
 				// サンダル

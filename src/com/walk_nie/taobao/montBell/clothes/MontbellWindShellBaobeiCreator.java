@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -32,7 +31,7 @@ public class MontbellWindShellBaobeiCreator  {
 				.readInPublishedBaobei(file);
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.08;
+		double benefitRate = 0.05;
 		MontbellWindShellBaobeiProducer db = new MontbellWindShellBaobeiProducer();
 		db
                 .addScanCategory("11500") // 超軽量ウインドブレーカー

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -34,7 +33,7 @@ public class MontbellUnderWareBaobeiCreator  {
 		//baobeiList.clear();
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.08;
+		double benefitRate = 0.05;
 		MontbellUnderwareBaobeiProducer db = new MontbellUnderwareBaobeiProducer();
 		db
                 .addScanCategory("75200") // スーパーメリノウール（厚手／エクスペディション）

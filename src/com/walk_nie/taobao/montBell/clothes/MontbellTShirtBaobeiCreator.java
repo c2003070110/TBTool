@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -32,23 +31,25 @@ public class MontbellTShirtBaobeiCreator  {
 				.readInPublishedBaobei(file);
 		//
 		double currencyRate = 0.060 + 0.005;
-		double benefitRate = 0.08;
+		double benefitRate = 0.05;
 		MontbellTShirtBaobeiProducer db = new MontbellTShirtBaobeiProducer();
 		db
+		        // Tシャツ（半袖/長袖）
         		.addScanCategory("46500") // 天然素材<メリノウールプラス>
+        		.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
                 .addScanCategory("45500") // 機能素材<ウイックロンZEO>
                 .addScanCategory("42000") // 機能素材<ウイックロン>
                 .addScanCategory("44000") // 機能素材<ウイックロンクール>
-                .addScanCategory("") // cotton
-        		//.addScanCategory("45550") // 機能素材<ウイックロンZEOサーマル>
-                //.addScanCategory("31100") // 半袖シャツ＜薄手＞
+                .addScanCategory("46000") // cotton
                 
-                //.addScanCategory("32300") // 長袖シャツ＜厚手＞
-                //.addScanCategory("32200") // 長袖シャツ＜中厚手＞
-                //.addScanCategory("32100") // 長袖シャツ＜薄手＞
-                //.addScanCategory("31500") // スウェットシャツ＆パーカ
-                //.addScanCategory("31400") // 作務衣
-                //.addScanCategory("31200") // 3半袖シャツ＜中厚手＞
+                // シャツ
+                .addScanCategory("32300") // 長袖シャツ＜厚手＞
+                .addScanCategory("32200") // 長袖シャツ＜中厚手＞
+                .addScanCategory("32100") // 長袖シャツ＜薄手＞
+                .addScanCategory("31200") // 半袖シャツ＜中厚手＞
+                .addScanCategory("31100") // 半袖シャツ＜薄手＞
+                .addScanCategory("31500") // スウェットシャツ＆パーカ
+                .addScanCategory("31400") // 作務衣
                 
                 .setOutputFile(outputFile)
                 .setCurrencyRate(currencyRate)

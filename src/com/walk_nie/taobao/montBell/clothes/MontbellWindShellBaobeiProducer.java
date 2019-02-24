@@ -70,14 +70,12 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -193,10 +191,13 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "\"日本直邮";
+		String title = "\"";
 		if (canPinyou(item)) {
-			title += " 拼邮包税免邮";
+			title += " 日本拼邮免邮";
+		}else{
+			title += " 日本直邮";
 		}
+	
 		//title += "" + item.titleCN;
 		title += " MontBell";
 		String categoryId = item.cateogryObj.categoryId;
@@ -211,9 +212,9 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
             title += " " + item.titleEn ;
         }
 		title += " " + item.productId;
-        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
-        }
+        //if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+        //    title += MontBellUtil.spececialProductId ;
+        //}
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}

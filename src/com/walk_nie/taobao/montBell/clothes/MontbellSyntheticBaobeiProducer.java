@@ -66,8 +66,7 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
@@ -144,7 +143,7 @@ public class MontbellSyntheticBaobeiProducer extends BaseBaobeiProducer{
         // 销售属性组合
         composeBaobeiSkuProps(item, obj);
         // 商家编码
-        obj.outer_id = "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
+        obj.outer_id = MontBellUtil.composeOuter_id(item);
         // 销售属性别名
         composeBaobeiPropAlias(item, obj);
         // 商品条形码

@@ -44,6 +44,7 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 
 			} else {
 				MontbellProductParser parser = new MontbellProductParser();
+				parser.scanFOFlag = false;
 				parser.setPublishedbaobeiList(this.publishedbaobeiList);
 				itemIdList = parser.scanItem(scanCategoryIds);
 			}
@@ -56,14 +57,12 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
@@ -155,15 +154,15 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 		String priceStr = item.priceJPY;
         try {
             int price = Integer.parseInt(priceStr);
-			if (price < 2000){
-				price = price + 200;
-			}else if (price < 5000){
-				price = price + 400;
-			}else if (price < 8000){
-				price = price + 200;
-			}else if (price < 10000){
-				price = price + 100;
-			}
+//			if (price < 2000){
+//				price = price + 200;
+//			}else if (price < 5000){
+//				price = price + 400;
+//			}else if (price < 8000){
+//				price = price + 200;
+//			}else if (price < 10000){
+//				price = price + 100;
+//			}
             long priceTax  = Math.round(price*1.08);
             double priceCNY = priceTax * currencyRate;
 			priceCNY = priceCNY + 70;
@@ -176,20 +175,23 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
 		String title = "日本直邮montbell ";
-		title += "拼邮包税免邮 ";
+		//title += "拼邮免邮 ";
+		title += "拼邮免邮 ";
 		//if (!StringUtil.isBlank(item.titleCN)) {
 		//	title += " " + item.titleCN;
 		//}
 		if ("46500".equals(item.cateogryObj.categoryId)) {
 			title += "吸汗速干T恤 美丽奴羊毛";
 		} else if ("45550".equals(item.cateogryObj.categoryId)) {
-			title += "吸汗速干T恤  Wickron ZEO";
+			title += "吸汗速干T恤 WickronZEO";
+		} else if ("46000".equals(item.cateogryObj.categoryId)) {
+			title += "吸汗速干T恤 纯棉";
 		} else if ("44000".equals(item.cateogryObj.categoryId)) {
-			title += "吸汗速干T恤  Wickron COOL";
+			title += "吸汗速干T恤 WickronCOOL";
 		} else if ("45500".equals(item.cateogryObj.categoryId)) {
-			title += "吸汗速干T恤  Wickron ZEO";
+			title += "吸汗速干T恤 WickronZEO";
 		} else if ("42000".equals(item.cateogryObj.categoryId)) {
-			title += "吸汗速干T恤  Wickron";
+			title += "吸汗速干T恤 Wickron";
 		} else if ("32300".equals(item.cateogryObj.categoryId)) {
 			title += "吸汗速干长袖 厚";
 		} else if ("32200".equals(item.cateogryObj.categoryId)) {
@@ -202,6 +204,8 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 			title += "吸汗速干短袖 薄";
 		} else if ("31500".equals(item.cateogryObj.categoryId)) {
 			title += "吸汗速干卫衣";
+		} else if ("31400".equals(item.cateogryObj.categoryId)) {
+			title += "和式作业服";
 		}
 //		if (!StringUtil.isBlank(item.titleEn)) {
 //			title += " " + item.titleEn;
@@ -210,9 +214,9 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 			title += " " + item.gender;
 		}
 		title += " " + item.productId;
-        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
-        }
+//        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+//            title += MontBellUtil.spececialProductId ;
+//        }
 		
 		baobei.title = "\"" + title + "\"";
 	}

@@ -65,14 +65,12 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
             priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
             
 			for (GoodsObject obj : itemIdList) {
-				MontBellUtil.downloadPicture(obj, MontBellUtil.rootPathName
-						+ "/" + obj.cateogryObj.categoryId);
+				MontBellUtil.downloadPicture(obj);
 			}
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName + "/"
-								+ obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
             System.out.println("-------- FINISH--------");
@@ -142,7 +140,7 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
         // 销售属性组合
         composeBaobeiSkuProps(item, obj);
         // 商家编码
-        obj.outer_id = "MTBL_" + item.cateogryObj.categoryId + "-" + item.productId;
+        obj.outer_id = MontBellUtil.composeOuter_id(item);
         // 销售属性别名
         composeBaobeiPropAlias(item, obj);
         // 商品条形码
@@ -190,15 +188,15 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
 
     private void composeBaobeiTitle(GoodsObject item,
             BaobeiPublishObject baobei) {
-        String title = "\"日本直邮 Montbell 帽子";
-		title += "拼邮包税免邮 ";
+        String title = "\"日本拼邮免邮";
+		title += " Montbell 帽子";
   
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
         }
         title += " " + item.productId;
 		if (!StringUtil.isBlank(MontBellUtil.spececialProductId)) {
-			title += MontBellUtil.spececialProductId;
+			//title += MontBellUtil.spececialProductId;
 		}
         if(!StringUtil.isBlank(item.gender)){
             title += " " + item.gender;
