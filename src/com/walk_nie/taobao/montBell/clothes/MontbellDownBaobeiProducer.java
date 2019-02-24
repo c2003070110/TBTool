@@ -318,8 +318,8 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer {
 		StringBuffer detailSB = new StringBuffer();
 		// 包邮
 		detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
-		// 包邮
-		detailSB.append(myMiaoshu(item));
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
 
 		// 尺寸描述
 		detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
@@ -335,16 +335,6 @@ public class MontbellDownBaobeiProducer extends BaseBaobeiProducer {
 		obj.description = "\"" + detailSB.toString() + extraMiaoshu1 + "\"";
 	}
 
-	private String myMiaoshu(GoodsObject item) {
-
-        StringBuffer detailSB = new StringBuffer();
-        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
-        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
-        // TODO wu chong rong liang/bu baoshui/bu ping you
-        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">如果不幸被海关查到，由买家报关通关，不能报关的买家，请不要下单！！！！</span></p>");
-        detailSB.append("</div>");
-        return detailSB.toString();
-	}
 
 	public MontbellDownBaobeiProducer addScanCategory(String scanCategoryId) {
 

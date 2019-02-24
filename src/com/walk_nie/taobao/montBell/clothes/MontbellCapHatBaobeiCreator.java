@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -38,9 +37,10 @@ public class MontbellCapHatBaobeiCreator  {
 		MontbellCapHatBaobeiProducer db = new MontbellCapHatBaobeiProducer();
 		db
                 .addScanCategory("103000") //  防寒キャップ/ハット/耳あて
+                .addScanCategory("104000") //  ニット帽/ビーニー
                 .addScanCategory("102000") // ハット 
-                .addScanCategory("112100") //  ハンチング/キャスケット/ワークキャップ
                 .addScanCategory("101000") //  キャップ
+                .addScanCategory("112100") //  ハンチング/キャスケット/ワークキャップ
                 .addScanCategory("112000") //  レインキャップ/ハット
                 .addScanCategory("1151100") //  バラクラバ
                 .addScanCategory("") //  

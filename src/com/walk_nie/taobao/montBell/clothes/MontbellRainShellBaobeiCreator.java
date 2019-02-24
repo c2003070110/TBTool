@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
-
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.util.BaobeiUtil;
 
+/**
+ * オールウエザー（雨具）
+ *
+ */
 public class MontbellRainShellBaobeiCreator  {
 
 	public static void main(String[] args) throws 
@@ -45,6 +48,8 @@ public class MontbellRainShellBaobeiCreator  {
                 .addScanCategory("8600") // レインウェア（農作業用）
                 
                 .addScanCategory("9000") // レインポンチョ
+                .addScanCategory("2500") // レインスカート
+                .addScanCategory("2600") // レインパンツ
                 .addScanCategory("4000") // 傘
                 .addScanCategory("3000") // レインキャップ/ハット
                 

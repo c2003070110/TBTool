@@ -439,6 +439,8 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 
         // 包邮
         detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));

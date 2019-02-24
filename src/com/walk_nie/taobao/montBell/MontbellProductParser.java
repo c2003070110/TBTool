@@ -200,6 +200,9 @@ public class MontbellProductParser extends BaseBaobeiParser {
 				if ("直営店在庫あり".equals(stockN)) {
 					stock.isStock = true;
 				}
+				if ("入荷待ち（受付可）".equals(stockN)) {
+					stock.isStock = true;
+				}
 				goodsObj.stockList.add(stock);
 			}
 		}
@@ -239,6 +242,9 @@ public class MontbellProductParser extends BaseBaobeiParser {
 						stock.isStock = true;
 					}
 					if ("直営店在庫あり".equals(stockN)) {
+						stock.isStock = true;
+					}
+					if ("入荷待ち（受付可）".equals(stockN)) {
 						stock.isStock = true;
 					}
 					goodsObj.stockList.add(stock);
@@ -316,7 +322,9 @@ public class MontbellProductParser extends BaseBaobeiParser {
 						WebDriverUtil.watermark_montbell);
 			}
 		}
-		goodsObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		if(!goodsObj.detailScreenShotPicFile.contains(despFile.getAbsolutePath())){
+			goodsObj.detailScreenShotPicFile.add(despFile.getAbsolutePath());
+		}
 	}
 
 	protected void processProductSizeTable(GoodsObject goodsObj, Element rootEl)

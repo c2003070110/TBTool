@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,9 +24,8 @@ import com.walk_nie.util.NieConfig;
 
 public class MontBellUtil {
 	
-	//public static String spececialCateId ="1372082560";//2018 spring summer!
-	public static String spececialCateId ="1402017494";//2018 autumn&winter!
-	public static String spececialProductId ="182";//2018 autumn&winter!
+	public static String spececialCateId ="1433105083";//2019 spring&summer!
+	public static String spececialProductId ="191";//2019 spring&summer!
 
     public static String rootPathName = NieConfig.getConfig("montbell.work.root.folder");
     public static String sizeTipFileName = "sizeTipList.txt";
@@ -93,19 +91,45 @@ public class MontBellUtil {
         detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
         detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
         detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">标有 拼邮可的宝贝 可以包税拼邮!运费只<span style=\";color:red;font-weight:bold\">40</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">直邮是 日本发货到你家，时效快但<span style=\";color:red;font-weight:bold\">关税买家承担！</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税是指 把宝贝运到国内，然后分发给大家。时效20天左右 <span style=\";color:red;font-weight:bold\"> 但不用操心关税</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\">100%正品，日货料好质高，低调奢华，性价比高！</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但直邮耗时，还请做好事前安排，提前下单哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但国际快递耗时，还请做好事前安排，提前下单哦。</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！100%日货(日货不等于日本产！)</span></p>");
-        //detailSB.append("<p style=\"text-indent:2.0em;\">不定期推出  满XXXX免邮，请关注哦。</p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">台湾 香港 澳门</span>需要加价！请咨询！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">本店价格仅适用于中国大陆！台湾 香港 澳门</span>请咨价！</p>");
+        detailSB.append("</div>");
+        return detailSB.toString();
+    }
+    public static String composePingyouMiaoshu(int yunFee) {
+        StringBuffer detailSB = new StringBuffer();
+        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">各位亲们</h3>");
+        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+        detailSB.append("<p style=\"text-indent:2.0em;\">无论宝贝，无论重量，无论数量，日本直邮!运费只<span style=\";color:red;font-weight:bold\">90</span></p>");
+        if(yunFee == 0){
+        	detailSB.append("<p style=\"text-indent:2.0em;\">本宝贝还可以<span style=\";color:red;font-weight:bold\">拼邮包税! 包税! 包税!</span></p>");
+        	detailSB.append("<p style=\"text-indent:2.0em;\">本宝贝还可以<span style=\";color:red;font-weight:bold\">拼邮免邮! 免邮! 免邮!</span></p>");
+        }else{
+        	detailSB.append("<p style=\"text-indent:2.0em;\">本宝贝还可以<span style=\";color:red;font-weight:bold\">拼邮包税! 包税! 包税!</span><span style=\";color:red;font-weight:bold\">运费" + yunFee + "</span></p>");
+        }
+    	detailSB.append("<p style=\"text-indent:2.0em;\">如果您选择拼邮，付款前，请联系卖家改价！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">拼邮包税是指 店主把宝贝运到国内，然后分发给大家。时效10-20天左右 <span style=\";color:red;font-weight:bold\"> 但不用通关报关，也不用操心关税</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店为您急事所急，急单商量。但国际快递耗时，还请做好事前安排，提前下单哦。</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">下单后</span>才采购于<span style=\";color:red;font-weight:bold\">日本MONTBELL官方</span>。不是现货！不能当天发货！</p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">不是厂货！不是渠道货！不是清仓货！不是韩国货！100%日货(日货不等于日本产！)</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店价格，仅适大陆地址！<span style=\";color:red;font-weight:bold\">本店价格仅适用于中国大陆！台湾 香港 澳门</span>请咨价！</p>");
+        detailSB.append("</div>");
+        return detailSB.toString();
+    }
+    public static String composeHaigaiMiaoshu() {
+        StringBuffer detailSB = new StringBuffer();
+        detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">海关报关通关</h3>");
+        detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
+        detailSB.append("<p style=\"text-indent:2.0em;\">本店商品 <span style=\";color:red;font-weight:bold\">是海外直邮</span>。海外包裹都是需要 中国海关的检查。<span style=\";color:red;font-weight:bold\"></span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">万一被海关抽查到，因为报关需要  <span style=\";color:red;font-weight:bold\">身份证</span>等个人隐私，报关通关是由<span style=\";color:red;font-weight:bold\">买家来操作的</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\"> 买家不会报关也没关系，<span style=\";color:red;font-weight:bold\">卖家会手把手教你报关</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">店主报关经验丰富，可以 合理合规 尽可能的<span style=\";color:red;font-weight:bold\">降低关税！</span></p>");
+        detailSB.append("<p style=\"text-indent:2.0em;\">关税多少？各地海关不同 税率也不尽一样。本店会想尽办法<span style=\";color:red;font-weight:bold\">降低关税！</span></p>");
         detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">使用转运地址的买家</span>，因为通关清关的问题。<span style=\";color:red;font-weight:bold\">本店拒绝发货！！</span></p>");
-        detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">如果不幸被海关查到，由买家报关通关，不能报关的买家，请不要下单！！！！</span></p>");
-        //detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图，有机会获得奖励:手机流量</p>");
-        //detailSB.append("<p style=\"text-indent:2.0em;\">评论晒图包含了 <span style=\";color:red;font-weight:bold\">身材尺寸，衣服size，合适否</span>  100%奖励！！！请踊跃参与！！</p>");
         detailSB.append("</div>");
         return detailSB.toString();
     }
@@ -120,9 +144,6 @@ public class MontBellUtil {
             detailSB.append("<p style=\"text-indent:2.0em;\">下单前，请认真比对尺寸大小！<span style=\";color:red;font-weight:bold\">店主本职工作很忙，请尽量自己比对哦。</span></p>");
             detailSB.append("<p style=\"text-indent:2.0em;\">如纠结 请咨询店主。店主有空时，第一时间回复。</p>");
             detailSB.append("<p style=\"text-indent:2.0em;\">图片中标有<span style=\";color:red;font-weight:bold\">1,2，3。。。A,B，C。。。 </span>表格中有对应的数据！非常简单明了的Size表哦。不要被日语吓到了！</p>");
-            //detailSB.append("<p style=\"text-indent:2.0em;\">对于晒图的淘友，有机会获得奖励:全国手机流量<span style=\";color:red;font-weight:bold\">100M</span></p>");
-            //detailSB.append("<p style=\"text-indent:2.0em;\">晒图包含了 <span style=\";color:red;font-weight:bold\">自己身材，衣服size，合适否</span>  100%奖励！！！</p>");
-            //detailSB.append("<p style=\"text-indent:2.0em;\"><span style=\";color:red;font-weight:bold\">请踊跃参与！！</span></p>");
             for(String sizeTip:item.sizeTipPics){
                 detailSB.append("<p style=\"text-indent:2.0em;\"><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + sizeTip + "\"/></p>");    
             }
@@ -137,12 +158,14 @@ public class MontBellUtil {
 			detailSB.append("<h3 style=\"background:#ff8f2d repeat-x 0 0;border:1.0px solid #e19d63;border-bottom:1.0px solid #d07428;padding:3.0px 0 0 10.0px;height:26.0px;color:#ffffff;font-size:large;\">宝贝说明</h3>");
 			detailSB.append("<div style=\"background:#f8f9fb repeat-x top;border:1.0px solid #b0bec7;padding:10.0px;font-size:large;font-family:simsun;\">");
             for(String pic:item.detailScreenShotPicFile){
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
-						+ pic + "\"/></p>");
+				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + pic + "\"/></p>");
             }
             for(String pic:item.specialPageScreenShotPicFile){
-				detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///"
-						+ pic + "\"/></p>");
+            	if(pic.startsWith("http")){
+					detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"" + pic + "\"/></p>");
+            	}else{
+					detailSB.append("<p><img style=\"border:#666666 2px solid;padding:2px;width:650px;\" src=\"FILE:///" + pic + "\"/></p>");
+            	}
             }
 			detailSB.append("</div>");
 		}
@@ -555,9 +578,7 @@ public class MontBellUtil {
             BaobeiPublishObject baobei) {
         String title = "\"日本直邮";
         title += " MontBell";
-        if(!StringUtil.isBlank(item.titleCN)){
-            title += " " + item.titleEn ;
-        }
+
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
         }

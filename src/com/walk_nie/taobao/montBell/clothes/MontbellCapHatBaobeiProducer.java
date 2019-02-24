@@ -112,10 +112,14 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
         obj.cid =  "50015396";
         // 店铺类目
         obj.seller_cids =  "1372086391";
+		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
+			obj.seller_cids += "," + MontBellUtil.spececialCateId;
+		}
         // 省
         obj.location_state = "\"日本\"";
         // 宝贝价格
-        obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
+        //obj.price = MontBellUtil.convertToCNYWithEmsFee(item,this.currencyRate,this.benefitRate);
+        composeBaobeiPrice(item, obj);
         //obj.price = item.priceCNY;
         // 宝贝数量
         obj.num = "99";
@@ -161,14 +165,41 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
+	private void composeBaobeiPrice(GoodsObject item, BaobeiPublishObject obj) {
+		String priceStr = item.priceJPY;
+        try {
+            int price = Integer.parseInt(priceStr);
+			if (price < 2000){
+				price = price + 200;
+			}else if (price < 5000){
+				price = price + 400;
+			}else if (price < 8000){
+				price = price + 200;
+			}else if (price < 10000){
+				price = price + 100;
+			}
+            long priceTax  = Math.round(price*1.08);
+            double priceCNY = priceTax * currencyRate;
+			priceCNY = priceCNY + 70;
+			obj.price =  String.valueOf(Math.round(priceCNY));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            obj.price = "XXXXXX";
+        }
+	}
+
     private void composeBaobeiTitle(GoodsObject item,
             BaobeiPublishObject baobei) {
-        String title = "\"[可拼邮]Montbell 帽子";
+        String title = "\"日本直邮 Montbell 帽子";
+		title += "拼邮包税免邮 ";
   
         if(!StringUtil.isBlank(item.titleEn)){
             title += " " + item.titleEn ;
         }
         title += " " + item.productId;
+		if (!StringUtil.isBlank(MontBellUtil.spececialProductId)) {
+			title += MontBellUtil.spececialProductId;
+		}
         if(!StringUtil.isBlank(item.gender)){
             title += " " + item.gender;
         }
@@ -256,7 +287,10 @@ public class MontbellCapHatBaobeiProducer extends BaseBaobeiProducer{
 	protected  void composeBaobeiMiaoshu(GoodsObject item, BaobeiPublishObject obj) {
         StringBuffer detailSB = new StringBuffer();
         // 包邮
-        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        //detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        detailSB.append(MontBellUtil.composePingyouMiaoshu(0));
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
         
         // 宝贝描述
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));

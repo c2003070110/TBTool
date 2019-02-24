@@ -94,6 +94,9 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 		obj.cid = "50019274";
 		// 店铺类目
 		obj.seller_cids = "1372084363";
+		if (!StringUtil.isBlank(MontBellUtil.spececialCateId)) {
+			obj.seller_cids += "," + MontBellUtil.spececialCateId;
+		}
 		// 省
 		//obj.location_state = "日本";
 		// 宝贝价格
@@ -144,11 +147,9 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "\"日本直邮 全场90";
-		if (!StringUtil.isBlank(item.titleCN)) {
-			title += " " + item.titleCN;
-		}
-		title += " 户外凉鞋";
+		String title = "\"日本直邮";
+		title += " 拼邮包税";
+		title += " MontBell 户外凉鞋";
 		if (!StringUtil.isBlank(item.titleEn)) {
 			title += " " + item.titleEn;
 		}
@@ -250,7 +251,9 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 
 		StringBuffer detailSB = new StringBuffer();
         // 包邮
-        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        detailSB.append(MontBellUtil.composePingyouMiaoshu(40));
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
         

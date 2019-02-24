@@ -119,9 +119,9 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
-		obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
-				this.benefitRate);
-		// obj.price = item.priceCNY;
+		//obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
+		//		this.benefitRate);
+		composeBaobeiPrice(item, obj);
 		// 宝贝数量
 		obj.num = "99";
 		
@@ -169,8 +169,34 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
 
+	private void composeBaobeiPrice(GoodsObject item, BaobeiPublishObject obj) {
+		String priceStr = item.priceJPY;
+        try {
+            int price = Integer.parseInt(priceStr);
+			if (price < 2000){
+				price = price + 200;
+			}else if (price < 5000){
+				price = price + 400;
+			}else if (price < 8000){
+				price = price + 200;
+			}else if (price < 10000){
+				price = price + 100;
+			}
+            long priceTax  = Math.round(price*1.08);
+            double priceCNY = priceTax * currencyRate;
+			priceCNY = priceCNY + 70;
+			obj.price =  String.valueOf(Math.round(priceCNY));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            obj.price = "XXXXXX";
+        }
+	}
+
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
 		String title = "\"日本直邮";
+		if (canPinyou(item)) {
+			title += " 拼邮包税免邮";
+		}
 		//title += "" + item.titleCN;
 		title += " MontBell";
 		String categoryId = item.cateogryObj.categoryId;
@@ -296,10 +322,13 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
         StringBuffer detailSB = new StringBuffer();
 
         // 包邮
-        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
-        
-        // 宝贝描述
-        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
+		if (canPinyou(item)) {
+			detailSB.append(MontBellUtil.composePingyouMiaoshu(0));
+		} else {
+			detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+		}
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
@@ -307,9 +336,22 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
+        // 宝贝描述
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i3/3910559931/O1CN01OXrRTZ2NERpOojV7x_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i2/3910559931/O1CN012DYmIM2NERpROxoQu_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i3/3910559931/O1CN010Riyg62NERpSatIFB_!!3910559931.jpg");
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
+        
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
         obj.description =  "\"" + detailSB.toString() + extraMiaoshu1+ "\"";
+	}
+
+	private boolean canPinyou(GoodsObject item) {
+		if (Integer.parseInt(item.priceJPY) < 10000) {
+			return true;
+		}
+		return false;
 	}
 
 }

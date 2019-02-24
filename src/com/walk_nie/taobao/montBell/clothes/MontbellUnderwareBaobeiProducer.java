@@ -114,8 +114,9 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		// 省
 		obj.location_state = "日本";
 		// 宝贝价格
-		obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
-				this.benefitRate);
+		//obj.price = MontBellUtil.convertToCNYWithEmsFee(item, this.currencyRate,
+		//		this.benefitRate);
+		composeBaobeiPrice(item, obj);
 		// obj.price = item.priceCNY;
 		// 宝贝数量
 		obj.num = "999";
@@ -162,8 +163,32 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 		return TaobaoUtil.composeTaobaoLine(obj);
 	}
 
+	private void composeBaobeiPrice(GoodsObject item, BaobeiPublishObject obj) {
+		String priceStr = item.priceJPY;
+        try {
+            int price = Integer.parseInt(priceStr);
+			if (price < 2000){
+				price = price + 200;
+			}else if (price < 5000){
+				price = price + 400;
+			}else if (price < 8000){
+				price = price + 200;
+			}else if (price < 10000){
+				price = price + 100;
+			}
+            long priceTax  = Math.round(price*1.08);
+            double priceCNY = priceTax * currencyRate;
+			priceCNY = priceCNY + 70;
+			obj.price =  String.valueOf(Math.round(priceCNY));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            obj.price = "XXXXXX";
+        }
+	}
+
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
 		String title = "\"日本直邮";
+		title += "拼邮包税免邮";
 		//title += "" + item.titleCN;
 		title += " MontBell";
 		if (item.titleOrg.indexOf("Tシャツ") > 0) {
@@ -323,16 +348,22 @@ public class MontbellUnderwareBaobeiProducer extends BaseBaobeiProducer {
 
 		StringBuffer detailSB = new StringBuffer();
         // 包邮
-        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
-        
-        // 宝贝描述
-        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
+        //detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+        detailSB.append(MontBellUtil.composePingyouMiaoshu(0));
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
 
         // 尺寸描述
         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
         
         // 着装图片
         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
+        
+        // 宝贝描述
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i1/3910559931/O1CN01py1L0u2NERpO8f7yt_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i4/3910559931/O1CN01SWZmwh2NERpQdseFW_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i3/3910559931/O1CN01PvskT62NERpRR5zx4_!!3910559931.jpg");
+        detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
 		 
 		//String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
 		String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();

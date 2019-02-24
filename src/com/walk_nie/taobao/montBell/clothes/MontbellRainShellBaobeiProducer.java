@@ -390,21 +390,38 @@ public class MontbellRainShellBaobeiProducer extends BaseBaobeiProducer {
 			BaobeiPublishObject obj) {
         StringBuffer detailSB = new StringBuffer();
 
-        // 包邮
-        detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+		// 包邮
+		if (canPinyou(item)) {
+			detailSB.append(MontBellUtil.composePingyouMiaoshu(40));
+		} else {
+			detailSB.append(MontBellUtil.composeBaoyouMiaoshu());
+		}
+        // 关税
+		detailSB.append(MontBellUtil.composeHaigaiMiaoshu());
+
+         // 尺寸描述
+         detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
+         
+         // 着装图片
+         detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
         // 宝贝描述
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i1/3910559931/O1CN01YKQs0i2NERpQBuVdl_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i2/3910559931/O1CN01Yj5LBv2NERpRG7C2q_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i4/3910559931/O1CN01DNIAyc2NERpJipe1A_!!3910559931.jpg");
+        item.specialPageScreenShotPicFile.add("https://img.alicdn.com/imgextra/i1/3910559931/O1CN01GiX6xV2NERpRIpYak_!!3910559931.jpg");
         detailSB.append(MontBellUtil.composeProductInfoMiaoshu(item));
-
-        // 尺寸描述
-        detailSB.append(MontBellUtil.composeSizeTipMiaoshu(item));
-        
-        // 着装图片
-        detailSB.append(MontBellUtil.composeDressOnMiaoshu(item.dressOnPics));
         
         //String extraMiaoshu = MontBellUtil.composeExtraMiaoshu();
         String extraMiaoshu1 = BaobeiUtil.getExtraMiaoshu();
         obj.description =  "\"" + detailSB.toString() + extraMiaoshu1+ "\"";
+	}
+
+	private boolean canPinyou(GoodsObject item) {
+		if (Integer.parseInt(item.priceJPY) < 10000) {
+			return true;
+		}
+		return false;
 	}
 
 }
