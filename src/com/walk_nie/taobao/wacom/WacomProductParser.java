@@ -12,18 +12,54 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.google.common.collect.Lists;
+import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.util.WebDriverUtil;
 
 public class WacomProductParser extends BaseBaobeiParser {
 
+	public List<WacomProductObject> scanItemByProductInfoList(List<WacomProductObject> productInfos) throws IOException {
+		List<WacomProductObject> goodsList = new ArrayList<WacomProductObject>();
+		for (WacomProductObject productInfo : productInfos) {
+			WacomProductObject obj = scanSingleItem(productInfo.productUrl);
+			obj.categoryId = productInfo.categoryId;
+			if (!isPublished(obj)) {
+				goodsList.add(obj);
+			}
+		}
+		return goodsList;
+	}
+
 	public List<WacomProductObject> scanItemByProductUrlList(List<String> urls) throws IOException {
 		List<WacomProductObject> goodsList = new ArrayList<WacomProductObject>();
 		for (String url : urls) {
 			WacomProductObject obj = scanSingleItem(url);
-			goodsList.add(obj);
+			if (!isPublished(obj)) {
+				goodsList.add(obj);
+			}
 		}
 		return goodsList;
+	}
+
+	private boolean isPublished(WacomProductObject obj) {
+		if (publishedbaobeiList == null) {
+			return false;
+		}
+		if (publishedbaobeiList.isEmpty()) {
+			return false;
+		}
+		for (BaobeiPublishObject baobeiObj : publishedbaobeiList) {
+			String publisedProductId = "";
+			String outer_id = baobeiObj.outer_id.replace("\"", "");
+			if (outer_id.startsWith("WACOM_")) {
+				String[] split = outer_id.split("-");
+				publisedProductId = split[split.length - 1];
+			}
+			if (publisedProductId.equals(obj.productId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public WacomProductObject scanSingleItem(String url) throws IOException {

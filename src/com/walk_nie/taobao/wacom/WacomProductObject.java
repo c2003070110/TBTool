@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WacomProductObject {
+	public String categoryId = "";
 	public String productId = "";
 	public String productUrl = "";
 	public String storeUrl = "";

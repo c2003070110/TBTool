@@ -10,4 +10,5 @@ public class YaSoldObject {
 	Date latestTime=null;
 	String obider="";
 	String statusMsg="";
+	String sendCode="";
 }

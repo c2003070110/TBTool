@@ -5,20 +5,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.http.client.utils.DateUtils;
-
 import com.beust.jcommander.internal.Lists;
-import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
 import com.walk_nie.taobao.support.BaseBaobeiProducer;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
-import com.walk_nie.util.NieConfig;
 
 public class WacomBaobeiProducer extends BaseBaobeiProducer {
 
@@ -28,7 +22,6 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 			System.out.println("-------- START --------");
 			List<WacomProductObject> itemIdList = Lists.newArrayList();
 			
-			List<String> productUrls = readProductUrls();
 			if (!productUrls.isEmpty()) {
 				WacomProductParser parser = new WacomProductParser();
 				parser.setPublishedbaobeiList(this.publishedbaobeiList);
@@ -56,23 +49,6 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 					e.printStackTrace();
 				}
 		}
-	}
-
-	private List<String> readProductUrls() throws IOException {
-		String scanFile = NieConfig.getConfig("wacom.scan.url.file");
-
-		List<String> adrs = Files.readLines(new File(scanFile), Charset.forName("UTF-8"));
-		List<String> outputList = Lists.newArrayList();
-		for (String line : adrs) {
-			if ("".equals(line)) {
-				continue;
-			}
-			if (line.startsWith("#")) {
-				continue;
-			}
-			outputList.add(line);
-		}
-		return outputList;
 	}
 
 	protected void writeOut(BufferedWriter priceBw, WacomProductObject item) throws Exception {
@@ -237,4 +213,23 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 		}
 	}
 
+	List<String> productUrls = Lists.newArrayList();
+	public WacomBaobeiProducer addUrlList(List<String> urls){
+		productUrls.addAll(urls);
+		return this;
+	}
+	public WacomBaobeiProducer addUrl(String url){
+		productUrls.add(url);
+		return this;
+	}
+
+	List<WacomProductObject> productInfoList = Lists.newArrayList();
+	public WacomBaobeiProducer addProductList(List<WacomProductObject> urls){
+		productInfoList.addAll(urls);
+		return this;
+	}
+	public WacomBaobeiProducer addProduct(WacomProductObject url){
+		productInfoList.add(url);
+		return this;
+	}
 }

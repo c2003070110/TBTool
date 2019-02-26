@@ -8,7 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.taobao.util.WebDriverSingleton;
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class YaAuto {
@@ -86,18 +87,17 @@ public class YaAuto {
 
 		String rootUrl = "https://auctions.yahoo.co.jp/user/jp/show/mystatus";
 		
-		// WebDriver driver = new ChromeDriver();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		WebDriver driver = WebDriverSingleton.getWebDriver();
 		driver.get(rootUrl);
 
 		if (!driver.findElements(By.id("idBox")).isEmpty()) {
 			WebElement el1 = driver.findElements(By.id("idBox")).get(0);
-			el1.findElement(By.id("username")).sendKeys("yiyi2014jp");
+			el1.findElement(By.id("username")).sendKeys(NieConfig.getConfig("yahoo.user.name"));
 			driver.findElement(By.id("btnNext")).click();
 		}
 
 		NieUtil.mySleepBySecond(2);
-		driver.findElement(By.id("passwd")).sendKeys("dengyi");
+		driver.findElement(By.id("passwd")).sendKeys(NieConfig.getConfig("yahoo.user.password"));
 		 driver.findElement(By.id("btnSubmit")).click();
 		return driver;
 	}
