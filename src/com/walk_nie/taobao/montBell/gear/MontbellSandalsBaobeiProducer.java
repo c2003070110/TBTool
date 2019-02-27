@@ -158,6 +158,9 @@ public class MontbellSandalsBaobeiProducer extends BaseBaobeiProducer {
 			title += " " + item.gender;
 		}
 		title += " " + item.productId;
+        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+            title += " " + MontBellUtil.spececialProductId ;
+        }
 		
 		baobei.title = title + "\"";
 	}

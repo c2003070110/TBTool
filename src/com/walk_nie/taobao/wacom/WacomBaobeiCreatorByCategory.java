@@ -2,6 +2,8 @@ package com.walk_nie.taobao.wacom;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
@@ -26,7 +28,7 @@ import com.walk_nie.util.NieConfig;
 public class WacomBaobeiCreatorByCategory {
 	
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, URISyntaxException {
 		List<String> categoryUrlList = Lists.newArrayList();
 		// クリエイティブタブレット Wacom MobileStudio Pro
 		categoryUrlList.add("https://store.wacom.jp/products/list.php?category_id=268");
@@ -48,7 +50,7 @@ public class WacomBaobeiCreatorByCategory {
 		System.exit(0);
 	}
 
-	public void process() throws IOException {
+	public void process() throws IOException, URISyntaxException {
 
 		File outputFile = new File(NieConfig.getConfig("wacom.work.root.folder"), 
 				String.format("baobei_%s.csv",
@@ -70,7 +72,7 @@ public class WacomBaobeiCreatorByCategory {
 				.process();
 	}
 
-	private List<WacomProductObject> getProductInfoList(String categoryFilePath) throws IOException {
+	private List<WacomProductObject> getProductInfoList(String categoryFilePath) throws IOException, URISyntaxException {
 		
 		WebDriver webDriver = WebDriverSingleton.getWebDriver();
 		List<WacomProductObject> productInfoList = Lists.newArrayList();
@@ -82,7 +84,7 @@ public class WacomBaobeiCreatorByCategory {
 		for (String url : categoryUrlList) {
 			webDriver.get(url);
 			String categoryId = "";
-			List<NameValuePair> params = URLEncodedUtils.parse(url, Charset.forName("UTF-8"));
+			List<NameValuePair> params = URLEncodedUtils.parse(new URI(url), Charset.forName("UTF-8"));
 			for (NameValuePair param : params) {
 				if ("category_id".equalsIgnoreCase(param.getName())) {
 					categoryId = param.getValue();
@@ -94,8 +96,9 @@ public class WacomBaobeiCreatorByCategory {
 			for (WebElement we : itemEls) {
 				String productId = we.findElement(By.cssSelector("input[name=\"product_id\"]")).getAttribute("value");
 				String href = we.findElement(By.tagName("a")).getAttribute("href");
-				String name = we.findElement(By.tagName("img")).getAttribute("alt");
-				if(!productList.contains(productId)){
+				String name0 = we.findElement(By.tagName("img")).getAttribute("alt");
+				String name = we.findElement(By.className("name")).getText();
+				if(!productList.contains(productId) && !"ストア限定".equals(name0)){
 
 					System.out.println(String.format(outFmt, productId, href, name, categoryId));
 

@@ -25,7 +25,7 @@ import com.walk_nie.util.NieConfig;
 public class MontBellUtil {
 	
 	public static String spececialCateId ="1433105083";//2019 spring&summer!
-	public static String spececialProductId ="191";//2019 spring&summer!
+	public static String spececialProductId ="19春夏";//2019 spring&summer!
 
     public static String rootPathName = NieConfig.getConfig("montbell.work.root.folder");
     public static String sizeTipFileName = "sizeTipList.txt";

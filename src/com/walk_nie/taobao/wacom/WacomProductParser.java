@@ -66,7 +66,11 @@ public class WacomProductParser extends BaseBaobeiParser {
 		System.out.println("[INFO][URL]" + url);
 		WacomProductObject obj = new WacomProductObject();
 		obj.productUrl = url;
-		scanSingleItem(obj);
+		try {
+			scanSingleItem(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return obj;
 	}
 

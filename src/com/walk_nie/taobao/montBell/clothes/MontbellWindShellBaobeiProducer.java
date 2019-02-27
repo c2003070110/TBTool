@@ -212,9 +212,9 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
             title += " " + item.titleEn ;
         }
 		title += " " + item.productId;
-        //if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-        //    title += MontBellUtil.spececialProductId ;
-        //}
+        if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
+            title += MontBellUtil.spececialProductId ;
+        }
 		if (!StringUtil.isBlank(item.gender)) {
 			title += " " + item.gender;
 		}

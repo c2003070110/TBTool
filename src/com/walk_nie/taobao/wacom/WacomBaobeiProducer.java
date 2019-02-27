@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.beust.jcommander.internal.Lists;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.support.BaseBaobeiParser;
@@ -27,6 +29,11 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 				parser.setPublishedbaobeiList(this.publishedbaobeiList);
 				itemIdList = parser.scanItemByProductUrlList(productUrls);
 			}
+			if (!productInfoList.isEmpty()) {
+				WacomProductParser parser = new WacomProductParser();
+				parser.setPublishedbaobeiList(this.publishedbaobeiList);
+				itemIdList = parser.scanItemByProductInfoList(productInfoList);
+			}
 			if (itemIdList.isEmpty())
 				return;
 			priceBw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-16"));
@@ -36,6 +43,9 @@ public class WacomBaobeiProducer extends BaseBaobeiProducer {
 
 			priceBw.write(TaobaoUtil.composeTaobaoHeaderLine());
 			for (WacomProductObject obj : itemIdList) {
+				if(StringUtils.isEmpty(obj.kataban)){
+					continue;
+				}
 				writeOut(priceBw, obj);
 			}
 			System.out.println("-------- FINISH--------");
