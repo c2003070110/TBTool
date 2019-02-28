@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -29,9 +30,7 @@ import com.walk_nie.util.NieUtil;
 
 public class YaAuAutoSendDeamon {
 	private String myaucinfoUrl = "https://auctions.yahoo.co.jp/jp/show/myaucinfo";
-
-	//private List<YaSoldObject> hadSendAuctionObjectList = Lists.newArrayList();
-	// key\tcode\tused
+ 
 	private List<YaSendCodeObject> codeList = Lists.newArrayList();
 	private Map<String, String> keyMsgPrefix = Maps.newHashMap();
 	private File logFile = null;
@@ -50,24 +49,30 @@ public class YaAuAutoSendDeamon {
 	public void execute() throws IOException {
 		init();
 		WebDriver driver = logon();
-		int interval = 120;// second
+		int interval = 100;// second
 		while (true) {
 			try {
 				long t1 = System.currentTimeMillis();
-				System.out.println("[CHECK]There is any not sent?");
+				System.out.println("[TIME]" + getNowDateTime() + "[CHECK]There is any one which is not sent.");
 				if (hasPaid(driver)) {
+					fetchLastestCode();
 					send(driver);
+				} else {
+					System.out.println("[TIME]" + getNowDateTime() + "[RSLT]There is NONE to sent.");
 				}
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
 				if (dif > interval * 1000) {
 					continue;
 				}
+				System.out.println("[TIME]" + getNowDateTime() + "[CHECK]There is any one which is not reviewed.");
 				if (hasNeedReview(driver)) {
 					review(driver);
+				} else {
+					System.out.println("[TIME]" + getNowDateTime() + "[RSLT]There is NONE to review.");
 				}
 				if (dif < interval * 1000) {
-					System.out.println("[SLEEP]zzzZZZzzz...");
+					System.out.println("[TIME]" + getNowDateTime() + "[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
 							.intValue());
 				}
@@ -78,22 +83,6 @@ public class YaAuAutoSendDeamon {
 	}
 
 	private void init() throws IOException {
-//		String hadSendFile = NieConfig
-//				.getConfig("yahoo.auction.autosend.hadSend.file");
-//		List<String> list = Files.readLines(new File(hadSendFile),
-//				Charset.forName("UTF-8"));
-//		for (String str : list) {
-//			String[] sp = str.split("\t");
-//			YaSoldObject yaObj = new YaSoldObject();
-//			yaObj.auctionId = sp[0];
-//			if (sp.length > 1) {
-//				yaObj.obider = sp[1];
-//			}
-//			if (sp.length > 2) {
-//				yaObj.sendCode = sp[2].trim();
-//			}
-//			hadSendAuctionObjectList.add(yaObj);
-//		}
 
 		List<String> list1 = NieConfig
 				.getConfigByPrefix("yahoo.auction.autosend.key");
@@ -114,12 +103,12 @@ public class YaAuAutoSendDeamon {
 			YaSendCodeObject obj = new YaSendCodeObject();
 			obj.key = sp[0];
 			obj.code = sp[1];
-			obj.isUsedFlag = Boolean.getBoolean(sp[2]);
+			obj.isUsedFlag = Boolean.parseBoolean(sp[2]);
 			obj.purOrderId = sp[3];
 			codeList.add(obj);
 		}
-		// TODO set other logger to off
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
 	}
 
 	private boolean hasPaid(WebDriver driver) {
@@ -148,10 +137,10 @@ public class YaAuAutoSendDeamon {
 						obider = param.getValue();
 					}
 				}
-				if (!isAutoSendTarget(title)) {
+				if (!title.startsWith("支払い完了:")) {
 					continue;
 				}
-				if (!title.startsWith("支払い完了:")) {
+				if (!isAutoSendTarget(title)) {
 					continue;
 				}
 				if (!hasStock(title)) {
@@ -185,34 +174,29 @@ public class YaAuAutoSendDeamon {
 				continue;
 			}
 			String href = tdWeA.getAttribute("href");
-			
-			String auctionId = "", obider="";
-			List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
-			for (NameValuePair param : params) {
-				if ("aid".equalsIgnoreCase(param.getName())) {
-					auctionId = param.getValue();
-				}
-				if ("bid".equalsIgnoreCase(param.getName())) {
-					obider = param.getValue();
-				}
-			}
+
+			YaSoldObject yaObj = parseYaObjectFromUrl(href);
 			
 			String title = tdWeA.getText();
-			if (!isAutoSendTarget(title)) {
-				continue;
-			}
 			if (!title.startsWith("支払い完了:")) {
 				continue;
 			}
+			if (!isAutoSendTarget(title)) {
+				continue;
+			}
 			if (!hasStock(title)) {
-				log("[ERROR][This Auction has none stock!][id] = " + auctionId +"[obid]" + obider);
+				log("[ERROR][This Auction has none stock!][id] = " + yaObj.auctionId +"[obid]" + yaObj.obider);
 				continue;
 			}
 			
 			autoSendHrefList.add(href);
 		}
+		String urlFmt = "https://contact.auctions.yahoo.co.jp/seller/top?aid=%s&bid=%s";
 		for (String href : autoSendHrefList) {
-			driver.get(href);
+			YaSoldObject yaObjTemp = parseYaObjectFromUrl(href);
+			driver.get(String.format(urlFmt, yaObjTemp.auctionId,
+					yaObjTemp.obider));
+			
 			codeSendOnce.clear();
 			WebElement rootWe = driver.findElement(By
 					.cssSelector("div[id=\"yjContentsBody\"]"));
@@ -243,21 +227,35 @@ public class YaAuAutoSendDeamon {
 			doSend(driver, rootWe, sendBtnWe,message, yaObj);
 
 			// 発送済みコードを保存
-			saveSendCode();
+			save(yaObj);
+			
+			driver.get(href);
 			
 			// 落札者を評価する
 			doReview(driver, yaObj);
 			
-			//  republish
+			// republish
 			republish(driver, yaObj);
-
 		}
 
-		save();
+	}
+
+	private YaSoldObject parseYaObjectFromUrl(String href) throws URISyntaxException {
+		YaSoldObject yaObj = new YaSoldObject();
+		List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
+		for (NameValuePair param : params) {
+			if ("aid".equalsIgnoreCase(param.getName())) {
+				yaObj.auctionId = param.getValue();
+			}
+			if ("bid".equalsIgnoreCase(param.getName())) {
+				yaObj.obider = param.getValue();
+			}
+		}
+		return yaObj;
 	}
 
 	private void doSend(WebDriver driver, WebElement rootWe, WebElement sendBtnWe, String message, YaSoldObject yaObj) {
-		System.out.println("[Sending][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+		System.out.println("[TIME]" + getNowDateTime() + "[Sending][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 
 		WebElement msgFormWe = rootWe.findElement(By
 				.cssSelector("div[id=\"msgForm\"]"));
@@ -306,7 +304,7 @@ public class YaAuAutoSendDeamon {
 		for (String code : codeSendOnce) {
 			for (YaSendCodeObject obj : codeList) {
 				if (code.equals(obj.code)) {
-					obj.isUsedFlag = false;
+					obj.isUsedFlag = true;
 					break;
 				}
 			}
@@ -333,17 +331,19 @@ public class YaAuAutoSendDeamon {
 		String[] sp = yaObj.title.split("\t");
 		for (String s : sp) {
 			String key = getIdentifierKeyFromTitle(s);
-			String code = getUnusedCode(key);
-			if (StringUtil.isBlank(code)) {
-				String msg = String.format(errMsgFmt, yaObj.auctionId,
-						yaObj.obider, key);
-				System.err.println(msg);
-				log(msg);
-				return null;
+			for (int i = 0; i < yaObj.qtty; i++) {
+				String code = getUnusedCode(key);
+				if (StringUtil.isBlank(code)) {
+					String msg = String.format(errMsgFmt, yaObj.auctionId,
+							yaObj.obider, key);
+					System.err.println(msg);
+					log(msg);
+					return null;
+				}
+				yaObj.sendCode += " " + code;
+				codeSendOnce.add(code);
+				sb.append(keyMsgPrefix.get(key)).append(" ").append(code).append("\n");
 			}
-			yaObj.sendCode += " " + code;
-			codeSendOnce.add(code);
-			sb.append(keyMsgPrefix.get(key)).append(" ").append(code).append("\n");
 		}
 
 		list1 = NieConfig.getConfigByPrefix("yahoo.auction.autosend.message.suffix");
@@ -355,7 +355,7 @@ public class YaAuAutoSendDeamon {
 
 	private String getUnusedCode(String key) throws IOException {
 		for (YaSendCodeObject obj : codeList) {
-			if (obj.key.equals(key) && !obj.isUsedFlag) {
+			if (obj.key.equals(key) && !obj.isUsedFlag && !codeSendOnce.contains(obj.code)) {
 				return obj.code;
 			}
 		}
@@ -363,7 +363,7 @@ public class YaAuAutoSendDeamon {
 		fetchLastestCode();
 		
 		for (YaSendCodeObject obj : codeList) {
-			if (obj.key.equals(key) && !obj.isUsedFlag) {
+			if (obj.key.equals(key) && !obj.isUsedFlag && !codeSendOnce.contains(obj.code)) {
 				return obj.code;
 			}
 		}
@@ -387,9 +387,10 @@ public class YaAuAutoSendDeamon {
 		for (String line : lines) {
 			YaSendCodeObject obj = new YaSendCodeObject();
 			String[] spl = line.split("\t");
-			obj.key = spl[0];
-			obj.code = spl[1];
-			obj.purOrderId = spl[2];
+			int idx = 1;
+			obj.key = spl[idx++];
+			obj.code = spl[idx++];
+			obj.purOrderId = spl[idx++];
 			codeListFetch.add(obj);
 		}
 
@@ -399,6 +400,7 @@ public class YaAuAutoSendDeamon {
 			for (YaSendCodeObject obj : codeList) {
 				if (obj.code.equals(f.code)) {
 					stored = true;
+					break;
 				}
 			}
 			if (!stored) {
@@ -423,6 +425,14 @@ public class YaAuAutoSendDeamon {
 				str = str.replaceAll("オークションID：", "");
 				str = str.replaceAll(" ", "");
 				yaObj.auctionId = str;
+			}
+			if ("decPrice".equals(we.getAttribute("class"))) {
+				String str = we.getText();
+				String numStr = str.substring(0,str.indexOf("落札価格"));
+				numStr = numStr.replaceAll("落札数量", "");
+				numStr = numStr.replaceAll("：", "");
+				numStr = numStr.replaceAll(" ", "");
+				yaObj.qtty = Integer.parseInt(numStr);
 			}
 			if ("decBuyerID".equals(we.getAttribute("class"))) {
 				String str = we.getText();
@@ -477,17 +487,16 @@ public class YaAuAutoSendDeamon {
 		return title.substring(i1 + 1, i2);
 	}
 
-	private void save() throws IOException {
+	private void save(YaSoldObject yaObj) throws IOException {
 
-//		String hadSendFile = NieConfig
-//				.getConfig("yahoo.auction.autosend.hadSend.file");
-//		List<String> l = Lists.newArrayList();
-//		String fmt = "%s\t%s\t%s";
-//		for (YaSoldObject obj : hadSendAuctionObjectList) {
-//			l.add(String.format(fmt, obj.auctionId, obj.obider, obj.sendCode));
-//		}
-//		FileUtils.writeLines(new File(hadSendFile), l, false);
+		String hadSendFile = NieConfig
+				.getConfig("yahoo.auction.autosend.hadSent.file");
+		List<String> l = Lists.newArrayList();
+		String fmt = "%s\t%s\t%s\t%s\t%s";
+		l.add(String.format(fmt, getNowDateTime(), yaObj.auctionId, yaObj.obider, yaObj.title,yaObj.statusMsg));
+		FileUtils.writeLines(new File(hadSendFile), l, true);
 
+		saveSendCode();
 	}
 
 	private boolean hasNeedReview(WebDriver driver) {
@@ -568,7 +577,7 @@ public class YaAuAutoSendDeamon {
 	}
 	private void doReview(WebDriver driver, YaSoldObject yaObj) {
 
-		System.out.println("[Reviewing][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+		System.out.println("[TIME]" + getNowDateTime() + "[Reviewing][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 		List<WebElement> weList = driver.findElements(By.tagName("input"));
 		for (WebElement we : weList) {
 			if ("定型コメント入力".equals(we.getAttribute("value"))) {
@@ -628,14 +637,19 @@ public class YaAuAutoSendDeamon {
 
 	private void log(String string) {
 
-		String today = DateUtils.formatDate(Calendar.getInstance().getTime(),
-				"yyyy-MM-dd");
+		String nowDateTimeStr = getNowDateTime();
 		try {
-			FileUtils.write(logFile, "[" + today + "]" + string + "\n",
+			FileUtils.write(logFile, "[" + nowDateTimeStr + "]" + string + "\n",
 					Charset.forName("UTF-8"), true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String getNowDateTime(){
+        TimeZone tz2 = TimeZone.getTimeZone("Asia/Tokyo");
+        Calendar cal1 = Calendar.getInstance(tz2);
+		return DateUtils.formatDate(cal1.getTime(), "yyyy-MM-dd HH:mm:ss");
 	}
 
 }
