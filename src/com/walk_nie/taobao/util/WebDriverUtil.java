@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -25,13 +24,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.beust.jcommander.internal.Lists;
@@ -52,21 +46,7 @@ public class WebDriverUtil  {
 		System.setProperty("webdriver.ie.driver", ieDriverPath);
 		System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
 		
-		LoggingPreferences preferences = new LoggingPreferences();
-		preferences.enable(LogType.BROWSER, Level.OFF);
-		preferences.enable(LogType.CLIENT, Level.OFF);
-		preferences.enable(LogType.DRIVER, Level.OFF);
-		preferences.enable(LogType.PERFORMANCE, Level.OFF);
-		preferences.enable(LogType.PROFILER, Level.OFF);
-		preferences.enable(LogType.SERVER, Level.OFF);
-		DesiredCapabilities dc = new DesiredCapabilities();
-        dc.setCapability(CapabilityType.LOGGING_PREFS, preferences);
-		FirefoxOptions opt = new FirefoxOptions();
-		opt.setLogLevel(FirefoxDriverLogLevel.FATAL);
-		opt.merge(dc);
-		//GeckoDriverService geckoService = GeckoDriverService.createDefaultService();
-		
-		return new FirefoxDriver(opt);
+		return new FirefoxDriver();
 	}
 
 	public static WebDriver getIEWebDriver() {
