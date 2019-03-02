@@ -1,7 +1,9 @@
 package com.walk_nie.ya.auction;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,12 +18,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.DateUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.jsoup.helper.StringUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
@@ -56,31 +58,31 @@ public class YaAuAutoSendDeamon {
 		while (true) {
 			try {
 				long t1 = System.currentTimeMillis();
-				System.out.println("[TIME]" + getNowDateTime() + "[CHECK]There is any one which is not sent.");
+				//log("[CHECK]There is any one which is not sent.");
 				if (hasPaid(driver)) {
+					log("[SEND]Same auction has paid and need to sent the code.");
 					fetchLastestCode();
 					send(driver);
 				} else {
-					System.out.println("[TIME]" + getNowDateTime() + "[RSLT]There is NONE to sent.");
+					log("[RSLT]There is NONE to sent.");
 				}
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
 				if (dif > interval * 1000) {
 					continue;
 				}
-				System.out.println("[TIME]" + getNowDateTime() + "[CHECK]There is any one which is not reviewed.");
 				if (hasNeedReview(driver)) {
 					review(driver);
 				} else {
-					System.out.println("[TIME]" + getNowDateTime() + "[RSLT]There is NONE to review.");
+					log("[RSLT]There is NONE to review.");
 				}
 				if (dif < interval * 1000) {
-					System.out.println("[TIME]" + getNowDateTime() + "[SLEEP]zzzZZZzzz...");
+					log("[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
 							.intValue());
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				log(ex);
 			}
 		}
 	}
@@ -120,6 +122,7 @@ public class YaAuAutoSendDeamon {
 				By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
 				By.tagName("table"));
 		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
+		log("[CHECK]Is There any auction paid?");
 		for (WebElement trWe : trWeList) {
 			List<WebElement> tdWeList = trWe.findElements(By.tagName("td"));
 			if (tdWeList.size() != 3) {
@@ -178,7 +181,7 @@ public class YaAuAutoSendDeamon {
 			}
 			String href = tdWeA.getAttribute("href");
 
-			YaSoldObject yaObj = parseYaObjectFromUrl(href);
+			//YaSoldObject yaObj = parseYaObjectFromUrl(href);
 			
 			String title = tdWeA.getText();
 			if (!title.startsWith("支払い完了:")) {
@@ -188,7 +191,7 @@ public class YaAuAutoSendDeamon {
 				continue;
 			}
 			if (!hasStock(title)) {
-				log("[ERROR][This Auction has none stock!][id] = " + yaObj.auctionId +"[obid]" + yaObj.obider);
+				//log("[ERROR][This Auction has none stock!][id] = " + yaObj.auctionId +"[obid]" + yaObj.obider);
 				continue;
 			}
 			
@@ -197,6 +200,7 @@ public class YaAuAutoSendDeamon {
 		String urlFmt = "https://contact.auctions.yahoo.co.jp/seller/top?aid=%s&bid=%s";
 		for (String href : autoSendHrefList) {
 			YaSoldObject yaObjTemp = parseYaObjectFromUrl(href);
+			log("[SEND]Start[auctionId]" + yaObjTemp.auctionId +"[obider]" + yaObjTemp.obider);
 			driver.get(String.format(urlFmt, yaObjTemp.auctionId,
 					yaObjTemp.obider));
 			
@@ -240,7 +244,6 @@ public class YaAuAutoSendDeamon {
 			// republish
 			republish(driver, yaObj);
 		}
-
 	}
 
 	private YaSoldObject parseYaObjectFromUrl(String href) throws URISyntaxException {
@@ -258,7 +261,7 @@ public class YaAuAutoSendDeamon {
 	}
 
 	private void doSend(WebDriver driver, WebElement rootWe, WebElement sendBtnWe, String message, YaSoldObject yaObj) {
-		System.out.println("[TIME]" + getNowDateTime() + "[Sending][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+		log("[Sending][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 
 		WebElement msgFormWe = rootWe.findElement(By
 				.cssSelector("div[id=\"msgForm\"]"));
@@ -298,7 +301,6 @@ public class YaAuAutoSendDeamon {
 		}
 		String msgFmt = "[SUCC]sent sucessfully!![auctionId]%s[obider]%s[msg]%s";
 		String msg = String.format(msgFmt, yaObj.auctionId, yaObj.obider, message);
-		System.out.println(msg);
 		log(msg);
 		NieUtil.mySleepBySecond(1);
 	}
@@ -339,7 +341,6 @@ public class YaAuAutoSendDeamon {
 				if (StringUtil.isBlank(code)) {
 					String msg = String.format(errMsgFmt, yaObj.auctionId,
 							yaObj.obider, key);
-					System.err.println(msg);
 					log(msg);
 					return null;
 				}
@@ -374,7 +375,9 @@ public class YaAuAutoSendDeamon {
 	}
 
 	private void fetchLastestCode() throws IOException {
-		String src = NieConfig.getConfig("yahoo.auction.code.source.file");
+		String src = NieConfig.getConfig("yahoo.auction.autosend.code.source.file");
+		log("[FETCH][START]fetch the lastest code");
+		log("[STOCK]Source = " + src);
 		List<String> lines = Lists.newArrayList();
 		if (src.startsWith("http")) {
 			URL u = new URL(src);
@@ -411,7 +414,12 @@ public class YaAuAutoSendDeamon {
 				newCodeList.add(f);
 			}
 		}
-		codeList.addAll(newCodeList);
+		if(!newCodeList.isEmpty()){
+			codeList.addAll(newCodeList);
+			log("[FETCH][RESULT][QTTY]The lastest code is " + newCodeList.size());
+		}else{
+			log("[FETCH][RESULT]The lastest code is NONE");
+		}
 	}
 
 	private YaSoldObject parseSold(WebElement rootWe) {
@@ -507,6 +515,7 @@ public class YaAuAutoSendDeamon {
 		WebElement weTbl = driver.findElement(
 				By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
 				By.tagName("table"));
+		log("[CHECK]Is there  any one which is not reviewed.");
 		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
 		for (WebElement trWe : trWeList) {
 			List<WebElement> tdWeList = trWe.findElements(By.tagName("td"));
@@ -580,7 +589,7 @@ public class YaAuAutoSendDeamon {
 	}
 	private void doReview(WebDriver driver, YaSoldObject yaObj) {
 
-		System.out.println("[TIME]" + getNowDateTime() + "[Reviewing][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+		log("[Reviewing][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 		List<WebElement> weList = driver.findElements(By.tagName("input"));
 		for (WebElement we : weList) {
 			if ("定型コメント入力".equals(we.getAttribute("value"))) {
@@ -605,7 +614,6 @@ public class YaAuAutoSendDeamon {
 		}
 		String msgFmt = "[SUCC]Review sucessfully!![auctionId]%s[obider]%s";
 		String msg = String.format(msgFmt, yaObj.auctionId, yaObj.obider);
-		System.out.println(msg);
 		log(msg);
 	}
 
@@ -619,10 +627,10 @@ public class YaAuAutoSendDeamon {
 		String rootUrl = "https://auctions.yahoo.co.jp/user/jp/show/mystatus";
 
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		//WebDriver driver = WebDriverUtil.getHtmlUnitDriver();
 		driver.manage().window().setSize(new Dimension(960, 960));
 		driver.manage().window().setPosition(new Point(10, 10));
 		driver.get(rootUrl);
-
 		if (!driver.findElements(By.id("idBox")).isEmpty()) {
 			WebElement el1 = driver.findElements(By.id("idBox")).get(0);
 			el1.findElement(By.id("username")).sendKeys(
@@ -631,6 +639,7 @@ public class YaAuAutoSendDeamon {
 		}
 
 		NieUtil.mySleepBySecond(2);
+
 		driver.findElement(By.id("passwd")).sendKeys(
 				NieConfig.getConfig("yahoo.user.password"));
 		driver.findElement(By.id("btnSubmit")).click();
@@ -644,8 +653,21 @@ public class YaAuAutoSendDeamon {
 
 		String nowDateTimeStr = getNowDateTime();
 		try {
-			FileUtils.write(logFile, "[" + nowDateTimeStr + "]" + string + "\n",
-					Charset.forName("UTF-8"), true);
+			String str = "[" + nowDateTimeStr + "]" + string + "\n";
+			System.out.print(str);
+			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void log(Exception ex) {
+		try {
+			PrintStream ps = new PrintStream(new FileOutputStream(logFile,true));
+			ex.printStackTrace(ps);
+			ps.flush();
+			ps.close();
+			ex.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

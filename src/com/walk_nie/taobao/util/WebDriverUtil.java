@@ -25,6 +25,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -39,6 +40,10 @@ public class WebDriverUtil  {
     private static WebDriver driver = null;
     public static String watermark_common = "in/watermark0.png";
     public static String watermark_montbell = "in/watermark4.png";
+    
+	public static WebDriver getHtmlUnitDriver() {
+		return new HtmlUnitDriver();
+	}
 
 	public static WebDriver getFirefoxWebDriver() {
 		System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
