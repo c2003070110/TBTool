@@ -25,8 +25,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.seleniumhq.jetty9.util.StringUtil;
 
-import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Maps;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
@@ -58,7 +58,6 @@ public class YaAuAutoSendDeamon {
 		while (true) {
 			try {
 				long t1 = System.currentTimeMillis();
-				//log("[CHECK]There is any one which is not sent.");
 				if (hasPaid(driver)) {
 					log("[SEND]Same auction has paid and need to sent the code.");
 					fetchLastestCode();
@@ -181,8 +180,6 @@ public class YaAuAutoSendDeamon {
 			}
 			String href = tdWeA.getAttribute("href");
 
-			//YaSoldObject yaObj = parseYaObjectFromUrl(href);
-			
 			String title = tdWeA.getText();
 			if (!title.startsWith("支払い完了:")) {
 				continue;
@@ -381,9 +378,10 @@ public class YaAuAutoSendDeamon {
 		List<String> lines = Lists.newArrayList();
 		if (src.startsWith("http")) {
 			URL u = new URL(src);
-			File file = new File("tmp.txt");
+			File file = new File("tmp" + getNowDateTime() + ".txt");
 			FileUtils.copyURLToFile(u, file);
 			lines = FileUtils.readLines(file, "UTF-8");
+			file.delete();
 		} else {
 			File file = new File(src);
 			lines = FileUtils.readLines(file, "UTF-8");
@@ -469,16 +467,6 @@ public class YaAuAutoSendDeamon {
 		}
 		return true;
 	}
-
-//	private boolean hadSend(YaSoldObject yaObj) {
-//		for (YaSoldObject yaObjHad : hadSendAuctionObjectList) {
-//			if (yaObjHad.auctionId.equals(yaObj.auctionId)
-//					&& yaObjHad.obider.equals(yaObj.obider)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 
 	private boolean hasStock(String title) throws IOException {
 

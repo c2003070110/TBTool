@@ -216,7 +216,7 @@ public class MontbellProductParser extends BaseBaobeiParser {
 
 		for (int i = 1; i < sizes.size(); i++) {
 			String zie = sizes.get(i).text();
-			if (!goodsObj.sizeList.contains(zie)) {
+			if (!goodsObj.sizeList.contains(zie) && !zie.startsWith("U/")) {
 				goodsObj.sizeList.add(zie);
 			}
 			try {
@@ -478,6 +478,17 @@ public class MontbellProductParser extends BaseBaobeiParser {
 				+ categoryObj.categoryId;
 		Document doc = TaobaoUtil.urlToDocumentByUTF8(cateogryUrl);
 		scanEnTitleByCategory(doc, categoryObj);
+		Elements pages1 = doc.select("div.resultArea").select("div.leftArea")
+				.select("p");
+		int minP1 = 3;
+		if (pages1.size() > minP1) {
+			for (int i = minP1; i < pages1.size() - 1; i++) {
+				String pagedCategoryUrl = cateogryUrl + "&page=" + (i - 1);
+				Document docPage = TaobaoUtil
+						.urlToDocumentByUTF8(pagedCategoryUrl);
+				scanEnTitleByCategory(docPage, categoryObj);
+			}
+		}
 
 		cateogryUrl = MontBellUtil.categoryUrlPrefix_en
 				+ categoryObj.categoryId;
