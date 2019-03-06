@@ -235,11 +235,11 @@ public class YaAuAutoSendDeamon {
 			
 			driver.get(href);
 			
-			// 落札者を評価する
-			doReview(driver, yaObj);
+			// TODO 落札者を評価する
+			//doReview(driver, yaObj);
 			
-			// republish
-			republish(driver, yaObj);
+			// TODO republish
+			//republish(driver, yaObj);
 		}
 	}
 
@@ -361,7 +361,7 @@ public class YaAuAutoSendDeamon {
 			}
 		}
 		
-		fetchLastestCode();
+		//fetchLastestCode();
 		
 		for (YaSendCodeObject obj : codeList) {
 			if (obj.key.equals(key) && !obj.isUsedFlag && !codeSendOnce.contains(obj.code)) {
@@ -414,6 +414,7 @@ public class YaAuAutoSendDeamon {
 		}
 		if(!newCodeList.isEmpty()){
 			codeList.addAll(newCodeList);
+			saveSendCode();
 			log("[FETCH][RESULT][QTTY]The lastest code is " + newCodeList.size());
 		}else{
 			log("[FETCH][RESULT]The lastest code is NONE");
@@ -605,7 +606,7 @@ public class YaAuAutoSendDeamon {
 		log(msg);
 	}
 
-	private void republish(WebDriver driver, YaSoldObject yaObj) {
+	protected void republish(WebDriver driver, YaSoldObject yaObj) {
 		// TODO 自動生成されたメソッド・スタブ
 		
 	}

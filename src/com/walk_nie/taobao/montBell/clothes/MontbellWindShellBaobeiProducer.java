@@ -193,30 +193,30 @@ public class MontbellWindShellBaobeiProducer extends BaseBaobeiProducer {
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
 		String title = "\"";
 		if (canPinyou(item)) {
-			title += " 日本拼邮免邮";
+			title += "日本拼免";
 		}else{
-			title += " 日本直邮";
+			title += "日本直邮";
 		}
 	
 		//title += "" + item.titleCN;
-		title += " MontBell";
+		title += "MontBell";
 		String categoryId = item.cateogryObj.categoryId;
 		if ("11500".equals(categoryId)) {
 			// 超軽量ウインドブレーカー
-			title += " 超轻皮肤衣";
+			title += "超轻皮肤衣";
 		} else if ("11000".equals(categoryId)) {
 			// ウインドブレーカー
-			title += " 户外风衣";
+			title += "户外风衣";
 		}
         if(!StringUtil.isBlank(item.titleEn)){
-            title += " " + item.titleEn ;
+            title += "" + item.titleEn.replaceAll(" ", "") ;
         }
-		title += " " + item.productId;
+		title += "" + item.productId;
         if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
             title += " " + MontBellUtil.spececialProductId ;
         }
 		if (!StringUtil.isBlank(item.gender)) {
-			title += " " + item.gender;
+			title += "" + item.gender;
 		}
 
 		baobei.title = title + "\"";
