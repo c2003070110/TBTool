@@ -216,7 +216,7 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "\"日本直邮 MontBell";
+		String title = "\"日本直邮MontBell";
 		//title += "" + item.titleCN;
 		String categoryId = item.cateogryObj.categoryId;
 		if ("142000".equals(categoryId)) {
@@ -293,14 +293,14 @@ public class MontbellSoftShellBaobeiProducer extends BaseBaobeiProducer {
 			title += " ";
 		}
         if(!StringUtil.isBlank(item.titleEn)){
-            title += " " + item.titleEn ;
+            title += " " + item.titleEn.replaceAll(" ", "") ;
         }
 		title += " " + item.productId;
         if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
+            title += " " + MontBellUtil.spececialProductId ;
         }
 		if (!StringUtil.isBlank(item.gender)) {
-			title += " " + item.gender;
+			title += item.gender;
 		}
 
 		baobei.title = title + "\"";

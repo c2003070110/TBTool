@@ -37,7 +37,6 @@ public class MontbellAutoOrder {
 	private String ooutFileName ="order-out.txt";
 	private String ooutFileNameForShot ="order-out-shot.txt";
 	
-	private String itemSplitter =",";
 	
 	private WebDriver driver = null;
 	private List<CrObject> crObjList = Lists.newArrayList();
@@ -472,10 +471,11 @@ public class MontbellAutoOrder {
 			fillCreditCard(driver, orderInfo.crObj);
 		}
 		
+		String productStr = MontBellUtil.toProductInfoString(orderInfo.productInfos);
 		File oFile = new File(MontBellUtil.rootPathName,ooutFileName);
 		List<String> lines = Lists.newArrayList();
 		lines.add(orderInfo.taobaoOrderName);
-		lines.add(toProductInfoString(orderInfo.productInfos));
+		lines.add(productStr);
 		lines.add(orderInfo.firstName +" " +orderInfo.lastName);
 		lines.add(orderInfo.tel);
 		lines.add(orderInfo.state);
@@ -488,7 +488,7 @@ public class MontbellAutoOrder {
 		File oFileS = new File(MontBellUtil.rootPathName,ooutFileNameForShot);
 		lines = Lists.newArrayList();
 		String yyyyMMdd = DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss");
-		lines.add(String.format("%s\t%s\t%s",yyyyMMdd, orderInfo.taobaoOrderName, toProductInfoString(orderInfo.productInfos)));
+		lines.add(String.format("%s\t%s\t%s",yyyyMMdd, orderInfo.taobaoOrderName, productStr));
 		NieUtil.appendToFile(oFileS, lines);
 	}
 
@@ -582,7 +582,7 @@ public class MontbellAutoOrder {
 		int idx = 0;
 		order.taobaoOrderName = votes.get(idx++);
 		String productInfos = votes.get(idx++);
-		String[] pis = productInfos.split(itemSplitter);
+		String[] pis = productInfos.split(MontBellUtil.itemSplitter);
 		for (String line : pis) {
 			TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(line);
 			
@@ -715,27 +715,6 @@ public class MontbellAutoOrder {
 		return str;
 	}
 
-	private String toProductInfoString(List<TaobaoOrderProductInfo> productInfos) {
-		StringBuffer sb = new StringBuffer();
-		for(TaobaoOrderProductInfo pi:productInfos){
-			sb.append("商家编码：MTBL_XX-" + pi.productId);
-			sb.append(" ");
-			if(!"".equals(pi.colorName)){
-				sb.append("颜色分类:" + pi.colorName);
-				sb.append(";");
-			}
-			if(!"".equals(pi.sizeName)){
-				sb.append("尺码:" + pi.sizeName);
-				sb.append(";");
-			}
-			if(!"".equals(pi.qtty)){
-				sb.append("数量：" + pi.qtty);
-			}
-			sb.append(itemSplitter);
-		}
-		return sb.toString();
-	}
-
 	private void logOrderInfo(TaobaoOrderInfo orderInfo) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[taobaoOrderName]" + orderInfo.taobaoOrderName + "\n");
@@ -748,7 +727,7 @@ public class MontbellAutoOrder {
 		sb.append("[adr1]" + orderInfo.adr1 + "\n");
 		sb.append("[postcode]" + orderInfo.postcode + "\n");
 		sb.append("[crId]" + orderInfo.crObj.crBrand + "\n");
-		sb.append("[productInfos]" + toProductInfoString(orderInfo.productInfos) + "\n");
+		sb.append("[productInfos]" + MontBellUtil.toProductInfoString(orderInfo.productInfos) + "\n");
 		System.out.println(sb.toString());
 	}
 
@@ -763,7 +742,7 @@ public class MontbellAutoOrder {
 			TaobaoOrderInfo orderInfo = new TaobaoOrderInfo();
 			String yyyyMMdd = splits[0];
 			orderInfo.taobaoOrderName = splits[1];
-			String[] pis = splits[2].split(itemSplitter);
+			String[] pis = splits[2].split(MontBellUtil.itemSplitter);
 			for (String pi : pis) {
 				TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(pi);
 				orderInfo.productInfos.add(pinfo);

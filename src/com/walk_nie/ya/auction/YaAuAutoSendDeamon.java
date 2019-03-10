@@ -59,7 +59,7 @@ public class YaAuAutoSendDeamon {
 			try {
 				long t1 = System.currentTimeMillis();
 				if (hasPaid(driver)) {
-					log("[SEND]Same auction has paid and need to sent the code.");
+					//log("[SEND]Same auction has paid and need to sent the code.");
 					fetchLastestCode();
 					send(driver);
 				} else {
@@ -121,7 +121,7 @@ public class YaAuAutoSendDeamon {
 				By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
 				By.tagName("table"));
 		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
-		log("[CHECK]Is There any auction paid?");
+		log("[hasPaid][START]Is There any auction paid?");
 		for (WebElement trWe : trWeList) {
 			List<WebElement> tdWeList = trWe.findElements(By.tagName("td"));
 			if (tdWeList.size() != 3) {
@@ -130,33 +130,35 @@ public class YaAuAutoSendDeamon {
 			try {
 				WebElement tdWeA = tdWeList.get(1).findElement(By.tagName("a"));
 				String title = tdWeA.getText();
-				String href = tdWeA.getAttribute("href");
+				//String href = tdWeA.getAttribute("href");
 				
-				String auctionId = "", obider="";
-				List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
-				for (NameValuePair param : params) {
-					if ("aid".equalsIgnoreCase(param.getName())) {
-						auctionId = param.getValue();
-					}
-					if ("bid".equalsIgnoreCase(param.getName())) {
-						obider = param.getValue();
-					}
-				}
+				//String auctionId = "", obider="";
+//				List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
+//				for (NameValuePair param : params) {
+//					if ("aid".equalsIgnoreCase(param.getName())) {
+//						auctionId = param.getValue();
+//					}
+//					if ("bid".equalsIgnoreCase(param.getName())) {
+//						obider = param.getValue();
+//					}
+//				}
 				if (!title.startsWith("支払い完了:")) {
 					continue;
 				}
 				if (!isAutoSendTarget(title)) {
 					continue;
 				}
-				if (!hasStock(title)) {
-					log("[ERROR][This Auction has none stock!][id] = " + auctionId +"[obid]" + obider);
-					continue;
-				}
+				//if (!hasStock(title)) {
+				//	log("[ERROR][This Auction has none stock!][id]" + auctionId +"[obid]" + obider);
+				//	continue;
+				//}
+				log("[hasPaid][END]There are some auction which had paid!");
 				return true;
 			} catch (Exception e) {
 
 			}
 		}
+		log("[hasPaid][END]There are NONE auction which had paid!");
 		return false;
 	}
 
@@ -167,6 +169,7 @@ public class YaAuAutoSendDeamon {
 				By.tagName("table"));
 		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
 		List<String> autoSendHrefList = Lists.newArrayList();
+		log("[SEND]START");
 		for (WebElement trWe : trWeList) {
 			List<WebElement> tdWeList = trWe.findElements(By.tagName("td"));
 			if (tdWeList.size() != 3) {
@@ -187,8 +190,19 @@ public class YaAuAutoSendDeamon {
 			if (!isAutoSendTarget(title)) {
 				continue;
 			}
+			
+			String auctionId = "", obider="";
+			List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
+			for (NameValuePair param : params) {
+				if ("aid".equalsIgnoreCase(param.getName())) {
+					auctionId = param.getValue();
+				}
+				if ("bid".equalsIgnoreCase(param.getName())) {
+					obider = param.getValue();
+				}
+			}
 			if (!hasStock(title)) {
-				//log("[ERROR][This Auction has none stock!][id] = " + yaObj.auctionId +"[obid]" + yaObj.obider);
+				log("[ERROR][This Auction has none stock!][id]" + auctionId +"[obid]" + obider);
 				continue;
 			}
 			
@@ -197,7 +211,7 @@ public class YaAuAutoSendDeamon {
 		String urlFmt = "https://contact.auctions.yahoo.co.jp/seller/top?aid=%s&bid=%s";
 		for (String href : autoSendHrefList) {
 			YaSoldObject yaObjTemp = parseYaObjectFromUrl(href);
-			log("[SEND]Start[auctionId]" + yaObjTemp.auctionId +"[obider]" + yaObjTemp.obider);
+			log("[SEND][SETING][auctionId]" + yaObjTemp.auctionId +"[obider]" + yaObjTemp.obider);
 			driver.get(String.format(urlFmt, yaObjTemp.auctionId,
 					yaObjTemp.obider));
 			
@@ -217,7 +231,8 @@ public class YaAuAutoSendDeamon {
 				}
 			}
 			if (sendBtnWe == null) {
-				log("[ERROR][This Auction has sent!][auctionId] = " + yaObj.auctionId +"[obider]" + yaObj.obider);
+				log("[ERROR][This Auction has sent!][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+				driver.get(href);
 				continue;
 			}
 
@@ -241,6 +256,7 @@ public class YaAuAutoSendDeamon {
 			// TODO republish
 			//republish(driver, yaObj);
 		}
+		log("[SEND]END");
 	}
 
 	private YaSoldObject parseYaObjectFromUrl(String href) throws URISyntaxException {
@@ -360,25 +376,17 @@ public class YaAuAutoSendDeamon {
 				return obj.code;
 			}
 		}
-		
-		//fetchLastestCode();
-		
-		for (YaSendCodeObject obj : codeList) {
-			if (obj.key.equals(key) && !obj.isUsedFlag && !codeSendOnce.contains(obj.code)) {
-				return obj.code;
-			}
-		}
 		return null;
 	}
 
 	private void fetchLastestCode() throws IOException {
 		String src = NieConfig.getConfig("yahoo.auction.autosend.code.source.file");
 		log("[FETCH][START]fetch the lastest code");
-		log("[STOCK]Source = " + src);
+		log("[FETCH][URL]" + src);
 		List<String> lines = Lists.newArrayList();
 		if (src.startsWith("http")) {
 			URL u = new URL(src);
-			File file = new File("tmp" + getNowDateTime() + ".txt");
+			File file = new File("tmp" + System.currentTimeMillis() + ".txt");
 			FileUtils.copyURLToFile(u, file);
 			lines = FileUtils.readLines(file, "UTF-8");
 			file.delete();
@@ -415,9 +423,9 @@ public class YaAuAutoSendDeamon {
 		if(!newCodeList.isEmpty()){
 			codeList.addAll(newCodeList);
 			saveSendCode();
-			log("[FETCH][RESULT][QTTY]The lastest code is " + newCodeList.size());
+			log("[FETCH][END][QTTY]The lastest code is " + newCodeList.size());
 		}else{
-			log("[FETCH][RESULT]The lastest code is NONE");
+			log("[FETCH][END]The lastest code is NONE");
 		}
 	}
 
@@ -476,11 +484,11 @@ public class YaAuAutoSendDeamon {
 	}
 
 	private String getIdentifierKeyFromTitle(String title) {
-		int i1 = title.indexOf("[");
+		int i1 = title.lastIndexOf("[");
 		if (i1 == -1) {
 			return null;
 		}
-		int i2 = title.indexOf("]");
+		int i2 = title.lastIndexOf("]");
 		if (i2 == -1) {
 			return null;
 		}

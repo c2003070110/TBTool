@@ -41,9 +41,9 @@ public class Montbell18SpringSummer {
 	*/
 		new MontbellRainShellBaobeiCreator().process();
 		new MontbellWindShellBaobeiCreator().process();
+		new MontbellSoftShellBaobeiCreator().process();
 		
 		new MontbellCapHatBaobeiCreator().process();
-		new MontbellSoftShellBaobeiCreator().process();
 		new MontbellTShirtBaobeiCreator().process();
 		new MontbellUnderWareBaobeiCreator().process();
 		
