@@ -156,12 +156,16 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
-		submitList = driver.findElements(By.tagName("a"));
+		//submitList = driver.findElements(By.tagName("a"));
+		submitList = driver.findElements(By.tagName("img"));
 		for (WebElement we : submitList) {
-			if ("javascript:goLoginWeb();".equalsIgnoreCase(we.getAttribute("href"))) {
+			try{
+			if ("ログインして次に進む".equalsIgnoreCase(we.getAttribute("alt"))) {
+			//if ("javascript:goLoginWeb();".equalsIgnoreCase(we.getAttribute("href"))) {
 				we.click();
-				break;
+				//break;
 			}
+			}catch(Exception e){}
 		}
 		return driver;
 	}
@@ -235,14 +239,14 @@ public class MontbellAutoOrder {
 		}catch(Exception ex){
 		}
 
-//		driver.get("https://webshop.montbell.jp/cart");
+		driver.get("https://webshop.montbell.jp/cart");
 //		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
 //				+ orderInfo.taobaoOrderName + ".jpg");
 //		// take screenshot
 //		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 		
 		List<WebElement> weList = null;
-		weList = driver.findElements(By.tagName("input[type=\"image\"]"));
+		weList = driver.findElements(By.cssSelector("input[type=\"image\"]"));
 		for (WebElement we : weList) {
 			if ("レジに進む".equalsIgnoreCase(we
 					.getAttribute("alt"))) {
@@ -253,17 +257,11 @@ public class MontbellAutoOrder {
 
 		if ("store".equals(orderInfo.crObj.id.toLowerCase())) {
 			// next button
-			weList = driver.findElements(By
-					.cssSelector("input[name=\"next_shop\"]"));
-			for (WebElement we : weList) {
-				if ("next_destination"
-						.equalsIgnoreCase(we.getAttribute("name"))) {
-					we.click();
-					break;
-				}
-			}
-			
 			WebElement we = driver.findElement(By
+					.cssSelector("input[name=\"next_shop\"]"));
+			we.click();
+			
+			 we = driver.findElement(By
 					.cssSelector("select[name=\"shop_prefecture_id\"]"));
 			Select dropdown = new Select(we);
 			dropdown.selectByValue("13");// 東京都
@@ -589,8 +587,9 @@ public class MontbellAutoOrder {
 			order.productInfos.add(pinfo);
 		}
 		String next = votes.get(idx++);
-		if("store".equalsIgnoreCase(next) || "".equals(getCrBrand(next))){
+		if("store".equalsIgnoreCase(next) || StringUtils.isNotEmpty(getCrBrand(next))){
 			// order for japan
+			next = votes.get(idx++);
 			order.crObj = getCrObject(next);
 			return order;
 		}
