@@ -32,8 +32,9 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
-public class YaAuAutoSendDeamon {
+public class YaAuAutoSend {
 	private String myaucinfoUrl = "https://auctions.yahoo.co.jp/jp/show/myaucinfo";
+	private String republishUrlFmt = "https://auctions.yahoo.co.jp/sell/jp/show/resubmit?aID=%s";
  
 	private List<YaSendCodeObject> codeList = Lists.newArrayList();
 	private Map<String, String> keyMsgPrefix = Maps.newHashMap();
@@ -46,7 +47,7 @@ public class YaAuAutoSendDeamon {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		YaAuAutoSendDeamon main = new YaAuAutoSendDeamon();
+		YaAuAutoSend main = new YaAuAutoSend();
 		main.execute();
 	}
 
@@ -67,6 +68,12 @@ public class YaAuAutoSendDeamon {
 				}
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
+				if (dif > interval * 1000) {
+					continue;
+				}
+				republish(driver);
+				  t2 = System.currentTimeMillis();
+				  dif = t2 - t1;
 				if (dif > interval * 1000) {
 					continue;
 				}
@@ -318,7 +325,7 @@ public class YaAuAutoSendDeamon {
 		NieUtil.mySleepBySecond(1);
 	}
 
-	private void saveSendCode() throws IOException {
+	private void saveSendCode() {
 		for (String code : codeSendOnce) {
 			for (YaSendCodeObject obj : codeList) {
 				if (code.equals(obj.code)) {
@@ -334,7 +341,11 @@ public class YaAuAutoSendDeamon {
 		for (YaSendCodeObject obj : codeList) {
 			l.add(String.format(fmt, obj.key, obj.code, obj.isUsedFlag, obj.purOrderId));
 		}
-		FileUtils.writeLines(new File(codeFile), l, false);
+		try {
+			FileUtils.writeLines(new File(codeFile), l, false);
+		} catch (IOException e) {
+			log("[ERROR][saveSendCode]"+e.getMessage());
+		}
 	}
 
 	private String composeSendMessage(YaSoldObject yaObj) throws IOException {
@@ -379,20 +390,32 @@ public class YaAuAutoSendDeamon {
 		return null;
 	}
 
-	private void fetchLastestCode() throws IOException {
+	private void fetchLastestCode() {
 		String src = NieConfig.getConfig("yahoo.auction.autosend.code.source.file");
 		log("[FETCH][START]fetch the lastest code");
 		log("[FETCH][URL]" + src);
 		List<String> lines = Lists.newArrayList();
 		if (src.startsWith("http")) {
-			URL u = new URL(src);
-			File file = new File("tmp" + System.currentTimeMillis() + ".txt");
-			FileUtils.copyURLToFile(u, file);
-			lines = FileUtils.readLines(file, "UTF-8");
-			file.delete();
+			try {
+				URL u = new URL(src);
+				File file = new File("tmp" + System.currentTimeMillis() + ".txt");
+				FileUtils.copyURLToFile(u, file);
+				lines = FileUtils.readLines(file, "UTF-8");
+				file.delete();
+			} catch (Exception e) {
+				log("[ERROR][fetchLastestCode]"+e.getMessage());
+				e.printStackTrace();
+				return ;
+			}
 		} else {
 			File file = new File(src);
-			lines = FileUtils.readLines(file, "UTF-8");
+			try {
+				lines = FileUtils.readLines(file, "UTF-8");
+			} catch (Exception e) {
+				log("[ERROR][fetchLastestCode]"+e.getMessage());
+				e.printStackTrace();
+				return ;
+			}
 		}
 		
 		List<YaSendCodeObject> codeListFetch = Lists.newArrayList();
@@ -614,9 +637,83 @@ public class YaAuAutoSendDeamon {
 		log(msg);
 	}
 
-	protected void republish(WebDriver driver, YaSoldObject yaObj) {
-		// TODO 自動生成されたメソッド・スタブ
-		
+	private void republish(WebDriver driver) {
+		driver.get(myaucinfoUrl);
+		WebElement weTbl = driver.findElement(
+				By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
+				By.tagName("table"));
+		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
+
+		// log("[republish][START]Is There any auction finished?");
+		List<String> list = Lists.newArrayList();//終了（落札者なし）
+		for (WebElement trWe : trWeList) {
+			try {
+				List<WebElement> tdWeList = trWe.findElements(By.tagName("td"));
+				if (tdWeList.size() != 3) {
+					continue;
+				}
+				WebElement tdWeA = tdWeList.get(1).findElement(By.tagName("a"));
+				String title = tdWeA.getText();
+				String href = tdWeA.getAttribute("href");
+
+				if (title.startsWith("終了（落札者なし）:")
+						&& isAutoSendTarget(title)) {
+					list.add(title + "\t" + href);
+				}
+				if (title.startsWith("終了（落札者あり）:")
+						&& isAutoSendTarget(title)) {
+					list.add(title + "\t" + href);
+				}
+
+			} catch (Exception e) {
+
+			}
+		}
+		for (String str : list) {
+			try {
+				String[] spit = str.split("\t");
+				log("[republish][publishing]" + spit[0]);
+				String t = spit[1];
+				int idx = t.lastIndexOf("?");
+				if (idx != -1) {
+					t = t.substring(0, idx);
+				}
+				idx = t.lastIndexOf("/");
+				String id = t.substring(idx + 1, t.length());
+				driver.get(String.format(republishUrlFmt, id));
+				List<WebElement> weList = driver.findElements(By
+						.tagName("a"));
+				for (WebElement we : weList) {
+					if ("再出品".equals(we.getText())) {
+						we.click();
+						break;
+					}
+				}
+				NieUtil.mySleepBySecond(1);
+
+				weList = driver.findElements(By.tagName("input"));
+				for (WebElement we : weList) {
+					if ("確認画面へ".equals(we.getAttribute("value"))) {
+						we.click();
+						break;
+					}
+				}
+				NieUtil.mySleepBySecond(1);
+
+				weList = driver.findElements(By.tagName("input"));
+				for (WebElement we : weList) {
+					if ("ガイドラインと上記規約に同意して出品する".equals(we.getAttribute("value"))) {
+						we.click();
+						break;
+					}
+				}
+				driver.get(spit[1]);
+
+			} catch (Exception e) {
+
+			}
+		}
+
 	}
 
 	private WebDriver logon() {
