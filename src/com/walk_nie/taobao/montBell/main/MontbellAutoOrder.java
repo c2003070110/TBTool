@@ -37,7 +37,6 @@ public class MontbellAutoOrder {
 	private String ooutFileName ="order-out.txt";
 	private String ooutFileNameForShot ="order-out-shot.txt";
 	
-	private String itemSplitter =",";
 	
 	private WebDriver driver = null;
 	private List<CrObject> crObjList = Lists.newArrayList();
@@ -157,12 +156,16 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
-		submitList = driver.findElements(By.tagName("a"));
+		//submitList = driver.findElements(By.tagName("a"));
+		submitList = driver.findElements(By.tagName("img"));
 		for (WebElement we : submitList) {
-			if ("javascript:goLoginWeb();".equalsIgnoreCase(we.getAttribute("href"))) {
+			try{
+			if ("ログインして次に進む".equalsIgnoreCase(we.getAttribute("alt"))) {
+			//if ("javascript:goLoginWeb();".equalsIgnoreCase(we.getAttribute("href"))) {
 				we.click();
-				break;
+				//break;
 			}
+			}catch(Exception e){}
 		}
 		return driver;
 	}
@@ -236,14 +239,14 @@ public class MontbellAutoOrder {
 		}catch(Exception ex){
 		}
 
-//		driver.get("https://webshop.montbell.jp/cart");
+		driver.get("https://webshop.montbell.jp/cart");
 //		File saveToShotF = new File(MontBellUtil.rootPathName + "/orderShot", DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss")
 //				+ orderInfo.taobaoOrderName + ".jpg");
 //		// take screenshot
 //		WebDriverUtil.screenShot(driver, saveToShotF.getCanonicalPath());
 		
 		List<WebElement> weList = null;
-		weList = driver.findElements(By.tagName("input[type=\"image\"]"));
+		weList = driver.findElements(By.cssSelector("input[type=\"image\"]"));
 		for (WebElement we : weList) {
 			if ("レジに進む".equalsIgnoreCase(we
 					.getAttribute("alt"))) {
@@ -254,17 +257,11 @@ public class MontbellAutoOrder {
 
 		if ("store".equals(orderInfo.crObj.id.toLowerCase())) {
 			// next button
-			weList = driver.findElements(By
-					.cssSelector("input[name=\"next_shop\"]"));
-			for (WebElement we : weList) {
-				if ("next_destination"
-						.equalsIgnoreCase(we.getAttribute("name"))) {
-					we.click();
-					break;
-				}
-			}
-			
 			WebElement we = driver.findElement(By
+					.cssSelector("input[name=\"next_shop\"]"));
+			we.click();
+			
+			 we = driver.findElement(By
 					.cssSelector("select[name=\"shop_prefecture_id\"]"));
 			Select dropdown = new Select(we);
 			dropdown.selectByValue("13");// 東京都
@@ -472,10 +469,11 @@ public class MontbellAutoOrder {
 			fillCreditCard(driver, orderInfo.crObj);
 		}
 		
+		String productStr = MontBellUtil.toProductInfoString(orderInfo.productInfos);
 		File oFile = new File(MontBellUtil.rootPathName,ooutFileName);
 		List<String> lines = Lists.newArrayList();
 		lines.add(orderInfo.taobaoOrderName);
-		lines.add(toProductInfoString(orderInfo.productInfos));
+		lines.add(productStr);
 		lines.add(orderInfo.firstName +" " +orderInfo.lastName);
 		lines.add(orderInfo.tel);
 		lines.add(orderInfo.state);
@@ -488,7 +486,7 @@ public class MontbellAutoOrder {
 		File oFileS = new File(MontBellUtil.rootPathName,ooutFileNameForShot);
 		lines = Lists.newArrayList();
 		String yyyyMMdd = DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss");
-		lines.add(String.format("%s\t%s\t%s",yyyyMMdd, orderInfo.taobaoOrderName, toProductInfoString(orderInfo.productInfos)));
+		lines.add(String.format("%s\t%s\t%s",yyyyMMdd, orderInfo.taobaoOrderName, productStr));
 		NieUtil.appendToFile(oFileS, lines);
 	}
 
@@ -582,15 +580,16 @@ public class MontbellAutoOrder {
 		int idx = 0;
 		order.taobaoOrderName = votes.get(idx++);
 		String productInfos = votes.get(idx++);
-		String[] pis = productInfos.split(itemSplitter);
+		String[] pis = productInfos.split(MontBellUtil.itemSplitter);
 		for (String line : pis) {
 			TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(line);
 			
 			order.productInfos.add(pinfo);
 		}
 		String next = votes.get(idx++);
-		if("store".equalsIgnoreCase(next) || "".equals(getCrBrand(next))){
+		if("store".equalsIgnoreCase(next) || StringUtils.isNotEmpty(getCrBrand(next))){
 			// order for japan
+			next = votes.get(idx++);
 			order.crObj = getCrObject(next);
 			return order;
 		}
@@ -715,27 +714,6 @@ public class MontbellAutoOrder {
 		return str;
 	}
 
-	private String toProductInfoString(List<TaobaoOrderProductInfo> productInfos) {
-		StringBuffer sb = new StringBuffer();
-		for(TaobaoOrderProductInfo pi:productInfos){
-			sb.append("商家编码：MTBL_XX-" + pi.productId);
-			sb.append(" ");
-			if(!"".equals(pi.colorName)){
-				sb.append("颜色分类:" + pi.colorName);
-				sb.append(";");
-			}
-			if(!"".equals(pi.sizeName)){
-				sb.append("尺码:" + pi.sizeName);
-				sb.append(";");
-			}
-			if(!"".equals(pi.qtty)){
-				sb.append("数量：" + pi.qtty);
-			}
-			sb.append(itemSplitter);
-		}
-		return sb.toString();
-	}
-
 	private void logOrderInfo(TaobaoOrderInfo orderInfo) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[taobaoOrderName]" + orderInfo.taobaoOrderName + "\n");
@@ -748,7 +726,7 @@ public class MontbellAutoOrder {
 		sb.append("[adr1]" + orderInfo.adr1 + "\n");
 		sb.append("[postcode]" + orderInfo.postcode + "\n");
 		sb.append("[crId]" + orderInfo.crObj.crBrand + "\n");
-		sb.append("[productInfos]" + toProductInfoString(orderInfo.productInfos) + "\n");
+		sb.append("[productInfos]" + MontBellUtil.toProductInfoString(orderInfo.productInfos) + "\n");
 		System.out.println(sb.toString());
 	}
 
@@ -763,7 +741,7 @@ public class MontbellAutoOrder {
 			TaobaoOrderInfo orderInfo = new TaobaoOrderInfo();
 			String yyyyMMdd = splits[0];
 			orderInfo.taobaoOrderName = splits[1];
-			String[] pis = splits[2].split(itemSplitter);
+			String[] pis = splits[2].split(MontBellUtil.itemSplitter);
 			for (String pi : pis) {
 				TaobaoOrderProductInfo pinfo = MontBellUtil.readTaobaoProductInfo(pi);
 				orderInfo.productInfos.add(pinfo);

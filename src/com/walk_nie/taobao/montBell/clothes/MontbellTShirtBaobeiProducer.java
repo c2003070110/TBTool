@@ -174,9 +174,9 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 	}
 
 	private void composeBaobeiTitle(GoodsObject item, BaobeiPublishObject baobei) {
-		String title = "日本直邮montbell ";
+		String title = "日本直邮montbell";
 		//title += "拼邮免邮 ";
-		title += "拼邮免邮 ";
+		title += " 拼免 ";
 		//if (!StringUtil.isBlank(item.titleCN)) {
 		//	title += " " + item.titleCN;
 		//}
@@ -207,16 +207,16 @@ public class MontbellTShirtBaobeiProducer extends BaseBaobeiProducer {
 		} else if ("31400".equals(item.cateogryObj.categoryId)) {
 			title += "和式作业服";
 		}
-//		if (!StringUtil.isBlank(item.titleEn)) {
-//			title += " " + item.titleEn;
-//		}
-		if (!StringUtil.isBlank(item.gender)) {
-			title += " " + item.gender;
+		if (!StringUtil.isBlank(item.titleEn)) {
+			//title += " " + item.titleEn.replaceAll(" ", "");
 		}
 		title += " " + item.productId;
         if(!StringUtil.isBlank(MontBellUtil.spececialProductId)){
-            title += MontBellUtil.spececialProductId ;
+            title += " " + MontBellUtil.spececialProductId ;
         }
+		if (!StringUtil.isBlank(item.gender)) {
+			title += item.gender;
+		}
 		
 		baobei.title = "\"" + title + "\"";
 	}

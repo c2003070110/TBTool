@@ -49,6 +49,7 @@ public class MontBellUtil {
     public static String productUrlPrefix_en_fo = "https://en.montbell.jp/products/goods/disp_fo.php?product_id=";
 
     public static String productSizeUrlPrefix = "http://webshop.montbell.jp/goods/size/?product_id=";
+    public static String itemSplitter =",";
 
     public static String colorNameDefault ="选我没错";
     public static String sizeNameDefault ="选我没错";
@@ -691,7 +692,7 @@ public class MontBellUtil {
 		}
 		productInfo.productId = pid;
 		String color = "";
-		String sizz = "";
+		String sizz = "-";
 		String qtty = "1";
 		if (pi.length > 1) {
 			String[] pii = pi[1].split(";");
@@ -699,15 +700,36 @@ public class MontBellUtil {
 			if (pii.length > 1) {
 				sizz = realSizeName(pii[1]);
 			}
-			if (pii.length > 2) {
-				qtty = realQtty(pii[2]);
-			}
+		}
+		if (pi.length > 2) {
+			qtty = realQtty(pi[2]);
 		}
 		productInfo.colorName = color;
 		productInfo.sizeName = sizz;
 		productInfo.qtty = qtty;
 		
 		return productInfo;
+	}
+
+	public static  String toProductInfoString(List<TaobaoOrderProductInfo> productInfos) {
+		StringBuffer sb = new StringBuffer();
+		for(TaobaoOrderProductInfo pi:productInfos){
+			sb.append("商家编码：MTBL_XX-" + pi.productId);
+			sb.append(" ");
+			if(!"".equals(pi.colorName)){
+				sb.append("颜色分类:" + pi.colorName);
+				sb.append(";");
+			}
+			if(!"".equals(pi.sizeName)){
+				sb.append("尺码:" + pi.sizeName);
+				
+			}
+			if(!"".equals(pi.qtty)){
+				sb.append(" 数量：" + pi.qtty);
+			}
+			sb.append(itemSplitter);
+		}
+		return sb.toString();
 	}
 	private static String realQtty(String str) {
 
