@@ -1,12 +1,15 @@
 package com.walk_nie.ya.auction;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
@@ -15,9 +18,13 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.DateUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
@@ -27,7 +34,6 @@ import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -36,7 +42,7 @@ public class YaAuAutoSend {
 	private String myaucinfoUrl = "https://auctions.yahoo.co.jp/jp/show/myaucinfo";
 	private String republishUrlFmt = "https://auctions.yahoo.co.jp/sell/jp/show/resubmit?aID=%s";
  
-	private List<YaSendCodeObject> codeList = Lists.newArrayList();
+	//private List<YaSendCodeObject> codeList = Lists.newArrayList();
 	private Map<String, String> keyMsgPrefix = Maps.newHashMap();
 	private File logFile = null;
 	private List<String> codeSendOnce = Lists.newArrayList();
@@ -61,7 +67,7 @@ public class YaAuAutoSend {
 				long t1 = System.currentTimeMillis();
 				if (hasPaid(driver)) {
 					//log("[SEND]Same auction has paid and need to sent the code.");
-					fetchLastestCode();
+					//fetchLastestCode();
 					send(driver);
 				} else {
 					log("[RSLT]There is NONE to sent.");
@@ -105,19 +111,19 @@ public class YaAuAutoSend {
 		logFile = new File(
 				NieConfig.getConfig("yahoo.auction.autosend.log.file"));
 
-		List<String> list = Files.readLines(
-				new File(NieConfig
-						.getConfig("yahoo.auction.autosend.code.file")),
-				Charset.forName("UTF-8"));
-		for (String str : list) {
-			String[] sp = str.split("\t");
-			YaSendCodeObject obj = new YaSendCodeObject();
-			obj.key = sp[0];
-			obj.code = sp[1];
-			obj.isUsedFlag = Boolean.parseBoolean(sp[2]);
-			obj.purOrderId = sp[3];
-			codeList.add(obj);
-		}
+//		List<String> list = Files.readLines(
+//				new File(NieConfig
+//						.getConfig("yahoo.auction.autosend.code.file")),
+//				Charset.forName("UTF-8"));
+//		for (String str : list) {
+//			String[] sp = str.split("\t");
+//			YaSendCodeObject obj = new YaSendCodeObject();
+//			obj.key = sp[0];
+//			obj.code = sp[1];
+//			obj.isUsedFlag = Boolean.parseBoolean(sp[2]);
+//			obj.purOrderId = sp[3];
+//			codeList.add(obj);
+//		}
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
 	}
@@ -198,20 +204,20 @@ public class YaAuAutoSend {
 				continue;
 			}
 			
-			String auctionId = "", obider="";
-			List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
-			for (NameValuePair param : params) {
-				if ("aid".equalsIgnoreCase(param.getName())) {
-					auctionId = param.getValue();
-				}
-				if ("bid".equalsIgnoreCase(param.getName())) {
-					obider = param.getValue();
-				}
-			}
-			if (!hasStock(title)) {
-				log("[ERROR][This Auction has none stock!][id]" + auctionId +"[obid]" + obider);
-				continue;
-			}
+//			String auctionId = "", obider="";
+//			List<NameValuePair> params = URLEncodedUtils.parse(new URI(href), Charset.forName("UTF-8"));
+//			for (NameValuePair param : params) {
+//				if ("aid".equalsIgnoreCase(param.getName())) {
+//					auctionId = param.getValue();
+//				}
+//				if ("bid".equalsIgnoreCase(param.getName())) {
+//					obider = param.getValue();
+//				}
+//			}
+//			if (!hasStock(title)) {
+//				log("[ERROR][This Auction has none stock!][id]" + auctionId +"[obid]" + obider);
+//				continue;
+//			}
 			
 			autoSendHrefList.add(href);
 		}
@@ -325,28 +331,28 @@ public class YaAuAutoSend {
 		NieUtil.mySleepBySecond(1);
 	}
 
-	private void saveSendCode() {
-		for (String code : codeSendOnce) {
-			for (YaSendCodeObject obj : codeList) {
-				if (code.equals(obj.code)) {
-					obj.isUsedFlag = true;
-					break;
-				}
-			}
-		}
-
-		String codeFile = NieConfig.getConfig("yahoo.auction.autosend.code.file");
-		List<String> l = Lists.newArrayList();
-		String fmt = "%s\t%s\t%b\t%s";
-		for (YaSendCodeObject obj : codeList) {
-			l.add(String.format(fmt, obj.key, obj.code, obj.isUsedFlag, obj.purOrderId));
-		}
-		try {
-			FileUtils.writeLines(new File(codeFile), l, false);
-		} catch (IOException e) {
-			log("[ERROR][saveSendCode]"+e.getMessage());
-		}
-	}
+//	private void saveSendCode() {
+//		for (String code : codeSendOnce) {
+//			for (YaSendCodeObject obj : codeList) {
+//				if (code.equals(obj.code)) {
+//					obj.isUsedFlag = true;
+//					break;
+//				}
+//			}
+//		}
+//
+//		String codeFile = NieConfig.getConfig("yahoo.auction.autosend.code.file");
+//		List<String> l = Lists.newArrayList();
+//		String fmt = "%s\t%s\t%b\t%s";
+//		for (YaSendCodeObject obj : codeList) {
+//			l.add(String.format(fmt, obj.key, obj.code, obj.isUsedFlag, obj.purOrderId));
+//		}
+//		try {
+//			FileUtils.writeLines(new File(codeFile), l, false);
+//		} catch (IOException e) {
+//			log("[ERROR][saveSendCode]"+e.getMessage());
+//		}
+//	}
 
 	private String composeSendMessage(YaSoldObject yaObj) throws IOException {
 		StringBuffer sb = new StringBuffer();
@@ -382,75 +388,121 @@ public class YaAuAutoSend {
 	}
 
 	private String getUnusedCode(String key) throws IOException {
-		for (YaSendCodeObject obj : codeList) {
-			if (obj.key.equals(key) && !obj.isUsedFlag && !codeSendOnce.contains(obj.code)) {
-				return obj.code;
-			}
-		}
-		return null;
+//		for (YaSendCodeObject obj : codeList) {
+//			if (obj.key.equals(key) && !obj.isUsedFlag && !codeSendOnce.contains(obj.code)) {
+//				return obj.code;
+//			}
+//		}
+//		return null;
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "get");
+		param.put("codeType", key);
+		return httpGet(NieConfig.getConfig("yahoo.auction.autosend.code.get.url"), param);
 	}
+	
+	private String httpGet(String url, Map<String, String> param) {
 
-	private void fetchLastestCode() {
-		String src = NieConfig.getConfig("yahoo.auction.autosend.code.source.file");
-		log("[FETCH][START]fetch the lastest code");
-		log("[FETCH][URL]" + src);
-		List<String> lines = Lists.newArrayList();
-		if (src.startsWith("http")) {
-			try {
-				URL u = new URL(src);
-				File file = new File("tmp" + System.currentTimeMillis() + ".txt");
-				FileUtils.copyURLToFile(u, file);
-				lines = FileUtils.readLines(file, "UTF-8");
-				file.delete();
-			} catch (Exception e) {
-				log("[ERROR][fetchLastestCode]"+e.getMessage());
-				e.printStackTrace();
-				return ;
-			}
-		} else {
-			File file = new File(src);
-			try {
-				lines = FileUtils.readLines(file, "UTF-8");
-			} catch (Exception e) {
-				log("[ERROR][fetchLastestCode]"+e.getMessage());
-				e.printStackTrace();
-				return ;
-			}
-		}
-		
-		List<YaSendCodeObject> codeListFetch = Lists.newArrayList();
-		for (String line : lines) {
-			YaSendCodeObject obj = new YaSendCodeObject();
-			String[] spl = line.split("\t");
-			int idx = 1;
-			obj.key = spl[idx++];
-			obj.code = spl[idx++];
-			obj.purOrderId = spl[idx++];
-			codeListFetch.add(obj);
-		}
+		try {
+			String p = urlEncodeUTF8(param);
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(url + "&" + p);
+			HttpResponse response = client.execute(request);
 
-		List<YaSendCodeObject> newCodeList = Lists.newArrayList();
-		for (YaSendCodeObject f : codeListFetch) {
-			boolean stored = false;
-			for (YaSendCodeObject obj : codeList) {
-				if (obj.code.equals(f.code)) {
-					stored = true;
-					break;
-				}
+			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
 			}
-			if (!stored) {
-				f.isUsedFlag = false;
-				newCodeList.add(f);
-			}
+			return result.toString();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		if(!newCodeList.isEmpty()){
-			codeList.addAll(newCodeList);
-			saveSendCode();
-			log("[FETCH][END][QTTY]The lastest code is " + newCodeList.size());
-		}else{
-			log("[FETCH][END]The lastest code is NONE");
-		}
+		return "";
 	}
+	private  String urlEncodeUTF8(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+        	e.printStackTrace();
+            return "";
+        }
+    }
+	private String urlEncodeUTF8(Map<?,?> map) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<?,?> entry : map.entrySet()) {
+            if (sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append(String.format("%s=%s",
+                urlEncodeUTF8(entry.getKey().toString()),
+                urlEncodeUTF8(entry.getValue().toString())
+            ));
+        }
+        return sb.toString();       
+    }
+
+//	private void fetchLastestCode() {
+//		String src = NieConfig.getConfig("yahoo.auction.autosend.code.source.file");
+//		log("[FETCH][START]fetch the lastest code");
+//		log("[FETCH][URL]" + src);
+//		List<String> lines = Lists.newArrayList();
+//		if (src.startsWith("http")) {
+//			try {
+//				URL u = new URL(src);
+//				File file = new File("tmp" + System.currentTimeMillis() + ".txt");
+//				FileUtils.copyURLToFile(u, file);
+//				lines = FileUtils.readLines(file, "UTF-8");
+//				file.delete();
+//			} catch (Exception e) {
+//				log("[ERROR][fetchLastestCode]"+e.getMessage());
+//				e.printStackTrace();
+//				return ;
+//			}
+//		} else {
+//			File file = new File(src);
+//			try {
+//				lines = FileUtils.readLines(file, "UTF-8");
+//			} catch (Exception e) {
+//				log("[ERROR][fetchLastestCode]"+e.getMessage());
+//				e.printStackTrace();
+//				return ;
+//			}
+//		}
+//		
+//		List<YaSendCodeObject> codeListFetch = Lists.newArrayList();
+//		for (String line : lines) {
+//			YaSendCodeObject obj = new YaSendCodeObject();
+//			String[] spl = line.split("\t");
+//			int idx = 1;
+//			obj.key = spl[idx++];
+//			obj.code = spl[idx++];
+//			obj.purOrderId = spl[idx++];
+//			codeListFetch.add(obj);
+//		}
+//
+//		List<YaSendCodeObject> newCodeList = Lists.newArrayList();
+//		for (YaSendCodeObject f : codeListFetch) {
+//			boolean stored = false;
+//			for (YaSendCodeObject obj : codeList) {
+//				if (obj.code.equals(f.code)) {
+//					stored = true;
+//					break;
+//				}
+//			}
+//			if (!stored) {
+//				f.isUsedFlag = false;
+//				newCodeList.add(f);
+//			}
+//		}
+//		if(!newCodeList.isEmpty()){
+//			codeList.addAll(newCodeList);
+//			saveSendCode();
+//			log("[FETCH][END][QTTY]The lastest code is " + newCodeList.size());
+//		}else{
+//			log("[FETCH][END]The lastest code is NONE");
+//		}
+//	}
 
 	private YaSoldObject parseSold(WebElement rootWe) {
 		YaSoldObject yaObj = new YaSoldObject();
@@ -500,11 +552,11 @@ public class YaAuAutoSend {
 		return true;
 	}
 
-	private boolean hasStock(String title) throws IOException {
-
-		String key = getIdentifierKeyFromTitle(title);
-		return getUnusedCode(key) != null;
-	}
+//	private boolean hasStock(String title) throws IOException {
+//
+//		String key = getIdentifierKeyFromTitle(title);
+//		return getUnusedCode(key) != null;
+//	}
 
 	private String getIdentifierKeyFromTitle(String title) {
 		int i1 = title.lastIndexOf("[");
@@ -527,7 +579,15 @@ public class YaAuAutoSend {
 		l.add(String.format(fmt, getNowDateTime(), yaObj.auctionId, yaObj.obider, yaObj.title,yaObj.statusMsg));
 		FileUtils.writeLines(new File(hadSendFile), l, true);
 
-		saveSendCode();
+		Map<String,String> param = Maps.newHashMap();
+		param.put("action", "asset");
+		param.put("auctionId", yaObj.auctionId);
+		param.put("obidId", yaObj.obider);
+		for (String code : codeSendOnce) {
+			param.put("codeCd", code);
+			httpGet(NieConfig.getConfig("yahoo.auction.autosend.code.asset.url"), param);
+		}
+		//saveSendCode();
 	}
 
 	private boolean hasNeedReview(WebDriver driver) {

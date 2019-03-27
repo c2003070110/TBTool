@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>my gift card</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript">
+(function (original) {
+  jQuery.fn.clone = function () {
+    var result           = original.apply(this, arguments),
+        my_textareas     = this.find('textarea').add(this.filter('textarea')),
+        result_textareas = result.find('textarea').add(result.filter('textarea')),
+        my_selects       = this.find('select').add(this.filter('select')),
+        result_selects   = result.find('select').add(result.filter('select'));
+
+    for (var i = 0, l = my_textareas.length; i < l; ++i) $(result_textareas[i]).val($(my_textareas[i]).val());
+    for (var i = 0, l = my_selects.length;   i < l; ++i) result_selects[i].selectedIndex = my_selects[i].selectedIndex;
+
+    return result;
+  };
+}) (jQuery.fn.clone);
+</script>
+<script type="text/javascript">
+var httpPrefix = "http://localhost:8080/imart/";
+$(function() {
+    $(document).on("click", "#btnSave", function() {
+        var param = "";
+        $("#container").find(".box").each(function(index,element){
+            var orderNoVal = $(element).find("#orderNo").val();
+            var codeTypeVal = $(element).find("#codeType").val();
+            var codeCdVal = $(element).find("#codeCd").val();
+            param = param + orderNoVal + "," + codeTypeVal + "," + codeCdVal + ";";
+        });
+        
+        var jqxhr = $.ajax(httpPrefix + "myphp/mygiftcard.php",
+                         { type : "GET",
+                           data : {"action":"save", "paramstr" : param},
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+            alert(msg);
+        });
+    });
+    $(document).on("click", "#btnCopyBox", function() {
+        var thisBox = $(this).parent().parent().parent();
+        var cloneBox = thisBox.clone();
+        cloneBox.find("#codeCd").val("");
+        $("#container").append(cloneBox);
+    });
+    $(document).on("click", "#btnDeleteRow", function() {
+        var thisBox = $(this).parent().parent().parent();
+        thisBox.remove();
+    });
+});
+</script>
+</head>
+<body class="py-4">
+  <nav class="navbar navbar-expand-xl navbar-dark fixed-top bg-dark">
+    <div class="col-2">
+     <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/imart/myphp/mygiftcard/stocklist.php">Stock</span></a>
+      </li>
+     </ul>
+    </div>
+    <div class="col-2">
+      <button type="button" class="btn btn-primary btn-lg btn-block" id="btnSave">SAVE</button>
+    </div>
+    <div class="col-6">
+      <textarea id="tempTxtArea" rows="3" cols="40"></textarea>
+    </div>
+  </nav>
+<div id="container" class="container">
+  
+  <hr class="mb-4">
+  <hr class="mb-4">
+  <hr class="mb-4">
+  <div class="box">
+      <div class="row mb-4 form-group">
+        <div class="col-6 themed-grid-col"><label for="orderNo">OrderNo</label><input type="text" class="form-control" id="orderNo"></div>
+        <div class="col-2 themed-grid-col"><button type="button" id="btnCopyBox" class="btn btn-secondary">COPY</button></div>
+      </div>
+      <div class="row mb-4 form-group">
+        <div class="col-6 themed-grid-col">
+		    <label for="codeType">CodeType</label>
+            <select class="custom-select d-block w-100" id="codeType">
+              <option value="">Choose...</option>
+              <option value="ca">California</option>
+            </select>
+        </div>
+        <div class="col-2 themed-grid-col"><button type="button" id="btnDeleteRow" class="btn btn-warning">DEL</button></div>
+      </div>
+      <div class="row mb-4 form-group">
+        <div class="col-6 themed-grid-col">
+		    <label for="codeCd">CodeCd</label>
+            <input type="text" class="form-control" id="codeCd">
+        </div>
+        <div class="col-2 themed-grid-col"></div>
+      </div>
+      <hr class="mb-4">
+  </div>
+</div>
+</body>
+</html>
