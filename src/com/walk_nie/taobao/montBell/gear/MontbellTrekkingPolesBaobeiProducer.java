@@ -71,8 +71,7 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
 			String taobaoPicFolder = TaobaoUtil.getPictureFolder(outputFile);
 			for (GoodsObject obj : itemIdList) {
 				TaobaoUtil.copyFiles(obj.pictureNameList,
-						MontBellUtil.rootPathName + "/"
-								+ obj.cateogryObj.categoryId, taobaoPicFolder);
+						MontBellUtil.getWebShopPicFolder(obj), taobaoPicFolder);
 				writeOut(priceBw, obj);
 			}
             System.out.println("-------- FINISH--------");
@@ -156,19 +155,23 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
         return TaobaoUtil.composeTaobaoLine(obj);
     }
 
-    private    void composeBaobeiTitle(GoodsObject item,
+    private void composeBaobeiTitle(GoodsObject item,
             BaobeiPublishObject baobei) {
         String title = "\"日本直邮 MontBell";
-        String cateId = item.cateogryObj.categoryId;
-        if("252000".equals(cateId)){
-        	//  Iグリップ
-        	title += " I型 拐棍 手杖" ;
-        }else if("252500".equals(cateId)){
-        	//Tグリップ
-        	title += " T型 拐棍 手杖" ;
-        }
+//        String cateId = item.cateogryObj.categoryId;
+//        if("252000".equals(cateId)){
+//        	//  Iグリップ
+//        	title += " I型 拐棍 手杖" ;
+//        }else if("252500".equals(cateId)){
+//        	//Tグリップ
+//        	title += " T型 拐棍 手杖" ;
+//        }
+    	title += " 登山杖手杖" ;
         if(!StringUtil.isBlank(item.titleEn)){
-            title += " " + item.titleEn ;
+            String en = item.titleEn.replaceAll("Alpine", "") ;
+            en = en.replaceAll("Pole", "");
+            en = en.replaceAll(" ", "");
+            title += en;
         }
         title += " " + item.productId;
         if(!StringUtil.isBlank(item.gender)){
@@ -179,7 +182,10 @@ public class MontbellTrekkingPolesBaobeiProducer extends BaseBaobeiProducer{
     protected void composeBaobeiCateProps(GoodsObject item, BaobeiPublishObject obj) {
         // cateProps　宝贝属性：1627207:-1001;1627207:-1002;1627207:-1003;1627207:-1004;1627207:-1005;1627207:-1006;1627207:-1007;1627207:-1008;1627207:-1009;20509:28381;20509:28313;20509:28314;20509:28315;20509:28316;20509:28317;20509:28319
         String cateProps = "";
-        cateProps += "20000:3589713;";
+        //cateProps += "20000:3589713;";
+		cateProps += "20000:84533669;";
+		cateProps += "20021:20213;";
+		cateProps += "122216608:29923;21548:42580;122216816:39036084;";
         
         // 宝贝属性
         for(int i =0;i<item.colorList.size();i++){

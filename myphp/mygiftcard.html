@@ -1,4 +1,4 @@
-<html>
+<html lang="ja">
 <head>
 <title>my gift card</title>
 <meta charset="utf-8">
@@ -29,16 +29,38 @@
 }) (jQuery.fn.clone);
 </script>
 <script type="text/javascript">
-var httpPrefix = "http://localhost:8080/imart/";
+var httpPrefix = "http://133.130.114.129/";
 $(function() {
     $(document).on("click", "#btnSave", function() {
-        var param = "";
-        $("#container").find(".box").each(function(index,element){
-            var orderNoVal = $(element).find("#orderNo").val();
-            var codeTypeVal = $(element).find("#codeType").val();
-            var codeCdVal = $(element).find("#codeCd").val();
-            param = param + orderNoVal + "," + codeTypeVal + "," + codeCdVal + ";";
+        var thisBox = $(this).parent().parent().parent();
+		var orderNoVal = thisBox.find("#orderNo").val();
+		var codeTypeVal = thisBox.find("#codeType").val();
+		var codeCdVal = thisBox.find("#codeCd").val();
+		if(orderNoVal == "" || codeCdVal == ''){
+			return;
+		}
+        var param = orderNoVal + "," + codeTypeVal + "," + codeCdVal;
+        
+        var jqxhr = $.ajax(httpPrefix + "myphp/mygiftcard.php",
+                         { type : "GET",
+                           data : {"action":"save", "paramstr" : param},
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+            alert(msg);
+			thisBox.find("#codeCd").val("");
         });
+    });
+    $(document).on("change", ".form-control11", function() {
+        var thisBox = $(this).parent().parent().parent();
+		var orderNoVal = thisBox.find("#orderNo").val();
+		var codeTypeVal = thisBox.find("#codeType").val();
+		var codeCdVal = thisBox.find("#codeCd").val();
+		if(orderNoVal == "" || codeCdVal == ''){
+			return;
+		}
+        var param = orderNoVal + "," + codeTypeVal + "," + codeCdVal;
         
         var jqxhr = $.ajax(httpPrefix + "myphp/mygiftcard.php",
                          { type : "GET",
@@ -50,57 +72,55 @@ $(function() {
             alert(msg);
         });
     });
-    $(document).on("click", "#btnCopyBox", function() {
-        var thisBox = $(this).parent().parent().parent();
-        var cloneBox = thisBox.clone();
-        cloneBox.find("#codeCd").val("");
-        $("#container").append(cloneBox);
-    });
-    $(document).on("click", "#btnDeleteRow", function() {
-        var thisBox = $(this).parent().parent().parent();
-        thisBox.remove();
-    });
 });
 </script>
 </head>
 <body class="py-4">
+<!--
   <nav class="navbar navbar-expand-xl navbar-dark fixed-top bg-dark">
-    <div class="col-2">
+    <div class="col-1">
      <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="/imart/myphp/mygiftcard/stocklist.php">Stock</span></a>
+        <a class="nav-link" href="/myphp/mygiftcard/stocklist.php">Stock</span></a>
       </li>
      </ul>
     </div>
-    <div class="col-2">
+    <div class="col-1">
       <button type="button" class="btn btn-primary btn-lg btn-block" id="btnSave">SAVE</button>
     </div>
     <div class="col-6">
       <textarea id="tempTxtArea" rows="3" cols="40"></textarea>
     </div>
   </nav>
+  -->
 <div id="container" class="container">
   
-  <hr class="mb-4">
-  <hr class="mb-4">
-  <hr class="mb-4">
+<a href="/myphp/mygiftcard/stocklist.php">stock list</a>
+      <hr class="mb-4">
+<textarea id="tempTxtArea" rows="6" cols="35"></textarea>
+      <hr class="mb-4">
   <div class="box">
       <div class="row mb-4 form-group">
-        <div class="col-6 themed-grid-col"><label for="orderNo">OrderNo</label><input type="text" class="form-control" id="orderNo"></div>
-        <div class="col-2 themed-grid-col"><button type="button" id="btnCopyBox" class="btn btn-secondary">COPY</button></div>
+        <div class="col-10 themed-grid-col"><label for="orderNo">OrderNo</label><input type="text" class="form-control" id="orderNo"></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-6 themed-grid-col">
 		    <label for="codeType">CodeType</label>
             <select class="custom-select d-block w-100" id="codeType">
-              <option value="">Choose...</option>
-              <option value="ca">California</option>
+				<option value="PSNUSD10" selected>PSN 10美元</option>
+				<option value="PSNUSD20">PSN 20美元</option>
+				<option value="PSNUSD50">PSN 50美元</option>
+				<option value="PSNUSD100">PSN 100美元</option>
+				<option value="XBOXUSD10">XBOX 10美元</option>
+				<option value="XBOXUSD20">XBOX 20美元</option>
+				<option value="XBOXUSD50">XBOX 50美元</option>
+				<option value="XBOXUSD100">XBOX 100美元</option>
             </select>
         </div>
-        <div class="col-2 themed-grid-col"><button type="button" id="btnDeleteRow" class="btn btn-warning">DEL</button></div>
+		<button type="button" id="btnSave" class="btn btn-secondary actionBtn">SAVE</button>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-6 themed-grid-col">
+        <div class="col-10 themed-grid-col">
 		    <label for="codeCd">CodeCd</label>
             <input type="text" class="form-control" id="codeCd">
         </div>

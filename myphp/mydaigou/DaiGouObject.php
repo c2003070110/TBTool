@@ -1,14 +1,14 @@
 <?
 class DaiGouObject
 {
-    public $buyer;
-    public $orderDate;
-    public $orderItem;
+    public $buyer = '';
+    public $orderDate = '';
+    public $orderItem = '';
 	
-    public $status;//paid,gouru,zaitu,fahuo
+    public $status = '';//paid,gouru,zaitu,fahuo
 	
-    public $priceJPY;
-    public $qtty;
-    public $priceCNY;
+    public $priceJPY = '';
+    public $qtty = '';
+    public $priceCNY = '';
 }
 ?>

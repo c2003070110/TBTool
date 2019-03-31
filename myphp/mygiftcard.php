@@ -1,5 +1,9 @@
-<?
-require './mygiftcard/MyGiftCard.php';
+<?php
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
+require __DIR__ . '/mygiftcard/MyGiftCard.php';
 $actionStr = $_GET['action'];
 
 if($actionStr === null){
@@ -34,5 +38,30 @@ if($actionStr == "save"){
 	}
 	$myGiftCard = new MyGiftCard();
 	$myGiftCard->assetCode($codeCd, $auctionId, $obidId);
+} else if($actionStr == "DEL"){
+	$codeCd = $_GET['codeCd'];
+	if($codeCd === null){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	$rslt = $myGiftCard->deleteCode($codeCd);
+	echo $rslt;
+} else if($actionStr == "US" || $actionStr == "RE" || $actionStr == "INV"){
+	$codeCd = $_GET['codeCd'];
+	if($codeCd === null){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	if($actionStr == "US"){
+		$rslt = $myGiftCard->updateStatus($codeCd, 'used');
+	}else if ($actionStr == "RE"){
+		$rslt = $myGiftCard->updateStatus($codeCd, 'unused');
+	}else if ($actionStr == "INV"){
+		$rslt = $myGiftCard->updateStatus($codeCd, 'invalid');
+	}
+	echo $rslt;
+	
 }
 ?>

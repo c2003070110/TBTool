@@ -1,4 +1,4 @@
-<?
+<?php
 require __DIR__ .'/crunchDB/crunchDB.php';
 require __DIR__ .'/crunchDB/crunchTable.php';
 require __DIR__ .'/crunchDB/crunchResource.php';

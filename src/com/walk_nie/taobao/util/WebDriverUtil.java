@@ -30,12 +30,13 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.beust.jcommander.internal.Lists;
+import com.walk_nie.util.NieConfig;
 
 public class WebDriverUtil  {
     // TODO change it to fix your pc
-    public final static String chromeDriverPath = "C:/Users/niehp/Google ドライブ/tool/chromedriver.exe";
-    public final static String firefoxDriverPath = "C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.21.0-win64/geckodriver.exe";
-    public final static String ieDriverPath = "C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
+    public final static String chromeDriverPath = NieConfig.getConfig("driver.path.chrome");//"C:/Users/niehp/Google ドライブ/tool/chromedriver.exe";
+    public final static String firefoxDriverPath = NieConfig.getConfig("driver.path.firefox");//"C:/Users/niehp/Google ドライブ/tool/geckodriver-v0.21.0-win64/geckodriver.exe";
+    public final static String ieDriverPath = NieConfig.getConfig("driver.path.ie"); //"C:/Users/niehp/Google ドライブ/tool/IEDriverServer_x64_3.4.0/IEDriverServer.exe";
 
     private static WebDriver driver = null;
     public static String watermark_common = "in/watermark0.png";

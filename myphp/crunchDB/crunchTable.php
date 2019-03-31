@@ -138,7 +138,16 @@
      * @param array $content The new database entries
      */
     public function insert($data){
-      array_push($this->tbdata['data'], $data);
+	  // MOD BY NIE START
+	 
+	  if(isset($this->tbdata['data'])){
+		  array_push($this->tbdata['data'], $data);
+	  }else{
+		  $this->tbdata['data'][] = $data;
+	  }
+	  //var_dump($this->tbdata['data']);
+	  //array_push($this->tbdata['data'], $data);
+	  // MOD BY NIE END
       $this->_saveData();
       return true;
     }

@@ -175,6 +175,7 @@
     public function update(){
       foreach($this->data as $data){
         foreach(func_get_args() as $arg){
+		//var_dump($data);
           if(array_key_exists($arg['0'], $this->base->tbdata['data'][$data['__dbid']])) {
             $this->base->tbdata['data'][$data['__dbid']][$arg[0]] = $arg[1];
           }

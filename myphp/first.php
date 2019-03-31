@@ -1,11 +1,16 @@
-<?
+<?php
 
-//require './mygiftcard/MyGiftCard.php';
-//$myGiftCard = new MyGiftCard();
-//$rslt = $myGiftCard->saveCode("1,ca1,11;2,ca2,22;3,ca3,33;");
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+//require './common.php';
+require __DIR__ . '/mygiftcard/MyGiftCard.php';
+$myGiftCard = new MyGiftCard();
+$rslt = $myGiftCard->saveCode("12,ca1,11");
 //$rslt = $myGiftCard->getCode("ca1");
 //$rslt = $myGiftCard->assetCode("11", "a000","o0001");
-
+var_dump($rslt);
+/*
 require './mydaigou/MyDaigou.php';
 require './mydaigou/DaiGouObject.php';
 
@@ -25,5 +30,5 @@ $rslt = $my->save($obj);
 //$rslt = $my->updateStatus($obj);
 //$rslt = $my->delete($obj);
 var_dump($rslt);
-
+*/
 ?>
