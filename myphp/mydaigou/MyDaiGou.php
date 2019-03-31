@@ -1,4 +1,4 @@
-<?
+<?php
 require '../common.php';
 require './DaiGouObject.php';
 
@@ -29,11 +29,20 @@ class MyDaiGou
 		$data = $tbl->select('*')->fetch();
 		return $data;
 	}
-	public function listBuyer($buyer){
+	public function listByBuyer($buyer){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYDAIGOU_SALE_INFO"));
 		$data = $tbl->select(['buyer', '==', $buyer])->fetch();
 		return $data;
+	}
+	public function addBuyer($obj){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYDAIGOU_SALE_INFO"));
+		$cnt = $tbl->select(['buyer', '==', $obj->buyer, 'and'])->count();
+		if($cnt == 0){
+			$tbl->insert($obj);
+		}
+		//return $data;
 	}
 	public function delete($obj){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
