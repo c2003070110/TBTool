@@ -404,7 +404,9 @@ public class YaAuAutoSend {
 
 		String p = urlEncodeUTF8(param);
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet request = new HttpGet(url + "?" + p);
+		String urlT = url + "?" + p;
+		log("[INFO][httpGet][URL]" + urlT);
+		HttpGet request = new HttpGet(urlT);
 		try {
 			HttpResponse response = client.execute(request);
 			int statusCode = response.getStatusLine().getStatusCode();

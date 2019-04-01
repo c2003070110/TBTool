@@ -10,6 +10,9 @@ class MyDaiGou
 	public function saveItem($obj){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYDAIGOU_ITEM_INFO"));
+		if(!isset($obj->orderDate) || $obj->orderDate == ''){
+			$obj->orderDate = date( "Ymd" );
+		}
 		if(!isset($obj->buyer) || $obj->buyer == ''){
 			$obj->uid = null;
 			$obj->status = 'unasign';
@@ -17,6 +20,7 @@ class MyDaiGou
 		if(!isset($obj->uid) || $obj->uid == ''){
 			$obj->uid = uniqid();
 			$tbl->insert($obj);
+			return;
 		}
 		$cnt = $tbl->select(['uid', '==', $obj->uid])->count();
 		if($cnt == 0){
@@ -79,19 +83,31 @@ class MyDaiGou
 	}
 	
 	
-	public function addBuyer($obj){
+	public function saveBuyer($obj){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYDAIGOU_BUYER_INFO"));
-		$cnt = $tbl->select(['buyer', '==', $obj->buyer, 'and'])->count();
-		if($cnt == 0){
+		if(!isset($obj->uid) || $obj->uid == ''){
+			$obj->uid = uniqid();
 			$tbl->insert($obj);
+			return "[success]insert!";
 		}
+		$tbl->select(['uid', '==', $obj->uid, 'and'])
+		    ->update(
+					 ['buyer', $obj->buyer],
+					 ['address', $obj->address]);
+		return "[success]update!";
 	}
 	public function listAllBuyer(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYDAIGOU_BUYER_INFO"));
 		$data = $tbl->select('*')->fetch();
 		return $data;
+	}
+	public function listBuyerByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYDAIGOU_BUYER_INFO"));
+		$data = $tbl->select(['uid', '==', $uid, 'and'])->fetch();
+		return $data[0];
 	}
 }
 ?>

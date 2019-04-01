@@ -61,8 +61,12 @@ $(function() {
     <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
     <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
     <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
-    <li class="list-group-item"><a href="/myphp/mygiftcard.html">REG</a></li>
+  </ul> 
+  <hr class="mb-4">  
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a href="/myphp/mygiftcard/">REG</a></li>
   </ul>   
+  <hr class="mb-4">  
   <hr class="mb-4">
   <div class="row">
     <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">OrderNo</div>

@@ -13,11 +13,13 @@ if($actionStr === null){
 	return;
 }
 
-if($actionStr == "addBuyer"){
+if($actionStr == "saveBuyer"){
 	$my = new MyDaiGou();
-	$obj = new ItemObject();
+	$obj = new BuyerObject();
+	$obj->uid = $_GET['uid'];
 	$obj->buyer = $_GET['buyer'];
-	$rslt = $my->addBuyer($obj);
+	$obj->address = $_GET['address'];
+	$rslt = $my->saveBuyer($obj);
 	echo $rslt;
 } else if($actionStr == "listByBuyer"){
 	$my = new MyDaiGou();
@@ -53,7 +55,7 @@ if($actionStr == "addBuyer"){
 	$obj->qtty = $_GET['qtty'];
 	$obj->priceCNY = $_GET['priceCNY'];
 	$obj->status = 'unGou';
-	$rslt = $my->save($obj);
+	$rslt = $my->saveItem($obj);
 	echo $rslt;
 } else if($actionStr == "gouru"){
 	$my = new MyDaiGou();
@@ -66,13 +68,13 @@ if($actionStr == "addBuyer"){
 	$obj->qtty = $_GET['qtty'];
 	$obj->priceCNY = $_GET['priceCNY'];
 	$obj->status = 'gouru';
-	$rslt = $my->save($obj);
+	$rslt = $my->saveItem($obj);
 	echo $rslt;
 } else if($actionStr == "zaitu" || $actionStr == "fahuo" || $actionStr == "compl" ){
 	$my = new MyDaiGou();
 	$obj = new ItemObject();
 	$obj->uid = $_GET['uid'];
-	$obj->status = actionStr;
+	$obj->status = $actionStr;
 	$rslt = $my->updateItemStatus($obj);
 	echo $rslt;
 }
