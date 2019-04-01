@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require __DIR__ .'/MyDaiGou.php';
-//require __DIR__ .'/DaiGouObject.php';
+//require __DIR__ .'/ItemObject.php';
 $actionStr = $_GET['action'];
 
 if($actionStr === null){
@@ -13,20 +13,9 @@ if($actionStr === null){
 	return;
 }
 
-if($actionStr == "save"){
+if($actionStr == "addBuyer"){
 	$my = new MyDaiGou();
-	$obj = new DaiGouObject();
-	$obj->buyer = $_GET['buyer'];
-	$obj->orderDate = $_GET['orderDate'];
-	$obj->orderItem = $_GET['orderItem'];
-	$obj->priceJPY = $_GET['priceJPY'];
-	$obj->qtty = $_GET['qtty'];
-	$obj->priceCNY = $_GET['priceCNY'];
-	$rslt = $my->save($obj);
-	echo $rslt;
-} else if($actionStr == "addBuyer"){
-	$my = new MyDaiGou();
-	$obj = new DaiGouObject();
+	$obj = new ItemObject();
 	$obj->buyer = $_GET['buyer'];
 	$rslt = $my->addBuyer($obj);
 	echo $rslt;
@@ -34,19 +23,57 @@ if($actionStr == "save"){
 	$my = new MyDaiGou();
 	$rslt = $my->listByBuyer($obj->buyer);
 	echo $rslt;
-} else if($actionStr == "delete"){
+} else if($actionStr == "saveItem"){
 	$my = new MyDaiGou();
-	$rslt = $my->delete($obj);
+	$obj = new ItemObject();
+	$obj->uid = $_GET['uid'];
+	$obj->buyer = $_GET['buyer'];
+	$obj->orderDate = $_GET['orderDate'];
+	$obj->orderItem = $_GET['orderItem'];
+	$obj->priceJPY = $_GET['priceJPY'];
+	$obj->qtty = $_GET['qtty'];
+	$obj->priceCNY = $_GET['priceCNY'];
+	$obj->status = 'unGou';
+	$rslt = $my->saveItem($obj);
+	echo $rslt;
+} else if($actionStr == "deleteItem"){
+	$my = new MyDaiGou();
+	$obj = new ItemObject();
+	$obj->uid = $_GET['uid'];
+	$rslt = $my->deleteItem($obj);
+	echo $rslt;
+} else if($actionStr == "assign"){
+	$my = new MyDaiGou();
+	$obj = new ItemObject();
+	$obj->uid = $_GET['uid'];
+	$obj->buyer = $_GET['buyer'];
+	$obj->orderDate = $_GET['orderDate'];
+	$obj->orderItem = $_GET['orderItem'];
+	$obj->priceJPY = $_GET['priceJPY'];
+	$obj->qtty = $_GET['qtty'];
+	$obj->priceCNY = $_GET['priceCNY'];
+	$obj->status = 'unGou';
+	$rslt = $my->save($obj);
 	echo $rslt;
 } else if($actionStr == "gouru"){
 	$my = new MyDaiGou();
+	$obj = new ItemObject();
+	$obj->uid = $_GET['uid'];
+	$obj->buyer = $_GET['buyer'];
+	$obj->orderDate = $_GET['orderDate'];
+	$obj->orderItem = $_GET['orderItem'];
+	$obj->priceJPY = $_GET['priceJPY'];
+	$obj->qtty = $_GET['qtty'];
+	$obj->priceCNY = $_GET['priceCNY'];
 	$obj->status = 'gouru';
-	$rslt = $my->updateStatus($obj);
+	$rslt = $my->save($obj);
 	echo $rslt;
-} else if($actionStr == "fahuo"){
+} else if($actionStr == "zaitu" || $actionStr == "fahuo" || $actionStr == "compl" ){
 	$my = new MyDaiGou();
-	$obj->status = 'fahuo';
-	$rslt = $my->updateStatus($obj);
+	$obj = new ItemObject();
+	$obj->uid = $_GET['uid'];
+	$obj->status = actionStr;
+	$rslt = $my->updateItemStatus($obj);
 	echo $rslt;
 }
 ?>

@@ -12,7 +12,7 @@ $rslt = $myGiftCard->saveCode("12,ca1,11");
 var_dump($rslt);
 /*
 require './mydaigou/MyDaigou.php';
-require './mydaigou/DaiGouObject.php';
+require './mydaigou/ItemObject.php';
 
 $my = new MyDaigou();
 $obj = new MyDaigou();

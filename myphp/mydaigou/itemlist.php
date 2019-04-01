@@ -19,27 +19,33 @@ require __DIR__ .'/MyDaiGou.php';
 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
-var httpPrefix = "http://133.130.114.129/";
+var actionUrl = "http://133.130.114.129/myphp/mydaigou/action.php";
 $(function() {
     $(document).on("click", "#btnCopyBox", function() {
         var thisBox = $(this).parent().parent().parent().parent();
         var cloneBox = thisBox.clone();
-        cloneBox.find("#orderItem").val("");
-        cloneBox.find("#priceJPY").val("");
-        cloneBox.find("#qtty").val("");
-        cloneBox.find("#priceCNY").val("");
+        cloneBox.find("#uid").val("");
+        cloneBox.find("#status").val("");
+        //cloneBox.find("#orderItem").val("");
+        //cloneBox.find("#priceJPY").val("");
+        //cloneBox.find("#qtty").val("");
+        //cloneBox.find("#priceCNY").val("");
         $("#container").append(cloneBox);
     });
 	var updateRecord = function(thisBox, action){
-        var buyer = $("#buyer").val();
+        var buyer = $("#buyer").text();
+		/*
 		if(buyer == ""){
 			alert("TODO!");
 			return;
 		}
-        var jqxhr = $.ajax(httpPrefix + "myphp/mydaigou/action.php",
+		*/
+        var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
                            data : {"action":action, 
+						           "uid" : thisBox.find("#uid").val(),
 						           "buyer" : buyer,
+						           "status" : thisBox.find("#status").val(),
 								   "orderDate" : thisBox.find("#orderDate").val(),
 								   "orderItem" : thisBox.find("#orderItem").val(),
 								   "priceJPY" : thisBox.find("#priceJPY").val(),
@@ -55,15 +61,19 @@ $(function() {
 	};
     $(document).on("click", "#btnSaveBox", function() {
         var thisBox = $(this).parent().parent().parent().parent();
-        updateRecord(thisBox, "save");
+        updateRecord(thisBox, "saveItem");
     });
     $(document).on("click", "#btnDelBox", function() {
         var thisBox = $(this).parent().parent().parent().parent();
-        updateRecord(thisBox, "delete");
+        updateRecord(thisBox, "deleteItem");
     });
     $(document).on("click", "#btnRmBox", function() {
         var thisBox = $(this).parent().parent().parent().parent();
         thisBox.remove();
+    });
+    $(document).on("click", "#btnAssign", function() {
+        var thisBox = $(this).parent().parent().parent().parent();
+        updateRecord(thisBox, "assign");
     });
     $(document).on("click", "#btnGouru", function() {
         var thisBox = $(this).parent().parent().parent().parent();
@@ -73,51 +83,88 @@ $(function() {
         var thisBox = $(this).parent().parent().parent().parent();
         updateRecord(thisBox, "fahuo");
     });
+    $(document).on("click", "#btnCompl", function() {
+        var thisBox = $(this).parent().parent().parent().parent();
+        updateRecord(thisBox, "compl");
+    });
 });
 </script>
 </head>
 <body class="py-4">
 <div id="container" class="container">
 <?php
+  if(isset($buyer)){
+?>
+  <h3>买家:<span id="buyer"><?php echo $buyer ?></span></h3>
+<?php
+  }
+?>
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php">BUYER</a></li>
+<?php
+  if(isset($buyer)){
+?>
+    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>">ALL</a></li>
+    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=unGou">待采购</a></li>
+    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=gouru">购入</a></li>
+    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=zaitu">在途</a></li>
+    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=fahuo">发货</a></li>
+    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=compl">发货</a></li>
+<?php
+  }
+?>
+  </ul>
+  <hr class="mb-4">
+<?php
   $mydaigou = new MyDaiGou();
   $buyer = $_GET['buyer'];
-  if(isset($buyer)){
-	  $dataList = $mydaigou->listByBuyer($buyer);
-  }else{
-	  $dataList = $mydaigou->listAll();
-  }
   $status = $_GET['status'];
-  if(isset($_GET['status'])){
-	  $dataArr = array();
-	  foreach ($dataList as $data) {
-		if(in_array($data["buyer"], $dataArr)){
-			continue;
-		}
-		$dataArr[] = &$data["buyer"];
+  $dataArr = array();
+  if(isset($buyer)){
+	  if(isset($status)){
+		  $dataArr = $mydaigou->listItemByBuyerAndStatus($buyer, $status);
+	  }else{
+		  $dataArr = $mydaigou->listItemByBuyer($buyer);
 	  }
-  }else{
-	  $dataArr[] = &$dataList;
   }
-?>
-<h3>买家:<?php echo $buyer ?></h3>
-<ul class="list-group list-group-horizontal">
-<?php
   foreach ($dataArr as $data) {
-?>
-  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>">ALL</a></li>
-  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=unGou">待采购</a></li>
-  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=gou">购入</a></li>
-  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=zaitu">在途</a></li>
-  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=fahuo">发货</a></li>
-<?php
+	  $boxCss = "bg-light";
+	  if($data['status'] == 'unGou'){
+		  $boxCss = "bg-danger text-white";
+	  }else if($data['status'] == 'gouru'){
+		  $boxCss = "bg-warning text-white";
+	  }else if($data['status'] == 'zaitu'){
+		  $boxCss = "bg-success text-white";
+	  }else if($data['status'] == 'fahuo'){
+		  $boxCss = "bg-success text-white"
+	  }else if($data['status'] == 'compl'){
+		  $boxCss = "bg-secondary text-white"
+	  }
+	  
+      include __DIR__ .'/itembox_subpage.php';
   }
+  // list unasign item
+   if(isset($buyer) && isset($status) && ($status == 'unGou' || $status == 'gouru')){
+	   $dataArr = $mydaigou->listItemByUnAsign();
+	   foreach ($dataArr as $data) {
+		   include __DIR__ .'/itembox_subpage.php';
+	   }
+   }
 ?>
-</ul>
-      <hr class="mb-4">
+<?php
+   // blank box
+   if(!isset($buyer) || (isset($status) && !($status == 'zaitu' || $status == 'fahuo' || $status == 'compl')){
+       $data = array[];
+       include __DIR__ .'/itembox_subpage.php';
+   }
+   
+?>
+<!--
   <div class="box">
       <div class="row mb-4">
 		<div class="input-group">
           <input type="text" class="form-control" id="orderDate" placeholder="下单日期" aria-label="" aria-describedby="button-addon4">
+		  <input type="hidden" name="uid">
 		  <div class="input-group-append" id="button-addon4">
 			<button class="btn btn-outline-secondary" id="btnSaveBox" type="button">SAVE</button>
 		  </div>
@@ -159,6 +206,7 @@ $(function() {
       </div>
       <hr class="mb-4">
   </div>
+  -->
 </div>
 </body>
 </html>

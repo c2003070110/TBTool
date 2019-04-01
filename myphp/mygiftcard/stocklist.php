@@ -19,22 +19,22 @@ require __DIR__ .'/MyGiftCard.php';
 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
-var httpPrefix = "http://133.130.114.129/";
+var actionUrl = "http://133.130.114.129/myphp/mygiftcard/action.php";
 $(function() {
     $(document).on("click", ".actionBtn", function() {
         var thisBox = $(this).parent().parent();
         var actionName = $(this).html();
 
-		var orderNoVal = thisBox.find("#orderNo").text();
-		var codeTypeVal = thisBox.find("#codeType").text();
-		var codeCdVal = thisBox.find("#codeCd").text();
+        var orderNoVal = thisBox.find("#orderNo").text();
+        var codeTypeVal = thisBox.find("#codeType").text();
+        var codeCdVal = thisBox.find("#codeCd").text();
         
-        var jqxhr = $.ajax(httpPrefix + "myphp/mygiftcard.php",
+        var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
                            data : {"action" : actionName, 
-						           "orderNo" : orderNoVal, 
-						           "codeType" : codeTypeVal, 
-						           "codeCd" : codeCdVal},
+                                   "orderNo" : orderNoVal, 
+                                   "codeType" : codeTypeVal, 
+                                   "codeCd" : codeCdVal},
                            dataType : "html" 
                           }
                       );
@@ -49,50 +49,50 @@ $(function() {
 <?php
   $myGiftCard = new MyGiftCard();
   if(isset($_GET['status'])){
-	  $dataArr = $myGiftCard->listStockByStatus($_GET['status']);
+      $dataArr = $myGiftCard->listStockByStatus($_GET['status']);
   }else{
-	  $dataArr = $myGiftCard->listStock();
+      $dataArr = $myGiftCard->listStock();
   }
 ?>
-<ul class="list-group list-group-horizontal">
-  <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php">ALL</a></li>
-  <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
-  <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
-  <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
-  <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
-  <li class="list-group-item"><a href="/myphp/mygiftcard.html">REG</a></li>
-</ul>
-      <hr class="mb-4">
 <div id="container" class="container">
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php">ALL</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard.html">REG</a></li>
+  </ul>   
+  <hr class="mb-4">
   <div class="row">
-	<div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">OrderNo</div>
-	<div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
-	<div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
-	<div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
-	<div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
-	<!--
-	<div class="col-1 themed-grid-col border border-primary bg-info text-white">AucId</div>
-	<div class="col-1 themed-grid-col border border-primary bg-info text-white">Obider</div>
-	-->
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">OrderNo</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    <!--
+    <div class="col-1 themed-grid-col border border-primary bg-info text-white">AucId</div>
+    <div class="col-1 themed-grid-col border border-primary bg-info text-white">Obider</div>
+    -->
   </div>
 <?php
   foreach ($dataArr as $data) {
 ?>
   <div class="row">
-	<div id="orderNo" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["orderNo"] ?></div>
-	<div id="codeType" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
-	<div id="codeCd" class="col-3 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeCd"] ?></div>
-	<div id="status" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["status"] ?></div>
-	<div class="col-3 text-break themed-grid-col border border-secondary">
-	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
-	  <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
-	  <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
-	  <button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>
-	</div>
-	<!--
-	<div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["aucId"] ?></div>
-	<div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["obider"] ?></div>
-	-->
+    <div id="orderNo" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["orderNo"] ?></div>
+    <div id="codeType" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
+    <div id="codeCd" class="col-3 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeCd"] ?></div>
+    <div id="status" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["status"] ?></div>
+    <div class="col-3 text-break themed-grid-col border border-secondary">
+      <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+      <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
+      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+      <button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>
+    </div>
+    <!--
+    <div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["aucId"] ?></div>
+    <div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["obider"] ?></div>
+    -->
   </div>
 <?php
   }

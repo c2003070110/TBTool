@@ -1,11 +1,12 @@
 <?php
-class DaiGouObject
+class ItemObject
 {
+    public $uid = '';
     public $buyer = '';
     public $orderDate = '';
     public $orderItem = '';
 	
-    public $status = '';//paid,gouru,zaitu,fahuo
+    public $status = '';//unasign,unGou,gouru,zaitu,fahuo,compl
 	
     public $priceJPY = '';
     public $qtty = '';

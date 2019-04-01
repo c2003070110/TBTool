@@ -402,11 +402,12 @@ public class YaAuAutoSend {
 	
 	private String httpGet(String url, Map<String, String> param) {
 
+		String p = urlEncodeUTF8(param);
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(url + "?" + p);
 		try {
-			String p = urlEncodeUTF8(param);
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(url + "&" + p);
 			HttpResponse response = client.execute(request);
+			int statusCode = response.getStatusLine().getStatusCode();
 
 			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			StringBuffer result = new StringBuffer();
@@ -414,8 +415,15 @@ public class YaAuAutoSend {
 			while ((line = rd.readLine()) != null) {
 				result.append(line);
 			}
-			return result.toString();
+			if(statusCode != 200){
+				log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + result.toString());
+				return "";
+			}else{
+				return result.toString();
+			}
+			
 		} catch (Exception ex) {
+			log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return "";

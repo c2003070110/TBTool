@@ -42,15 +42,7 @@ $(function() {
 <body class="py-4">
 <?php
   $myDaiGou = new MyDaiGou();
-  $dataList = $myDaiGou->listAll();
-  $dataArr = array();
-  foreach ($dataList as $data) {
-    if(in_array($data["buyer"], $dataArr)){
-        continue;
-    }
-    $dataArr[] = &$data["buyer"];
-  }
-  
+  $dataArr = $myDaiGou->listAllBuyer();  
 ?>
 <div id="container" class="container">
 	<ul class="list-group list-group-horizontal">

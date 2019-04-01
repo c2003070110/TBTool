@@ -7,6 +7,8 @@ define("CRDB_PATH", __DIR__ . "/db");
 
 define("TBL_MYGIFTCODE_CODE", "mygiftcode.code"); 
 
-define("TBL_MYDAIGOU_SALE_INFO", "mydaigou.sale.info"); 
+define("TBL_MYDAIGOU_ITEM_INFO", "mydaigou.item.info"); 
+
+define("TBL_MYDAIGOU_BUYER_INFO", "mydaigou.buyer.info"); 
 
 ?>
