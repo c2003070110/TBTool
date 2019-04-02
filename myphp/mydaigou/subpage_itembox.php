@@ -15,14 +15,32 @@
 		<div class="mb-2 input-group ui-front">
           <input value="<?php echo $data['orderItem'] ?>" type="text" class="form-control" id="orderItem" placeholder="宝贝商品" aria-label="" aria-describedby="button-addon4">
 		  <div class="input-group-append" id="button-addon4">
+<!--
 			<button class="btn" id="btnCopyBox" type="button">COPY</button>
+-->
 		  </div>
 		</div>
 		<div class="mb-2 input-group">
 		  <input value="<?php echo $data['priceJPY'] ?>" type="text" class="form-control" id="priceJPY" placeholder="价格(JPY)" aria-label="" aria-describedby="button-addon4">
 		  <div class="input-group-append" id="button-addon4">
+<?php
+  if($subPageDiv == 'createNew' || $subPageDiv == 'modify'){
+?>
 			<button class="btn" id="btnSaveBox" type="button">SAVE</button>
-			<button class="btn" id="btnDelBox" type="button">DEL</button>
+<?php
+  }
+?>
+<?php
+  if($data['status'] =='gouru' || $data['status'] =='zaitu' || $data['status'] =='fahuo' || $data['status'] =='compl'){
+?>		
+			<button class="btn" id="btnDelBox" type="button">RELEASE</button>
+<?php
+  }else{
+?>
+			<button class="btn" id="btnDelBox" type="button">DELETE</button>
+<?php
+  }
+?>
 <!--
 			<button class="btn" id="btnRmBox" type="button">REMOVE</button>
 -->
@@ -35,10 +53,10 @@
           <input type="text" class="form-control" id="qtty" placeholder="数量" aria-label="" aria-describedby="button-addon4">
 		  <div class="input-group-append" id="button-addon4">
 		  </div>
+        </div>
 <?php
   }
 ?>
-        </div>
         <div class="mb-2 input-group">
           <input value="<?php echo $data['priceCNY'] ?>" type="text" class="form-control" id="priceCNY" placeholder="价格(CNY)" aria-label="" aria-describedby="button-addon4">
 		  <div class="input-group-append" id="button-addon4">

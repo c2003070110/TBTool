@@ -4,7 +4,7 @@ $sugguestType = $_POST['sugguestType'];
 $termKey = $_POST['termKey'];
 if ($sugguestType === 'buyer') {
 	$my = new MyDaiGou();
-	$dataArr = $my->listAll();
+	$dataArr = $my->listAllBuyer();
 	$tags = array();
 	foreach ($dataArr as $data) {
 		if (stripos($data["buyer"], $termKey) !== false) {
@@ -14,13 +14,16 @@ if ($sugguestType === 'buyer') {
 	echo json_encode($tags);
 }else if ($sugguestType === 'orderItem') {
 	$my = new MyDaiGou();
-	$dataArr = $my->listAll();
+	$dataArr = $my->listAllItem();
 	$tags = array();
 	foreach ($dataArr as $data) {
 		if (stripos($data["orderItem"], $termKey) !== false) {
-			$tags[] = array(
+			$data = array(
 			             "label" => $data["orderItem"].':'.$data["priceJPY"].':'.$data["priceCNY"],
 			             "value" => $data["orderItem"]);
+			if(!in_array($data, $tags)){
+				$tags[] = $data;
+			}
 		}
 	}
 	echo json_encode($tags);

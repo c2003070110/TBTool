@@ -35,7 +35,11 @@ if($actionStr == "saveBuyer"){
 	$obj->priceJPY = $_GET['priceJPY'];
 	$obj->qtty = $_GET['qtty'];
 	$obj->priceCNY = $_GET['priceCNY'];
-	$obj->status = 'unGou';
+	if(!isset($_GET['status'])){
+		$obj->status = 'unGou';
+	}else{
+		$obj->status = $_GET['status'];
+	}
 	$rslt = $my->saveItem($obj);
 	echo $rslt;
 } else if($actionStr == "deleteItem"){
@@ -57,20 +61,7 @@ if($actionStr == "saveBuyer"){
 	$obj->status = 'unGou';
 	$rslt = $my->saveItem($obj);
 	echo $rslt;
-} else if($actionStr == "gouru"){
-	$my = new MyDaiGou();
-	$obj = new ItemObject();
-	$obj->uid = $_GET['uid'];
-	$obj->buyer = $_GET['buyer'];
-	$obj->orderDate = $_GET['orderDate'];
-	$obj->orderItem = $_GET['orderItem'];
-	$obj->priceJPY = $_GET['priceJPY'];
-	$obj->qtty = $_GET['qtty'];
-	$obj->priceCNY = $_GET['priceCNY'];
-	$obj->status = 'gouru';
-	$rslt = $my->saveItem($obj);
-	echo $rslt;
-} else if($actionStr == "zaitu" || $actionStr == "fahuo" || $actionStr == "compl" ){
+} else if($actionStr == "gouru" || $actionStr == "zaitu" || $actionStr == "fahuo" || $actionStr == "compl" ){
 	$my = new MyDaiGou();
 	$obj = new ItemObject();
 	$obj->uid = $_GET['uid'];

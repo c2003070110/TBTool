@@ -19,7 +19,8 @@ require __DIR__ .'/MyDaiGou.php';
 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
-var httpPrefix = "http://133.130.114.129/";
+var actionUrl = "<?php echo constant("URL_ACTION_MYDAIGOU") ?>";
+var autocompleteUrl = "<?php echo constant("URL_AUTOCOMPLETE_MYDAIGOU") ?>";
 $(function() {
     $(document).on("click", "#btnSaveBuyer", function() {
         var thisBox = $(this).parent().parent().parent().parent().parent();
@@ -27,7 +28,7 @@ $(function() {
 		var buyer = thisBox.find("#buyer").val();
 		var address = thisBox.find("#address").val();
         
-        var jqxhr = $.ajax(httpPrefix + "myphp/mydaigou/action.php",
+        var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
                            data : {"action" : "saveBuyer", 
 						           "uid" : uid, 
@@ -37,32 +38,51 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
-            alert(msg);
+            location.reload();
         });
     });
 });
 </script>
 </head>
 <body class="py-4">
+<div id="container" class="container">
 <?php
+  include __DIR__ .'/subpage_toplink.php';
+?>
+<?php
+  $todo = '';
+  if(isset($_GET['todo'])){
+	$todo = $_GET['todo'];
+  }
   $myDaiGou = new MyDaiGou();
   $dataArr = $myDaiGou->listAllBuyer();  
 ?>
-<div id="container" class="container">
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php">记账 每天都买了些啥？</a></li>
-  </ul>
 <?php
   foreach ($dataArr as $data) {
 ?>
 	<ul class="list-group list-group-horizontal">
-	  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $data["buyer"] ?>"><?php echo $data["buyer"] ?>が买了些啥？</a></li>
-	  <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php?buyer=<?php echo $data["uid"] ?>"><?php echo $data["buyer"] ?>を修改地址？</a></li>
-
+	  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $data["buyer"] ?>&status=unGou"><?php echo $data["buyer"] ?>が买了些啥？</a></li>
+<?php
+    if($todo == 'addItem') {
+?>
+      <li class="list-group-item"><a href="/myphp/mydaigou/additem.php?buyer=<?php echo $data["buyer"] ?>"><?php echo $data["buyer"] ?>がaccept</a></li>
+<?php
+    }else if($todo == 'report'){
+?>
+      <li class="list-group-item"><a href="/myphp/mydaigou/report.php?buyer=<?php echo $data["buyer"] ?>"><?php echo $data["buyer"] ?>がREPORT</a></li>
+<?php
+    }else{
+?>
+	  <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php?buyer=<?php echo $data["uid"] ?>&todo=<?php echo $todo ?>"><?php echo $data["buyer"] ?>を修改地址？</a></li>
+<?php
+    }
+?>
 	</ul>
 	<hr class="mb-4">
 <?php
   }
+?>
+<?php
   $uid = $_GET['buyer'];
   if(isset($uid)){
 	  $dataMod = $myDaiGou->listBuyerByUid($uid);
