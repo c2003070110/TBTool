@@ -110,22 +110,22 @@ class MyGiftCard
 		return "";
 	}
 	public function assetCode($codeCd,$aucId,$obidId){
-		$cdb = new CrunchDB('./db/');
-		$tbl = $cdb->table('mygiftcode.code');
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
 		$tbl->select(['codeCd', '==', $codeCd])->update(['status', 'used'],['aucId', $aucId],['obidId', $obidId]);
 	}
 	public function updateStatus($codeCd, $status){
-		$cdb = new CrunchDB('./db/');
-		$tbl = $cdb->table('mygiftcode.code');
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
 		$tbl->select(['codeCd', '==', $codeCd])->update(['status', $status]);
 		$resultStr = "success";
 		return $resultStr;
 	}
 	public function deleteCode($codeCd){
-		$cdb = new CrunchDB('./db/');
-		$tbl = $cdb->table('mygiftcode.code');
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
 		$tbl->select(['codeCd', '==', $codeCd])->delete();
 		$resultStr = "success";

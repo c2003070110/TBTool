@@ -132,59 +132,61 @@ $(function() {
   if($reportForSelfFlag == true){
 ?>
     <div class="col-2 text-break themed-grid-col border border-secondary">
-	  <label for="xiaojiJPY">xiaoji JPY</label>
+	  <label for="xiaojiJPY">小计 JPY</label>
 	  <input value="<?php echo $ttlJPY ?>" type="text" class="form-control" id="xiaojiJPY" >
 	</div>
 <?php
   }
 ?>
     <div class="col text-break themed-grid-col border border-secondary">
-	  <label for="xiaojiCNY">xiaoji CNY</label>
+	  <label for="xiaojiCNY">小计</label>
 	  <input value="<?php echo $ttlCNY ?>" type="text" class="form-control" id="xiaojiCNY" >
 	</div>
+  </div>
+  <div class="row">
 <?php
   if($reportForSelfFlag == true){
 ?>
     <div class="col-2 text-break themed-grid-col border border-secondary">
-	  <label for="yunfeiJPY">yunfei JPY</label>
+	  <label for="yunfeiJPY">运费 JPY</label>
 	  <input type="text" class="form-control" id="yunfeiJPY" >
 	</div>
 <?php
   }
 ?>
     <div class="col text-break themed-grid-col border border-secondary">
-	  <label for="yunfeiCNY">yunfei CNY</label>
+	  <label for="yunfeiCNY">运费</label>
 	  <input type="text" class="form-control" id="yunfeiCNY" >
 	</div>
   </div>
-  <hr class="mb-4">
+  <hr class="mb-1">
   <div class="row">
 <?php
   if($reportForSelfFlag == true){
 ?>
     <div class="col text-break themed-grid-col border border-secondary">
-	  <label for="hejiJPY">heji JPY</label>
+	  <label for="hejiJPY">合计 JPY</label>
 	  <input type="text" class="form-control" id="hejiJPY" >
 	</div>
 <?php
   }
 ?>
     <div class="col-6 text-break themed-grid-col border border-secondary">
-	  <label for="hejiCNY">heji CNY</label>
+	  <label for="hejiCNY">合计</label>
 	  <input type="text" class="form-control" id="hejiCNY" >
 	</div>
   </div>
 <?php
   if($reportForSelfFlag == true){
 ?>
-  <hr class="mb-4">
+  <hr class="mb-1">
   <div class="row">
     <div class="col text-break themed-grid-col border border-secondary">
-	  <label for="currencyRate">huilv</label>
+	  <label for="currencyRate">汇率</label>
 	  <input type="text" class="form-control" id="currencyRate">
 	</div>
     <div class="col text-break themed-grid-col border border-secondary">
-	  <label for="liyiCNY">liyi</label>
+	  <label for="liyiCNY">利益</label>
 	  <input type="text" class="form-control" id="liyiCNY" >
 	</div>
   </div>

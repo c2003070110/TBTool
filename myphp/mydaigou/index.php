@@ -18,13 +18,9 @@
 <body class="py-4">
 <div id="container" class="container">
 
-  <ul class="list-group list-group-horizontal">
-   <li class="list-group-item"><a href="/myphp/mydaigou/additem.php">记账 每天都买了些啥？</a></li>
-   <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php?todo=addItem">acceptXXX</a></li>
-   <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php">ALL X ALL</a></li>
-   <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php?todo=report">report XXX</a></li>
-  </ul>
-  <hr class="mb-4">
+<?php
+  include __DIR__ .'/subpage_toplink.php';
+?>
 
 </div>
 </body>

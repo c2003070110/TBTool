@@ -82,6 +82,10 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateRecord(thisBox, "deleteItem");
     });
+    $(document).on("click", "#btnAssign", function() {
+		var thisBox = getMyBox(this);
+        updateRecord(thisBox, "assign");
+    });
 });
 </script>
 </head>
@@ -102,11 +106,10 @@ $(function() {
   if($buyer != ''){
 ?>
    <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
-   <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>">acceptXXX</a></li>
+   <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>">TA的剁手列表</a></li>
 <?php
   }else{
 ?>
-   <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php">ALL X ALL</a></li>
 <?php 
   }
 ?>

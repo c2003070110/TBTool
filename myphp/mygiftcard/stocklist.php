@@ -39,7 +39,8 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
-            alert(msg);
+			//alert(msg);
+            location.reload();
         });
     });
 });
@@ -48,19 +49,32 @@ $(function() {
 <body class="py-4">
 <?php
   $myGiftCard = new MyGiftCard();
+  $status = '';
   if(isset($_GET['status'])){
-      $dataArr = $myGiftCard->listStockByStatus($_GET['status']);
+	  $status = $_GET['status'];
+      $dataArr = $myGiftCard->listStockByStatus($status);
   }else{
       $dataArr = $myGiftCard->listStock();
+  }
+  if($status == 'unused'){
+	  $cssBgUnused = "bg-success text-white";
+  }else if($status == 'using'){
+	  $cssBgUsing = "bg-success text-white";
+  }else if($status == 'used'){
+	  $cssBgUsed = "bg-success text-white";
+  }else if($status == 'invalid'){
+	  $cssBgInvalid = "bg-success text-white";
+  }else{
+	  $cssBgAll = "bg-success text-white";
   }
 ?>
 <div id="container" class="container">
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php">ALL</a></li>
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php">ALL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
+    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
+    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
+    <li class="list-group-item <?php echo $cssBgInvalid ?>"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
   </ul> 
   <hr class="mb-4">  
   <ul class="list-group list-group-horizontal">
@@ -88,10 +102,28 @@ $(function() {
     <div id="codeCd" class="col-3 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeCd"] ?></div>
     <div id="status" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["status"] ?></div>
     <div class="col-3 text-break themed-grid-col border border-secondary">
+<?php 
+  if($data["status"] == 'unused') {
+?>
       <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
       <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
-      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
       <button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>
+<?php 
+  }else if($data["status"] == 'using') {
+?>
+      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+      <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
+<?php 
+  }else if($data["status"] == 'used') {
+?>
+      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+<?php 
+  }else if($data["status"] == 'invalid') {
+?>
+      <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+<?php 
+  }
+?>
     </div>
     <!--
     <div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["aucId"] ?></div>

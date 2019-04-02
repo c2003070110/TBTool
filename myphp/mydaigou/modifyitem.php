@@ -48,7 +48,7 @@ $(function() {
 			  }
 		  );
         jqxhr.done(function( msg ) {
-            //window.history.back();
+            window.history.back();
         });
 	};
     $("#orderItem").autocomplete({

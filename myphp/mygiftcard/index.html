@@ -29,7 +29,7 @@
 }) (jQuery.fn.clone);
 </script>
 <script type="text/javascript">
-var actionUrl = "http://133.130.114.129/myphp/mygiftcard/action.php";
+var actionUrl = "<?php echo constant("URL_ACTION_MYGIFTCARD") ?>";
 $(function() {
     $(document).on("click", "#btnSave", function() {
         var thisBox = $(this).parent().parent().parent();

@@ -58,7 +58,7 @@ if($actionStr == "saveBuyer"){
 	$obj->priceJPY = $_GET['priceJPY'];
 	$obj->qtty = $_GET['qtty'];
 	$obj->priceCNY = $_GET['priceCNY'];
-	$obj->status = 'unGou';
+	$obj->status = 'gouru';
 	$rslt = $my->saveItem($obj);
 	echo $rslt;
 } else if($actionStr == "gouru" || $actionStr == "zaitu" || $actionStr == "fahuo" || $actionStr == "compl" ){

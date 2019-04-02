@@ -58,7 +58,7 @@ $(function() {
 			  }
 		  );
         jqxhr.done(function( msg ) {
-            //location.reload();
+            location.reload();
         });
 	};
     $(document).on("click", "#btnCopyBox", function() {
@@ -142,15 +142,11 @@ $(function() {
 ?>
   <h3>买家:<span id="buyer"><?php echo $buyer ?></span></h3>
   <hr class="mb-4">
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php">ALL X ALL</a></li>
-  </ul>
-  <hr class="mb-4">
 <?php
   }
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgUnasign ?>"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=unasign">unasign</a></li>
+    <li class="list-group-item <?php echo $cssBgUnasign ?>"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=unasign">求领养</a></li>
     <li class="list-group-item <?php echo $cssBgUnGou ?>"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=unGou">待采购</a></li>
     <li class="list-group-item <?php echo $cssBgGouru ?>"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=gouru">已购入</a></li>
     <li class="list-group-item <?php echo $cssBgZaitu ?>"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $buyer ?>&status=zaitu">已在途</a></li>
@@ -173,17 +169,17 @@ $(function() {
   
 ?>
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">orderItem</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
 <?php
     if($status == ''){
 ?>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">status</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
 <?php
     }
 ?>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">JPY</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">CNY</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">buyer</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">日元</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">人民币</div>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">买家</div>
   </div>
 <?php
   foreach ($dataArr as $data) {

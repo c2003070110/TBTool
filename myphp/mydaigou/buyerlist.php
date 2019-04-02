@@ -61,19 +61,19 @@ $(function() {
   foreach ($dataArr as $data) {
 ?>
 	<ul class="list-group list-group-horizontal">
-	  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $data["buyer"] ?>&status=unGou"><?php echo $data["buyer"] ?>が买了些啥？</a></li>
 <?php
     if($todo == 'addItem') {
 ?>
-      <li class="list-group-item"><a href="/myphp/mydaigou/additem.php?buyer=<?php echo $data["buyer"] ?>"><?php echo $data["buyer"] ?>がaccept</a></li>
+      <li class="list-group-item"><a href="/myphp/mydaigou/additem.php?buyer=<?php echo $data["buyer"] ?>">记录 【买家：<?php echo $data["buyer"] ?>】的订单</a></li>
 <?php
     }else if($todo == 'report'){
 ?>
-      <li class="list-group-item"><a href="/myphp/mydaigou/report.php?buyer=<?php echo $data["buyer"] ?>"><?php echo $data["buyer"] ?>がREPORT</a></li>
+      <li class="list-group-item"><a href="/myphp/mydaigou/report.php?buyer=<?php echo $data["buyer"] ?>">【买家：<?php echo $data["buyer"] ?>】を结算 报表</a></li>
 <?php
     }else{
 ?>
-	  <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php?buyer=<?php echo $data["uid"] ?>&todo=<?php echo $todo ?>"><?php echo $data["buyer"] ?>を修改地址？</a></li>
+	  <li class="list-group-item"><a href="/myphp/mydaigou/itemlist.php?buyer=<?php echo $data["buyer"] ?>&status=unGou">【买家：<?php echo $data["buyer"] ?>】が买了些啥？</a></li>
+	  <li class="list-group-item"><a href="/myphp/mydaigou/buyerlist.php?buyer=<?php echo $data["uid"] ?>&todo=<?php echo $todo ?>">【买家：<?php echo $data["buyer"] ?>】を修改地址？</a></li>
 <?php
     }
 ?>
