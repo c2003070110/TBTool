@@ -11,10 +11,8 @@ define("TBL_MYDAIGOU_ITEM_INFO", "mydaigou.item.info");
 
 define("TBL_MYDAIGOU_BUYER_INFO", "mydaigou.buyer.info"); 
 
-define("URL_ACTION_MYGIFTCARD", "http://133.130.114.129/myphp/mygiftcard/action.php"); 
+define("TBL_MYHUILV_INFO", "myhuilv.info"); 
 
-define("URL_ACTION_MYDAIGOU", "http://133.130.114.129/myphp/mydaigou/action.php"); 
-
-define("URL_AUTOCOMPLETE_MYDAIGOU", "http://133.130.114.129/myphp/mydaigou/autocomplete.php"); 
+define("TBL_HUI_LV_PLUS", "0.005"); 
 
 ?>

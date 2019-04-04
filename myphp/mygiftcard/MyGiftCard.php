@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/../common.php';
+require __DIR__ . '/../mycommon.php';
+require __DIR__ . '/../mydefine.php';
 require __DIR__ . '/GiftCardObject.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;

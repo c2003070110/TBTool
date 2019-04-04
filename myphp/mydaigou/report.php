@@ -34,20 +34,10 @@ var actionUrl = "<?php echo constant("URL_ACTION_MYDAIGOU") ?>";
 var autocompleteUrl = "<?php echo constant("URL_AUTOCOMPLETE_MYDAIGOU") ?>";
 $(function() {
 	var toInt = function(data){
-		if(!data){
-			data = 0;
-		}else{
-			data = parseInt(data, 10);
-		}
-		return data;
+		return !data ? 0 : parseInt(data, 10);
 	}
 	var parseDouble = function(data){
-		if(!data){
-			data = 0;
-		}else{
-			data = parseFloat(data);
-		}
-		return data;
+		return !data ? 0 : parseFloat(data, 10);
 	}
     $(document).on("change", ".form-control", function() {
         var xiaojiJPY = toInt($("#xiaojiJPY").val());
