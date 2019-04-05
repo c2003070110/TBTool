@@ -19,6 +19,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
@@ -307,6 +308,30 @@ public class MontbellAutoOrder {
 			if(orderInfo.crObj != null){
 				fillCreditCard(driver, orderInfo.crObj);
 			}
+			
+			String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
+			if(!("YES".equalsIgnoreCase(answ) || "Y".equals(answ))){
+				logOrderResult(orderInfo, null);
+				return;
+			}
+			
+			//  submit
+			weList = driver.findElements(By.tagName("input"));
+			for (WebElement we1 : weList) {
+				if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
+					// FIXME which?
+					if ("XXXX".equalsIgnoreCase(we1.getAttribute("name"))) {
+						we1.click();
+						break;
+					}
+				}
+			}
+			NieUtil.mySleepBySecond(1);
+			
+			// TODO orderNo
+			String orderNo = "";
+			
+			logOrderResult(orderInfo,orderNo);
 		}
 	}
 
@@ -342,11 +367,11 @@ public class MontbellAutoOrder {
 			public Boolean apply(WebDriver driver) {
 				try {
 					driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
-					return true;
+					return Boolean.TRUE;
 				} catch (Exception e) {
 
 				}
-				return false;
+				return Boolean.FALSE;
 			}
 		});
 		weList = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
@@ -373,10 +398,10 @@ public class MontbellAutoOrder {
 				try {
 					driver.findElements(By
 							.cssSelector("input[name=\"destination_id\"]"));
-					return true;
+					return Boolean.TRUE;
 				} catch (Exception e) {
 				}
-				return false;
+				return Boolean.FALSE;
 			}
 		});
 		weList = driver.findElements(By.cssSelector("input[name=\"destination_id\"]"));
@@ -407,11 +432,11 @@ public class MontbellAutoOrder {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					driver.findElements(By.id("basicInfo"));
-					return true;
+					driver.findElements(By.cssSelector("input[name=\"dest_first_name\""));
+					return Boolean.TRUE;
 				} catch (Exception e) {
 				}
-				return false;
+				return Boolean.FALSE;
 			}
 		});
 		WebElement we = driver.findElement(By.id("basicInfo"));
@@ -457,11 +482,11 @@ public class MontbellAutoOrder {
 			public Boolean apply(WebDriver driver) {
 				try {
 					driver.findElements(By.id("contents"));
-					return true;
+					return Boolean.TRUE;
 				} catch (Exception e) {
 
 				}
-				return false;
+				return Boolean.FALSE;
 			}
 		});
 		// add credit card
@@ -469,25 +494,67 @@ public class MontbellAutoOrder {
 			fillCreditCard(driver, orderInfo.crObj);
 		}
 		
-		String productStr = MontBellUtil.toProductInfoString(orderInfo.productInfos);
-		File oFile = new File(MontBellUtil.rootPathName,ooutFileName);
-		List<String> lines = Lists.newArrayList();
-		lines.add(orderInfo.taobaoOrderName);
-		lines.add(productStr);
-		lines.add(orderInfo.firstName +" " +orderInfo.lastName);
-		lines.add(orderInfo.tel);
-		lines.add(orderInfo.state);
-		lines.add(orderInfo.city);
-		lines.add(orderInfo.adr2);
-		lines.add(orderInfo.adr1);
-		lines.add(orderInfo.postcode);
-		NieUtil.appendToFile(oFile, lines);
+		String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
+		if(!("YES".equalsIgnoreCase(answ) || "Y".equals(answ))){
+			logOrderResult(orderInfo, null);
+			return;
+		}
+		
+		//  submit
+		weList = driver.findElements(By.tagName("input"));
+		for (WebElement we1 : weList) {
+			if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
+				// FIXME which?
+				if ("XXXX".equalsIgnoreCase(we1.getAttribute("name"))) {
+					we1.click();
+					break;
+				}
+			}
+		}
+		NieUtil.mySleepBySecond(1);
+		
+		// TODO orderNo
+		String orderNo = "";
+		
+		logOrderResult(orderInfo,orderNo);
 		
 		File oFileS = new File(MontBellUtil.rootPathName,ooutFileNameForShot);
-		lines = Lists.newArrayList();
+		List<String> lines = Lists.newArrayList();
 		String yyyyMMdd = DateUtils.formatDate(Calendar.getInstance().getTime(), "yyyyMMddHHmmss");
+		String productStr = MontBellUtil.toProductInfoString(orderInfo.productInfos);
 		lines.add(String.format("%s\t%s\t%s",yyyyMMdd, orderInfo.taobaoOrderName, productStr));
 		NieUtil.appendToFile(oFileS, lines);
+	}
+
+	private void logOrderResult(TaobaoOrderInfo orderInfo, String orderNo) throws IOException {
+
+		String productStr = MontBellUtil.toProductInfoString(orderInfo.productInfos);
+		File oFile = new File(MontBellUtil.rootPathName, ooutFileName);
+		List<String> lines = Lists.newArrayList();
+		if (!StringUtil.isBlank(orderInfo.taobaoOrderName)) {
+			lines.add(orderInfo.taobaoOrderName);
+		}
+		lines.add(productStr);
+		if (!StringUtil.isBlank(orderInfo.firstName)) {
+			lines.add(orderInfo.firstName + " " + orderInfo.lastName);
+		}
+		if (!StringUtil.isBlank(orderInfo.state)) {
+			lines.add(orderInfo.tel);
+			lines.add(orderInfo.state);
+			lines.add(orderInfo.city);
+			lines.add(orderInfo.adr2);
+			lines.add(orderInfo.adr1);
+		}
+		if (!StringUtil.isBlank(orderInfo.postcode)) {
+			lines.add(orderInfo.postcode);
+		}
+		if (orderInfo.crObj != null) {
+			lines.add(orderInfo.crObj.crBrand + "/****-****-****-" + orderInfo.crObj.numb4);
+		}
+		if (!StringUtil.isBlank(orderNo)) {
+			lines.add(orderNo);
+		}
+		NieUtil.appendToFile(oFile, lines);
 	}
 
 	private void addItemToCard(WebDriver driver, TaobaoOrderInfo orderInfo,String type) {

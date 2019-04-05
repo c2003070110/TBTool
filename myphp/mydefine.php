@@ -13,6 +13,8 @@ define("TBL_MYDAIGOU_BUYER_INFO", "mydaigou.buyer.info");
 
 define("TBL_MYHUILV_INFO", "myhuilv.info"); 
 
-define("TBL_HUI_LV_PLUS", "0.005"); 
+define("TBL_MYMONTB_ORDER_INFO", "mymontb.order.info"); 
+
+define("HUI_LV_PLUS", "0.005"); 
 
 ?>
