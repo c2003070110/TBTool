@@ -46,12 +46,47 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
+			var adrArr = msg.split("\n");
+			if(adrArr.length>2){
+				var nmArr = adrArr[2].split(/(?=[A-Z])/);
+				if(nmArr.length>2){
+					$("#firstName").val(nmArr[0]);
+					$("#lastName").val(nmArr[1] + nmArr[2]);
+				}else if(nmArr.length>1){
+					$("#firstName").val(nmArr[0]);
+					$("#lastName").val(nmArr[1]);
+				}else{
+					$("#firstName").val(nmArr[0]);
+					$("#lastName").val(nmArr[0]);
+				}
+			}
+			if(adrArr.length>3){
+				$("#tel").val(adrArr[3]);
+			}
+			if(adrArr.length>4){
+				$("#statePY").val(adrArr[4]);
+			}
+			if(adrArr.length>5){
+				$("#cityPY").val(adrArr[5]);
+			}
+			if(adrArr.length>6){
+				$("#adr1PY").val(adrArr[6]);
+			}
+			if(adrArr.length>8){
+				$("#adr2PY").val(adrArr[7] + " " + adrArr[8]);
+			}
+			if(adrArr.length>9){
+				$("#adr2PY").val(adrArr[7] + " " + adrArr[8]);
+				$("#postcode").val(adrArr[9]);
+			}
             $("#maijiadianzhiPY").val(msg);
         });
     });
 	var formParameter = function(){
+		param = {};
         param.uid = $("#orderUid").val();
-        param.maijiaNamePY = $("#maijiaNamePY").val();
+        param.firstName = $("#firstName").val();
+        param.lastName = $("#lastName").val();
         param.tel = $("#tel").val();
         param.postcode = $("#postcode").val();
         param.statePY = $("#statePY").val();
@@ -72,7 +107,7 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
-            alert(msg);
+            alert("请看后台执行MB官网下单情况！！");
         });
     });
 });
@@ -92,78 +127,100 @@ $(function() {
   $my = new MyMontb();
   $orderObj = $my->listOrderInfoByUid($orderUid);
 ?>
+  <input type="hidden" id="orderUid" value="<?php echo $orderUid ?>">
   <div class="box">
       <div class="row mb-4 form-group">
         <div class="col-10">
-		  <label for="maijia">maijia</label>
+		  <label for="maijia">淘宝买家ID</label>
 		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-10">
-		  <label for="dingdanhao">dingdanhao</label>
+		  <label for="dingdanhao">淘宝订单号</label>
 		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>"></div>
       </div>
+<?php
+  $prodSize = count($orderObj["productObjList"]);
+  for($i = 0, $size = $prodSize; $i < $size; ++$i) {
+	$p = $orderObj["productObjList"][$i];
+	$lines = $p["productId"] . ' ' . $p["colorName"] . ' ' . $p["sizeName"];
+?>
       <div class="row mb-4 form-group">
-        <div class="col-8">
-            <label for="maijiadianzhiHanzi">maijiadianzhiHanzi</label>
+        <div class="col-12">
+            <label for="maijiadianzhiHanzi">宝贝</label>
+            <input type="text" class="form-control" id="baobailist" value="<?php echo $lines ?>">
+        </div>
+      </div>
+<?php
+  }
+?>
+      <div class="row mb-4 form-group">
+        <div class="col-10">
+            <label for="maijiadianzhiHanzi">买家地址</label>
             <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>">
         </div>
         <div class="col-2">
-		  <button type="button" id="btnConvertHanziToPY" class="btn btn-secondary">convert hanzi to PY</button>
+		  <button type="button" id="btnConvertHanziToPY" class="btn btn-secondary">TO PY</button>
         </div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-10">
-            <label for="maijiadianzhiPY">maijiadianzhiPY</label>
-            <input type="textarea" col="10" row="6" id="maijiadianzhiPY" readonly>
+            <label for="maijiadianzhiPY">买家地址(拼音)</label>
+            <textarea  cols="60" rows="6" id="maijiadianzhiPY"  ></textarea >
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-4">
-		  <label for="maijiaName">maijiaNamePY</label>
-		  <input type="text" class="form-control" id="maijiaName"></div>
+        <div class="col-3">
+		  <label for="maijiaName">F</label>
+		  <input type="text" class="form-control" id="firstName" value="<?php echo $orderObj['firstName'] ?>">
         </div>
-        <div class="col-4">
+        <div class="col-3">
+		  <label for="maijiaName">L</label>
+		  <input type="text" class="form-control" id="lastName" value="<?php echo $orderObj['lastName'] ?>">
+        </div>
+        <div class="col-3">
 		  <label for="tel">tel</label>
-		  <input type="text" class="form-control" id="tel"></div>
+		  <input type="text" class="form-control" id="tel" value="<?php echo $orderObj['tel'] ?>">
         </div>
-        <div class="col-4">
+        <div class="col-3">
 		  <label for="postcode">postcode</label>
-		  <input type="text" class="form-control" id="postcode"></div>
+		  <input type="text" class="form-control" id="postcode" value="<?php echo $orderObj['postcode'] ?>">
         </div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-4">
-		  <label for="state">state</label>
-		  <input type="text" class="form-control" id="statePY"></div>
+		  <label for="state">省(拼音)</label>
+		  <input type="text" class="form-control" id="statePY" value="<?php echo $orderObj['statePY'] ?>">
         </div>
-        <div class="col-4">
-		  <label for="city">city</label>
-		  <input type="text" class="form-control" id="cityPY"></div>
-        </div>
-      </div>
-      <div class="row mb-4 form-group">
-        <div class="col-4">
-		  <label for="adr1">adr1</label>
-		  <input type="text" class="form-control" id="adr1PY"></div>
+        <div class="col-8">
+		  <label for="city">市(拼音)</label>
+		  <input type="text" class="form-control" id="cityPY" value="<?php echo $orderObj['cityPY'] ?>">
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-4">
-		  <label for="adr2">adr2</label>
-		  <input type="text" class="form-control" id="adr2PY"></div>
+        <div class="col-12">
+		  <label for="adr1">地址1(拼音)</label>
+		  <input type="text" class="form-control" id="adr1PY" value="<?php echo $orderObj['adr1PY'] ?>">
+        </div>
+      </div>
+      <div class="row mb-4 form-group">
+        <div class="col-12">
+		  <label for="adr2">地址2(拼音)</label>
+		  <input type="text" class="form-control" id="adr2PY" value="<?php echo $orderObj['adr2PY'] ?>">
         </div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-5">
-		  <label for="fukuanWay">fukuanWay</label>
+		  <label for="fukuanWay">付款CR</label>
             <select class="custom-select d-block w-100" id="fukuanWay">
                 <option value="1" selected>Line JCB</option>
                 <option value="2">CCB Master</option>
             </select>
         </div>
+      </div>
+      <div class="row mb-4 form-group">
         <div class="col-5">
-		  <button type="button" id="btnOrder" class="btn btn-secondary">ORDER</button>
+		  <button type="button" id="btnOrder" class="btn btn-secondary">MB官网下单</button>
         </div>
       </div>
       <hr class="mb-4">

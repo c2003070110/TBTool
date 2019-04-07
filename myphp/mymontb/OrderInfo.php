@@ -9,7 +9,8 @@ class OrderObject
     public $status = ''; // unorder,ordered
 	
     //public $addressObj;
-    public $maijiaNamePY = '';
+    public $firstName = '';
+    public $lastName = '';
     public $tel = '';
     public $postcode = '';
 	

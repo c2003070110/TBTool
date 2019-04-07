@@ -21,9 +21,25 @@ require __DIR__ .'/MyMontb.php';
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
 <script type="text/javascript">
-var actionUrl = "<?php echo constant("URL_ACTION_MYDAIGOU") ?>";
-var autocompleteUrl = "<?php echo constant("URL_AUTOCOMPLETE_MYDAIGOU") ?>";
+var actionUrl = "<?php echo constant("URL_ACTION_MYMONTB") ?>";
 $(function() {
+    $(document).on("click", "#btnDelRow", function() {
+        var thisBox = $(this).parent().parent();
+		var param = {};
+		param.action = "deleteOrder";
+		param.uid = $(thisBox).find("#uid").val();
+        
+        var jqxhr = $.ajax(actionUrl,
+                         { type : "GET",
+                           data : param,
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+            location.reload();
+        });
+        //thisBox.remove();
+    });
 });
 </script>
 </head>
@@ -63,20 +79,20 @@ $(function() {
   <hr class="mb-4">
 <?php
   $my = new MyMontb();
-  if((isset($status) && $status != '') && (isset($maijia) && $maijia != '')){
+  if($status !== '' && $maijia !== ''){
 	  $dataArr = $my->listItemByMaijiaAndStatus($maijia, $status);
-  }else if (isset($maijia) && $maijia != ''){
+  }else if ($maijia !== ''){
 	  $dataArr = $my->listOrderInfoByMaijia($maijia);
-  }else if (isset($status) && $status != ''){
+  }else if ($status !== ''){
 	  $dataArr = $my->listOrderInfoByStatus($status);
   }else{
-	  $dataArr = $my->listAllItem();
+	  $dataArr = $my->listAllOrderInfo();
   }
   
 ?>
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">maijia</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">dingdianhao</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝订单号</div>
 <?php
     if($status == ''){
 ?>
@@ -84,15 +100,15 @@ $(function() {
 <?php
     }
 ?>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">mbOrderNo</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">MB官网订单号</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
 	  $boxCss = "bg-light";
 	  if($data['status'] == 'unorder'){
-		  $boxCss = "bg-danger text-white";
-	  }else if($data['status'] == 'ordered'){
 		  $boxCss = "bg-warning text-white";
+	  }else if($data['status'] == 'ordered'){
+		  $boxCss = "bg-success text-white";
 	  }
 ?>
   <div class="row <?php echo $boxCss ?>">
@@ -112,18 +128,18 @@ $(function() {
 <?php
     }
 ?>
-    <div class="col text-break themed-grid-col border border-secondary"><?php echo $data["priceJPY"] ?></div>
-    <div class="col text-break themed-grid-col border border-secondary"><?php echo $data["priceCNY"] ?></div>
-    <div class="col-3 text-break themed-grid-col border">
+    <div class="col-2 text-break themed-grid-col border">
 <?php
     if($data["mbOrderNo"] == ''){
       if($data["status"] == 'unorder'){
 ?>
 	  <a href="/myphp/mymontb/page_orderOrder.php?uid=<?php echo $data['uid'] ?>">order!</a>
+	  <button type="button" id="btnDelRow" class="btn btn-secondary">DEL</button>
 <?php
       }else{
 ?>
-	  <a href="/myphp/mymontb/page_regOrder.php?uid=<?php echo $data['uid'] ?>">fill</a>
+	  <a href="/myphp/mymontb/page_regOrder.php?uid=<?php echo $data['uid'] ?>">FILL</a>
+	  <a href="/myphp/mymontb/page_orderOrder.php?uid=<?php echo $data['uid'] ?>">REORDER</a>
 <?php
       }
     }else{

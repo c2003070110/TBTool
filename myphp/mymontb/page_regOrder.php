@@ -37,18 +37,23 @@ require __DIR__ . '/MyMontb.php';
 <script type="text/javascript">
 var actionUrl = "<?php echo constant("URL_ACTION_MYMONTB") ?>";
 $(function() {
+    $(document).on("click", "#btnDelProduct", function() {
+        var thisBox = $(this).parent().parent();
+        thisBox.remove();
+    });
     $(document).on("click", "#btnAddProduct", function() {
-        var thisBox = $(this).parent().parent().parent();
+        var thisBox = $(this).parent().parent();
         var cloneBox = thisBox.clone();
-        $(thisBox).append(cloneBox);
+        $(thisBox).after(cloneBox);
     });
 	var formParameter = function(){
+		param = {};
         param.uid = $("#orderUid").val();
         param.maijia = $("#maijia").val();
         param.dingdanhao = $("#dingdanhao").val();
         param.maijiadianzhiHanzi = $("#maijiadianzhiHanzi").val();
 		
-		var itemBoxes = $("#productBox");
+		var itemBoxes = $(".form-group_product");
 		var productList = "";
 		for(var i=0; i<itemBoxes.length; i++){
 			var productId = $(itemBoxes[i]).find("#productId").val();
@@ -114,49 +119,81 @@ $(function() {
   <div class="box">
       <div class="row mb-4 form-group">
         <div class="col-10">
-		  <label for="maijia">maijia</label>
+		  <label for="maijia">淘宝买家ID</label>
 		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-10">
-		  <label for="dingdanhao">dingdanhao</label>
+		  <label for="dingdanhao">淘宝订单号</label>
 		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-8">
-            <label for="maijiadianzhiHanzi">maijiadianzhiHanzi</label>
+        <div class="col-10">
+            <label for="maijiadianzhiHanzi">买家地址</label>
             <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>">
         </div>
       </div>
 <?php
-  foreach($orderObj['productObjList'] as $prodObj){
+  if($orderUid === '' || count($orderObj['productObjList']) == 0){
 ?>
       <div class="row mb-4 form-group" id="productBox">
         <div class="col-4">
 		  <label for="productId">productId</label>
-		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>"></div>
-        </div>
-        <div class="col-4">
-		  <label for="colorName">colorName</label>
-		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>"></div>
-        </div>
-        <div class="col-4">
-		  <label for="sizeName">sizeName</label>
-		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>"></div>
+		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
         </div>
         <div class="col-2">
-		  <button type="button" id="btnAddProduct" class="btn btn-secondary">add product</button>
+		  <label for="colorName">color</label>
+		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>">
         </div>
-		<hr class="mb-4">
+        <div class="col-2">
+		  <label for="sizeName">size</label>
+		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>">
+        </div>
+        <div class="col-2">
+		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button><hr>
+		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
+        </div>
+      </div>
+<?php
+  }
+?>
+<?php
+  foreach($orderObj['productObjList'] as $prodObj){
+?>
+      <div class="row mb-1 form-group_product" id="productBox">
+        <div class="col-4">
+		  <label for="productId">productId</label>
+		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
+        </div>
+        <div class="col-3">
+		  <label for="colorName">color</label>
+		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>">
+        </div>
+        <div class="col-3">
+		  <label for="sizeName">size</label>
+		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>">
+        </div>
+        <div class="col-1">
+		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>
+		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
+        </div>
+      </div>
+<?php
+  }
+?>
+<?php
+  if($orderUid !== ''){
+?>
+      <div class="row mb-4 form-group">
+        <div class="col-5">
+		  <label for="mbOrderNo">MB 官网订单号</label>
+		  <input type="text" class="form-control" id="mbOrderNo"></div>
+        </div>
       </div>
 <?php
   }
 ?>
       <div class="row mb-4 form-group">
-        <div class="col-5">
-		  <label for="mbOrderNo">MB ORDER NO</label>
-		  <input type="text" class="form-control" id="mbOrderNo"></div>
-        </div>
         <div class="col-5">
 		  <button type="button" id="btnSave" class="btn btn-secondary">SAVE</button>
         </div>

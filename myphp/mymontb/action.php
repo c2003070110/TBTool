@@ -12,7 +12,16 @@ if($actionStr === null){
 }
 if($actionStr == "saveOrder"){
 	$my = new MyMontb();
-	$rslt = $myGiftCard->saveOrder();
+	$rslt = $my->saveOrder();
+	echo $rslt;
+} else if($actionStr == "deleteOrder"){
+	$uid = $_GET['uid'];
+	if($uid === null){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$rslt = $my->deleteOrder($uid);
 	echo $rslt;
 } else if($actionStr == "orderOrder"){
 	$uid = $_GET['uid'];
@@ -22,13 +31,14 @@ if($actionStr == "saveOrder"){
 	}
 	$my = new MyMontb();
 	$rslt = $my->orderOrder();
-	echo $rslt;
+	//echo $rslt;
 } else if($actionStr == "convertHanziToPY"){
 	$hanzi = $_GET['hanzi'];
 	if($hanzi === null){
 		echo "[Fatal]Parameter is NULL";
 		return;
 	}
+	$my = new MyMontb();
 	$rslt = $my->convertHanziToPY($hanzi);
 	echo $rslt;
 } else {	

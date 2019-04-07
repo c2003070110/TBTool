@@ -78,7 +78,7 @@ $(function() {
   </ul> 
   <hr class="mb-4">  
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mygiftcard/">REG</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/regcode.php">REG</a></li>
   </ul>   
   <hr class="mb-4">  
   <hr class="mb-4">

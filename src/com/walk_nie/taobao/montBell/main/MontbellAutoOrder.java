@@ -33,6 +33,7 @@ import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoOrder {
+	private long lastestTime = System.currentTimeMillis();
 	protected BufferedReader stdReader = null;
 	private String inFileName = "order-in.txt";
 	private String ooutFileName ="order-out.txt";
@@ -61,6 +62,25 @@ public class MontbellAutoOrder {
 		}
 	}
 
+	public void orderForChinaOnce() {
+		String inFileName = NieConfig.getConfig("montbell.orderforChina.file.in");
+		File tempFile0 = new File(inFileName);
+		if(!tempFile0.exists()){
+			return;
+		}
+//		System.out.println("[waiting for order info in ]"
+//				+ tempFile0.getAbsolutePath());
+		long updateTime = tempFile0.lastModified();
+		if (lastestTime < updateTime) {
+			lastestTime = updateTime;
+			try {
+				WebDriver driver = logonForChina();
+				orderForChina(driver, tempFile0);
+				driver.close();
+			} catch (IOException e) {
+			}
+		}
+	}
 	public void orderForChina() {
 		
 		WebDriver driver = logonForChina();
@@ -320,7 +340,7 @@ public class MontbellAutoOrder {
 			for (WebElement we1 : weList) {
 				if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
 					// FIXME which?
-					if ("XXXX".equalsIgnoreCase(we1.getAttribute("name"))) {
+					if ("btn_next".equalsIgnoreCase(we1.getAttribute("name"))) {
 						we1.click();
 						break;
 					}

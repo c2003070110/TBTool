@@ -10,30 +10,29 @@ import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.walk_nie.taobao.montBell.MontBellUtil;
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellPinyinMain {
+	private long lastestTime = System.currentTimeMillis();
 
 	public static void main(String[] args) throws Exception {
 		new MontbellPinyinMain().process();
 	}
 
 	public void process() throws Exception {
-		/*
-		long updateTime = System.currentTimeMillis();
-		while (true) {
-			File tempFile0 = new File(inFileName);
-			if (updateTime < tempFile0.lastModified()) {
-				updateTime = tempFile0.lastModified();
-				pinyin(tempFile0);
-				System.out.println("[waiting for pinyin in ]"
-						+ tempFile0.getAbsolutePath());
-			}
+		String inFileName = NieConfig.getConfig("montbell.pinyin.file.in");
+		File tempFile0 = new File(inFileName);
+//		System.out.println("[waiting for pinyin in ]"
+//				+ tempFile0.getAbsolutePath());
+		long updateTime = tempFile0.lastModified();
+		if (lastestTime < updateTime) {
+			lastestTime = updateTime;
+			pinyin(tempFile0);
 		}
-		*/
-		File tempFile0 = new File(MontBellUtil.rootPathName, "pinyin-in.txt");
-		pinyin(tempFile0);
+		
+		//File tempFile0 = new File(MontBellUtil.rootPathName, "pinyin-in.txt");
+		//pinyin(tempFile0);
 	}
 
 	protected void pinyin(File tempFile0) throws IOException, PinyinException {
@@ -89,7 +88,7 @@ public class MontbellPinyinMain {
 
 		// String fileName = String.format("pinyin-%d.txt",
 		// System.currentTimeMillis());
-		File oFile = new File(MontBellUtil.rootPathName, "pinyin-out.txt");
+		File oFile = new File(NieConfig.getConfig("montbell.pinyin.file.out"));
 		NieUtil.appendToFile(oFile, outputList);
 	}
 }
