@@ -28,8 +28,8 @@ class MyHuilv
 	public function listByHuilvDiv($huilvDiv){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYHUILV_INFO"));
-		$data = $tbl->select(['huilvDiv', '==', $huilvDiv])->fetch();
-		return $data;
+		$dataA = $tbl->select(['huilvDiv', '==', $huilvDiv])->fetch();
+		return $dataA[0];
 	}
 }
 ?>
