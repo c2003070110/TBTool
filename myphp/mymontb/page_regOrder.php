@@ -136,7 +136,7 @@ $(function() {
 <?php
   if($orderUid === '' || count($orderObj['productObjList']) == 0){
 ?>
-      <div class="row mb-4 form-group" id="productBox">
+      <div class="row mb-4 form-group_product" id="productBox">
         <div class="col-4">
 		  <label for="productId">productId</label>
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">

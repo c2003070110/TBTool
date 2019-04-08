@@ -515,7 +515,7 @@ public class MontbellAutoOrder {
 		}
 		
 		String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
-		if(!("YES".equalsIgnoreCase(answ) || "Y".equals(answ))){
+		if(!("YES".equalsIgnoreCase(answ) || "Y".equalsIgnoreCase(answ))){
 			logOrderResult(orderInfo, null);
 			return;
 		}
@@ -524,8 +524,7 @@ public class MontbellAutoOrder {
 		weList = driver.findElements(By.tagName("input"));
 		for (WebElement we1 : weList) {
 			if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
-				// FIXME which?
-				if ("XXXX".equalsIgnoreCase(we1.getAttribute("name"))) {
+				if ("btn_next".equalsIgnoreCase(we1.getAttribute("name"))) {
 					we1.click();
 					break;
 				}
@@ -533,8 +532,18 @@ public class MontbellAutoOrder {
 		}
 		NieUtil.mySleepBySecond(1);
 		
-		// TODO orderNo
 		String orderNo = "";
+		weList = driver.findElements(By.className("orderNo"));
+		for (WebElement we1 : weList) {
+			if ("p".equalsIgnoreCase(we1.getTagName())) {
+				String txt = we1.getText().trim();
+				if (txt.startsWith("ORDER NO")) {
+					orderNo = txt.replaceAll("ORDER NO", "");
+					orderNo = orderNo.replaceAll("#", "");
+					orderNo = orderNo.replaceAll(" ", "");
+				}
+			}
+		}
 		
 		logOrderResult(orderInfo,orderNo);
 		

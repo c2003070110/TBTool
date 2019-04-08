@@ -26,7 +26,8 @@ public class MontbellAutoMain {
 	protected BufferedReader stdReader = null;
 	private String outFileName =  "taobao-out.txt";
 	private String outOrderMemoFileName = "taobao-order-memo.txt";
-	
+	private MontbellPinyinMain pinyin = null;
+	private MontbellAutoOrder montbellAutoOrder = null;
 	private String itemSplitter =",";
 	
 	public static void main(String[] args) throws Exception {
@@ -34,7 +35,8 @@ public class MontbellAutoMain {
 	}
 
 	public void process() throws Exception {
-		MontbellAutoOrder montbellAutoOrder = new MontbellAutoOrder();
+		pinyin = new MontbellPinyinMain();
+		montbellAutoOrder = new MontbellAutoOrder();
 		while (true) {
 			try {
 				//
@@ -92,7 +94,6 @@ public class MontbellAutoMain {
 	}
 
 	private void toPinYin() throws Exception {
-		MontbellPinyinMain pinyin = new MontbellPinyinMain();
 		pinyin.process();
 	}
 

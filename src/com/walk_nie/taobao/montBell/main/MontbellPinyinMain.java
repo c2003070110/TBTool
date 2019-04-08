@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.seleniumhq.jetty9.util.StringUtil;
+
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
@@ -42,9 +44,10 @@ public class MontbellPinyinMain {
 		List<String> outputList = Lists.newArrayList();
 		for (String line : adrs) {
 			System.out.println("[processing]" + line);
-			String pyStr = PinyinHelper.convertToPinyinString(line, " ",
+			line = line.replaceAll(" ", ",");
+			String pyStr = PinyinHelper.convertToPinyinString(line, ":",
 					PinyinFormat.WITHOUT_TONE);
-			String[] spl = pyStr.toLowerCase().split(" ");
+			String[] spl = pyStr.toLowerCase().split(":");
 			StringBuffer sb = new StringBuffer();
 			for (String str : spl) {
 				if ("".equals(str))
@@ -55,30 +58,36 @@ public class MontbellPinyinMain {
 			StringBuffer nsb = new StringBuffer();
 			String[] nsrs = sb.toString().split(",");
 			for(String nsr:nsrs){
+				if(StringUtil.isBlank(nsr))continue;
 				String idxKey = "Sheng";
 				if(nsr.indexOf(idxKey) >0 ){
 					nsb.append(nsr.substring(0,nsr.indexOf(idxKey))).append("\n");
 					nsr = nsr.substring(nsr.indexOf(idxKey)+idxKey.length());
+					if(StringUtil.isBlank(nsr))continue;
 				}
 				idxKey = "Shi";
 				if(nsr.indexOf(idxKey) >0 ){
 					nsb.append(nsr.substring(0,nsr.indexOf(idxKey)+idxKey.length())).append("\n");
 					nsr = nsr.substring(nsr.indexOf(idxKey)+idxKey.length());
+					if(StringUtil.isBlank(nsr))continue;
 				}
 				idxKey = "Qu";
 				if(nsr.indexOf(idxKey) >0 ){
 					nsb.append(nsr.substring(0,nsr.indexOf(idxKey)+idxKey.length())).append("\n");
 					nsr = nsr.substring(nsr.indexOf(idxKey)+idxKey.length());
+					if(StringUtil.isBlank(nsr))continue;
 				}
 				idxKey = "JieDao";
 				if(nsr.indexOf(idxKey) >0 ){
 					nsb.append(nsr.substring(0,nsr.indexOf(idxKey)+idxKey.length())).append("\n");
 					nsr = nsr.substring(nsr.indexOf(idxKey)+idxKey.length());
+					if(StringUtil.isBlank(nsr))continue;
 				}
 				idxKey = "Zhen";
 				if(nsr.indexOf(idxKey) >0 ){
 					nsb.append(nsr.substring(0,nsr.indexOf(idxKey))).append("\n");
 					nsr = nsr.substring(nsr.indexOf(idxKey) + 1);
+					if(StringUtil.isBlank(nsr))continue;
 				}
 				nsb.append(nsr).append("\n");
 			}
