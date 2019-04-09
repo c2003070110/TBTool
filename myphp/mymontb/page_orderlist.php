@@ -91,7 +91,7 @@ $(function() {
   
 ?>
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝订单号</div>
 <?php
     if($status == ''){
@@ -100,7 +100,7 @@ $(function() {
 <?php
     }
 ?>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">MB官网订单号</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">MB官网订单号</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
@@ -113,7 +113,7 @@ $(function() {
 ?>
   <div class="row <?php echo $boxCss ?>">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-4 text-break themed-grid-col border border-secondary">
+    <div class="col-2 text-break themed-grid-col border border-secondary">
 	    <?php echo $data['maijia'] ?>
 	</div>
     <div class="col-4 text-break themed-grid-col border border-secondary">
@@ -128,7 +128,7 @@ $(function() {
 <?php
     }
 ?>
-    <div class="col-2 text-break themed-grid-col border">
+    <div class="col-4 text-break themed-grid-col border">
 <?php
     if($data["mbOrderNo"] == ''){
       if($data["status"] == 'unorder'){
@@ -144,7 +144,7 @@ $(function() {
       }
     }else{
 ?>
-    <div class="col text-break themed-grid-col border border-secondary"><?php echo $data["mbOrderNo"] ?></div>
+      <?php echo $data["mbOrderNo"] ?>
 <?php
     }
 ?>

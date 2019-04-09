@@ -16,9 +16,11 @@ if($actionStr == "saveMyhuilv"){
 	$my = new MyHuilv();
 	$obj = new HuilvObject();
 	$obj->huilvDiv = $_GET['huilvDiv'];
+	$obj->plusplus = $_GET['plusplus'];
 	$obj->myhuilv = $_GET['myhuilv'];
 	$rslt = $my->save($obj);
 	echo $rslt;
+	
 } else if($actionStr == "listByBuyer"){
 	$my = new MyDaiGou();
 	$rslt = $my->listByBuyer($obj->buyer);

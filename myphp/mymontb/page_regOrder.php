@@ -118,17 +118,17 @@ $(function() {
   <input type="hidden" id="orderUid" value="<?php echo $orderUid ?>">
   <div class="box">
       <div class="row mb-4 form-group">
-        <div class="col-10">
+        <div class="col-12">
 		  <label for="maijia">淘宝买家ID</label>
 		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10">
+        <div class="col-12">
 		  <label for="dingdanhao">淘宝订单号</label>
 		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10">
+        <div class="col-12">
             <label for="maijiadianzhiHanzi">买家地址</label>
             <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>">
         </div>
@@ -141,15 +141,15 @@ $(function() {
 		  <label for="productId">productId</label>
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
         </div>
-        <div class="col-2">
+        <div class="col-3">
 		  <label for="colorName">color</label>
 		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>">
         </div>
-        <div class="col-2">
+        <div class="col-3">
 		  <label for="sizeName">size</label>
 		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>">
         </div>
-        <div class="col-2">
+        <div class="col-1">
 		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button><hr>
 		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
         </div>
@@ -187,7 +187,7 @@ $(function() {
       <div class="row mb-4 form-group">
         <div class="col-5">
 		  <label for="mbOrderNo">MB 官网订单号</label>
-		  <input type="text" class="form-control" id="mbOrderNo"></div>
+		  <input type="text" class="form-control" id="mbOrderNo" value="<?php echo $prodObj['mbOrderNo'] ?>></div>
         </div>
       </div>
 <?php

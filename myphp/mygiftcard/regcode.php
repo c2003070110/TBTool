@@ -1,3 +1,9 @@
+<?php
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+require __DIR__ . '/MyGiftCard.php';
+?>
 <html lang="ja">
 <head>
 <title>my gift card</title>
@@ -32,10 +38,9 @@
 var actionUrl = "http://133.130.114.129/myphp/mygiftcard/action.php";
 $(function() {
     $(document).on("click", "#btnSave", function() {
-        var thisBox = $(this).parent().parent().parent();
-        var orderNoVal = thisBox.find("#orderNo").val();
-        var codeTypeVal = thisBox.find("#codeType").val();
-        var codeCdVal = thisBox.find("#codeCd").val();
+        var orderNoVal = $("#orderNo").val();
+        var codeTypeVal = $("#codeType").val();
+        var codeCdVal = $("#codeCd").val();
         if(orderNoVal == "" || codeCdVal == ''){
             return;
         }
@@ -52,24 +57,27 @@ $(function() {
             thisBox.find("#codeCd").val("");
         });
     });
-    $(document).on("change", ".form-control11", function() {
-        var thisBox = $(this).parent().parent().parent();
-        var orderNoVal = thisBox.find("#orderNo").val();
-        var codeTypeVal = thisBox.find("#codeType").val();
-        var codeCdVal = thisBox.find("#codeCd").val();
-        if(orderNoVal == "" || codeCdVal == ''){
-            return;
-        }
-        var param = orderNoVal + "," + codeTypeVal + "," + codeCdVal;
+    $(document).on("click", ".actionBtn", function() {
+        var actionName = $(this).html();
+
+        var uid = $("#uid").val();
+        var orderNoVal = $("#orderNo").val();
+        var codeTypeVal = $("#codeType").val();
+        var codeCdVal = $("#codeCd").val();
         
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
-                           data : {"action":"save", "paramstr" : param},
+                           data : {"action" : actionName, 
+                                   "uid" : uid, 
+                                   "orderNo" : orderNoVal, 
+                                   "codeType" : codeTypeVal, 
+                                   "codeCd" : codeCdVal},
                            dataType : "html" 
                           }
                       );
         jqxhr.done(function( msg ) {
-            alert(msg);
+			//alert(msg);
+            location.reload();
         });
     });
 });
@@ -83,34 +91,87 @@ $(function() {
   <hr class="mb-4">
   <textarea id="tempTxtArea" rows="6" cols="35"></textarea>
   <hr class="mb-4">
+<?php
+  $uid = '';
+  if(isset($_GET['uid'])){
+	$uid = $_GET['uid'];
+  }
+  if($uid !== ''){
+	$my = new MyGiftCard();
+	$obj = $my->listCodeByUid($uid);
+  }
+?>
+  <input type="hidden" id="uid" value="<?php echo $uid ?>">
   <div class="box">
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col"><label for="orderNo">OrderNo</label><input type="text" class="form-control" id="orderNo"></div>
+        <div class="col-12 themed-grid-col">
+		  <label for="orderNo">OrderNo</label>
+		  <input type="text" class="form-control" id="orderNo" value="<?php echo $obj['orderNo'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-6 themed-grid-col">
+        <div class="col-8 themed-grid-col">
             <label for="codeType">CodeType</label>
             <select class="custom-select d-block w-100" id="codeType">
-                <option value="PSNUSD10" selected>PSN 10美元</option>
-                <option value="PSNUSD20">PSN 20美元</option>
-                <option value="PSNUSD50">PSN 50美元</option>
-                <option value="PSNUSD100">PSN 100美元</option>
-                <option value="XBOXUSD10">XBOX 10美元</option>
-                <option value="XBOXUSD20">XBOX 20美元</option>
-                <option value="XBOXUSD50">XBOX 50美元</option>
-                <option value="XBOXUSD100">XBOX 100美元</option>
+                <option value="" selected></option>
+                <option value="PSNUSD10" <?php if($obj['codeType']=='PSNUSD10'){?> selected <?php } ?>>PSN 10美元</option>
+                <option value="PSNUSD20" <?php if($obj['codeType']=='PSNUSD20'){?> selected <?php } ?>>PSN 20美元</option>
+                <option value="PSNUSD50" <?php if($obj['codeType']=='PSNUSD50'){?> selected <?php } ?>>PSN 50美元</option>
+                <option value="PSNUSD100" <?php if($obj['codeType']=='PSNUSD100'){?> selected <?php } ?>>PSN 100美元</option>
+                <option value="XBOXUSD10" <?php if($obj['codeType']=='XBOXUSD10'){?> selected <?php } ?>>XBOX 10美元</option>
+                <option value="XBOXUSD20" <?php if($obj['codeType']=='XBOXUSD10'){?> selected <?php } ?>>XBOX 20美元</option>
+                <option value="XBOXUSD50" <?php if($obj['codeType']=='XBOXUSD50'){?> selected <?php } ?>>XBOX 50美元</option>
+                <option value="XBOXUSD100" <?php if($obj['codeType']=='XBOXUSD100'){?> selected <?php } ?>>XBOX 100美元</option>
             </select>
         </div>
-        <button type="button" id="btnSave" class="btn btn-secondary actionBtn">SAVE</button>
+<?php
+  if($uid == ''){
+?>
+        <div class="col-4 themed-grid-col">
+          <button type="button" id="btnSave" class="btn btn-secondary actionBtn">save</button>
+		</div>
+<?php 
+  }
+?>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col">
+        <div class="col-12 themed-grid-col">
             <label for="codeCd">CodeCd</label>
-            <input type="text" class="form-control" id="codeCd">
+            <input type="text" class="form-control" id="codeCd" value="<?php echo $obj['codeCd'] ?>">
         </div>
-        <div class="col-2 themed-grid-col"></div>
       </div>
       <hr class="mb-4">
+<?php
+  if($uid !== ''){
+?>
+      <div class="row mb-4 form-group">
+        <div class="col-12 themed-grid-col">
+<?php 
+    if($data["status"] == 'unused') {
+?>
+          <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+          <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
+          <button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>
+<?php 
+    }else if($data["status"] == 'using') {
+?>
+      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+      <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
+<?php 
+    }else if($data["status"] == 'used') {
+?>
+      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+<?php 
+    }else if($data["status"] == 'invalid') {
+?>
+      <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+<?php 
+    }
+?>
+<?php 
+  }
+?>
+        </div>
+      </div>
   </div>
 </div>
 </body>

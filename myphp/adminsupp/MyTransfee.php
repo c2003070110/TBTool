@@ -4,12 +4,12 @@ require __DIR__ . '/../mydefine.php';
 
 class MyTransfee
 {
-	function getGuojiYunfei($weight, $guojiShoudan){
+	public function getGuojiYunfei($weight, $guojiShoudan){
 		if($guojiShoudan == "EMS"){
-			int $st1 = 1400,$st2 = 2400,$st3 = 3800,$st4 = 8100;
-			int $incr1=140,$incr2=300,$incr3=500,$incr4=800;
+			$st1 = 1400;$st2 = 2400;$st3 = 3800;$st4 = 8100;
+			$incr1=140;$incr2=300;$incr3=500;$incr4=800;
 			if($weight < 500){
-				return $st;
+				return $st1;
 			}else if($weight < 600){
 				return $st1 + $incr1 * 1;
 			}else if($weight < 700){
@@ -47,11 +47,11 @@ class MyTransfee
 			}else if($weight < 7000){
 				return $st4;
 			}else {
-				return $st4 + $incr3 * intVal(($weight-7000)/1000);
+				return $st4 + $incr3 * ceil (($weight-7000)/1000);
 			}
 		}else if($guojiShoudan == "SAL"){
-			int $st1 = 1800,$st2 = 4700,$st3 = 7000;
-			int $incr1=600,$incr2=500,$incr3=300;
+			$st1 = 1800;$st2 = 4700;$st3 = 7000;
+			$incr1=600;$incr2=500;$incr3=300;
 			if($weight < 1000){
 				return $st1;
 			}else if($weight < 2000){
@@ -75,23 +75,23 @@ class MyTransfee
 			}else if($weight < 11000){
 				return $st3;
 			}else {
-				return $st3 + $incr3 * intVal(($weight-11000)/1000);
+				return $st3 + $incr3 * ceil (($weight-11000)/1000);
 			}
 		}else if($guojiShoudan == "SEA"){
-			int $st1 = 1600;
-			int $incr1=300;
+			$st1 = 1600;
+			$incr1=300;
 			if($weight < 1000){
 				return $st1;
 			}else {
-				return $st3 + $incr1 * intVal(($weight-1000)/1000);
+				return $st1 + $incr1 * ceil (($weight-1000)/1000);
 			}
 		}else if($guojiShoudan == "PINGYOU"){
-			return ($weight / 100) * 7;
+			return ceil (($weight / 100) * 120);
 		}else{
 			return 0;
 		}
 	}
-	function getGuoneiYunfei($weight, $guojiShoudan){
+	public function getGuoneiYunfei($weight, $guojiShoudan){
 		if($guojiShoudan === ""){
 			return 0;
 		}
@@ -101,7 +101,7 @@ class MyTransfee
 		if($weight < 1000){
 			return 10;
 		}else{
-			10 + intVal($weight/1000) * 5;
+			return 10 + ceil ($weight / 1000) * 5;
 		}
 	}
 }

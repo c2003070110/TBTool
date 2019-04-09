@@ -1,6 +1,7 @@
 <?php
 class GiftCardObject
 {
+    public $uid = '';
     public $orderNo = '';
     public $codeType = '';
     public $codeCd = '';

@@ -5,15 +5,9 @@
 
 require __DIR__ .'/MyYaBid.php';
 
-  $buyer = '';
-  $admin = '';
-  if(isset($_GET("buyer"))){
-	  $buyer = $_GET("buyer");
-  }
-  if(isset($_GET("admin"))){
-	  $admin = $_GET("admin");
-  }
-  $my = new MyYaBid();
+  $buyer = $_GET["buyer"];
+  $admin = $_GET["admin"];
+  $status = $_GET["status"];
 ?>
 <html lang="ja">
 <head>
@@ -31,21 +25,18 @@ require __DIR__ .'/MyYaBid.php';
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
 <script type="text/javascript">
-var actionUrl = "<?php echo constant("URL_ACTION_MYDAIGOU") ?>";
-var autocompleteUrl = "<?php echo constant("URL_AUTOCOMPLETE_MYDAIGOU") ?>";
+var actionUrl = "<?php echo constant("URL_ACTION_MYYABID") ?>";
 $(function() {
 	var getMyBox = function(thisElement){
-		return $(thisElement).parent().parent().parent().parent();
+		return $(thisElement).parent().parent().parent();
 	}
-	var updateRecord = function(thisBox, action){
+	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":action, 
+			   data : {"action":"updateItemStatus", 
 					   "uid" : thisBox.find("#uid").val(),
 					   "buyer" : thisBox.find("#buyer").val(),
-					   "orderItem" : thisBox.find("#orderItem").val(),
-					   "priceJPY" : thisBox.find("#priceJPY").val(),
-					   "priceCNY" : thisBox.find("#priceCNY").val(),
+					   "status" : status
 			   },
 			   dataType : "html" 
 			  }
@@ -54,50 +45,33 @@ $(function() {
             location.reload();
         });
 	};
-    $(document).on("click", "#btnCopyBox", function() {
-        var thisBox = getMyBox(this);
-        var cloneBox = thisBox.clone();
-        cloneBox.find("#uid").val("");
-        cloneBox.find("#buyer").val("");
-        cloneBox.find("#status").val("");
-        $("#container").append(cloneBox);
-    });
-    $(document).on("click", "#btnSaveBox", function() {
+    $(document).on("click", "#btnCancel", function() {
 		var thisBox = getMyBox(this);
-        updateRecord(thisBox, "saveItem");
+        updateStatus(thisBox, "cancel");
     });
-    $(document).on("click", "#btnDelBox", function() {
+    $(document).on("click", "#btnPaiing", function() {
 		var thisBox = getMyBox(this);
-        updateRecord(thisBox, "deleteItem");
+        updateStatus(thisBox, "paiing");
     });
-    $(document).on("click", "#btnRmBox", function() {
+    $(document).on("click", "#btnDepai", function() {
 		var thisBox = getMyBox(this);
-        thisBox.remove();
+        updateStatus(thisBox, "depai");
     });
-    $(document).on("click", "#btnAssign", function() {
+    $(document).on("click", "#btnLiupai", function() {
 		var thisBox = getMyBox(this);
-		var buyer = thisBox.find("#buyer").val();
-		if(buyer == ""){
-			alert("please input buyer!!");
-			return;
-		}
-        updateRecord(thisBox, "assign");
+        updateStatus(thisBox, "liupai");
     });
-    $(document).on("click", "#btnGouru", function() {
+    $(document).on("click", "#btnfuk", function() {
 		var thisBox = getMyBox(this);
-        updateRecord(thisBox, "gouru");
+        updateStatus(thisBox, "fuk");
     });
-    $(document).on("click", "#btnZaitu", function() {
+    $(document).on("click", "#btnbdfh", function() {
 		var thisBox = getMyBox(this);
-        updateRecord(thisBox, "zaitu");
+        updateStatus(thisBox, "bdfh");
     });
-    $(document).on("click", "#btnFahuo", function() {
+    $(document).on("click", "#btnBdDao", function() {
 		var thisBox = getMyBox(this);
-        updateRecord(thisBox, "fahuo");
-    });
-    $(document).on("click", "#btnCompl", function() {
-		var thisBox = getMyBox(this);
-        updateRecord(thisBox, "compl");
+        updateStatus(thisBox, "bddao");
     });
 });
 </script>
@@ -105,7 +79,8 @@ $(function() {
 <body class="py-4">
 <div id="container" class="container">
 <?php
-  $isAdmin = $my.isAdmin($admin);
+  $my = new MyYaBid();
+  $isAdmin = $my->isAdmin($admin);
   
   include __DIR__ .'/subpage_toplink.php';
   
@@ -114,62 +89,80 @@ $(function() {
   }
   if($buyer != ''){
 ?>
-  <h3>买家:<span id="buyer"><?php echo $buyer ?></span></h3>
+  <h3>买家:<span><?php echo $buyer ?></span></h3>
   <hr class="mb-4">
 <?php
   }
-  if ($buyer != ''){
+  if (!empty($buyer)){
 	  $dataArr = $my->listItemByBuyer($buyer);
-  }else{
-	  $dataArr = $my->listItemByAll();
-  } 
+  }else if($isAdmin){
+	  $dataArr = $my->listItemByAll($status);
+  } else{
+	  exit(0);
+  }
 ?>
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">日元</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">daoneiyunfei</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">zhongliang(g)</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
+    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
+    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">日元</div>
+    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">daoneiyunfei</div>
+    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">zhongliang(g)</div>
 <?php
     if($isAdmin){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">买家</div>
+    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">买家</div>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">obiderAddr</div>
 <?php
     }
 ?>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
-	  $boxCss = "bg-warning text-white";
+	  //$boxCss = "bg-warning text-white";
 ?>
   <div class="row <?php echo $boxCss ?>">
+    <input type="hidden" id="buyer" value="<?php echo $data['buyer'] ?>">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-4 text-break themed-grid-col border border-secondary">
+    <div class="col-2 text-break themed-grid-col border border-secondary">
 	  <a href="<?php echo $data['itemUrl'] ?>" target="blank">
-	    <?php echo $data['itemName'] ?>
+	    <?php echo $data['itemName'] != '' ? $data['itemName'] : $data['itemUrl'] ?>
 	  </a>
 	</div>
-    <div class="col-2 text-break themed-grid-col border border-secondary"><?php echo $my->getStatusName($data["status"]) ?></div>
-    <div class="col text-break themed-grid-col border border-secondary"><?php echo $data["priceJPY"] ?></div>
 <?php
     if($isAdmin){
 ?>
-    <div class="col text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/myyabid/page_myEstimation.php?uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
-	    <?php echo $data['transfeeJPY'] ?>
+    <div class="col-1 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/myyabid/page_myBidList.php?status=<?php echo $data['status'] ?>&admin=<?php echo $admin ?>">
+	    <?php echo $my->getStatusName($data["status"]) ?>
 	  </a>
 	</div>
-    <div class="col text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/myyabid/page_myEstimation.php?uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
+<?php
+    }else{
+?>
+    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $my->getStatusName($data["status"]) ?></div>
+<?php
+    }
+?>
+    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $data["priceJPY"] ?></div>
+<?php
+    if($isAdmin){
+?>
+    <div class="col-1 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/myyabid/page_myItem.php?buyer=<?php echo $data['buyer'] ?>&uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
+	    <?php echo $data['transfeeDaoneiJPY'] ?>
+	  </a>
+	</div>
+    <div class="col-1 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/myyabid/page_myItem.php?buyer=<?php echo $data['buyer'] ?>&uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
 	    <?php echo $data['weight'] ?>
 	  </a>
 	</div>
 <?php
     }else{
 ?>
-    <div class="col text-break themed-grid-col border border-secondary"><?php echo $data["transfeeJPY"] ?></div>
-    <div class="col text-break themed-grid-col border border-secondary"><?php echo $data["weight"] ?></div>
+    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $data["transfeeDaoneiJPY"] ?></div>
+    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $data["weight"] ?></div>
 <?php
     }
 ?>
@@ -177,15 +170,16 @@ $(function() {
 <?php
     if($isAdmin){
 ?>
-    <div class="col text-break themed-grid-col border border-secondary">
+    <div class="col-1 text-break themed-grid-col border border-secondary">
 	  <a href="/myphp/myyabid/page_myBidList.php?buyer=<?php echo $data['buyer'] ?>&admin=<?php echo $admin ?>">
 	    <?php echo $data['buyer'] ?>
 	  </a>
 	</div>
+    <div class="col-3 text-break themed-grid-col border border-secondary"><?php echo $data["obiderAddr"] ?></div>
 <?php
     }
 ?>
-    <div class="col-3 text-break themed-grid-col border">
+    <div class="col-2 text-break themed-grid-col border">
 <?php
     if($buyer == $data['buyer'] && ($data["status"] == 'paiBf')){
 ?>
@@ -200,40 +194,40 @@ $(function() {
 		if($data["status"] == 'paiBf'){
 ?>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">paiing</button>
+		<button class="btn" id="btnPaiing" type="button">paiing</button>
 	  </div>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">depai</button>
+		<button class="btn" id="btnDepai" type="button">depai</button>
 	  </div>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">liupai</button>
+		<button class="btn" id="btnLiupai" type="button">liupai</button>
 	  </div>
 <?php
 		}else if($data["status"] == 'paiing'){
 ?>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">depai</button>
+		<button class="btn" id="btnDepai" type="button">depai</button>
 	  </div>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">liupai</button>
+		<button class="btn" id="btnLiupai" type="button">liupai</button>
 	  </div>
 <?php
 		}else if($data["status"] == 'depai'){
 ?>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">fuk</button>
+		<button class="btn" id="btnfuk" type="button">fuk</button>
 	  </div>
 <?php
 		}else if($data["status"] == 'fuk'){
 ?>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">bdfh</button>
+		<button class="btn" id="btnbdfh" type="button">bdfh</button>
 	  </div>
 <?php
 		}else if($data["status"] == 'bdfh'){
 ?>
 	  <div class="mb-1 input-group">
-		<button class="btn" class="btnUpdateStatus" type="button">bddao</button>
+		<button class="btn" id="btnBdDao" type="button">bddao</button>
 	  </div>
 <?php
 		}

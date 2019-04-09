@@ -1,5 +1,5 @@
 <?php
-class ItemObject
+class BidItemObject
 {
     public $uid = '';
     public $buyer = '';
@@ -16,7 +16,8 @@ class ItemObject
     public $obiderAddr = '';
     public $obiderMsg = '';
 	
-    public $transfeeJPY = 'weizhi';
+    public $transfeeDaoneiJPY = 'weizhi';
+    public $transfeeDaoneiCNY = 'weizhi';
 	
 	public $weight = 'weizhi';
 	
@@ -24,6 +25,6 @@ class ItemObject
 	
     public $priceCNY = '';
     //public $qtty = '';
-	public $parcelUid //parcelObject->uid
+	public $parcelUid ='';//parcelObject->uid
 }
 ?>

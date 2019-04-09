@@ -13,10 +13,11 @@ class MyHuilv
 		$cnt = $tbl->select(['huilvDiv', '==', $obj->huilvDiv])->count();
 		if($cnt == 0){
 			$tbl->insert($obj);
+			return "insert!";
 		} else{
-			$tbl->select(['huilvDiv', '==', $obj->uidhuilvDiv
-				->update(
-				         ['huilvVal', $obj->huilvVal]);
+			$tbl->select(['huilvDiv', '==', $obj->uidhuilvDiv])
+				->update(['huilvVal', $obj->huilvVal]);
+			return "update!";
 		}
 	}
 	public function listAllItem(){
@@ -29,7 +30,7 @@ class MyHuilv
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYHUILV_INFO"));
 		$dataA = $tbl->select(['huilvDiv', '==', $huilvDiv])->fetch();
-		return $dataA[0];
+		return $dataA[0]["myhuilv"];
 	}
 }
 ?>

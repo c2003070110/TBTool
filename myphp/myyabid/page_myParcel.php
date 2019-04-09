@@ -5,18 +5,10 @@
 
 require __DIR__ .'/MyYaBid.php';
 
-  $buyer = '';
-  $admin = '';
-  $uid = '';
-  if(isset($_GET("buyer"))){
-	  $buyer = $_GET("buyer");
-  }
-  if(isset($_GET("admin"))){
-	  $admin = $_GET("admin");
-  }
-  if(isset($_GET("uid"))){
-	  $buyer = $_GET("uid");
-  }
+  $buyer = $_GET["buyer"];
+  $admin = $_GET["admin"];
+  $uid = $_GET["uid"];
+  
   $my = new MyYaBid();
 ?>
 <html lang="ja">
@@ -74,7 +66,7 @@ $(function() {
 <body class="py-4">
 <div id="container" class="container">
 <?php
-  $isAdmin = $my.isAdmin($admin);
+  $isAdmin = $my->isAdmin($admin);
   include __DIR__ .'/subpage_toplink.php';
   if($admin != '' && !$isAdmin){
 	  exit(0);
@@ -145,29 +137,29 @@ $(function() {
   <div class="row mb-4 form-group">
     <div class="col-10 themed-grid-col">
       <label for="transWeight">transWeight</label>
-      <input type="text" class="form-control" id="transWeight" <?php if($isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['itemTtlWeight'] ?>">
+      <input type="text" class="form-control" id="transWeight" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['itemTtlWeight'] ?>">
     </div>
   </div>
   <div class="row mb-4 form-group">
     <div class="col-10 themed-grid-col">
       <label for="transfeeGuojiJPY">transfeeGuojiJPY</label>
-      <input type="text" class="form-control" id="transfeeGuojiJPY" <?php if($isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiJPY'] ?>">
+      <input type="text" class="form-control" id="transfeeGuojiJPY" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiJPY'] ?>">
     </div>
   </div>
   <div class="row mb-4 form-group">
     <div class="col-10 themed-grid-col">
       <label for="transnoGuoji">transnoGuoji</label>
-      <input type="text" class="form-control" id="transnoGuoji" <?php if($isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuoji'] ?>">
+      <input type="text" class="form-control" id="transnoGuoji" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuoji'] ?>">
     </div>
   </div>
   <div class="row mb-4 form-group">
     <div class="col-10 themed-grid-col">
       <label for="transfeeGuonei">transfeeGuonei</label>
-      <input type="text" class="form-control" id="transfeeGuonei" <?php if($isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuonei'] ?>">
+      <input type="text" class="form-control" id="transfeeGuonei" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuonei'] ?>">
     </div>
     <div class="col-10 themed-grid-col">
       <label for="transnoGuonei">transnoGuonei</label>
-      <input type="text" class="form-control" id="transnoGuonei" <?php if($isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuonei'] ?>">
+      <input type="text" class="form-control" id="transnoGuonei" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuonei'] ?>">
     </div>
   </div>
   <hr class="mb-4">

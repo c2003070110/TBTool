@@ -1,5 +1,5 @@
 <?php
-  include __DIR__ .'/subpage_toplink.php';
+require __DIR__ .'/MyHuilv.php';
 ?>
 <html lang="ja">
 <head>
@@ -20,8 +20,10 @@
 var actionUrl = "<?php echo constant("URL_ACTION_ADMINSUPP") ?>";
 $(function() {
     $(document).on("click", "#btnGetYLHV", function() {
+		$("#huilvYL").val(0.0603);
+		/*
         var url = "https://www.kuaiyilicai.com/uprate/jpy.html";
-        var jqxhr = $.ajax("myphp/redirect.php",
+        var jqxhr = $.ajax("/myphp/redirect.php",
                          { type : "GET",
                            data : {realUrl : url},
                            dataType : "html" }
@@ -30,7 +32,7 @@ $(function() {
 			var subRowList = $(msg).find("div[class=\"panel-body\"]").find("div[class=\"sub_row\"]");
             for(var i=0; i<subRowList.length; i++){
 				var divlist = $(subRowList[i]).find("div");
-				if(divlist.length <>2){
+				if(divlist.length != 2){
 					continue;
 				}
 				if("汇率:" == $(divlist[0]).text()){
@@ -38,8 +40,9 @@ $(function() {
 					$("#huilv").val(huilvTxt);
 				}
 			}
-	    }
-    }
+	    });
+		*/
+    });
     $(document).on("click", "#btnSave", function() {
         var myhuilv = parseFloat($("#myhuilv").val());
         
@@ -48,6 +51,7 @@ $(function() {
                            data : {
 							   "action" : "saveMyhuilv", 
 							   "huilvDiv" : $("#huilvDiv").val(),
+							   "plusplus" : $("#plusplus").val(),
 						       "myhuilv" : myhuilv},
                            dataType : "html" 
                           }
@@ -59,7 +63,7 @@ $(function() {
     });
     $(document).on("change", ".form-control", function() {
         var thisBox = $(this).parent().parent().parent();
-        var huilvYL = parseFloat($("#huilvYL").val);
+        var huilvYL = parseFloat($("#huilvYL").val());
         var plusplus = parseFloat($("#plusplus").val());
         $("#myhuilv").val(huilvYL + plusplus);
     });
@@ -74,7 +78,7 @@ $(function() {
   <div class="box">
       <div class="row mb-4 form-group">
         <button type="button" id="btnGetYLHV" class="btn btn-secondary actionBtn">get YingLian huilv</button>
-        <div class="col-10 themed-grid-col">
+        <div class="col-6 themed-grid-col">
           <label for="huilv">YingLian</label>
           <input type="text" class="form-control" id="huilvYL" readonly>
         </div>
@@ -83,21 +87,21 @@ $(function() {
         <div class="col-6 themed-grid-col">
             <label for="huilvDiv">huilv Div</label>
             <select class="custom-select d-block w-100" id="huilvDiv">
-                <option value="huilvDiv1" selected>YA</option>
-                <option value="huilvDiv2">Daigou</option>
+                <option value="YA" selected>YA</option>
+                <option value="daigou">Daigou</option>
             </select>
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col">
+        <div class="col-5 themed-grid-col">
           <label for="plusplus">++</label>
-          <input type="text" class="form-control" id="plusplus" value="<?php echo constant("TBL_HUI_LV_PLUS") ?>>
+          <input type="text" class="form-control" id="plusplus" value="<?php echo constant("HUI_LV_PLUS") ?>">
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col">
+        <div class="col-6 themed-grid-col">
           <label for="myhuilv">My huilv</label>
-          <input type="text" id="myhuilv" readonly>
+          <input type="text" class="form-control" id="myhuilv" readonly>
         </div>
         <button type="button" id="btnSave" class="btn btn-secondary actionBtn">SAVE</button>
       </div>

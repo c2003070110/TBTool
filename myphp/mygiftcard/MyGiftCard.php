@@ -18,6 +18,7 @@ class MyGiftCard
 			return $resultStr;
 		}
 		$cardObj = new GiftCardObject();
+		$cardObj->uid = uniqid();
 		$cardObj->orderNo = $orderNo;
 		$cardObj->codeType = $codeType;
 		$cardObj->codeCd = $codeCd;
@@ -92,6 +93,16 @@ class MyGiftCard
 		$resultStr = "success";
 		return $resultStr;
 		*/
+	}
+	public function listCodeByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		$dataArr = $tbl->select(['uid', '==', $uid])->fetch();
+		if(empty($dataArr)){
+			return NULL;
+		}
+		return $dataArr[0];
 	}
 	public function getCode($codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));

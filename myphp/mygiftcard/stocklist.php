@@ -70,26 +70,35 @@ $(function() {
 ?>
 <div id="container" class="container">
   <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a href="/myphp/mygiftcard/regcode.php">REG</a></li>
+  </ul>   
+  <hr class="mb-2"> 
+  <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php">ALL</a></li>
     <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
     <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
     <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
     <li class="list-group-item <?php echo $cssBgInvalid ?>"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
   </ul> 
-  <hr class="mb-4">  
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mygiftcard/regcode.php">REG</a></li>
-  </ul>   
-  <hr class="mb-4">  
-  <hr class="mb-4">
+  <hr class="mb-2">   
   <div class="row">
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">OrderNo</div>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
     <!--
-    <div class="col-1 themed-grid-col border border-primary bg-info text-white">AucId</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">OrderNo</div>
+	-->
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
+<?php
+    if($status == ''){
+?>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
+<?php
+    }
+?>
+    <!--
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    -->
+    <div class="col-2 themed-grid-col border border-primary bg-info text-white">AucId</div>
+    <!--
     <div class="col-1 themed-grid-col border border-primary bg-info text-white">Obider</div>
     -->
   </div>
@@ -97,10 +106,23 @@ $(function() {
   foreach ($dataArr as $data) {
 ?>
   <div class="row">
+    <!--
     <div id="orderNo" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["orderNo"] ?></div>
-    <div id="codeType" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
-    <div id="codeCd" class="col-3 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeCd"] ?></div>
+	-->
+    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
+    <div id="codeCd" class="col-4 text-break themed-grid-col border border-secondary bg-dark text-white">
+	  <a href="/myphp/mygiftcard/regcode.php?uid=<?php echo $data['uid'] ?>">
+	    <?php echo $data["uid"] ?></div>
+	  </a>
+	</div>
+<?php
+    if($status == ''){
+?>
     <div id="status" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["status"] ?></div>
+<?php
+    }
+?>
+    <!--
     <div class="col-3 text-break themed-grid-col border border-secondary">
 <?php 
   if($data["status"] == 'unused') {
@@ -125,8 +147,12 @@ $(function() {
   }
 ?>
     </div>
+    -->
+    <div class="col-2 themed-grid-col border border-secondary bg-dark text-white">
+	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['aucId'] ?>" target="blank">
+	    <?php echo $data["aucId"] ?></div>
+	  </a>
     <!--
-    <div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["aucId"] ?></div>
     <div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["obider"] ?></div>
     -->
   </div>

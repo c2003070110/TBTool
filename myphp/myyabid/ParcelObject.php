@@ -15,12 +15,16 @@ class ParcelObject
     public $status = '';// 1:daBao;2:zaiTu;3:gnFh;4:fin;
 	
 	public $transfeeGuonei = 0;
-	public $transnoGuonei = ''
+	public $transnoGuonei = '';
 	
 	public $paidTtlCNY = 0;
 	
-    public $itemTtlJPY = 0,
-    public $itemTtlWeight = 0;
+    public $itemTtlJPY = 0;
     public $itemTtlCNY = 0;
+	
+    public $itemTtlWeight = 0;
+	
+    public $itemTransfeeDaoneiTtlJPY = 0;
+    public $itemTransfeeDaoneiTtlCNY = 0;
 }
 ?>
