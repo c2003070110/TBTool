@@ -5,7 +5,7 @@ require __DIR__ .'/ParcelObject.php';
 require __DIR__ .'/BidItemObject.php';
 require __DIR__ .'/BuyerObject.php';
 require __DIR__ .'/../adminsupp/MyTransfee.php';
-  require __DIR__ .'/../adminsupp/MyHuilv.php';
+require __DIR__ .'/../adminsupp/MyHuilv.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
@@ -16,6 +16,10 @@ class MyYaBid
 	}
 	public function getDaigoufei(){
 		return 20;
+	}
+	public function getHuilv(){
+		$myhuilv = new MyHuilv();
+		return $myhuilv->listByHuilvDiv("YA");
 	}
 	public function getStatusName($status){
 		return $status;
@@ -41,6 +45,28 @@ class MyYaBid
 	
 	
 	//********parcel_info**********
+	public function updateParcelByYunfei($buyer, $parcelUid, $guojiShoudan, $transfeeGuojiJPY, $transfeeGuonei){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYYABID_PARCEL_INFO") . '_' .$buyer);
+		
+		$transfeeGuojiCNY = intval($transfeeGuojiJPY * $huilv);
+		
+		$tbl->select(['uid', '==', $parcelUid])
+			->update(['guojiShoudan', $guojiShoudan],
+					 ['transfeeGuojiJPY', $transfeeGuojiJPY],
+					 ['transfeeGuojiCNY', $transfeeGuojiCNY],
+					 ['transfeeGuonei', $transfeeGuonei]);
+	}
+	public function updateParcelByPaidCNY($buyer, $parcelUid, $paidCNY){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYYABID_PARCEL_INFO") . '_' .$buyer);
+		
+		$nowData = $tbl->select(['uid', '==', $parcelUid])->fetch()[0];
+		$paidTtlCNY = intval($nowData["paidTtlCNY"]) + intval($paidCNY);
+		
+		$tbl->select(['uid', '==', $parcelUid])
+			->update(['paidTtlCNY', $paidTtlCNY]);
+	}
 	public function listParcelByBuyerAndUnParcel($buyer){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYYABID_PARCEL_INFO") . '_' .$buyer);
@@ -59,41 +85,6 @@ class MyYaBid
 			$objA = $tbl->select(['buyer', '==', $buyer,'and'],['status', '==', 'daBao','and'])->fetch();
 			$obj = $objA[0];
 		}
-		$itemArr = $this->listItemByBuyerAndUnParcel($obj["buyer"], $obj["uid"]);
-		$itemTtlJPY = 0;$itemTtlWeight = 0;$itemTtlCNY = 0;$itemTransfeeDaoneiTtlJPY=0;$itemTransfeeDaoneiTtlCNY=0;
-		foreach ($itemArr as $data) {
-	        $itemTtlJPY += intVal($data["priceJPY"]);
-	        $itemTtlCNY += intVal($data["priceCNY"]);
-			
-	        $itemTtlWeight += intVal($data["weight"]);
-			
-	        $itemTransfeeDaoneiTtlJPY += intVal($data["transfeeDaoneiJPY"]);
-	        $itemTransfeeDaoneiTtlCNY += intVal($data["transfeeDaoneiCNY"]);
-		}
-		$myTransfee = new MyTransfee();
-		$myhuilv = new MyHuilv();
-		
-		$huilv = $myhuilv->listByHuilvDiv("YA");
-		
-		$transfeeGuojiJPY = 0;$transfeeGuojiCNY = 0;$transfeeGuonei = 0;
-		if(isset($myparcel["guojiShoudan"])){
-			$transfeeGuojiJPY = myTransfee->getGuojiYunfei($ttlWeight, $myparcel["guojiShoudan"]);
-			$transfeeGuojiCNY = $transfeeGuojiJPY * $huilv;
-			$transfeeGuonei = myTransfee->getGuoneiYunfei($ttlWeight, $myparcel["guojiShoudan"]);
-		}
-		$tbl->select(['uid', '==', $obj["uid"]])
-			->update(
-					 ['itemTtlJPY', $itemTtlJPY],
-					 ['itemTtlCNY', $itemTtlCNY],
-					 ['itemTtlWeight', $itemTtlWeight],
-					 ['itemTransfeeDaoneiTtlJPY', $itemTransfeeDaoneiTtlJPY],
-					 ['itemTransfeeDaoneiTtlCNY', $itemTransfeeDaoneiTtlCNY],
-					 ['transfeeGuojiJPY', $transfeeGuojiJPY],
-					 ['transfeeGuojiCNY', $transfeeGuojiCNY],
-					 ['transfeeGuonei', $transfeeGuonei]);
-					 
-		$objA = $tbl->select(['uid', '==', $uid])->fetch();
-		$obj = $objA[0];
 		return $obj;
 	}
 	
@@ -123,20 +114,60 @@ class MyYaBid
 		}
 		return $rsltstr;
 	}
-	public function updateItemStatus($buyer, $itemUid, $status){
+	public function updateItemStatus($buyer, $itemUid, $toStatus){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYYABID_ITEM_INFO") . '_' . $buyer);
-		
-		$tbl->select(['uid', '==', $itemUid])
-		    ->update(['status', $status]);
+		if($toStatus === "cancel"){
+			$tbl->select(['uid', '==', $itemUid])
+				->delete();
+		}else if($toStatus === "rubao"){
+			$parcelObj = $this->listParcelByBuyerAndUnParcel($buyer);
+			$itemObj = $tbl->select(['uid', '==', $itemUid])->fetch()[0];
+			
+			$itemTtlPriceJPY = intval($parcelObj["itemTtlJPY"]) + intval($itemObj["priceJPY"]);
+			$itemTtlPriceCNY = intval($parcelObj["itemTtlCNY"]) + intval($itemObj["priceCNY"]);
+			$itemTransfeeDaoneiTtlJPY = intval($parcelObj["itemTransfeeDaoneiTtlJPY"]) + intval($itemObj["transfeeDaoneiJPY"]);
+			$itemTransfeeDaoneiTtlCNY = intval($parcelObj["itemTransfeeDaoneiTtlCNY"]) + intval($itemObj["transfeeDaoneiCNY"]);
+			
+			$daigoufeiTtlCNY = intval($parcelObj["daigoufeiTtlCNY"]) + intval($itemObj["daigoufeiCNY"]);
+			$itemTtlCNY = intval($parcelObj["itemTtlCNY"]) + intval($itemObj["itemCNY"]);
+			
+			$itemTtlWeight = intval($parcelObj["itemTtlWeight"]) + intval($itemObj["weight"]);
+			
+			$tbl->select(['uid', '==', $itemUid])
+				->update(['status', $toStatus],
+				         ['parcelUid', $parcelObj["uid"]]);
+						 
+		    $tbl = $cdb->table(constant("TBL_MYYABID_PARCEL_INFO") . '_' .$buyer);
+			$tbl->select(['uid', '==', $parcelObj["uid"]])
+				->update(['itemTtlPriceJPY', $itemTtlPriceJPY],
+				         ['itemTtlPriceCNY', $itemTtlPriceCNY],
+				         ['itemTransfeeDaoneiTtlJPY', $itemTransfeeDaoneiTtlJPY],
+				         ['itemTransfeeDaoneiTtlCNY', $itemTransfeeDaoneiTtlCNY],
+				         ['daigoufeiTtlCNY', $daigoufeiTtlCNY],
+				         ['itemTtlCNY', $itemTtlCNY],
+				         ['itemTtlWeight', $itemTtlWeight]);
+		}else{
+			$tbl->select(['uid', '==', $itemUid])
+				->update(['status', $toStatus]);
+		}
 	}
 	public function updateItemPrice($buyer, $itemUid, $priceJPY, $transfeeDaoneiJPY, $weight){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYYABID_ITEM_INFO") . '_' . $buyer);
 		
+		$huilv = $this->getHuilv();
+		$daigoufei = $this->getDaigoufei();
+		$priceCNY = intval($priceJPY * $huilv);
+		$transfeeDaoneiCNY = intval($transfeeDaoneiJPY * $huilv);
+		$itemCNY = $priceCNY + $transfeeDaoneiCNY + $daigoufei;
 		$tbl->select(['uid', '==', $itemUid])
 		    ->update(['priceJPY', $priceJPY],
+			         ['priceCNY', $priceCNY],
 			         ['transfeeDaoneiJPY', $transfeeDaoneiJPY],
+			         ['transfeeDaoneiCNY', $transfeeDaoneiCNY],
+			         ['daigoufeiCNY', $daigoufei],
+			         ['itemCNY', $itemCNY],
 					 ['weight', $weight]);
 	}
 	
@@ -154,29 +185,24 @@ class MyYaBid
 	public function listItemByBuyerAndUnParcel($buyer, $parcelUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYYABID_ITEM_INFO") . '_' . $buyer);
-		$rsltArr = [];
 		
-		$objA = $tbl->select(['buyer', '==', $buyer,'and'])->fetch();
-		foreach ($objA as $data) {
-			if($data["parcelUid"] == '' 
-				&& ($data["status"] == 'depai' || $data["status"] == 'fuk' 
-					|| $data["status"] == 'bdfh'|| $data["status"] == 'bddao')){
-				$rsltArr = $data;
-				$tbl->select(['uid', '==', $data["uid"]])
-					->update(['parcelUid', $parcelUid]);
-			}
-			if($data["parcelUid"] == $parcelUid){
-				$rsltArr = $data;
-			}
-		}
-		return rsltArr;
+		return $tbl->select(['buyer', '==', $buyer,'and'],
+		                     ['parcelUid', '==', $parcelUid,'and'])
+					->fetch();
 	}
 	public function listItemByBuyer($buyer){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYYABID_ITEM_INFO") . '_' .$buyer);
-		$rsltArr = [];
 		
 		$objA = $tbl->select(['buyer', '==', $buyer])->fetch();
+		return $objA;
+	}
+	public function listItemByBuyerAndStatus($buyer, $status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYYABID_ITEM_INFO") . '_' .$buyer);
+		$rsltArr = [];
+		
+		$objA = $tbl->select(['buyer', '==', $buyer, 'and'], ['status', '==', $status])->fetch();
 		return $objA;
 	}
 	public function listItemByAll($status){
@@ -197,10 +223,34 @@ class MyYaBid
 	}
 	
 	//********taobao_dingdan_info*********
-	public function listTaobaoDingdanByParcel($parcelUid){
+	public function listTaobaoDingdanByParcel($buyer, $parcelUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYYABID_TAOBAO_DINGDAN_INFO"));
-		$objA = $tbl->select("*")->fetch();
+		$tbl = $cdb->table(constant("TBL_MYYABID_TAOBAO_DINGDAN_INFO").'_'.$buyer);
+		return $tbl->select("*")->fetch();
+	}
+	public function addTaobaoDingdan($buyer, $parcelUid, $taobaoDingdanhao, $taobaoDingdanCNY){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYYABID_TAOBAO_DINGDAN_INFO").'_'.$buyer);
+		$obj = array();
+		$obj["uid"] = uniqid();
+		$obj["buyer"] = $buyer;
+		$obj["parcelUid"] = $parcelUid;
+		$obj["taobaoDingdanhao"] = $taobaoDingdanhao;
+		$obj["taobaoDingdanCNY"] = $taobaoDingdanCNY;
+		$tbl->insert($obj);
+		
+		$this->updateParcelByPaidCNY($buyer, $parcelUid, $taobaoDingdanCNY);
+	}
+	public function deleteTaobaoDingdan($buyer, $parcelUid, $taobaodingdanUid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYYABID_TAOBAO_DINGDAN_INFO").'_'.$buyer);
+		
+		$nowData = $tbl->select(['uid', '==', $taobaodingdanUid])->fetch()[0];
+		$paidCNY = intval($nowData["taobaoDingdanCNY"]) * -1;
+		
+		$tbl->select(['uid', '==', $taobaodingdanUid])->delete();
+		
+		$this->updateParcelByPaidCNY($buyer, $parcelUid, $paidCNY);
 	}
 	
 	

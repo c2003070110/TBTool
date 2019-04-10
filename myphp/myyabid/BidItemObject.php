@@ -7,7 +7,8 @@ class BidItemObject
     public $itemUrl = '';
     public $itemId = '';
     public $itemName = '';
-    public $priceJPY = '';
+    public $priceJPY = 'shaohouluru';
+    public $priceCNY = '';// priceJPY * huilv
     public $priceJPYEsti = '';
 	
     public $bidFinishDt = '';
@@ -16,14 +17,15 @@ class BidItemObject
     public $obiderAddr = '';
     public $obiderMsg = '';
 	
-    public $transfeeDaoneiJPY = 'weizhi';
-    public $transfeeDaoneiCNY = 'weizhi';
+    public $transfeeDaoneiJPY = 'shaohouluru';
+    public $transfeeDaoneiCNY = 'shaohouluru';// transfeeDaoneiJPY * huilv 
 	
-	public $weight = 'weizhi';
+	public $weight = 'shaohouluru';
 	
-    public $status = '';//paiBf;paiing;depai;liupai;fuk;bdfh;bddao;rubao;zaitu;fin;cancel;
+    public $status = '';//paiBf;paiing;depai;liupai;fuk;bdfh;bddao;rubao;daobao;zaitu;fin;cancel;
 	
-    public $priceCNY = '';
+    public $daigoufeiCNY = '';// priceCNY + transfeeDaoneiCNY + daigoufei
+    public $itemCNY = '';// priceCNY + transfeeDaoneiCNY + daigoufei
     //public $qtty = '';
 	public $parcelUid ='';//parcelObject->uid
 }

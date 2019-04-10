@@ -19,12 +19,15 @@ class ParcelObject
 	
 	public $paidTtlCNY = 0;
 	
-    public $itemTtlJPY = 0;
-    public $itemTtlCNY = 0;
+    public $itemTtlPriceJPY = 0;
+    public $itemTtlPriceCNY = 0;
 	
     public $itemTtlWeight = 0;
 	
     public $itemTransfeeDaoneiTtlJPY = 0;
     public $itemTransfeeDaoneiTtlCNY = 0;
+	
+    public $itemTtlCNY = 0;
+    public $daigoufeiTtlCNY = 0;
 }
 ?>

@@ -49,29 +49,9 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "cancel");
     });
-    $(document).on("click", "#btnPaiing", function() {
+    $(document).on("click", "#btnRubao", function() {
 		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "paiing");
-    });
-    $(document).on("click", "#btnDepai", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "depai");
-    });
-    $(document).on("click", "#btnLiupai", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "liupai");
-    });
-    $(document).on("click", "#btnfuk", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "fuk");
-    });
-    $(document).on("click", "#btnbdfh", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "bdfh");
-    });
-    $(document).on("click", "#btnBdDao", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "bddao");
+        updateStatus(thisBox, "rubao");
     });
 });
 </script>
@@ -102,20 +82,11 @@ $(function() {
   }
 ?>
   <div class="row">
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
-    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
-    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">日元</div>
-    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">daoneiyunfei</div>
-    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">zhongliang(g)</div>
-<?php
-    if($isAdmin){
-?>
-    <div class="col-1 text-break themed-grid-col border border-primary bg-info text-white">买家</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">obiderAddr</div>
-<?php
-    }
-?>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">日元</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">daoneiyunfei</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">zhongliang(g)</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
@@ -124,116 +95,70 @@ $(function() {
   <div class="row <?php echo $boxCss ?>">
     <input type="hidden" id="buyer" value="<?php echo $data['buyer'] ?>">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
+<?php
+    if($buyer == $data['buyer'] && ($data["status"] == 'bddao')){
+?>
     <div class="col-2 text-break themed-grid-col border border-secondary">
+<?php
+    }else{
+?>
+    <div class="col-4 text-break themed-grid-col border border-secondary">
+<?php
+    }
+?>
 	  <a href="<?php echo $data['itemUrl'] ?>" target="blank">
 	    <?php echo $data['itemName'] != '' ? $data['itemName'] : $data['itemUrl'] ?>
 	  </a>
 	</div>
 <?php
-    if($isAdmin){
+    if($buyer == $data['buyer'] && ($data["status"] == 'bddao')){
 ?>
-    <div class="col-1 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/myyabid/page_myBidList.php?status=<?php echo $data['status'] ?>&admin=<?php echo $admin ?>">
+    <div class="col-2 border border-secondary">
+	  <div class="mt-1 mb-1">
+		<button class="btn btn-secondary actionBtn" id="btnRubao" type="button">rubao</button>
+	  </div>
+	</div>
+<?php
+    }
+?>
+    <div class="col-2 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/myyabid/page_myItem.php?buyer=<?php echo $data['buyer'] ?>&uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
 	    <?php echo $my->getStatusName($data["status"]) ?>
 	  </a>
 	</div>
 <?php
-    }else{
-?>
-    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $my->getStatusName($data["status"]) ?></div>
-<?php
-    }
-?>
-    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $data["priceJPY"] ?></div>
-<?php
-    if($isAdmin){
-?>
-    <div class="col-1 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/myyabid/page_myItem.php?buyer=<?php echo $data['buyer'] ?>&uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
-	    <?php echo $data['transfeeDaoneiJPY'] ?>
-	  </a>
-	</div>
-    <div class="col-1 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/myyabid/page_myItem.php?buyer=<?php echo $data['buyer'] ?>&uid=<?php echo $data['uid'] ?>&admin=<?php echo $admin ?>">
-	    <?php echo $data['weight'] ?>
-	  </a>
-	</div>
-<?php
-    }else{
-?>
-    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $data["transfeeDaoneiJPY"] ?></div>
-    <div class="col-1 text-break themed-grid-col border border-secondary"><?php echo $data["weight"] ?></div>
-<?php
-    }
-?>
-	
-<?php
-    if($isAdmin){
-?>
-    <div class="col-1 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/myyabid/page_myBidList.php?buyer=<?php echo $data['buyer'] ?>&admin=<?php echo $admin ?>">
-	    <?php echo $data['buyer'] ?>
-	  </a>
-	</div>
-    <div class="col-3 text-break themed-grid-col border border-secondary"><?php echo $data["obiderAddr"] ?></div>
-<?php
-    }
-?>
-    <div class="col-2 text-break themed-grid-col border">
-<?php
     if($buyer == $data['buyer'] && ($data["status"] == 'paiBf')){
 ?>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnCancel" type="button">cancel</button>
+    <div class="col-2 border border-secondary">
+	  <div class="mt-1 mb-1">
+		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">cancel</button>
 	  </div>
+	</div>
+    <div class="col-2 border border-secondary">
+	  <div class="mt-1 mb-1">
+		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">cancel</button>
+	  </div>
+	</div>
+    <div class="col-2 border border-secondary">
+	  <div class="mt-1 mb-1">
+		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">cancel</button>
+	  </div>
+	</div>
+<?php
+    }else{
+?>
+    <div class="col-2 text-break themed-grid-col border border-secondary">
+	  <?php echo $data["priceJPY"] ?>
+	</div>
+    <div class="col-2 text-break themed-grid-col border border-secondary">
+	  <?php echo $data["transfeeDaoneiJPY"] ?>
+	</div>
+    <div class="col-2 text-break themed-grid-col border border-secondary">
+	  <?php echo $data["weight"] ?>
+	</div>
 <?php
     }
 ?>
-<?php
-    if($isAdmin){
-		if($data["status"] == 'paiBf'){
-?>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnPaiing" type="button">paiing</button>
-	  </div>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnDepai" type="button">depai</button>
-	  </div>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnLiupai" type="button">liupai</button>
-	  </div>
-<?php
-		}else if($data["status"] == 'paiing'){
-?>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnDepai" type="button">depai</button>
-	  </div>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnLiupai" type="button">liupai</button>
-	  </div>
-<?php
-		}else if($data["status"] == 'depai'){
-?>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnfuk" type="button">fuk</button>
-	  </div>
-<?php
-		}else if($data["status"] == 'fuk'){
-?>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnbdfh" type="button">bdfh</button>
-	  </div>
-<?php
-		}else if($data["status"] == 'bdfh'){
-?>
-	  <div class="mb-1 input-group">
-		<button class="btn" id="btnBdDao" type="button">bddao</button>
-	  </div>
-<?php
-		}
-    }
-?>
-    </div>
   </div>
 <?php
   }

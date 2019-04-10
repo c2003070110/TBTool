@@ -63,13 +63,13 @@ $(function() {
 	  exit(0);
   }
 ?>
-  <hr class="mb-4">
   <div class="box itembox">
     <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
-    <input type="hidden" id="uid" value="<?php echo $uid ?>" >
+    <input type="hidden" id="uid" value="<?php echo $uid ?>">
     <div class="row mb-4 form-group">
-      <div class="col-12 text-break themed-grid-col border border-secondary">
-	    <a href="<?php echo $data['itemUrl'] ?>" target="blank">
+      <div class="col-12 text-break themed-grid-col">
+        <label for="itemName">ItemName</label>
+	    <a href="<?php echo $data['itemUrl'] ?>" target="blank" id="itemName">
 	      <?php echo $data['itemName'] ?>
 	    </a>
 	  </div>

@@ -35,7 +35,7 @@ require __DIR__ . '/MyGiftCard.php';
 }) (jQuery.fn.clone);
 </script>
 <script type="text/javascript">
-var actionUrl = "http://133.130.114.129/myphp/mygiftcard/action.php";
+var actionUrl = "<?php echo constant("URL_ACTION_MYGIFTCARD") ?>";
 $(function() {
     $(document).on("click", "#btnSave", function() {
         var orderNoVal = $("#orderNo").val();
@@ -54,7 +54,7 @@ $(function() {
                       );
         jqxhr.done(function( msg ) {
             alert(msg);
-            thisBox.find("#codeCd").val("");
+            $("#codeCd").val("");
         });
     });
     $(document).on("click", ".actionBtn", function() {
@@ -80,29 +80,73 @@ $(function() {
             location.reload();
         });
     });
+    $(document).on("click", "#btnConvert", function() {
+        var srcTxt = $("#tempTxtArea").val();
+		var arr1 = srcTxt.split(/(\r\n|\n|\r)/gm);
+		var hasOrderNo = false,hasCodeCd = false;
+		for(var i=0; i<arr1.length; i++){
+			var strLoop1 = arr1[i];
+			if(hasOrderNo == false){
+				var numArr = strLoop1.match(/\d+/g);
+				if(numArr){
+					for(var j=0; j<numArr.length; j++){
+						if(numArr[j].length > 15){
+							$("#orderNo").val(numArr[j]);
+							hasOrderNo = true;
+						}
+					}
+				}
+			}
+			if(hasCodeCd == false){
+				var cdArr = strLoop1.split(/[\s,:]+/);
+				if(cdArr){
+					for(var j=0; j<cdArr.length; j++){
+						if(cdArr[j].indexOf("-") != -1){
+							$("#codeCd").val(cdArr[j]);
+							hasCodeCd = true;
+						}
+					}
+				}
+			}
+		}
+		if(hasOrderNo == false || hasCodeCd == false){
+			alert("Convert do NOT completed successful!");
+		}
+    });
 });
 </script>
 </head>
 <body class="py-4">
 <div id="container" class="container">
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php">stock list</a></li>
-  </ul>   
-  <hr class="mb-4">
-  <textarea id="tempTxtArea" rows="6" cols="35"></textarea>
-  <hr class="mb-4">
 <?php
-  $uid = '';
-  if(isset($_GET['uid'])){
-	$uid = $_GET['uid'];
-  }
-  if($uid !== ''){
+  $uid = $_GET['uid'];
+  if(!empty($uid)){
 	$my = new MyGiftCard();
 	$obj = $my->listCodeByUid($uid);
   }
 ?>
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php">stock list</a></li>
+  </ul>   
+  <hr class="mb-4">
   <input type="hidden" id="uid" value="<?php echo $uid ?>">
   <div class="box">
+<?php
+  if(empty($uid)){
+?>
+      <div class="row mb-4 form-group">
+        <div class="col-12 themed-grid-col">
+		  <textarea id="tempTxtArea" rows="6" cols="35"></textarea>
+		</div>
+      </div>
+      <div class="row mb-4 form-group">
+        <div class="col-12 themed-grid-col">
+          <button type="button" id="btnConvert" class="btn btn-secondary">C o n v e r t !</button>
+		</div>
+      </div>
+<?php 
+  }
+?>
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
 		  <label for="orderNo">OrderNo</label>
@@ -111,7 +155,7 @@ $(function() {
       <div class="row mb-4 form-group">
         <div class="col-8 themed-grid-col">
             <label for="codeType">CodeType</label>
-            <select class="custom-select d-block w-100" id="codeType">
+            <select class="custom-select d-block" id="codeType">
                 <option value="" selected></option>
                 <option value="PSNUSD10" <?php if($obj['codeType']=='PSNUSD10'){?> selected <?php } ?>>PSN 10美元</option>
                 <option value="PSNUSD20" <?php if($obj['codeType']=='PSNUSD20'){?> selected <?php } ?>>PSN 20美元</option>
@@ -124,10 +168,10 @@ $(function() {
             </select>
         </div>
 <?php
-  if($uid == ''){
+  if(empty($uid)){
 ?>
         <div class="col-4 themed-grid-col">
-          <button type="button" id="btnSave" class="btn btn-secondary actionBtn">save</button>
+          <button type="button" id="btnSave" class="btn btn-secondary">save</button>
 		</div>
 <?php 
   }
@@ -139,29 +183,29 @@ $(function() {
             <input type="text" class="form-control" id="codeCd" value="<?php echo $obj['codeCd'] ?>">
         </div>
       </div>
-      <hr class="mb-4">
 <?php
-  if($uid !== ''){
+  if(!empty($uid)){
 ?>
+      <hr class="mb-4">
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
 <?php 
-    if($data["status"] == 'unused') {
+    if($obj["status"] == 'unused') {
 ?>
           <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
           <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
           <button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>
 <?php 
-    }else if($data["status"] == 'using') {
+    }else if($obj["status"] == 'using') {
 ?>
       <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
       <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
 <?php 
-    }else if($data["status"] == 'used') {
+    }else if($obj["status"] == 'used') {
 ?>
       <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
 <?php 
-    }else if($data["status"] == 'invalid') {
+    }else if($obj["status"] == 'invalid') {
 ?>
       <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php 

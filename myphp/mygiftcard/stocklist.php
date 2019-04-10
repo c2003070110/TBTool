@@ -19,7 +19,7 @@ require __DIR__ .'/MyGiftCard.php';
 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
-var actionUrl = "http://133.130.114.129/myphp/mygiftcard/action.php";
+var actionUrl = "<?php echo constant("URL_ACTION_MYGIFTCARD") ?>";
 $(function() {
     $(document).on("click", ".actionBtn", function() {
         var thisBox = $(this).parent().parent();
@@ -82,10 +82,7 @@ $(function() {
   </ul> 
   <hr class="mb-2">   
   <div class="row">
-    <!--
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">OrderNo</div>
-	-->
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
 <?php
     if($status == ''){
@@ -94,25 +91,30 @@ $(function() {
 <?php
     }
 ?>
-    <!--
+<?php
+    if($status == 'unused' || $status == 'using' || $status == 'used'){
+?>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
-    -->
+<?php
+    }
+?>
+<?php
+    if($status == 'used'){
+?>
     <div class="col-2 themed-grid-col border border-primary bg-info text-white">AucId</div>
-    <!--
-    <div class="col-1 themed-grid-col border border-primary bg-info text-white">Obider</div>
-    -->
+<?php
+    }
+?>
   </div>
 <?php
   foreach ($dataArr as $data) {
 ?>
   <div class="row">
-    <!--
-    <div id="orderNo" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["orderNo"] ?></div>
-	-->
-    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
+    <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
+    <div id="codeType" class="col-3 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
     <div id="codeCd" class="col-4 text-break themed-grid-col border border-secondary bg-dark text-white">
 	  <a href="/myphp/mygiftcard/regcode.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data["uid"] ?></div>
+	    <?php echo $data["codeCd"] ?>
 	  </a>
 	</div>
 <?php
@@ -122,7 +124,9 @@ $(function() {
 <?php
     }
 ?>
-    <!--
+<?php
+    if($status == 'unused' || $status == 'using' || $status == 'used'){
+?>
     <div class="col-3 text-break themed-grid-col border border-secondary">
 <?php 
   if($data["status"] == 'unused') {
@@ -147,15 +151,20 @@ $(function() {
   }
 ?>
     </div>
-    -->
+<?php
+    }
+?>
+<?php
+    if($status == 'used'){
+?>
     <div class="col-2 themed-grid-col border border-secondary bg-dark text-white">
 	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['aucId'] ?>" target="blank">
 	    <?php echo $data["aucId"] ?></div>
 	  </a>
-    <!--
-    <div class="col-1 themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["obider"] ?></div>
-    -->
   </div>
+<?php
+    }
+?>
 <?php
   }
 ?>
