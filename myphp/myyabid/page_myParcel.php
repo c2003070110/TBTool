@@ -3,7 +3,6 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
-require __DIR__ .'/../adminsupp/MyHuilv.php';
 require __DIR__ .'/MyYaBid.php';
 
   $buyer = $_GET["buyer"];
@@ -131,81 +130,103 @@ $(function() {
   $ttlCNY = $myparcel["itemTtlCNY"] + $myparcel["transfeeGuojiCNY"] + $myparcel["transfeeGuonei"];
   $bukuanCNY = $ttlCNY - $myparcel["paidTtlCNY"] ;
   
-  $myhuilv = new MyHuilv();
-  $huilv = $myhuilv->listByHuilvDiv("YA");
+  $huilv = $my->getHuilv();
 ?>
   <input type="hidden" id="myparcelUid" value="<?php echo $myparcel['uid'] ?>">
   <input type="hidden" id="myhuilv" value="<?php echo $huilv ?>">
   <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
   <div class="row mb-4 form-group">
-    <div class="col-4 themed-grid-col">
-      <label for="transWeight">transWeight</label>
+    <div class="col-6 themed-grid-col">
+      <label for="transWeight">包裹重量(g)</label>
       <input type="text" class="form-control" id="transWeight" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['itemTtlWeight'] ?>">
     </div>
-    <div class="col-4 themed-grid-col">
-        <label for="guojiShoudan">shoudan</label>
+    <div class="col-6 themed-grid-col">
+        <label for="guojiShoudan">快递方式</label>
         <select class="custom-select d-block" id="guojiShoudan" class="form-control" >
             <option value=""></option>
             <option value="EMS" <?php if($myparcel['guojiShoudan']=='EMS'){?> selected <?php } ?>>EMS</option>
             <!--<option value="AIR" <?php if($myparcel['guojiShoudan']=='AIR'){?> selected <?php } ?>>AIR</option>-->
             <option value="SAL" <?php if($myparcel['guojiShoudan']=='SAL'){?> selected <?php } ?>>SAL</option>
-            <option value="SEA" <?php if($myparcel['guojiShoudan']=='SEA'){?> selected <?php } ?>>SEA</option>
-            <option value="PINGYOU" <?php if($myparcel['guojiShoudan']=='PINGYOU'){?> selected <?php } ?>>PINGYOU</option>
+            <option value="SEA" <?php if($myparcel['guojiShoudan']=='SEA'){?> selected <?php } ?>>海运</option>
+            <option value="PINGYOU" <?php if($myparcel['guojiShoudan']=='PINGYOU'){?> selected <?php } ?>>拼邮</option>
         </select>
     </div>
   </div>
   <div class="row mb-4 form-group">
-    <div class="col-4 themed-grid-col">
-      <label for="transfeeGuojiJPY">transfeeGuojiJPY</label>
+    <div class="col-6 themed-grid-col">
+      <label for="transfeeGuojiJPY">国际运费JPY</label>
       <input type="text" class="form-control" id="transfeeGuojiJPY" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiJPY'] ?>">
     </div>
-    <div class="col-4 themed-grid-col">
-      <label for="transfeeGuojiCNY">transfeeGuojiCNY</label>
+    <div class="col-6 themed-grid-col">
+      <label for="transfeeGuojiCNY">国际运费CNY</label>
       <input type="text" class="form-control" id="transfeeGuojiCNY" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiCNY'] ?>">
-    </div>
-    <div class="col-4 themed-grid-col">
-      <label for="transnoGuoji">transnoGuoji</label>
-      <input type="text" class="form-control" id="transnoGuoji" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuoji'] ?>">
     </div>
   </div>
   <div class="row mb-4 form-group">
+    <div class="col-8 themed-grid-col">
+      <label for="transnoGuoji">国际快递号码</label>
+      <input type="text" class="form-control" id="transnoGuoji" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuoji'] ?>">
+    </div>
+<?php 
+  if($isAdmin){
+?>
+    <div class="col">
+	  <button class="btn btn-secondary actionBtn" id="btnGuojiFahuo" type="button">国际快递发货</button>
+	</div>
+<?php 
+  }
+?>
+  </div>
+  <div class="row mb-4 form-group">
     <div class="col-4 themed-grid-col">
-      <label for="transfeeGuonei">transfeeGuonei</label>
+      <label for="transfeeGuonei">国内运费CNY</label>
       <input type="text" class="form-control" id="transfeeGuonei" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuonei'] ?>">
     </div>
-    <div class="col-4 themed-grid-col">
-      <label for="transnoGuonei">transnoGuonei</label>
+    <div class="col-6 themed-grid-col">
+      <label for="transnoGuonei">国内快递号码</label>
       <input type="text" class="form-control" id="transnoGuonei" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuonei'] ?>">
     </div>
+<?php 
+  if($isAdmin){
+?>
+    <div class="col">
+	  <button class="btn btn-secondary actionBtn" id="btnGuojiFahuo" type="button">国际快递发货</button>
+	</div>
+<?php 
+  }
+?>
   </div>
   <hr class="mb-4">
   <div class="row mb-4 form-group">
     <div class="col-4 themed-grid-col">
-      <label for="ttlCNY">total(CNY)</label>
+      <label for="ttlCNY">总金额(CNY)</label>
       <input type="text" class="form-control" id="ttlCNY" readonly value="<?php echo $ttlCNY ?>">
     </div>
     <div class="col-4 themed-grid-col">
-      <label for="bukuanCNY">paidTtl(CNY)</label>
+      <label for="bukuanCNY">已付款(CNY)</label>
       <input type="text" class="form-control" id="paidTtlCNY" readonly value="<?php echo $myparcel["paidTtlCNY"] ?>">
     </div>
     <div class="col-4 themed-grid-col">
-      <label for="bukuanCNY">bukuan(CNY)</label>
+      <label for="bukuanCNY">补款(CNY)</label>
       <input type="text" class="form-control" id="bukuanCNY" readonly value="<?php echo $bukuanCNY ?>">
     </div>
   </div>
   <hr class="mb-4">
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">日元</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">priceCNY</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">transfeeDaoneiJPY</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">transfeeDaoneiCNY</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">daigoufeiCNY</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">itemCNY</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">zhongliang(g)</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">货值日元</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">货值人民币</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">岛内运费日元</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">岛内运费人民币</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">代购费</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">商品合计</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">重量(g)</div>
   </div>
   <div class="row bg-success text-white">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">heji</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">
+	合计
+	<button class="btn btn-secondary actionBtn" id="btnReCalc" type="button">再计算</button>
+	</div>
     <div class="col text-break themed-grid-col border border-primary">
 	  <?php echo $myparcel["itemTtlPriceJPY"] ?>
 	  <input type="hidden" class="form-control" id="itemTtlPriceJPY"  value="<?php echo $myparcel["itemTtlPriceJPY"] ?>">
@@ -241,7 +262,7 @@ $(function() {
 ?>
   <div class="row <?php echo $boxCss ?>">
     <input type="hidden" id="biduid" value="<?php echo $data['uid'] ?>">
-    <div class="col-4 text-break themed-grid-col border border-secondary">
+    <div class="col-2 text-break themed-grid-col border border-secondary">
 	  <a href="<?php echo $data['itemUrl'] ?>" target="blank">
 	    <?php echo $data['itemName'] != '' ? $data['itemName'] : $data['itemUrl'] ?>
 	  </a>
@@ -259,22 +280,24 @@ $(function() {
 ?>
   <hr class="mb-4">
   <div class="row mb-4 form-group">
-    <div class="col-6 themed-grid-col">
-      <label for="taobaoDingdanhao">taobaoDingdanhao</label>
+    <div class="col-7 themed-grid-col">
+      <label for="taobaoDingdanhao">淘宝订单号</label>
       <input type="text" class="form-control" id="taobaoDingdanhao" >
     </div>
-    <div class="col-3 themed-grid-col">
-      <label for="taobaoDingdanCNY">cny</label>
+    <div class="col-5 themed-grid-col">
+      <label for="taobaoDingdanCNY">金额</label>
       <input type="text" class="form-control" id="taobaoDingdanCNY" >
     </div>
-    <div class="col-2 themed-grid-col">
-		<button class="btn btn-secondary actionBtn" id="btnAddTaobaoDingdan" type="button">add</button>
+  </div>
+  <div class="row mb-4 form-group">
+    <div class="col-12 themed-grid-col">
+	  <button class="btn btn-secondary actionBtn" id="btnAddTaobaoDingdan" type="button">添加淘宝订单</button>
     </div>
   </div>
   <hr class="mb-4">
   <div class="row">
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">taobaoDingdanhao</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">cny</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">淘宝订单号</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">金额</div>
     <div class="col text-break themed-grid-col border border-primary bg-info text-white">action</div>
   </div>
 <?php

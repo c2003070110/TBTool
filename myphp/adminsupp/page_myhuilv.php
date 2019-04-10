@@ -20,8 +20,8 @@ require __DIR__ .'/MyHuilv.php';
 var actionUrl = "<?php echo constant("URL_ACTION_ADMINSUPP") ?>";
 $(function() {
     $(document).on("click", "#btnGetYLHV", function() {
-		$("#huilvYL").val(0.0603);
-		/*
+		//$("#huilvYL").val(0.0603);
+		
         var url = "https://www.kuaiyilicai.com/uprate/jpy.html";
         var jqxhr = $.ajax("/myphp/redirect.php",
                          { type : "GET",
@@ -29,19 +29,25 @@ $(function() {
                            dataType : "html" }
                       );
         jqxhr.done(function( msg ) {
-			var subRowList = $(msg).find("div[class=\"panel-body\"]").find("div[class=\"sub_row\"]");
+			//console.log(msg);
+			//var htmlEle = $(msg).find("body > div.container > form > div:nth-child(3) > div > div.panel-body > div:nth-child(2) > div.col-md-10.col-xs-8 > span:nth-child(1)");
+			
+			//console.log(htmlEle.html());
+			
+			var subRowList = $(msg).find(".sub_row").find("span");
             for(var i=0; i<subRowList.length; i++){
-				var divlist = $(subRowList[i]).find("div");
-				if(divlist.length != 2){
-					continue;
-				}
-				if("汇率:" == $(divlist[0]).text()){
-					var huilvTxt = $(divlist[1].find("span").text());
-					$("#huilv").val(huilvTxt);
+				var huilvTxt = $(subRowList[i]).html();
+				if(huilvTxt.indexOf("0.0") == 0){
+					$("#huilvYL").val(huilvTxt);
+					
+					var huilvYL = parseFloat($("#huilvYL").val());
+                    var plusplus = parseFloat($("#plusplus").val());
+                    $("#myhuilv").val(huilvYL + plusplus);
+					break;
 				}
 			}
 	    });
-		*/
+		
     });
     $(document).on("click", "#btnSave", function() {
         var myhuilv = parseFloat($("#myhuilv").val());
@@ -58,11 +64,9 @@ $(function() {
                       );
         jqxhr.done(function( msg ) {
             alert(msg);
-            thisBox.find("#codeCd").val("");
         });
     });
     $(document).on("change", ".form-control", function() {
-        var thisBox = $(this).parent().parent().parent();
         var huilvYL = parseFloat($("#huilvYL").val());
         var plusplus = parseFloat($("#plusplus").val());
         $("#myhuilv").val(huilvYL + plusplus);

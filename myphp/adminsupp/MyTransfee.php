@@ -1,6 +1,4 @@
 <?php
-require __DIR__ . '/../mycommon.php';
-require __DIR__ . '/../mydefine.php';
 
 class MyTransfee
 {

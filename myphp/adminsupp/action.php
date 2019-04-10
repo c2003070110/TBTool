@@ -1,8 +1,8 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 require __DIR__ .'/MyHuilv.php';
 $actionStr = $_GET['action'];
@@ -14,11 +14,7 @@ if($actionStr === null){
 
 if($actionStr == "saveMyhuilv"){
 	$my = new MyHuilv();
-	$obj = new HuilvObject();
-	$obj->huilvDiv = $_GET['huilvDiv'];
-	$obj->plusplus = $_GET['plusplus'];
-	$obj->myhuilv = $_GET['myhuilv'];
-	$rslt = $my->save($obj);
+	$rslt = $my->save($_GET);
 	echo $rslt;
 	
 } else if($actionStr == "listByBuyer"){

@@ -146,15 +146,15 @@ $(function() {
     if($amtInputFlag){
 ?>
     <div class="col-3 text-break border border-primary bg-info text-white">日元</div>
-    <div class="col-3 text-break border border-primary bg-info text-white">daoneiyunfei</div>
+    <div class="col-3 text-break border border-primary bg-info text-white">岛内运费</div>
 <?php
     }
 ?>
 <?php
     if($weightInputFlag){
 ?>
-    <div class="col-2 text-break border border-primary bg-info text-white">zhongliang(g)</div>
-    <div class="col-6 text-break border border-primary bg-info text-white">obiderAddr</div>
+    <div class="col-2 text-break border border-primary bg-info text-white">重量(g)</div>
+    <div class="col-6 text-break border border-primary bg-info text-white">YA卖家地址</div>
 <?php
     }
 ?>

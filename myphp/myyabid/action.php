@@ -4,8 +4,8 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
-require __DIR__ .'/MyYaBid.php';
-require __DIR__ .'/../adminsupp/MyTransfee.php';
+require_once __DIR__ .'/MyYaBid.php';
+require_once __DIR__ .'/../adminsupp/MyTransfee.php';
 $actionStr = $_GET['action'];
 
 if($actionStr === null){
@@ -20,7 +20,7 @@ if($actionStr == "getYunfei"){
 	}
 	$transfeeGuojiJPY = $my->getGuojiYunfei($_GET["weigth"], $_GET["guojiShoudan"]);
 	$transfeeGuonei = $my->getGuoneiYunfei($_GET["weigth"], $_GET["guojiShoudan"]);
-	if(empty($_GET["buyer"]) && empty($_GET["myparcelUid"]) ){
+	if(!empty($_GET["buyer"]) && !empty($_GET["myparcelUid"]) ){
 		$my = new MyYaBid();
 		$my->updateParcelByYunfei($_GET["buyer"], $_GET["myparcelUid"], $_GET["guojiShoudan"],$transfeeGuojiJPY, $transfeeGuonei);
 	}

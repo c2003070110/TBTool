@@ -84,9 +84,9 @@ $(function() {
   <div class="row">
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
     <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">日元</div>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">daoneiyunfei</div>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">zhongliang(g)</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">货值日元</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">岛内运费</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">重量(g)</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
@@ -129,17 +129,7 @@ $(function() {
 <?php
     if($buyer == $data['buyer'] && ($data["status"] == 'paiBf')){
 ?>
-    <div class="col-2 border border-secondary">
-	  <div class="mt-1 mb-1">
-		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">cancel</button>
-	  </div>
-	</div>
-    <div class="col-2 border border-secondary">
-	  <div class="mt-1 mb-1">
-		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">cancel</button>
-	  </div>
-	</div>
-    <div class="col-2 border border-secondary">
+    <div class="col-6 border border-secondary">
 	  <div class="mt-1 mb-1">
 		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">cancel</button>
 	  </div>

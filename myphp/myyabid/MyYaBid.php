@@ -1,11 +1,11 @@
 <?php
-require __DIR__ . '/../mycommon.php';
-require __DIR__ . '/../mydefine.php';
-require __DIR__ .'/ParcelObject.php';
-require __DIR__ .'/BidItemObject.php';
-require __DIR__ .'/BuyerObject.php';
-require __DIR__ .'/../adminsupp/MyTransfee.php';
-require __DIR__ .'/../adminsupp/MyHuilv.php';
+require_once __DIR__ . '/../mycommon.php';
+require_once __DIR__ . '/../mydefine.php';
+require_once __DIR__ .'/ParcelObject.php';
+require_once __DIR__ .'/BidItemObject.php';
+require_once __DIR__ .'/BuyerObject.php';
+require_once __DIR__ .'/../adminsupp/MyTransfee.php';
+require_once __DIR__ .'/../adminsupp/MyHuilv.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
@@ -102,7 +102,8 @@ class MyYaBid
 				continue;
 			}
 			$obj = new BidItemObject();
-			$obj->uid = uniqid(). strval(idx++);
+			$obj->uid = uniqid() . strval($idx++);
+			
 			$obj->buyer = $buyer;
 			$obj->status = 'paiBf';
 			$obj->itemUrl = $url;

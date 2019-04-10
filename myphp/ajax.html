@@ -1,10 +1,9 @@
 
 <html>
 <head>
-<title>MY Montbell</title>
+<title>test</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <style type="text/css">
 <!--
 div {border-style:solid;width:100%}
@@ -12,12 +11,7 @@ input {height:48px}
 button {height:48px}
 -->
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<script
-  src="https://code.jquery.com/jquery-1.12.4.min.js"
-  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-  crossorigin="anonymous"></script>
+<script type="text/javascript" src="ui/libs/jquery-1.7.2.js"></script>
 <script type="text/javascript">
 var rootUrl = "http://webshop.montbell.jp";
 function toString(obj){
@@ -42,7 +36,7 @@ $(function(){
   $("#send").click(function() {
      var prodId = $("#productId").val();
      var prodUrl = "http://webshop.montbell.jp/goods/disp.php?product_id=" + prodId;
-     var jqxhr = $.ajax("redirect.php",
+     var jqxhr = $.ajax("ajax-test/redirect.jsp",
                          { type : "GET",
                            data : {realUrl : prodUrl},
                            dataType : "html" }
@@ -72,7 +66,7 @@ $(function(){
              }
              stockString += "\n";
          }
-         stockString = "<textarea name=\"textArea1\" rows=\"6\" cols=\"90\">" + stockString + "</textarea>";
+         stockString = "<textarea name=\"textArea1\" rows=\"6\" cols=\"100\">" + stockString + "</textarea>";
          
          var dtlDisp = $(msg).find("div.type01");
          var dtlDispString = "";
@@ -126,40 +120,10 @@ $(function(){
          });
      });
   });
-  $("#douyin").click(function() {
-     var douyinURL = $("#douyinURL").val();
-     var jqxhr = $.ajax("douyin.php",
-                         { type : "GET",
-                           data : {douyinUrl : douyinURL},
-                           dataType : "html" }
-                      );
-     jqxhr.done(function( msg ) {
-	    alert(msg);
-		$("#douyinURL").val("");
-	 });
-	});
-  $("#yaAucBtn").click(function() {
-     var taobaoOrderId = $("#taobaoOrderId").val();
-     var yaAucKey = $("[name=yaAucKey] option:selected").val();
-     var yaAucCode = $("#yaAucCode").val();
-     var jqxhr = $.ajax("yaauc.php",
-                         { type : "GET",
-                           data : {
-						     taobaoOrderId : taobaoOrderId,
-						     yaAucKey : yaAucKey,
-						     yaAucCode : yaAucCode
-						    },
-                           dataType : "html" }
-                      );
-     jqxhr.done(function( msg ) {
-	    alert(msg);
-		$("#yaAucCode").val("");
-	 });
-	});
 });
 function sizeReget (prodId) {
     var sizeUrl = "http://webshop.montbell.jp/goods/size/?product_id=" + prodId;
-    var jqxhr = $.ajax("redirect.php",
+    var jqxhr = $.ajax("ajax-test/redirect.jsp",
                          { type : "GET",
                            data : {realUrl : sizeUrl},
                            async: false,
@@ -183,41 +147,8 @@ function sizeReget (prodId) {
 
 </head>
 <body>
-<!-- MONTBELL START-->
-<div>
-  <label class="w-20 p-3">MontBell ID:</label>
-  <input class="w-20 p-3" type="text" id="productId">
-  <button id="send">send</button>
+<input type="text" id="productId"><button id="send">send</button>
+
 <div id ="result"></div>
-</div>
-<!-- MONTBELL END-->
-<!-- DOUYIN START-->
-<div>
-  <label class="w-20 p-3">DOUYIN URL:</label>
-  <input class="w-20 p-3" type="text" id="douyinURL">
-  <button id="douyin">save</button>
-<!-- DOUYIN END-->
-<!-- Ya Auction START-->
-<!--
-<div>
-  <label class="w-20 p-3">订单号:</label>
-  <input class="w-20 p-3" type="text" id="taobaoOrderId">
-  <label class="w-20 p-3">类型:</label>
-  <select name="yaAucKey">
-    <option value="PSNUSD10" selected>PSN 10美元</option>
-    <option value="PSNUSD20">PSN 20美元</option>
-    <option value="PSNUSD50">PSN 50美元</option>
-    <option value="PSNUSD100">PSN 100美元</option>
-    <option value="XBOXUSD10">XBOX 10美元</option>
-    <option value="XBOXUSD20">XBOX 20美元</option>
-    <option value="XBOXUSD50">XBOX 50美元</option>
-    <option value="XBOXUSD100">XBOX 100美元</option>
-  </select>
-  <label class="w-20 p-3">CODE:</label>
-  <input class="w-20 p-3" type="text" id="yaAucCode">
-  <button id="yaAucBtn">save</button>
-  -->
-<!-- Ya Auction END-->
 </body>
 </html>
-

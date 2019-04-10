@@ -46,6 +46,8 @@ $(function() {
 			//location.reload();
         });
     });
+    $(document).on("change", ".priceInput", function() {
+    });
 });
 </script>
 </head>
@@ -61,46 +63,154 @@ $(function() {
   if($buyer == ''){
 	  exit(0);
   }
+  $huilv = $my->getHuilv();
 ?>
-  <hr class="mb-4">
   <div class="box itembox">
     <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
+    <input type="hidden" id="myhuilv" value="<?php echo $huilv ?>">
     <div class="row mb-2 form-group">
-      <div class="col-12 themed-grid-col">
+      <div class="col-6">
         <label for="priceJPY">url</label>
-        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <label for="priceJPY">心里价 日元</label>
+      </div>
+      <div class="col-3">
+        <label for="priceCNY">人民币含代购费</label>
       </div>
     </div>
     <div class="row mb-2 form-group">
-      <div class="col-12 themed-grid-col">
-        <label for="priceJPY">url</label>
+      <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
     <div class="row mb-2 form-group">
-      <div class="col-12 themed-grid-col">
-        <label for="priceJPY">url</label>
+      <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
     <div class="row mb-2 form-group">
-      <div class="col-12 themed-grid-col">
-        <label for="priceJPY">url</label>
+      <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
     <div class="row mb-2 form-group">
-      <div class="col-12 themed-grid-col">
+      <div class="col-6">
+        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
+    </div>
+    <div class="row mb-2 form-group">
+      <div class="col-6">
+        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
+    </div>
+	<!--
+    <div class="row mb-2 form-group">
+      <div class="col-6">
+        <label for="url">url</label>
+        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <label for="priceJPY">心里价位日元</label>
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <label for="priceCNY">折和人民币</label>
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
+    </div>
+    <div class="row mb-2 form-group">
+      <div class="col-6">
         <label for="priceJPY">url</label>
         <input type="text" class="form-control urlInput" id="url" >
       </div>
+      <div class="col-3">
+        <label for="priceJPY">日元</label>
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <label for="priceCNY">人民币</label>
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
     </div>
+    <div class="row mb-2 form-group">
+      <div class="col-6">
+        <label for="priceJPY">url</label>
+        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <label for="priceJPY">日元</label>
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <label for="priceCNY">人民币</label>
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
+    </div>
+    <div class="row mb-2 form-group">
+      <div class="col-6">
+        <label for="priceJPY">url</label>
+        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <label for="priceJPY">日元</label>
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <label for="priceCNY">人民币</label>
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
+    </div>
+    <div class="row mb-2 form-group">
+      <div class="col-6">
+        <label for="priceJPY">url</label>
+        <input type="text" class="form-control urlInput" id="url" >
+      </div>
+      <div class="col-3">
+        <label for="priceJPY">日元</label>
+        <input type="text" class="form-control priceInput" id="priceJPY" >
+      </div>
+      <div class="col-3">
+        <label for="priceCNY">人民币</label>
+        <input type="text" class="form-control priceInput" id="priceCNY" readonly>
+      </div>
+    </div>
+	-->
     <div class="row mb-4 form-group">
       <div class="col-4"></div>
-      <div class="col-3 btn-secondary">
-        <button class="btn" id="btnAdd" type="button">add</button>
+      <div class="col-8 ">
+        <button class="btn btn-secondary actionBtn" id="btnAdd" type="button">a d d ！！</button>
       </div>
-      <div class="col-4"><div>
     </div>
   </div>
 </div>

@@ -2,6 +2,7 @@
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
+
   require __DIR__ .'/MyYaBid.php';
   $admin = $_GET["admin"];
 ?>
@@ -70,7 +71,9 @@ $(function() {
 ?>
   <div class="row">
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $data["buyer"] ?></div>
-    <div class="col-9 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $url ?></div>
+    <div class="col-9 text-break themed-grid-col border border-primary bg-info text-white">
+	<a href="<?php echo $url ?>"><?php echo $url ?></a>
+	</div>
   </div>
 <?php
   }

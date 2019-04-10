@@ -94,14 +94,14 @@ $(function() {
 <?php
     if($status == 'unused' || $status == 'using' || $status == 'used'){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
 <?php
     }
 ?>
 <?php
     if($status == 'used'){
 ?>
-    <div class="col-2 themed-grid-col border border-primary bg-info text-white">AucId</div>
+    <div class="col-3 themed-grid-col border border-primary bg-info text-white">AucId</div>
 <?php
     }
 ?>
@@ -127,7 +127,7 @@ $(function() {
 <?php
     if($status == 'unused' || $status == 'using' || $status == 'used'){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-secondary">
+    <div class="col-2 text-break themed-grid-col border border-secondary">
 <?php 
   if($data["status"] == 'unused') {
 ?>
@@ -157,19 +157,18 @@ $(function() {
 <?php
     if($status == 'used'){
 ?>
-    <div class="col-2 themed-grid-col border border-secondary bg-dark text-white">
+    <div class="col-3 themed-grid-col border border-secondary bg-dark text-white">
 	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['aucId'] ?>" target="blank">
-	    <?php echo $data["aucId"] ?></div>
+	    <?php echo $data["aucId"] ?>
 	  </a>
-  </div>
+    </div>
 <?php
     }
 ?>
+  </div>
 <?php
   }
 ?>
-      <hr class="mb-4">
-
 </div>
 </body>
 </html>

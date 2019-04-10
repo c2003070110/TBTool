@@ -2,8 +2,7 @@
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
-  require __DIR__ .'/MyYaBid.php';
-  require __DIR__ .'/../adminsupp/MyHuilv.php';
+  require_once __DIR__ .'/MyYaBid.php';
   $buyer = $_GET["buyer"];
   $admin = $_GET["admin"];
 ?>
@@ -33,6 +32,7 @@ $(function() {
 		var itemTtlJPY=0, itemTransfeeDaoneiTtlJPY=0, itemTtlCNY=0;
 		for(var i=0; i<itemBoxes.length; i++){
 			var priceJPY = parseInt($(itemBoxes[i]).find("#priceJPY").val());
+			if(priceJPY == 0)continue;
 			itemTtlJPY = itemTtlJPY + priceJPY;
 			
 			var transfeeDaoneiJPY = parseInt($(itemBoxes[i]).find("#transfeeDaoneiJPY").val());
@@ -90,100 +90,99 @@ $(function() {
   if($buyer == ""){
 	  exit(0);
   }
-  $myhuilv = new MyHuilv();
-  $huilv = $myhuilv->listByHuilvDiv("YA");
+  $huilv = $my->getHuilv();
   
   $mydaigoufei = $my->getDaigoufei();
 ?>
   <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
   <input type="hidden" id="myhuilv" value="<?php echo $huilv ?>">
   <input type="hidden" id="mydaigoufei" value="<?php echo $mydaigoufei ?>">
+  <h3>竞拍价格计算</h3>
   <div class="box">
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
-        <button type="button" id="btnAddItem" class="btn btn-secondary actionBtn">add another item</button>
+        <button type="button" id="btnAddItem" class="btn btn-secondary actionBtn">添加多个竞拍</button>
       </div>
     </div>
   </div>
-  <hr class="mb-4">
   <div class="box itembox" id="itemRow">
+    <hr class="mb-1">
     <div class="row mb-4 form-group">
-      <div class="col-4 themed-grid-col">
-        <label for="priceJPY">priceJPY</label>
-        <input type="text" class="form-control" id="priceJPY" >
+      <div class="col-3 themed-grid-col">
+        <label for="priceJPY">货值JPY</label>
+        <input type="text" class="form-control" id="priceJPY" value="0">
       </div>
       <div class="col-4 themed-grid-col">
-        <label for="transfeeDaoneiJPY">transfeeDaoneiJPY</label>
-        <input type="text" class="form-control" id="transfeeDaoneiJPY" >
+        <label for="transfeeDaoneiJPY">岛内运费JPY</label>
+        <input type="text" class="form-control" id="transfeeDaoneiJPY" value="0">
       </div>
-      <div class="col-4 themed-grid-col">
-        <label for="priceCNY">priceCNY</label>
+      <div class="col-5 themed-grid-col">
+        <label for="priceCNY">货值CNY(含代购费)</label>
         <input type="text" class="form-control" id="priceCNY" readonly>
       </div>
     </div>
   </div>
-  <h3>item xiao ji</h3>
   <hr class="mb-1">
   <div class="box" id="itemhejibox">
     <div class="row mb-4 form-group">
-      <div class="col-4 themed-grid-col">
-        <label for="itemTtlJPY">itemTtlJPY</label>
+      <div class="col-3 themed-grid-col">
+        <label for="itemTtlJPY">合值JPY</label>
         <input type="text" class="form-control" id="itemTtlJPY" readonly >
       </div>
       <div class="col-4 themed-grid-col">
-        <label for="itemTransfeeDaoneiTtlJPY">itemTransfeeDaoneiTtlJPY</label>
+        <label for="itemTransfeeDaoneiTtlJPY">合值JPY</label>
         <input type="text" class="form-control" id="itemTransfeeDaoneiTtlJPY" readonly >
       </div>
-      <div class="col-4 themed-grid-col">
-        <label for="itemTtlCNY">itemTtlCNY</label>
+      <div class="col-5 themed-grid-col">
+        <label for="itemTtlCNY">合值CNY</label>
         <input type="text" class="form-control" id="itemTtlCNY" readonly>
       </div>
     </div>
   </div>
-  <h3>guoji yunfei</h3>
+  <h3>国际运费计算</h3>
   <hr class="mb-1">
   <div class="box" id="guojiYunfeiBox">
     <div class="row mb-4 form-group">
       <div class="col-6 themed-grid-col">
-        <label for="priceJPY">zhongliang(g)</label>
+        <label for="priceJPY">包裹重量(g)</label>
         <input type="text" class="form-control" id="weigth" >
       </div>
       <div class="col-6 themed-grid-col">
-          <label for="guojiShoudan">shoudan</label>
+          <label for="guojiShoudan">快递方式</label>
           <select class="custom-select d-block w-100 form-control" id="guojiShoudan">
               <option value="EMS" selected>EMS</option>
               <!--<option value="AIR">AIR</option>-->
               <option value="SAL">SAL</option>
-              <option value="SEA">SEA</option>
-              <option value="PINGYOU">PINGYOU</option>
+              <option value="SEA">海运</option>
+              <option value="PINGYOU">拼邮</option>
           </select>
       </div>
     </div>
     <div class="row mb-4 form-group">
       <div class="col-4 themed-grid-col">
-        <label for="transfeeGuojiJPY">transfeeGuojiJPY</label>
+        <label for="transfeeGuojiJPY">国际运费JPY</label>
         <input type="text" class="form-control" id="transfeeGuojiJPY" readonly>
       </div>
       <div class="col-4 themed-grid-col">
-        <label for="transfeeGuojiCNY">transfeeGuojiCNY</label>
+        <label for="transfeeGuojiCNY">国际运费CNY</label>
         <input type="text" class="form-control" id="transfeeGuojiCNY" readonly>
       </div>
       <div class="col-4 themed-grid-col">
-        <label for="transfeeGuonei">transfeeGuonei</label>
+        <label for="transfeeGuonei">拼邮时国内段运费</label>
         <input type="text" class="form-control" id="transfeeGuonei" readonly>
       </div>
     </div>
   </div>
-  <h3>zongji</h3>
+  <h3>总计费用</h3>
   <hr class="mb-1">
   <div class="box" id="hejibox">
     <div class="row mb-4 form-group">
       <div class="col-6 themed-grid-col">
-        <label for="ttlJPY">ttlJPY</label>
+        <label for="ttlJPY">总计JPY</label>
         <input type="text" class="form-control" id="ttlJPY" readonly >
       </div>
       <div class="col-6 themed-grid-col">
-        <label for="ttlCNY">ttlCNY</label>
+        <label for="ttlCNY">你需要付款的金额CNY</label>
         <input type="text" class="form-control" id="ttlCNY" readonly>
       </div>
     </div>
@@ -192,7 +191,7 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-12 themed-grid-col">
 	    <a href="/myphp/myyabid/page_addMyBid.php?buyer=<?php echo $buyer ?>">
-	      add bid
+	      收费能接受，想竞拍。点这里提交竞拍宝贝的链接
 	    </a>
       </div>
     </div>
