@@ -25,4 +25,6 @@ define("TBL_MYYABID_PARCEL_INFO", "myyabid.parcel.info");
 
 define("TBL_MYYABID_TAOBAO_DINGDAN_INFO", "myyabid.taobao.dingdan.info"); 
 
+define("TBL_MYYABID_BID_INFO", "myyabid.bid.info"); 
+
 ?>

@@ -6,13 +6,11 @@ class ParcelObject
 	
     public $guojiShoudan = '';//1:ems;2:air;3:sal;4:sea;5:pinyou
 	
-	//public $transWeight = 0;
-	
 	public $transfeeGuojiJPY = 0;
 	public $transfeeGuojiCNY = 0;
 	public $transnoGuoji = '';
 	
-    public $status = '';// 1:daBao;2:zaiTu;3:gnFh;4:fin;
+    public $status = '';// 1:daBao;2:zaiTu;3:guonneiFh;4:fin;
 	
 	public $transfeeGuonei = 0;
 	public $transnoGuonei = '';
@@ -29,5 +27,8 @@ class ParcelObject
 	
     public $itemTtlCNY = 0;
     public $daigoufeiTtlCNY = 0;
+    
+    public $dabaofeiCNY = 0;
+    public $barginCNY = 0;
 }
 ?>

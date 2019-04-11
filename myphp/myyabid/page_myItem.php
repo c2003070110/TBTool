@@ -28,19 +28,25 @@ $(function() {
 		
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":"updateItemPrice", 
+			   data : {"action":"updateItemEstimatePrice", 
 					   "uid" : $("#uid").val(),
 					   "buyer" : $("#buyer").val(),
-					   "priceJPY" : $("#priceJPY").val(),
-					   "transfeeDaoneiJPY" : $("#transfeeDaoneiJPY").val(),
-					   "weight" : $("#weight").val(),
+					   "estimateJPY" : $("#estimateJPY").val()
 			   },
 			   dataType : "html" 
 			  }
 		  );
         jqxhr.done(function( msg ) {
-            //location.reload();
+            location.reload();
         });
+    });
+    $(document).on("change", ".priceInput", function() {
+		var thisBox = $(this).parent().parent();
+		var jpy = parseInt($("#estimateJPY").val());
+		var huilv = parseFloat($("#myhuilv").val());
+		var mydaigoufei = parseInt($("#mydaigoufei").val());
+		var cny = Math.ceil(jpy * huilv) + mydaigoufei;
+		$("#estimateCNY").val(cny);
     });
 });
 </script>
@@ -54,42 +60,43 @@ $(function() {
   if($admin != '' && !$isAdmin){
 	  exit(0);
   }
-  if($buyer == '' && !$uid == ''){
+  if(empty($buyer) && empty($uid)){
 	  exit(0);
   }
   $my = new MyYaBid();
   $data = $my->listItemByBuyerAndItemUid($buyer, $uid);
-  if(!isset($data)){
+  if(empty($data)){
 	  exit(0);
   }
+  $huilv = $my->getHuilv();
+  $mydaigoufei = $my->getDaigoufei();
+  $estimateCNY = ceil(intval($data["estimateJPY"]) * $huilv) + $mydaigoufei;
+  $editFlag = ($data["status"] == "paiBf") || ($data["status"] == "paiing");
+  //var_dump($editFlag);
 ?>
   <div class="box itembox">
     <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
     <input type="hidden" id="uid" value="<?php echo $uid ?>">
+    <input type="hidden" id="myhuilv" value="<?php echo $huilv ?>">
+    <input type="hidden" id="mydaigoufei" value="<?php echo $mydaigoufei ?>">
     <div class="row mb-4 form-group">
       <div class="col-12 text-break themed-grid-col">
         <label for="itemName">ItemName</label>
 	    <a href="<?php echo $data['itemUrl'] ?>" target="blank" id="itemName">
-	      <?php echo $data['itemName'] ?>
+	      <?php echo $data['itemName'] != '' ? $data['itemName'] : $data['itemUrl'] ?>
 	    </a>
 	  </div>
     </div>
     <div class="row mb-4 form-group">
       <div class="col-12 themed-grid-col">
-        <label for="priceJPY">priceJPY</label>
-        <input type="text" class="form-control" id="priceJPY" value="<?php echo $data['priceJPY'] ?>">
+        <label for="priceJPY">心里价 日元</label>
+        <input type="text" class="form-control priceInput" id="estimateJPY" value="<?php echo $data['estimateJPY'] ?>" <?php if(!$editFlag){?> readonly <?php } ?>>
       </div>
     </div>
     <div class="row mb-4 form-group">
-      <div class="col-10 themed-grid-col">
-        <label for="transfeeDaoneiJPY">transfeeDaoneiJPY</label>
-        <input type="text" class="form-control" id="transfeeDaoneiJPY" value="<?php echo $data['transfeeDaoneiJPY'] ?>" <?php if(!$isAdmin){?> readonly <?php } ?>>
-      </div>
-    </div>
-    <div class="row mb-4 form-group">
-      <div class="col-10 themed-grid-col">
-        <label for="weight">weight</label>
-        <input type="text" class="form-control" id="weight" value="<?php echo $data['weight'] ?>" <?php if(!$isAdmin){?> readonly <?php } ?>>
+      <div class="col-12 themed-grid-col">
+        <label for="priceJPY">人民币含代购费</label>
+        <input type="text" class="form-control" id="estimateCNY" value="<?php echo $estimateCNY ?>" readonly >
       </div>
     </div>
     <div class="row mb-4 form-group">

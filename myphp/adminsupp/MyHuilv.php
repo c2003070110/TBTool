@@ -7,14 +7,14 @@ use cybrox\crunchdb\CrunchDB as CrunchDB;
 
 class MyHuilv
 {
-	public function save($obj){
+	public function save($huilvDiv, $plusplus, $myhuilv){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYHUILV_INFO"));
 		
 		$obj = new HuilvObject();
-		$obj->huilvDiv = $_GET['huilvDiv'];
-		$obj->plusplus = $_GET['plusplus'];
-		$obj->huilvVal = $_GET['myhuilv'];
+		$obj->huilvDiv = $huilvDiv;
+		$obj->plusplus = $plusplus;
+		$obj->huilvVal = $myhuilv;
 		
 		$cnt = $tbl->select(['huilvDiv', '==', $obj->huilvDiv])->count();
 		if($cnt == 0){
@@ -24,6 +24,15 @@ class MyHuilv
 			$tbl->select(['huilvDiv', '==', $obj->huilvDiv])
 				->update(['huilvVal', $obj->myhuilv]);
 			return "update!";
+		}
+	}
+	public function updateHuilvByYinglian($huilvYL){
+		$dataArr = $this->listAllItem();
+		$huilv = doubleval($huilvYL);
+		foreach ($dataArr as $data) {
+			$pp = doubleval($data["plusplus"]);
+			$huilvNew = $huilv + $pp;
+			$this->save($data["huilvDiv"], $data["plusplus"], $huilvNew);
 		}
 	}
 	public function listAllItem(){

@@ -38,7 +38,7 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
-public class YaAuAutoSend {
+public class YaAucDemon {
 	private String myaucinfoUrl = "https://auctions.yahoo.co.jp/jp/show/myaucinfo";
 	private String republishUrlFmt = "https://auctions.yahoo.co.jp/sell/jp/show/resubmit?aID=%s";
  
@@ -53,7 +53,7 @@ public class YaAuAutoSend {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		YaAuAutoSend main = new YaAuAutoSend();
+		YaAucDemon main = new YaAucDemon();
 		main.execute();
 	}
 
@@ -65,29 +65,19 @@ public class YaAuAutoSend {
 		while (true) {
 			try {
 				long t1 = System.currentTimeMillis();
-				if (hasPaid(driver)) {
-					//log("[SEND]Same auction has paid and need to sent the code.");
-					//fetchLastestCode();
-					send(driver);
-				} else {
-					log("[RSLT]There is NONE to sent.");
-				}
+				
+				forSeller(driver,interval, t1);
+				
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
 				if (dif > interval * 1000) {
 					continue;
 				}
-				republish(driver);
-				  t2 = System.currentTimeMillis();
-				  dif = t2 - t1;
-				if (dif > interval * 1000) {
-					continue;
-				}
-				if (hasNeedReview(driver)) {
-					review(driver);
-				} else {
-					log("[RSLT]There is NONE to review.");
-				}
+				
+				forBuyer(driver,interval,t2);
+				
+				t2 = System.currentTimeMillis();
+				dif = t2 - t1;
 				if (dif < interval * 1000) {
 					log("[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
@@ -96,6 +86,47 @@ public class YaAuAutoSend {
 			} catch (Exception ex) {
 				log(ex);
 			}
+		}
+	}
+
+	private void forBuyer(WebDriver driver, int interval, long t2) {
+		// TODO 
+		// listItemByEmptyBidUidOne
+		// insertBidObject
+		
+		// listBidByEmptyObiderAdrOne
+		// updateBidByObiderAdr
+		
+		// listItemByEmptyPriceOne
+		// updateItemPriceByBidId
+		
+		// updateBidByObiderMsg
+		// updateItemStatusDepaiByBidId
+		// updateItemStatusBdfhByBidId
+	}
+
+	private void forSeller(WebDriver driver, int interval, long t1) throws IOException, URISyntaxException {
+
+		if (hasPaid(driver)) {
+			send(driver);
+		} else {
+			log("[RSLT]There is NONE to sent.");
+		}
+		long t2 = System.currentTimeMillis();
+		long dif = t2 - t1;
+		if (dif > interval * 1000) {
+			return;
+		}
+		republish(driver);
+		t2 = System.currentTimeMillis();
+		dif = t2 - t1;
+		if (dif > interval * 1000) {
+			return;
+		}
+		if (hasNeedReview(driver)) {
+			review(driver);
+		} else {
+			log("[RSLT]There is NONE to review.");
 		}
 	}
 

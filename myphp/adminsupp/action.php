@@ -14,55 +14,20 @@ if($actionStr === null){
 
 if($actionStr == "saveMyhuilv"){
 	$my = new MyHuilv();
-	$rslt = $my->save($_GET);
+	$rslt = $my->save($_GET['huilvDiv'],$_GET['plusplus'],$_GET['myhuilv']);
+	echo $rslt;
+} else if($actionStr == "updateYLHuilv"){
+	if(empty($_GET["huilvYL"])){
+		echo "[ERROR]PARAMETER";
+		return;
+	} 
+	$my = new MyHuilv();
+	$rslt = $my->updateHuilvByYinglian($_GET["huilvYL"]);
 	echo $rslt;
 	
-} else if($actionStr == "listByBuyer"){
-	$my = new MyDaiGou();
-	$rslt = $my->listByBuyer($obj->buyer);
-	echo $rslt;
-} else if($actionStr == "saveItem"){
-	$my = new MyDaiGou();
-	$obj = new ItemObject();
-	$obj->uid = $_GET['uid'];
-	$obj->buyer = $_GET['buyer'];
-	$obj->orderDate = $_GET['orderDate'];
-	$obj->orderItem = $_GET['orderItem'];
-	$obj->priceJPY = $_GET['priceJPY'];
-	$obj->qtty = $_GET['qtty'];
-	$obj->priceCNY = $_GET['priceCNY'];
-	if(!isset($_GET['status'])){
-		$obj->status = 'unGou';
-	}else{
-		$obj->status = $_GET['status'];
-	}
-	$rslt = $my->saveItem($obj);
-	echo $rslt;
-} else if($actionStr == "deleteItem"){
-	$my = new MyDaiGou();
-	$obj = new ItemObject();
-	$obj->uid = $_GET['uid'];
-	$rslt = $my->deleteItem($obj);
-	echo $rslt;
-} else if($actionStr == "assign"){
-	$my = new MyDaiGou();
-	$obj = new ItemObject();
-	$obj->uid = $_GET['uid'];
-	$obj->buyer = $_GET['buyer'];
-	$obj->orderDate = $_GET['orderDate'];
-	$obj->orderItem = $_GET['orderItem'];
-	$obj->priceJPY = $_GET['priceJPY'];
-	$obj->qtty = $_GET['qtty'];
-	$obj->priceCNY = $_GET['priceCNY'];
-	$obj->status = 'gouru';
-	$rslt = $my->saveItem($obj);
-	echo $rslt;
-} else if($actionStr == "gouru" || $actionStr == "zaitu" || $actionStr == "fahuo" || $actionStr == "compl" ){
-	$my = new MyDaiGou();
-	$obj = new ItemObject();
-	$obj->uid = $_GET['uid'];
-	$obj->status = $actionStr;
-	$rslt = $my->updateItemStatus($obj);
-	echo $rslt;
+	
+} else {
+	echo "[ERROR]PARAMETER";
+	return;
 }
 ?>

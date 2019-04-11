@@ -25,18 +25,22 @@
 var actionUrl = "<?php echo constant("URL_ACTION_MYYABID") ?>";
 $(function() {
     $(document).on("click", "#btnAdd", function() {
-		var itemBoxes = $(".urlInput");
-		var urllist = [],idx=0;
+		var itemBoxes = $(".data-row");
+		var urllist = [],jpylist = [],idx=0;
 		for(var i=0; i<itemBoxes.length; i++){
-			var urlVal = $(itemBoxes[i]).val();
+			var urlVal = $(itemBoxes[i]).find("#url").val();
+			var jpyVal = $(itemBoxes[i]).find("#priceJPY").val();
 			if(urlVal == "")continue;
-			urllist[idx++] = urlVal;
+			urllist[idx] = urlVal;
+			jpylist[idx] = jpyVal;
+			idx++;
 		}
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
 			   data : {"action":"addMyBid", 
 					   "buyer" : $("#buyer").val(),
-					   "urllist" : urllist
+					   "urllist" : urllist,
+					   "jpylist" : jpylist
 			   },
 			   dataType : "html" 
 			  }
@@ -47,6 +51,12 @@ $(function() {
         });
     });
     $(document).on("change", ".priceInput", function() {
+		var thisBox = $(this).parent().parent();
+		var jpy = parseInt(thisBox.find("#priceJPY").val());
+		var huilv = parseFloat($("#myhuilv").val());
+		var mydaigoufei = parseInt($("#mydaigoufei").val());
+		var cny = Math.ceil(jpy * huilv) + mydaigoufei;
+		thisBox.find("#priceCNY").val(cny);
     });
 });
 </script>
@@ -64,10 +74,12 @@ $(function() {
 	  exit(0);
   }
   $huilv = $my->getHuilv();
+  $mydaigoufei = $my->getDaigoufei();
 ?>
   <div class="box itembox">
     <input type="hidden" id="buyer" value="<?php echo $buyer ?>">
     <input type="hidden" id="myhuilv" value="<?php echo $huilv ?>">
+  <input type="hidden" id="mydaigoufei" value="<?php echo $mydaigoufei ?>">
     <div class="row mb-2 form-group">
       <div class="col-6">
         <label for="priceJPY">url</label>
@@ -79,7 +91,7 @@ $(function() {
         <label for="priceCNY">人民币含代购费</label>
       </div>
     </div>
-    <div class="row mb-2 form-group">
+    <div class="row mb-2 form-group data-row">
       <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
       </div>
@@ -90,7 +102,7 @@ $(function() {
         <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
-    <div class="row mb-2 form-group">
+    <div class="row mb-2 form-group data-row">
       <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
       </div>
@@ -101,7 +113,7 @@ $(function() {
         <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
-    <div class="row mb-2 form-group">
+    <div class="row mb-2 form-group data-row">
       <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
       </div>
@@ -112,7 +124,7 @@ $(function() {
         <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
-    <div class="row mb-2 form-group">
+    <div class="row mb-2 form-group data-row">
       <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
       </div>
@@ -123,7 +135,7 @@ $(function() {
         <input type="text" class="form-control priceInput" id="priceCNY" readonly>
       </div>
     </div>
-    <div class="row mb-2 form-group">
+    <div class="row mb-2 form-group data-row">
       <div class="col-6">
         <input type="text" class="form-control urlInput" id="url" >
       </div>

@@ -29,6 +29,60 @@ require __DIR__ .'/MyYaBid.php';
 <script type="text/javascript">
 var actionUrl = "<?php echo constant("URL_ACTION_MYYABID") ?>";
 $(function() {
+    $(document).on("click", "#btnReCalc", function() {
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"calcParcelPrice", 
+					   "myparcelUid" : $("#myparcelUid").val(),
+					   "buyer" : $("#buyer").val()
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+			location.reload();
+        });
+    });
+    $(document).on("click", "#btnGuojiFahuo", function() {
+		var transferNo = $("#transnoGuoji").val();
+		if(transferNo == ''){
+			alert("please input 国际快递号码!");
+			return;
+		}
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"parcelGuojiFahuo", 
+					   "myparcelUid" : $("#myparcelUid").val(),
+					   "buyer" : $("#buyer").val(),
+					   "transferNo" : transferNo
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+			location.reload();
+        });
+    });
+    $(document).on("click", "#btnGuoneiFahuo", function() {
+		var transferNo = $("#transnoGuonei").val();
+		if(transferNo == ''){
+			alert("please input 国内快递号码!");
+			return;
+		}
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"parcelGuoneiFahuo", 
+					   "myparcelUid" : $("#myparcelUid").val(),
+					   "buyer" : $("#buyer").val(),
+					   "transferNo" : transferNo
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+			location.reload();
+        });
+    });
     $(document).on("click", "#btnAddTaobaoDingdan", function() {
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
@@ -69,40 +123,27 @@ $(function() {
 			}
         });
     });
-    $(document).on("change", "#guojiShoudan", function() {
+    $(document).on("change", ".parcelAmt", function() {
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":"getYunfei", 
-					   "weigth" : $("#transWeight").val(),
-					   "guojiShoudan" : $("#guojiShoudan").val(),
+			   data : {"action":"updateParcelAmt", 
 					   "myparcelUid" : $("#myparcelUid").val(),
-					   "buyer" : $("#buyer").val()
+					   "buyer" : $("#buyer").val(),
+					   "guojiShoudan" : $("#guojiShoudan").val(),
+					   "itemTtlWeight" : $("#transWeight").val(),
+					   "transfeeGuojiJPY" : $("#transfeeGuojiJPY").val(),
+					   "transfeeGuojiCNY" : $("#transfeeGuojiCNY").val(),
+					   "dabaofeiCNY" : $("#dabaofeiCNY").val(),
+					   "transnoGuoji" : $("#transnoGuoji").val(),
+					   "transfeeGuonei" : $("#transfeeGuonei").val(),
+					   "transnoGuonei" : $("#transnoGuonei").val(),
+					   "paidTtlCNY" : $("#paidTtlCNY").val()
 			   },
 			   dataType : "html" 
 			  }
 		  );
         jqxhr.done(function( msg ) {
-		    var huilv = parseFloat($("#myhuilv").val());
-            var vals = msg.split(":");
-			var transfeeGuojiJPY = parseInt(vals[0]);
-			var transfeeGuonei = parseInt(vals[1]);
-			
-			$("#transfeeGuojiJPY").val(transfeeGuojiJPY);
-			
-			var transfeeGuojiCNY = Math.ceil(transfeeGuojiJPY * huilv);
-			$("#transfeeGuojiCNY").val(transfeeGuojiCNY);
-			
-			$("#transfeeGuonei").val(transfeeGuonei);
-			
-			var itemTtlJPY = parseInt($("#itemTtlJPY").val());
-			var itemTransfeeDaoneiTtlJPY = parseInt($("#itemTransfeeDaoneiTtlJPY").val());
-			var itemTtlCNY = parseInt($("#itemTtlCNY").val());
-			var ttlCNY = itemTtlCNY + transfeeGuojiCNY + transfeeGuonei;
-			$("#ttlJPY").val(itemTtlJPY + itemTransfeeDaoneiTtlJPY + transfeeGuojiJPY);
-			$("#ttlCNY").val(ttlCNY);
-			
-			var paidTtlCNY = parseInt($("#paidTtlCNY").val());
-			$("#bukuanCNY").val(ttlCNY - paidTtlCNY);
+			location.reload();
         });
     });
 });
@@ -123,14 +164,28 @@ $(function() {
   <h3>买家:<span><?php echo $buyer ?></span></h3>
   <hr class="mb-4">
 <?php
-  $myparcel = $my->listParcelByBuyerAndUnParcel($buyer);
+  if(!empty($uid)){
+	  $myparcel = $my->listParcelByBuyerAndUid($buyer, $uid);
+  }else{
+	  $myparcel = $my->listParcelByBuyerAndUnParcel($buyer);
+  }
+  $dataArr = $my->listItemByBuyerAndParcelUid($buyer, $myparcel["uid"]);
   //var_dump($myparcel);
-  $dataArr = $my->listItemByBuyerAndUnParcel($buyer, $myparcel["uid"]);
   
-  $ttlCNY = $myparcel["itemTtlCNY"] + $myparcel["transfeeGuojiCNY"] + $myparcel["transfeeGuonei"];
-  $bukuanCNY = $ttlCNY - $myparcel["paidTtlCNY"] ;
+  $bukuanCNY = $myparcel["itemTtlCNY"] - $myparcel["paidTtlCNY"] ;
   
   $huilv = $my->getHuilv();
+  $ttlCNY = $myparcel["itemTtlCNY"]
+            + $myparcel["transfeeGuojiCNY"] + $myparcel["transfeeGuonei"]
+            + $myparcel["transfeeGuonei"] + $myparcel["dabaofeiCNY"]
+            - $myparcel["barginCNY"];
+  //var_dump($myparcel);
+  $bukuanCNY = $ttlCNY - $myparcel["paidTtlCNY"] ;
+  
+  $guojiShoudanEditFlag = ($myparcel["status"] === "daBao");
+  
+  $amtEditFlag = ($myparcel["status"] === "daBao") && $isAdmin;
+  $transnoGuoneiEditFlag = ($myparcel["status"] === "zaiTu") && $isAdmin;
 ?>
   <input type="hidden" id="myparcelUid" value="<?php echo $myparcel['uid'] ?>">
   <input type="hidden" id="myhuilv" value="<?php echo $huilv ?>">
@@ -138,11 +193,11 @@ $(function() {
   <div class="row mb-4 form-group">
     <div class="col-6 themed-grid-col">
       <label for="transWeight">包裹重量(g)</label>
-      <input type="text" class="form-control" id="transWeight" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['itemTtlWeight'] ?>">
+      <input type="text" class="form-control parcelAmt" id="transWeight" <?php if(!$amtEditFlag){?> readonly <?php } ?> value="<?php echo $myparcel['itemTtlWeight'] ?>">
     </div>
     <div class="col-6 themed-grid-col">
         <label for="guojiShoudan">快递方式</label>
-        <select class="custom-select d-block" id="guojiShoudan" class="form-control" >
+        <select class="custom-select form-control parcelAmt" id="guojiShoudan" <?php if(!$guojiShoudanEditFlag){?> disabled <?php } ?>>
             <option value=""></option>
             <option value="EMS" <?php if($myparcel['guojiShoudan']=='EMS'){?> selected <?php } ?>>EMS</option>
             <!--<option value="AIR" <?php if($myparcel['guojiShoudan']=='AIR'){?> selected <?php } ?>>AIR</option>-->
@@ -153,44 +208,45 @@ $(function() {
     </div>
   </div>
   <div class="row mb-4 form-group">
-    <div class="col-6 themed-grid-col">
-      <label for="transfeeGuojiJPY">国际运费JPY</label>
-      <input type="text" class="form-control" id="transfeeGuojiJPY" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiJPY'] ?>">
-    </div>
+    <input type="hidden" id="transfeeGuojiJPY" value="<?php echo $myparcel['transfeeGuojiJPY'] ?>">
     <div class="col-6 themed-grid-col">
       <label for="transfeeGuojiCNY">国际运费CNY</label>
-      <input type="text" class="form-control" id="transfeeGuojiCNY" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiCNY'] ?>">
+      <input type="text" class="form-control parcelAmt" id="transfeeGuojiCNY" <?php if(!$amtEditFlag){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuojiCNY'] ?>">
+    </div>
+    <div class="col-6 themed-grid-col">
+      <label for="dabaofeiCNY">daobao/cailiaofei CNY</label>
+      <input type="text" class="form-control parcelAmt" id="dabaofeiCNY" <?php if(!$amtEditFlag){?> readonly <?php } ?> value="<?php echo $myparcel['dabaofeiCNY'] ?>">
     </div>
   </div>
   <div class="row mb-4 form-group">
     <div class="col-8 themed-grid-col">
       <label for="transnoGuoji">国际快递号码</label>
-      <input type="text" class="form-control" id="transnoGuoji" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuoji'] ?>">
+      <input type="text" class="form-control" id="transnoGuoji" <?php if(!$amtEditFlag){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuoji'] ?>">
     </div>
 <?php 
-  if($isAdmin){
+    if($amtEditFlag){
 ?>
     <div class="col">
 	  <button class="btn btn-secondary actionBtn" id="btnGuojiFahuo" type="button">国际快递发货</button>
 	</div>
 <?php 
-  }
+    }
 ?>
   </div>
   <div class="row mb-4 form-group">
     <div class="col-4 themed-grid-col">
       <label for="transfeeGuonei">国内运费CNY</label>
-      <input type="text" class="form-control" id="transfeeGuonei" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuonei'] ?>">
+      <input type="text" class="form-control parcelAmt" id="transfeeGuonei" <?php if(!$amtEditFlag){?> readonly <?php } ?> value="<?php echo $myparcel['transfeeGuonei'] ?>">
     </div>
     <div class="col-6 themed-grid-col">
       <label for="transnoGuonei">国内快递号码</label>
-      <input type="text" class="form-control" id="transnoGuonei" <?php if(!$isAdmin){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuonei'] ?>">
+      <input type="text" class="form-control" id="transnoGuonei" <?php if(!$transnoGuoneiEditFlag){?> readonly <?php } ?> value="<?php echo $myparcel['transnoGuonei'] ?>">
     </div>
 <?php 
-  if($isAdmin){
+  if($transnoGuoneiEditFlag){
 ?>
     <div class="col">
-	  <button class="btn btn-secondary actionBtn" id="btnGuojiFahuo" type="button">国际快递发货</button>
+	  <button class="btn btn-secondary actionBtn" id="btnGuoneiFahuo" type="button">国际快递发货</button>
 	</div>
 <?php 
   }
@@ -214,18 +270,24 @@ $(function() {
   <hr class="mb-4">
   <div class="row">
     <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">宝贝名</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">货值日元</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">货值人民币</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">岛内运费日元</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">岛内运费人民币</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">代购费</div>
-    <div class="col text-break themed-grid-col border border-primary bg-info text-white">商品合计</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">货值JPY</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">货值CNY</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">岛内运费JPY</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">岛内运费CNY</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">代购费CNY</div>
+    <div class="col text-break themed-grid-col border border-primary bg-info text-white">商品合计CNY</div>
     <div class="col text-break themed-grid-col border border-primary bg-info text-white">重量(g)</div>
   </div>
   <div class="row bg-success text-white">
     <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">
 	合计
+<?php 
+  if($amtEditFlag){
+?>
 	<button class="btn btn-secondary actionBtn" id="btnReCalc" type="button">再计算</button>
+<?php 
+  }
+?>
 	</div>
     <div class="col text-break themed-grid-col border border-primary">
 	  <?php echo $myparcel["itemTtlPriceJPY"] ?>
@@ -278,6 +340,9 @@ $(function() {
 <?php
   }
 ?>
+<?php 
+	if($myparcel["status"] == "daBao"){
+?>
   <hr class="mb-4">
   <div class="row mb-4 form-group">
     <div class="col-7 themed-grid-col">
@@ -294,11 +359,20 @@ $(function() {
 	  <button class="btn btn-secondary actionBtn" id="btnAddTaobaoDingdan" type="button">添加淘宝订单</button>
     </div>
   </div>
+<?php
+	}
+?>
   <hr class="mb-4">
   <div class="row">
     <div class="col text-break themed-grid-col border border-primary bg-info text-white">淘宝订单号</div>
     <div class="col text-break themed-grid-col border border-primary bg-info text-white">金额</div>
+<?php 
+	if($myparcel["status"] == "daBao"){
+?>
     <div class="col text-break themed-grid-col border border-primary bg-info text-white">action</div>
+<?php
+	}
+?>
   </div>
 <?php
   $dataTbArr = $my->listTaobaoDingdanByParcel($buyer, $myparcel["uid"]);
@@ -309,11 +383,18 @@ $(function() {
     <input type="hidden" id="taobaodingdanUid" value="<?php echo $dataTb['uid'] ?>">
     <div class="col text-break themed-grid-col border border-secondary"><?php echo $dataTb["taobaoDingdanhao"] ?></div>
     <div class="col text-break themed-grid-col border border-secondary"><?php echo $dataTb["taobaoDingdanCNY"] ?></div>
+<?php 
+	if($myparcel["status"] == "daBao"){
+?>
     <div class="col text-break themed-grid-col border border-secondary">
 	  <button class="btn btn-secondary actionBtn" id="btnDeleteTaobaoDingdan" type="button">delete</button>
 	</div>
-    </div>
 <?php
+	}
+?>
+    </div> 
+<?php
+	}
   }
 ?>
   </div>

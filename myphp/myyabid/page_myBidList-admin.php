@@ -138,6 +138,7 @@ $(function() {
 <?php
     if(empty($status)){
 ?>
+    <div class="col-2 border border-primary bg-info text-white">心里价</div>
     <div class="col-2 border border-primary bg-info text-white">状态</div>
 <?php
     }
@@ -169,7 +170,7 @@ $(function() {
 <?php
     }else{
 ?>
-    <div class="col-6 border border-primary bg-info text-white">Action</div>
+    <div class="col-4 border border-primary bg-info text-white">Action</div>
 <?php
     }
 ?>
@@ -200,6 +201,11 @@ $(function() {
 <?php
     if(empty($status)){
 ?>
+    <div class="col-2 border border-secondary">
+	  <a href="/myphp/myyabid/page_myItem.php?uid=<?php echo $data['uid'] ?>&buyer=<?php echo $data['buyer'] ?>&admin=<?php echo $admin ?>">
+	    <?php echo empty($data["estimateJPY"]) ? "wsd" : $data["estimateJPY"] ?>
+	  </a>
+	</div>
     <div class="col-2 border border-secondary">
 	  <a href="/myphp/myyabid/page_myBidList-admin.php?status=<?php echo $data['status'] ?>&admin=<?php echo $admin ?>">
 	    <?php echo $my->getStatusName($data["status"]) ?>
@@ -244,7 +250,7 @@ $(function() {
 <?php
     }else{
 ?>
-    <div class="col-6 text-break border">
+    <div class="col-4 text-break border">
 <?php
     }
 ?>
