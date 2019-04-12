@@ -6,7 +6,11 @@ class OrderObject
     public $dingdanhao = '';
     public $maijiadianzhiHanzi = '';
     public $mbOrderNo = '';
-    public $status = ''; // unorder,ordered
+    public $status = ''; // unorder,ordering,ordered,mbfh,fin
+	
+	public $transferWay = ""; // zhiYou,pinYou
+	public $transferNoGuoji = "";
+	public $transferNoGuonei = "";
 	
     //public $addressObj;
     public $firstName = '';

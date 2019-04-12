@@ -4,12 +4,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.DateUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 public class NieUtil {
 
@@ -42,5 +49,62 @@ public class NieUtil {
 		}
 		oFile = null;
 	}
+	
+
+	public static String httpGet(String url, Map<String, String> param) {
+
+		String p = urlEncodeUTF8(param);
+		HttpClient client = HttpClientBuilder.create().build();
+		String urlT = url + "?" + p;
+		//log("[INFO][httpGet][URL]" + urlT);
+		HttpGet request = new HttpGet(urlT);
+		try {
+			HttpResponse response = client.execute(request);
+			int statusCode = response.getStatusLine().getStatusCode();
+
+			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			StringBuffer result = new StringBuffer();
+			String line = "";
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			if(statusCode != 200){
+				//log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + result.toString());
+				return "";
+			}else{
+				return result.toString();
+			}
+			
+		} catch (Exception ex) {
+			//log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return "";
+	}
+	private static String urlEncodeUTF8(Map<?,?> map) {
+		if(map == null){
+			return "";
+		}
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<?,?> entry : map.entrySet()) {
+            if (sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append(String.format("%s=%s",
+                urlEncodeUTF8(entry.getKey().toString()),
+                urlEncodeUTF8(entry.getValue().toString())
+            ));
+        }
+        return sb.toString();       
+    }
+	
+	private static String urlEncodeUTF8(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+        	e.printStackTrace();
+            return "";
+        }
+    }
 
 }

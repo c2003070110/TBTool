@@ -69,6 +69,49 @@ $(function() {
         param.mbOrderNo = $("#mbOrderNo").val();
 		return param;
 	}
+    $(document).on("click", "#btnConvert", function() {
+        var srcTxt = $("#tempTxtArea").val();
+		var arr1 = srcTxt.split(/(\r\n|\n|\r)/gm);
+		var productList = "";
+		for(var i=0; i<arr1.length; i++){
+			var strLoop1 = arr1[i];
+			var cdArr = strLoop1.split(/[\s,;]+/);
+			if(cdArr){
+				var productId="",colorName="",sizeName="";
+				for(var j=0; j<cdArr.length; j++){
+					var arr2 = cdArr[j].split(":");
+					if(arr2.length <2) continue;
+					if(arr2[0].indexOf("XXX") == 0){
+						productId = arr2[1];
+					}
+					if(arr2[0].indexOf("YYY") == 0){
+						colorName = arr2[1];
+					}
+					if(arr2[0].indexOf("ZZZ") == 0){
+						sizeName = arr2[1];
+					}
+				}
+				if(productId != ""){
+					productList = productList + productId + "," + colorName + "," + sizeName +";";
+				}
+			}
+		}
+		if(productList != ""){
+			productList = productList.substring(0,productList.length-1);
+			var param = formParameter();
+			param.action = "saveOrder";
+			param.productList = productList;
+			var jqxhr = $.ajax(actionUrl,
+							 { type : "GET",
+							   data : param,
+							   dataType : "html" 
+							  }
+						  );
+			jqxhr.done(function( msg ) {
+				location.reload();
+			});
+		}
+    });
     $(document).on("click", "#btnSave", function() {
 	    var param = formParameter();
 		param.action = "saveOrder";
@@ -80,7 +123,7 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
-            alert(msg);
+				location.reload();
         });
     });
     $(document).on("click", "#btnOrder", function() {
@@ -110,9 +153,11 @@ $(function() {
   if(isset($_GET['uid'])){
 	$orderUid = $_GET['uid'];
   }
+  $editFlag = ($orderUid === '');
   if($orderUid !== ''){
 	$my = new MyMontb();
 	$orderObj = $my->listOrderInfoByUid($orderUid);
+	$editFlag = ($orderObj["status"] == 'unorder' || $orderObj["status"] == 'ordered');
   }
 ?>
   <input type="hidden" id="orderUid" value="<?php echo $orderUid ?>">
@@ -120,52 +165,43 @@ $(function() {
       <div class="row mb-4 form-group">
         <div class="col-12">
 		  <label for="maijia">淘宝买家ID</label>
-		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>"></div>
+		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
 		  <label for="dingdanhao">淘宝订单号</label>
-		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>"></div>
+		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
             <label for="maijiadianzhiHanzi">买家地址</label>
-            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>">
+            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
       </div>
 <?php
-  if($orderUid === '' || count($orderObj['productObjList']) == 0){
+  if($orderObj["status"] == 'unorder'){
+?>
+      <div class="row mb-4 form-group">
+        <div class="col-4 themed-grid-col">
+            <label for="tempTxtArea">product lines</label>
+          <button type="button" id="btnConvert" class="btn btn-secondary">C o n v e r t !</button>
+		</div>
+        <div class="col-8 themed-grid-col">
+		  <textarea id="tempTxtArea" rows="6" cols="35"></textarea>
+		</div>
+      </div>
+<?php
+  }
+?>
+<?php
+  if($orderUid === '' || $orderObj["status"] == 'unorder'){
 ?>
       <div class="row mb-4 form-group_product" id="productBox">
         <div class="col-4">
 		  <label for="productId">productId</label>
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
         </div>
-        <div class="col-3">
-		  <label for="colorName">color</label>
-		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>">
-        </div>
-        <div class="col-3">
-		  <label for="sizeName">size</label>
-		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>">
-        </div>
-        <div class="col-1">
-		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button><hr>
-		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
-        </div>
-      </div>
-<?php
-  }
-?>
-<?php
-  foreach($orderObj['productObjList'] as $prodObj){
-?>
-      <div class="row mb-1 form-group_product" id="productBox">
         <div class="col-4">
-		  <label for="productId">productId</label>
-		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
-        </div>
-        <div class="col-3">
 		  <label for="colorName">color</label>
 		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>">
         </div>
@@ -182,17 +218,37 @@ $(function() {
   }
 ?>
 <?php
-  if($orderUid !== ''){
+  foreach($orderObj['productObjList'] as $prodObj){
 ?>
-      <div class="row mb-4 form-group">
-        <div class="col-5">
-		  <label for="mbOrderNo">MB 官网订单号</label>
-		  <input type="text" class="form-control" id="mbOrderNo" value="<?php echo $prodObj['mbOrderNo'] ?>></div>
+      <div class="row mb-1 form-group_product" id="productBox">
+        <div class="col-4">
+		  <label for="productId">productId</label>
+		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
+        </div>
+        <div class="col-3">
+		  <label for="colorName">color</label>
+		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?> <?php if(!$editFlag){?> readOnly <?php } ?>">
+        </div>
+        <div class="col-3">
+		  <label for="sizeName">size</label>
+		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?> <?php if(!$editFlag){?> readOnly <?php } ?>">
+        </div>
+        <div class="col-1">
+		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>
+		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
         </div>
       </div>
 <?php
   }
 ?>
+      <div class="row mb-1 form-group_product">
+        <label for="transferWay">快递方式</label>
+        <select class="custom-select form-control parcelAmt" id="transferWay" <?php if(!$editFlag){?> disabled <?php } ?>>
+            <option value=""></option>
+            <option value="zhiYou" <?php if($orderObj['transferWay']=='zhiYou'){?> selected <?php } ?>>zhiYou</option>
+            <option value="pinYou" <?php if($orderObj['transferWay']=='pinYou'){?> selected <?php } ?>>拼邮</option>
+        </select>
+      </div>
       <div class="row mb-4 form-group">
         <div class="col-5">
 		  <button type="button" id="btnSave" class="btn btn-secondary">SAVE</button>

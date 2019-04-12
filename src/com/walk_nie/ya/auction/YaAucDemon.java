@@ -428,60 +428,8 @@ public class YaAucDemon {
 		Map<String, String> param = Maps.newHashMap();
 		param.put("action", "get");
 		param.put("codeType", key);
-		return httpGet(NieConfig.getConfig("yahoo.auction.autosend.code.get.url"), param);
+		return NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.code.get.url"), param);
 	}
-	
-	private String httpGet(String url, Map<String, String> param) {
-
-		String p = urlEncodeUTF8(param);
-		HttpClient client = HttpClientBuilder.create().build();
-		String urlT = url + "?" + p;
-		log("[INFO][httpGet][URL]" + urlT);
-		HttpGet request = new HttpGet(urlT);
-		try {
-			HttpResponse response = client.execute(request);
-			int statusCode = response.getStatusLine().getStatusCode();
-
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			StringBuffer result = new StringBuffer();
-			String line = "";
-			while ((line = rd.readLine()) != null) {
-				result.append(line);
-			}
-			if(statusCode != 200){
-				log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + result.toString());
-				return "";
-			}else{
-				return result.toString();
-			}
-			
-		} catch (Exception ex) {
-			log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + ex.getMessage());
-			ex.printStackTrace();
-		}
-		return "";
-	}
-	private  String urlEncodeUTF8(String s) {
-        try {
-            return URLEncoder.encode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-        	e.printStackTrace();
-            return "";
-        }
-    }
-	private String urlEncodeUTF8(Map<?,?> map) {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<?,?> entry : map.entrySet()) {
-            if (sb.length() > 0) {
-                sb.append("&");
-            }
-            sb.append(String.format("%s=%s",
-                urlEncodeUTF8(entry.getKey().toString()),
-                urlEncodeUTF8(entry.getValue().toString())
-            ));
-        }
-        return sb.toString();       
-    }
 
 //	private void fetchLastestCode() {
 //		String src = NieConfig.getConfig("yahoo.auction.autosend.code.source.file");
@@ -626,7 +574,7 @@ public class YaAucDemon {
 		param.put("obidId", yaObj.obider);
 		for (String code : codeSendOnce) {
 			param.put("codeCd", code);
-			httpGet(NieConfig.getConfig("yahoo.auction.autosend.code.asset.url"), param);
+			NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.code.asset.url"), param);
 		}
 		//saveSendCode();
 	}

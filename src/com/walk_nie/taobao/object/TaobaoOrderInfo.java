@@ -8,6 +8,7 @@ import com.walk_nie.object.CrObject;
 
 public class TaobaoOrderInfo {
 
+	public String uid;
 	public String taobaoOrderName;
 	public List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
 	public String firstName;
@@ -19,5 +20,7 @@ public class TaobaoOrderInfo {
 	public String adr1;
 	public String postcode;
 	public CrObject crObj;
+	
+	public String mbOrderNo;
 	 
 }

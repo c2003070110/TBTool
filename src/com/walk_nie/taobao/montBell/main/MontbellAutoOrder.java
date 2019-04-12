@@ -16,6 +16,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.json.Json;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -62,25 +63,75 @@ public class MontbellAutoOrder {
 		}
 	}
 
-	public void orderForChinaOnce() {
-		String inFileName = NieConfig.getConfig("montbell.orderforChina.file.in");
-		File tempFile0 = new File(inFileName);
-		if(!tempFile0.exists()){
-			return;
-		}
-//		System.out.println("[waiting for order info in ]"
-//				+ tempFile0.getAbsolutePath());
-		long updateTime = tempFile0.lastModified();
-		if (lastestTime < updateTime) {
-			lastestTime = updateTime;
-			try {
-				WebDriver driver = logonForChina();
-				orderForChina(driver, tempFile0);
-				driver.close();
-			} catch (IOException e) {
-			}
+	public void processForWebService() {
+		try {
+			TaobaoOrderInfo orderInfo = readInOrderInfoFromWebService();
+			if(orderInfo == null)return;
+			WebDriver driver = logonForChina();
+			orderForChina(driver, orderInfo);
+			reactOrderResultToWebServer(orderInfo);
+			driver.close();
+		} catch (Exception e) {
 		}
 	}
+	private void reactOrderResultToWebServer(TaobaoOrderInfo orderInfo) {
+		Map<String,String> param = Maps.newHashMap();
+		param.put("action", "updateMBOrderNo");
+		param.put("uid", orderInfo.uid);
+		param.put("mbOrderNo", orderInfo.mbOrderNo);
+		// /myphp/mymontb/action.php?action=updateMBOrderNo
+		NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.react.url"), param);
+	}
+
+	private TaobaoOrderInfo readInOrderInfoFromWebService() {
+
+		Map<String,String> param = Maps.newHashMap();
+		param.put("action", "listOrderByEmptyMBOrderOne");
+		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
+		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
+		if(StringUtil.isBlank(orderLine)){
+			System.out.println("[INFO]Nothing to order");
+			return null;
+		}
+		if(orderLine.indexOf("ERROR") != -1){
+			System.out.println("[ERROR]" + orderLine);
+			return null;
+		}
+		Json j = new Json();
+		Map<String,Object> objMap = null ;
+		try{
+			objMap = j.toType(orderLine, Map.class);
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+		TaobaoOrderInfo tbOrderInfo = new TaobaoOrderInfo();
+		tbOrderInfo.uid = (String)objMap.get("uid");
+		tbOrderInfo.taobaoOrderName = (String)objMap.get("maijia");
+		tbOrderInfo.firstName = (String)objMap.get("firstName");
+		tbOrderInfo.lastName = (String)objMap.get("lastName");
+		tbOrderInfo.tel = (String)objMap.get("tel");
+		tbOrderInfo.postcode = (String)objMap.get("postcode");
+		tbOrderInfo.state = (String)objMap.get("statePY");
+		tbOrderInfo.city = (String)objMap.get("cityPY");
+		tbOrderInfo.adr1 = (String)objMap.get("adr1PY");
+		tbOrderInfo.adr2 = (String)objMap.get("adr2PY");
+		tbOrderInfo.crObj = getCrObject((String)objMap.get("fukuanWay"));
+		
+		List<Map<String,Object>> pMapList = (List<Map<String,Object>>)objMap.get("productObjList");
+		 List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
+		for(Map<String,Object> pMap :pMapList){
+			TaobaoOrderProductInfo p = new TaobaoOrderProductInfo();
+			p.productId = (String)pMap.get("productId");
+			p.colorName = (String)pMap.get("colorName");
+			p.sizeName = (String)pMap.get("sizeName");
+			p.qtty = (String)pMap.get("qtty");
+			productInfos.add(p);
+		}
+		tbOrderInfo.productInfos = productInfos; 
+		return tbOrderInfo;
+	}
+
 	public void orderForChina() {
 		
 		WebDriver driver = logonForChina();
@@ -356,15 +407,18 @@ public class MontbellAutoOrder {
 	}
 
 	protected void orderForChina(WebDriver driver, File tempFile0) throws IOException{
-
 		TaobaoOrderInfo orderInfo = readInOrderInfo(tempFile0);
-		logOrderInfo(orderInfo);
-		
 		if("".equals(orderInfo.postcode)){
 			System.out.println("[ERROR] Order Info NO Correct! PostCode IS NULL! File=" + tempFile0.getAbsolutePath());
 			return;
 		}
+		orderForChina(driver, orderInfo);
+	}
 
+	protected void orderForChina(WebDriver driver, TaobaoOrderInfo orderInfo) throws IOException{
+
+		logOrderInfo(orderInfo);
+		
 		try{
 			addItemToCard(driver,orderInfo,"CN");
 		}catch(Exception ex){
@@ -544,7 +598,7 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
-		
+		orderInfo.mbOrderNo = orderNo;
 		logOrderResult(orderInfo,orderNo);
 		
 		File oFileS = new File(MontBellUtil.rootPathName,ooutFileNameForShot);

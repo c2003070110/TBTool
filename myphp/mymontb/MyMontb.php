@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../mycommon.php';
 require __DIR__ . '/../mydefine.php';
-require __DIR__ . '/OrderInfo.php';
+require __DIR__ . '/OrderObject.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
@@ -64,7 +64,28 @@ class MyMontb
 		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
 		$tbl->select(['uid', '==', $uid])->delete();
 	}
-	public function orderOrder(){
+	public function updateOrderByMBOrder($uid, $mbOrderNo){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['mbOrderNo', $mbOrderNo],
+					 ['status', 'ordered']);
+	}
+	public function updateOrderByTranfserNo($uid, $transferNoGuoji, $transferNoGuonei){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['transferNoGuoji', $transferNoGuoji],
+					 ['transferNoGuonei', $transferNoGuonei],
+					 ['status', 'mbfh']);
+	}
+	public function orderOrder($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['status', 'ordering']);
+	}
+	public function updateOrder(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
 		
@@ -87,7 +108,7 @@ class MyMontb
 		} else{
 			$tbl->select(['uid', '==', $orderObj->uid])
 				->update(
-				         ['status', 'ordered'],
+				         ['status', 'unorder'],
 				         ['firstName', $orderObj->firstName],
 				         ['lastName', $orderObj->lastName],
 				         ['tel', $orderObj->tel],
@@ -98,6 +119,8 @@ class MyMontb
 						 ['adr2PY', $orderObj->adr2PY],
 						 ['fukuanWay', $orderObj->fukuanWay]);
 		}
+		return;
+		/*
 		// write to order in file
 		$dataNew = $tbl->select(['uid', '==', $orderObj->uid])->fetch();
 		$dataNew0 = $dataNew[0];
@@ -139,6 +162,7 @@ class MyMontb
 		$wRslt = unlink(realpath($fileIn));
 		$wRslt = file_put_contents($fileIn, $lines);
 		return $wRslt;
+		*/
 	}
 	public function listOrderInfoByUid($uid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
@@ -164,6 +188,23 @@ class MyMontb
 		
 		return $tbl->select(['status', '==', $status])->fetch();
 	}
+	public function listOrderByEmptyMBOrderOne($status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
+		
+		$dataArr = $tbl->select(['status', '==', "ordering"])->fetch();
+		foreach ($dataArr as $data) {
+			if(empty($data["mbOrderNo"]) &&
+				(!empty($data["firstName"]) && !empty($data["lastName"]) && !empty($data["tel"])
+				  && !empty($data["postcode"]) && !empty($data["statePY"]) && !empty($data["cityPY"])
+				  && !empty($data["adr1PY"]) && !empty($data["adr2PY"]) && !empty($data["fukuanWay"])
+				)){
+				return $data;
+			}
+		}
+		return NULL;
+	}
+	
 	public function listAllOrderInfo(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));

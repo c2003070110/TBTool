@@ -42,7 +42,7 @@ public class MontbellOrderDemon {
 				if (dif > 1000) {
 					continue;
 				}
-				order.orderForChinaOnce();
+				order.processForWebService();
 				t2 = System.currentTimeMillis();
 				dif = t2 - t1;
 			} catch (Exception ex) {
