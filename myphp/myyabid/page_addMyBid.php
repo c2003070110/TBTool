@@ -82,7 +82,7 @@ $(function() {
   <input type="hidden" id="mydaigoufei" value="<?php echo $mydaigoufei ?>">
     <div class="row mb-2 form-group">
       <div class="col-6">
-        <label for="priceJPY">url</label>
+        <label for="priceJPY">竞拍宝贝的链接 URL</label>
       </div>
       <div class="col-3">
         <label for="priceJPY">心里价 日元</label>

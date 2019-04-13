@@ -81,7 +81,6 @@ $(function() {
     <input type="hidden" id="mydaigoufei" value="<?php echo $mydaigoufei ?>">
     <div class="row mb-4 form-group">
       <div class="col-12 text-break themed-grid-col">
-        <label for="itemName">ItemName</label>
 	    <a href="<?php echo $data['itemUrl'] ?>" target="blank" id="itemName">
 	      <?php echo $data['itemName'] != '' ? $data['itemName'] : $data['itemUrl'] ?>
 	    </a>
@@ -101,7 +100,7 @@ $(function() {
     </div>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
-        <button type="button" id="btnUpdateItem" class="btn btn-secondary actionBtn">update item</button>
+        <button type="button" id="btnUpdateItem" class="btn btn-secondary actionBtn">更  新</button>
       </div>
     </div>
 <?php

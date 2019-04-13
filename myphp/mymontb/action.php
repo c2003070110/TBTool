@@ -10,35 +10,49 @@ if($actionStr === null){
 	echo "[ERROR]Parameter Of [action] is NULL";
 	return;
 }
-if($actionStr == "saveOrder"){
+if($actionStr == "saveTBOrder"){
 	$my = new MyMontb();
-	$rslt = $my->saveOrder();
+	$rslt = $my->saveTBOrder();
 	echo $rslt;
-} else if($actionStr == "deleteOrder"){
+} else if($actionStr == "updateTBOrderStatus"){
+	if(empty($_GET["uid"]) || empty($_GET["buyer"]) || empty($_GET["status"])){
+		return ;
+	} 
+	$my = new MyYaBid();
+	$rslt = $my->updateTBOrderStatus($_GET["uid"], $_GET["status"]);
+} else if($actionStr == "updateMBOrder"){
 	$uid = $_GET['uid'];
 	if($uid === null){
 		echo "[ERROR]Parameter is NULL";
 		return;
 	}
 	$my = new MyMontb();
-	$rslt = $my->deleteOrder($uid);
-	echo $rslt;
-} else if($actionStr == "updateOrder"){
+	$rslt = $my->updateMBOrder();
+} else if($actionStr == "orderMBOrder"){
 	$uid = $_GET['uid'];
 	if($uid === null){
 		echo "[ERROR]Parameter is NULL";
 		return;
 	}
 	$my = new MyMontb();
-	$rslt = $my->updateOrder();
-} else if($actionStr == "orderOrder"){
-	$uid = $_GET['uid'];
-	if($uid === null){
+	$rslt = $my->orderMBOrder($uid);
+} else if($actionStr == "updateMBOrderNo"){
+	if(empty($_GET['uid']) || empty($_GET['mbOrderNo'])){
 		echo "[ERROR]Parameter is NULL";
 		return;
 	}
 	$my = new MyMontb();
-	$rslt = $my->orderOrder($uid);
+	$rslt = $my->updateMBOrderByMBOrder($_GET['uid'],$_GET['mbOrderNo']);
+} else if($actionStr == "updateTransferNo"){
+	if(empty($_GET['uid'])){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$rslt = $my->updateMBOrderByTranfserNo($_GET['uid'],$_GET['transferNoGuoji'],$_GET['transferNoGuonei']);
+
+
+
 } else if($actionStr == "convertHanziToPY"){
 	$hanzi = $_GET['hanzi'];
 	if($hanzi === null){
@@ -48,20 +62,6 @@ if($actionStr == "saveOrder"){
 	$my = new MyMontb();
 	$rslt = $my->convertHanziToPY($hanzi);
 	echo $rslt;
-} else if($actionStr == "updateMBOrderNo"){
-	if(empty($_GET['uid']) || empty($_GET['mbOrderNo'])){
-		echo "[ERROR]Parameter is NULL";
-		return;
-	}
-	$my = new MyMontb();
-	$rslt = $my->updateOrderByMBOrder($_GET['uid'],$_GET['mbOrderNo']);
-} else if($actionStr == "updateTransferNo"){
-	if(empty($_GET['uid'])){
-		echo "[ERROR]Parameter is NULL";
-		return;
-	}
-	$my = new MyMontb();
-	$rslt = $my->updateOrderByTranfserNo($_GET['uid'],$_GET['transferNoGuoji'],$_GET['transferNoGuonei']);
 	
 //***********service action**************
 // listOrderByEmptyMBOrderOne input:NONE; ouput:OrderObject;

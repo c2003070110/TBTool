@@ -155,5 +155,17 @@ class MyGiftCard
 		
 		return $tbl->select(['status', '==', $status])->fetch();
 	}
+	public function listStockByStatusAndCodeType($status, $codeType){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		return $tbl->select(['status', '==', $status, 'and'],['codeType', '==', $codeType, 'and'])->fetch();
+	}
+	public function listStockByCodeType($codeType){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		return $tbl->select(['codeType', '==', $codeType])->fetch();
+	}
 }
 ?>

@@ -67,16 +67,16 @@ $(function() {
   $dataArr = $my->listAllBuyer();
   foreach ($dataArr as $data) {
 	  $host = (empty($_SERVER["HTTPS"]) ? "http://" : "https://") . $_SERVER["HTTP_HOST"];
-	  $url = $host . "/myphp/myyabid/page_myEstimation.php?buyer=".$data["buyer"];
-	  $urlAdmin = $host . "/myphp/myyabid/page_myEstimation.php?buyer=".$data["buyer"]."&admin".$my->getAdminIdentifier();
+	  $url = $host . "/myphp/myyabid/page_myBidList.php?buyer=".$data["buyer"];
+	  $urlAdmin = $host . "/myphp/myyabid/page_myBidList-admin.php?buyer=".$data["buyer"]."&admin=".$my->getAdminIdentifier();
 ?>
   <div class="row">
     <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data["buyer"] ?></div>
     <div class="col-4 text-break themed-grid-col border border-primary">
-	  <a href="<?php echo $url ?>">myEstimation(Buyer)</a>
+	  <a href="<?php echo $url ?>">bidList(Buyer)</a>
 	</div>
     <div class="col-4 text-break themed-grid-col border border-primary">
-	  <a href="<?php echo $urlAdmin ?>">myEstimation(admin)</a>
+	  <a href="<?php echo $urlAdmin ?>">bidList(admin)</a>
 	</div>
   </div>
 <?php

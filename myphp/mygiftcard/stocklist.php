@@ -49,10 +49,14 @@ $(function() {
 <body class="py-4">
 <?php
   $myGiftCard = new MyGiftCard();
-  $status = '';
-  if(isset($_GET['status'])){
-	  $status = $_GET['status'];
+  $status = $_GET['status'];
+  $codeType = $_GET['codeType'];
+  if(!empty($status) && !empty($codeType)){
+      $dataArr = $myGiftCard->listStockByStatusAndCodeType($status, $codeType);
+  }else if(!empty($status)){
       $dataArr = $myGiftCard->listStockByStatus($status);
+  }else if(!empty($codeType)){
+      $dataArr = $myGiftCard->listStockByCodeType($codeType);
   }else{
       $dataArr = $myGiftCard->listStock();
   }
@@ -78,30 +82,32 @@ $(function() {
     <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
     <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
     <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
-    <li class="list-group-item <?php echo $cssBgInvalid ?>"><a href="/myphp/mygiftcard/stocklist.php?status=invalid">invalid</a></li>
   </ul> 
   <hr class="mb-2">   
   <div class="row">
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
 <?php
     if($status == ''){
 ?>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
 <?php
     }
 ?>
 <?php
     if($status == 'unused' || $status == 'using' || $status == 'used'){
 ?>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
 <?php
     }
 ?>
 <?php
     if($status == 'used'){
 ?>
-    <div class="col-3 themed-grid-col border border-primary bg-info text-white">AucId</div>
+    <div class="col-4 themed-grid-col border border-primary bg-info text-white">AucId</div>
+<?php
+    }else{
+?>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
 <?php
     }
 ?>
@@ -111,8 +117,7 @@ $(function() {
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
-    <div id="codeType" class="col-3 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["codeType"] ?></div>
-    <div id="codeCd" class="col-4 text-break themed-grid-col border border-secondary bg-dark text-white">
+    <div id="codeCd" class="col-4 text-break themed-grid-col border border-secondary">
 	  <a href="/myphp/mygiftcard/regcode.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["codeCd"] ?>
 	  </a>
@@ -120,14 +125,14 @@ $(function() {
 <?php
     if($status == ''){
 ?>
-    <div id="status" class="col-2 text-break themed-grid-col border border-secondary bg-dark text-white"><?php echo $data["status"] ?></div>
+    <div id="status" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["status"] ?></div>
 <?php
     }
 ?>
 <?php
     if($status == 'unused' || $status == 'using' || $status == 'used'){
 ?>
-    <div class="col-2 text-break themed-grid-col border border-secondary">
+    <div class="col-4 text-break themed-grid-col border border-secondary">
 <?php 
   if($data["status"] == 'unused') {
 ?>
@@ -157,11 +162,19 @@ $(function() {
 <?php
     if($status == 'used'){
 ?>
-    <div class="col-3 themed-grid-col border border-secondary bg-dark text-white">
+    <div class="col-4 themed-grid-col border border-secondary">
 	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['aucId'] ?>" target="blank">
 	    <?php echo $data["aucId"] ?>
 	  </a>
     </div>
+<?php
+    }else{
+?>
+    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/mygiftcard/stocklist.php?status=<?php echo $status ?>&codeType=<?php echo $data["codeType"] ?>">
+	    <?php echo $data["codeType"] ?>
+	  </a>
+	</div>
 <?php
     }
 ?>

@@ -11,11 +11,11 @@
   }else{
 ?>
   <ul class="list-group list-group-horizontal">
-   <li class="list-group-item"><a href="/myphp/myyabid/page_myEstimation.php?buyer=<?php echo $buyer ?>">Estimate</a></li>
-   <li class="list-group-item"><a href="/myphp/myyabid/page_addMyBid.php?buyer=<?php echo $buyer ?>">add bid</a></li>
-   <li class="list-group-item"><a href="/myphp/myyabid/page_myBidList.php?buyer=<?php echo $buyer ?>">bid list</a></li>
-   <li class="list-group-item"><a href="/myphp/myyabid/page_myParcel.php?buyer=<?php echo $buyer ?>">parcel(daobaozhong)</a></li>
-   <li class="list-group-item"><a href="/myphp/myyabid/page_myParcelList.php?buyer=<?php echo $buyer ?>">parcel(fh)</a></li>
+   <li class="list-group-item"><a href="/myphp/myyabid/page_myEstimation.php?buyer=<?php echo $buyer ?>">估算大概多少钱</a></li>
+   <li class="list-group-item"><a href="/myphp/myyabid/page_addMyBid.php?buyer=<?php echo $buyer ?>">我要竞拍</a></li>
+   <li class="list-group-item"><a href="/myphp/myyabid/page_myBidList.php?buyer=<?php echo $buyer ?>">我的竞拍现在怎么样？</a></li>
+   <li class="list-group-item"><a href="/myphp/myyabid/page_myParcel.php?buyer=<?php echo $buyer ?>">我打包中的包裹都有哪些宝贝？</a></li>
+   <li class="list-group-item"><a href="/myphp/myyabid/page_myParcelList.php?buyer=<?php echo $buyer ?>">以前的包裹</a></li>
   </ul>
 <?php 
   }

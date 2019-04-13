@@ -13,9 +13,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.util.NieConfig;
-import com.walk_nie.util.NieUtil;
 
-public class MontbellOrderDemon {
+public class MontbellPYDemon {
 	private File logFile = null;
 
 	/**
@@ -24,27 +23,17 @@ public class MontbellOrderDemon {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		MontbellOrderDemon main = new MontbellOrderDemon();
+		MontbellPYDemon main = new MontbellPYDemon();
 		main.execute();
 	}
 
 	public void execute()  {
 		init();
-		MontbellAutoOrder order = new MontbellAutoOrder();
+		MontbellPinyinMain py = new MontbellPinyinMain();
 		
-		int interval = 60;// second
 		while (true) {
 			try {
-				long t1 = System.currentTimeMillis();
-
-				order.processForWebService();
-				long t2 = System.currentTimeMillis();
-				long dif = t2 - t1;
-				if (dif < interval * 1000) {
-					log("[SLEEP]zzzZZZzzz...");
-					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
-							.intValue());
-				}
+				py.process();
 			} catch (Exception ex) {
 				log(ex);
 			}

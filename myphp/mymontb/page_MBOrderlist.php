@@ -53,10 +53,6 @@ $(function() {
   if(isset($_GET['status'])){
 	$status = $_GET['status'];
   }
-  $maijia = '';
-  if(isset($_GET['maijia'])){
-	$maijia = $_GET['maijia'];
-  }
   if($status == 'unorder'){
 	  $cssBgUnorder = "bg-success text-white";
   }else if($status == 'ordered'){
@@ -68,41 +64,30 @@ $(function() {
   }else{
 	  $cssBgAll = "bg-success text-white";
   }
-  if(isset($maijia) && $maijia != ''){
-?>
-  <h3>买家:<span id="buyer"><?php echo $maijia ?></span></h3>
-  <hr class="mb-4">
-<?php
-  }
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_orderlist.php?status=unorder">unorder</a></li>
-    <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_orderlist.php?status=ordered">ordered + MB未</a></li>
-    <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_orderlist.php?status=mbfh">MBFH</a></li>
-    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_orderlist.php?status=fin">fin</a></li>
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_orderlist.php">ALL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=unorder">unorder</a></li>
+    <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordering">ordering</a></li>
+    <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordered">ordered</a></li>
+    <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=mbfh">MBFH</a></li>
+    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=fin">fin</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_MBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
 <?php
   $my = new MyMontb();
-  if($status !== '' && $maijia !== ''){
-	  $dataArr = $my->listItemByMaijiaAndStatus($maijia, $status);
-  }else if ($maijia !== ''){
-	  $dataArr = $my->listOrderInfoByMaijia($maijia);
-  }else if ($status !== ''){
-	  $dataArr = $my->listOrderInfoByStatus($status);
+  if ($status !== ''){
+	  $dataArr = $my->listMBOrderInfoByStatus($status);
   }else{
-	  $dataArr = $my->listAllOrderInfo();
+	  $dataArr = $my->listAllMBOrderInfo();
   }
-  
 ?>
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝订单号</div>
+    <div class="col-8 text-break themed-grid-col border border-primary bg-info text-white">收件人PY</div>
 <?php
     if($status == ''){
 ?>
-    <div class="col-2 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">status</div>
 <?php
     }
 ?>
@@ -113,11 +98,10 @@ $(function() {
 <?php
     }else if($status == 'mbfh'){
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">TransferNo</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">快递号</div>
 <?php
     }
 ?>
-
   </div>
 <?php
   foreach ($dataArr as $data) {
@@ -131,33 +115,33 @@ $(function() {
 ?>
   <div class="row <?php echo $boxCss ?>">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-4 text-break border border-secondary">
-	    <?php echo $data['maijia'] ?>
-	</div>
-    <div class="col-4 text-break themed-grid-col border border-secondary">
+    <div class="col-8 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
 <?php
-    if($data["status"] == 'unorder'){
-?>
-	  <a href="/myphp/mymontb/page_regOrder.php?uid=<?php echo $data['uid'] ?>">
-	    Mod
-	  </a>
-	  <a href="/myphp/mymontb/page_orderOrder.php?uid=<?php echo $data['uid'] ?>">
-	    ORDER
-	  </a>
-<?php
-    }else {
-?>
-	  <a href="/myphp/mymontb/page_orderOrder.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data['dingdanhao'] ?>
-	  </a>
-<?php
+    if(empty($data['firstName'])){
+		echo "Order!";
+    }else{
+        echo $data['firstName']. " " . $data['lastName'] . " " . $data['tel'];
     }
 ?>
+	  </a>
 	</div>
 <?php
     if($status == ''){
 ?>
-    <div class="col-2 text-break themed-grid-col border border-primary"><?php echo $data['status'] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['status'] ?></div>
+<?php
+    }
+?>
+<?php
+    if($status == 'ordered'){
+?>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $data['mbOrderNo'] ?></div>
+<?php
+    }else if($status == 'mbfh'){
+    	$transferNo = empty($data['transferNoGuonei']) ? $data['transferNoGuoji'] : $data['transferNoGuonei'];
+?>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $transferNo  ?></div>
 <?php
     }
 ?>

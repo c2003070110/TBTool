@@ -13,7 +13,9 @@ define("TBL_MYDAIGOU_BUYER_INFO", "mydaigou.buyer.info");
 
 define("TBL_MYHUILV_INFO", "myhuilv.info"); 
 
-define("TBL_MYMONTB_ORDER_INFO", "mymontb.order.info"); 
+define("TBL_MYMONTB_TB_ORDER_INFO", "mymontb.tb.order.info"); 
+define("TBL_MYMONTB_MB_ORDER_INFO", "mymontb.mb.order.info"); 
+define("TBL_MYMONTB_PRODUCT_INFO", "mymontb.product.info"); 
 
 define("HUI_LV_PLUS", "0.005"); 
 

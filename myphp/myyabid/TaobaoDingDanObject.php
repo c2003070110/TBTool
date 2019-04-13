@@ -8,6 +8,6 @@ class TaobaoDingDanObject
 	public $taobaoDingdanhao = "";
 	public $taobaoDingdanCNY = "";
 	
-	public $status = "" // unuse,using,used
+	public $status = ""; // unuse,using,used
 }
 ?>

@@ -1,64 +1,249 @@
 <?php
 require __DIR__ . '/../mycommon.php';
 require __DIR__ . '/../mydefine.php';
-require __DIR__ . '/OrderObject.php';
+require __DIR__ . '/ObjectClass.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
 
 class MyMontb
 {
-	public function saveOrder(){
+	public function saveTBOrder(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
 		
-		$orderObj = new OrderObject();
-		
-		$orderObj->uid = $_GET['uid'];
+		$orderObj = new TBOrderObject();
+		$tbOrderUid = empty($_GET['uid']) ? uniqid("tb", true) : $_GET['uid'];
+		$status = empty($_GET['status']) ? "st" : $_GET['status'];
+		$orderObj->uid = $tbOrderUid;
 		$orderObj->maijia = $_GET['maijia'];
 		$orderObj->dingdanhao = $_GET['dingdanhao'];
+		$orderObj->dingdanDt = $_GET['dingdanDt'];
 		$orderObj->maijiadianzhiHanzi = $_GET['maijiadianzhiHanzi'];
-		$orderObj->mbOrderNo = $_GET['mbOrderNo'];
-		$prodliststr = $_GET['productList'];
-		
-		$prodlines = explode(";", $prodliststr);
-		$prodArr = array();
-		
-		for($i = 0, $size = count($prodlines); $i < $size; ++$i) {
-			list($productId,$colorName,$sizeName) = explode(",", $prodlines[$i]);
-			if($productId == null)continue;
-			$prodObj = new ProductObject();
-			$prodObj->productId = $productId;
-			$prodObj->colorName = $colorName;
-			$prodObj->sizeName = $sizeName;
-			$prodArr[] = $prodObj;
-		}
-		$orderObj->productObjList = $prodArr;
-		//var_dump($orderObj->uid);
-		if(!isset($orderObj->uid) || $orderObj->uid == ''){
-			$orderObj->uid = uniqid();
-			$orderObj->status = 'unorder';
+		$orderObj->status = $status;
+		$orderObj->transferWay = $_GET['transferWay'];
+		var_dump($orderObj);
+		$mbUid = "";
+		$tbOrdData = $tbl->select(['uid', '==', $orderObj->uid])->fetch()[0];
+		if(empty($tbOrdData)){
+			if($orderObj->transferWay === "zhiYou"){
+				$mbUid = uniqid("mb", true);
+				$orderObj->mbUid = $mbUid;
+			}
 			$tbl->insert($orderObj);
-			$resultStr = "Insert!";
-			return $resultStr;
-		}
-		$cnt = $tbl->select(['uid', '==', $orderObj->uid])->count();
-		if($cnt == 0){
-			$tbl->insert($orderObj);
-			$resultStr = "Insert!";
-			return $resultStr;
+			
+			$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+			$mbObj = new MBOrderObject();
+			$mbObj->uid = $mbUid;
+			$mbObj->status = "unorder";
+			$tbl->insert($mbObj);
 		} else{
+			
 			$tbl->select(['uid', '==', $orderObj->uid])
 				->update(
 				         ['maijia', $orderObj->maijia],
 				         ['dingdanhao', $orderObj->dingdanhao],
+				         ['dingdanDt', $orderObj->dingdanDt],
 				         ['maijiadianzhiHanzi', $orderObj->maijiadianzhiHanzi],
-						 ['mbOrderNo', $orderObj->mbOrderNo],
-						 ['productObjList', $orderObj->productObjList]);
-			$resultStr = "Update!";
-			return $resultStr;
+				         ['status', $orderObj->status],
+				         ['transferWay', $orderObj->transferWay]);
+			//$mbUid = $tbOrdData["mbUid"];
+			
+			if($orderObj->transferWay === "zhiYou" && $tbOrdData["transferWay"] !== "zhiYou"){
+				// insert 
+				$mbUid = uniqid("mb", true);
+				$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+				$mbObj = new MBOrderObject();
+				$mbObj->uid = $mbUid;
+				$mbObj->status = "unorder";
+				$tbl->insert($mbObj);
+			}else if($orderObj->transferWay !== "zhiYou" && $tbOrdData["transferWay"] === "zhiYou"){
+				// delete
+				$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+				$tbl->select("uid","==",$tbOrdData["mbUid"])->delete();
+			}else{
+				$mbUid = $tbOrdData["mbUid"];
+			}
+		}
+		
+		$prodliststr = $_GET['productList'];
+		$prodlines = explode(";", $prodliststr);
+		$prodArr = array();
+		for($i = 0, $size = count($prodlines); $i < $size; ++$i) {
+			list($productId,$colorName,$sizeName) = explode(",", $prodlines[$i]);
+			if($productId == null)continue;
+			$prodObj = new ProductObject();
+			$prodObj->uid = uniqid("p", true) . $i;
+			$prodObj->productId = $productId;
+			$prodObj->colorName = $colorName;
+			$prodObj->sizeName = $sizeName;
+			$prodObj->tbUid = $tbOrderUid;
+			$prodObj->mbUid = $mbUid;
+			
+			$prodArr[] = $prodObj;
+		}
+		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		$tbl->select(['tbUid', '==', $orderObj->uid])->delete();
+		foreach ($prodArr as $data) {
+		    $tbl->insert($data);
 		}
 	}
+	
+	public function updateTBOrderStatus($tbOrderUid, $toStatus){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		if($toStatus === "mboff"){
+			$tbl->select(['uid', '==', $tbOrderUid])
+				->update(['status', $toStatus]);
+				
+			// TODO delete MBOrder
+		}else{
+			$tbl->select(['uid', '==', $tbOrderUid])
+				->update(['status', $toStatus]);
+		}
+	}
+	public function listTBOrderInfoByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		
+		return $tbl->select(['uid', '==', $uid])->fetch()[0];
+	}
+	public function listTBOrderByMaijiaAndStatus($maijia, $status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		
+		return $tbl->select(['maijia', '==', $maijia],['status', '==', $status, 'and'])->fetch();
+	}
+	public function listTBOrderByMaijia($maijia){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		
+		return $tbl->select(['maijia', '==', $maijia])->fetch();
+	}
+	public function listTBOrderByStatus($status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		
+		return $tbl->select(['status', '==', $status])->fetch();
+	}
+	public function listAllTBOrder(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		
+		return $tbl->select("*")->fetch();
+	}
+	public function listTBOrderInfoByMBUid($mbUid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
+		
+		return $tbl->select(['mbUid', '==', $mbUid,'and'],['transferWay', '==', 'zhiYou','and'])->fetch()[0];
+	}
+	
+	
+	//*********MB_ORDER ********
+	public function updateMBOrder(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		
+		$orderObj = new MBOrderObject();
+		
+		$orderObj->uid = $_GET['uid'];
+		$orderObj->firstName = $_GET['firstName'];
+		$orderObj->lastName = $_GET['lastName'];
+		$orderObj->tel = $_GET['tel'];
+		$orderObj->postcode = $_GET['postcode'];
+		$orderObj->statePY = $_GET['statePY'];
+		$orderObj->cityPY = $_GET['cityPY'];
+		$orderObj->adr1PY = $_GET['adr1PY'];
+		$orderObj->adr2PY = $_GET['adr2PY'];
+		$orderObj->fukuanWay = $_GET['fukuanWay'];
+		$cnt = $tbl->select(['uid', '==', $orderObj->uid])->count();
+		if($cnt == 0){
+			$resultStr = "Not Exist!";
+			return $resultStr;
+		} else{
+			$tbl->select(['uid', '==', $orderObj->uid])
+				->update(
+				         ['status', 'unorder'],
+				         ['firstName', $orderObj->firstName],
+				         ['lastName', $orderObj->lastName],
+				         ['tel', $orderObj->tel],
+				         ['postcode', $orderObj->postcode],
+						 ['statePY', $orderObj->statePY],
+						 ['cityPY', $orderObj->cityPY],
+						 ['adr1PY', $orderObj->adr1PY],
+						 ['adr2PY', $orderObj->adr2PY],
+						 ['fukuanWay', $orderObj->fukuanWay]);
+		}
+		return;
+	}
+	public function updateMBOrderByMBOrder($uid, $mbOrderNo){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['mbOrderNo', $mbOrderNo],
+					 ['status', 'ordered']);
+	}
+	public function updateMBOrderByTranfserNo($uid, $transferNoGuoji, $transferNoGuonei){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['transferNoGuoji', $transferNoGuoji],
+					 ['transferNoGuonei', $transferNoGuonei],
+					 ['status', 'mbfh']);
+	}
+	public function orderMBOrder($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['status', 'ordering']);
+	}
+	public function listMBOrderInfoByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		
+		return $tbl->select(['uid', '==', $uid])->fetch()[0];
+	}
+	public function listMBOrderInfoByStatus($status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		
+		return $tbl->select(['status', '==', $status])->fetch();
+	}
+	public function listAllMBOrderInfo(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		
+		return $tbl->select('*')->fetch();
+	}
+	
+	
+	
+	
+	//*********PRODUCT ********
+	public function listProductInfoByMBUid($mbUid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		
+		return $tbl->select(['mbUid', '==', $mbUid])->fetch();
+	}
+	public function listProductInfoByByTBOrderUid($tbUid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		
+		return $tbl->select(['tbUid', '==', $tbUid])->fetch();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public function deleteOrder($uid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_ORDER_INFO"));

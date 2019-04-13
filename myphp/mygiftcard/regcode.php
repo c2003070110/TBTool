@@ -98,7 +98,7 @@ $(function() {
 				}
 			}
 			if(hasCodeCd == false){
-				var cdArr = strLoop1.split(/[\s,:]+/);
+				var cdArr = strLoop1.split(/[\s,:：]+/);
 				if(cdArr){
 					for(var j=0; j<cdArr.length; j++){
 						if(cdArr[j].indexOf("-") != -1){
@@ -136,7 +136,7 @@ $(function() {
 ?>
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
-		  <textarea id="tempTxtArea" rows="6" cols="35"></textarea>
+		  <textarea id="tempTxtArea" rows="6" cols="45"></textarea>
 		</div>
       </div>
       <div class="row mb-4 form-group">
@@ -161,6 +161,7 @@ $(function() {
                 <option value="PSNUSD20" <?php if($obj['codeType']=='PSNUSD20'){?> selected <?php } ?>>PSN 20美元</option>
                 <option value="PSNUSD50" <?php if($obj['codeType']=='PSNUSD50'){?> selected <?php } ?>>PSN 50美元</option>
                 <option value="PSNUSD100" <?php if($obj['codeType']=='PSNUSD100'){?> selected <?php } ?>>PSN 100美元</option>
+                <option value="PSNHKD80" <?php if($obj['codeType']=='PSNHKD80'){?> selected <?php } ?>>PSN 80HKD</option>
                 <option value="XBOXUSD10" <?php if($obj['codeType']=='XBOXUSD10'){?> selected <?php } ?>>XBOX 10美元</option>
                 <option value="XBOXUSD20" <?php if($obj['codeType']=='XBOXUSD10'){?> selected <?php } ?>>XBOX 20美元</option>
                 <option value="XBOXUSD50" <?php if($obj['codeType']=='XBOXUSD50'){?> selected <?php } ?>>XBOX 50美元</option>

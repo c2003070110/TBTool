@@ -63,16 +63,14 @@ public class MontbellAutoOrder {
 		}
 	}
 
-	public void processForWebService() {
-		try {
-			TaobaoOrderInfo orderInfo = readInOrderInfoFromWebService();
-			if(orderInfo == null)return;
-			WebDriver driver = logonForChina();
-			orderForChina(driver, orderInfo);
-			reactOrderResultToWebServer(orderInfo);
-			driver.close();
-		} catch (Exception e) {
-		}
+	public void processForWebService() throws IOException{
+		TaobaoOrderInfo orderInfo = readInOrderInfoFromWebService();
+		if (orderInfo == null)
+			return;
+		WebDriver driver = logonForChina();
+		orderForChina(driver, orderInfo);
+		reactOrderResultToWebServer(orderInfo);
+		driver.close();
 	}
 	private void reactOrderResultToWebServer(TaobaoOrderInfo orderInfo) {
 		Map<String,String> param = Maps.newHashMap();
@@ -86,7 +84,7 @@ public class MontbellAutoOrder {
 	private TaobaoOrderInfo readInOrderInfoFromWebService() {
 
 		Map<String,String> param = Maps.newHashMap();
-		param.put("action", "listOrderByEmptyMBOrderOne");
+		param.put("action", "listMBOrderByEmptyMBOrderOne");
 		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
 		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
 		if(StringUtil.isBlank(orderLine)){
@@ -118,14 +116,42 @@ public class MontbellAutoOrder {
 		tbOrderInfo.adr2 = (String)objMap.get("adr2PY");
 		tbOrderInfo.crObj = getCrObject((String)objMap.get("fukuanWay"));
 		
-		List<Map<String,Object>> pMapList = (List<Map<String,Object>>)objMap.get("productObjList");
+		param = Maps.newHashMap();
+		param.put("action", "listProductInfoByMBUid");
+		param.put("mbUid", tbOrderInfo.uid);
+		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
+		String productLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
+		if(StringUtil.isBlank(productLine)){
+			System.out.println("[INFO]order with NONE product.mbuid=" + tbOrderInfo.uid);
+			return null;
+		}
+		if(productLine.indexOf("ERROR") != -1){
+			System.out.println("[ERROR]" + orderLine);
+			return null;
+		}
+		
+		List<Map<String,Object>> pMapList = null;
+		try{
+			pMapList = j.toType(productLine, List.class);
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
 		 List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
 		for(Map<String,Object> pMap :pMapList){
 			TaobaoOrderProductInfo p = new TaobaoOrderProductInfo();
-			p.productId = (String)pMap.get("productId");
+			String pid = (String)pMap.get("productId");
+			if (pid.startsWith("MTBL_")) {
+				String[] newP = pid.split("-");
+				pid = newP[1];
+			}
+			p.productId = pid;
 			p.colorName = (String)pMap.get("colorName");
 			p.sizeName = (String)pMap.get("sizeName");
 			p.qtty = (String)pMap.get("qtty");
+			if(StringUtil.isBlank(p.qtty)){
+				p.qtty = "1";
+			}
 			productInfos.add(p);
 		}
 		tbOrderInfo.productInfos = productInfos; 

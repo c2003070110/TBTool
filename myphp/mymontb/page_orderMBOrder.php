@@ -42,13 +42,13 @@ $(function(){
         });
     });
     $(document).on("click", "#btnConvert", function() {
-		var srcTxt = $("#tempTxtArea").val();
+		var srcTxt = $("#maijiadianzhiPY").val();
 		var adrArr = srcTxt.split("\n");
-		if(adrArr.length ! = 7){
-			alert("[ERROR]7 Lines!");
+		if(adrArr.length < 10){
+			alert("[ERROR]10 Lines!");
 			return ;
 		}
-		var idx = 0;
+		var idx = 2;
 		var nmArr = adrArr[idx++].split(/(?=[A-Z])/);
 		if(nmArr.length>2){
 			$("#firstName").val(nmArr[0]);
@@ -66,7 +66,7 @@ $(function(){
 		$("#adr1PY").val(adrArr[idx++]);
 		$("#adr2PY").val(adrArr[idx++]);
 		$("#postcode").val(adrArr[idx++]);
-	}
+	});
 	var formParameter = function(){
 		param = {};
         param.uid = $("#orderUid").val();
@@ -80,11 +80,11 @@ $(function(){
         param.adr2PY = $("#adr2PY").val();
         param.fukuanWay = $("#fukuanWay").val();
 		return param;
-	}
+	};
     $(document).on("click", "#btnUpdate", function() {
         
 	    var param = formParameter();
-		param.action = "updateOrder";
+		param.action = "updateMBOrder";
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
                            data : param,
@@ -98,7 +98,7 @@ $(function(){
     $(document).on("click", "#btnOrder", function() {
         
 	    var param = formParameter();
-		param.action = "orderOrder";
+		param.action = "orderMBOrder";
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
                            data : param,
@@ -167,7 +167,11 @@ $(function(){
   }
   $orderUid = $_GET['uid'];
   $my = new MyMontb();
-  $orderObj = $my->listOrderInfoByUid($orderUid);
+  $orderObj = $my->listMBOrderInfoByUid($orderUid);
+  
+  $tbOrderObj = $my->listTBOrderInfoByMBUid($orderUid);
+  
+  $productObjList = $my->listProductInfoByMBUid($orderUid);
   
   $editFlag = ($orderObj["status"] == 'unorder' || $orderObj["status"] == 'ordered');
 ?>
@@ -224,19 +228,19 @@ $(function(){
       <div class="row mb-4 form-group">
         <div class="col-10">
 		  <label for="maijia">淘宝买家ID</label>
-		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
+		  <input type="text" class="form-control" id="maijia" value="<?php echo $tbOrderObj['maijia'] ?>" readOnly ></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-10">
 		  <label for="dingdanhao">淘宝订单号</label>
-		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
+		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $tbOrderObj['dingdanhao'] ?>" readOnly></div>
       </div>
 <?php
-  $prodSize = count($orderObj["productObjList"]);
-  $lines = $orderObj['maijiadianzhiHanzi'] . "\n";
+  $prodSize = count($productObjList);
+  $lines = $tbOrderObj['maijiadianzhiHanzi'] . "\n";
   for($i = 0, $size = $prodSize; $i < $size; ++$i) {
-	$p = $orderObj["productObjList"][$i];
-	$lines .= "XXX:" . $p["productId"] . ' YYY:' . $p["colorName"] . ' ZZZ:' . $p["sizeName"] . "\n";
+	$p = $productObjList[$i];
+	$lines .= "商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . "\n";
   }
 ?>
       <div class="row mb-4 form-group">
@@ -247,7 +251,7 @@ $(function(){
       <div class="row mb-4 form-group">
         <div class="col-10">
             <label for="maijiadianzhiHanzi">买家地址</label>
-            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
+            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $tbOrderObj['maijiadianzhiHanzi'] ?>" readOnly>
         </div>
 <?php if($editFlag){?> 
         <div class="col-2">
@@ -263,7 +267,7 @@ $(function(){
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
-            <textarea  cols="60" rows="6" id="maijiadianzhiPY"  ></textarea >
+            <textarea  cols="40" rows="6" id="maijiadianzhiPY"  ></textarea >
         </div>
       </div>
       <div class="row mb-4 form-group">
@@ -293,11 +297,11 @@ $(function(){
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-4">
+        <div class="col-5">
 		  <label for="state">省(拼音)</label>
 		  <input type="text" class="form-control" id="statePY" value="<?php echo $orderObj['statePY'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
-        <div class="col-8">
+        <div class="col-7">
 		  <label for="city">市(拼音) Max 20</label>
 		  <input type="text" class="form-control" id="cityPY" value="<?php echo $orderObj['cityPY'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
@@ -315,7 +319,7 @@ $(function(){
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-5">
+        <div class="col-12">
 		  <label for="fukuanWay">付款CR</label>
             <select class="custom-select d-block w-100" id="fukuanWay" <?php if(!$editFlag){?> disabled <?php } ?>>
                 <option value="1" <?php if($orderObj['fukuanWay']=='1'){?> selected <?php } ?>>Line JCB</option>
@@ -329,7 +333,7 @@ $(function(){
 		  <button type="button" id="btnUpdate" class="btn btn-secondary">UPDATE</button>
         </div>
         <div class="col-5">
-		  <button type="button" id="btnOrder" class="btn btn-secondary">ORDER</button>
+		  <button type="button" id="btnOrder" class="btn btn-secondary">to order list</button>
         </div>
       </div>
 <?php } ?>
