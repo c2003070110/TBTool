@@ -28,10 +28,11 @@ public class MontbellOrderDemon {
 		main.execute();
 	}
 
-	public void execute()  {
+	public void execute() {
 		init();
 		MontbellAutoOrder order = new MontbellAutoOrder();
-		
+		MontbellStockChecker stock = new MontbellStockChecker();
+
 		int interval = 60;// second
 		while (true) {
 			try {
@@ -40,6 +41,12 @@ public class MontbellOrderDemon {
 				order.processForWebService();
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
+				if (dif > interval * 1000) {
+					//continue;
+				}
+				stock.processForWebService();
+				t2 = System.currentTimeMillis();
+				dif = t2 - t1;
 				if (dif < interval * 1000) {
 					log("[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))

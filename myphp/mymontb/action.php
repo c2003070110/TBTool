@@ -1,8 +1,9 @@
 <?php
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-
+/*
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+*/
 require __DIR__ . '/MyMontb.php';
 $actionStr = $_GET['action'];
 
@@ -13,13 +14,16 @@ if($actionStr === null){
 if($actionStr == "saveTBOrder"){
 	$my = new MyMontb();
 	$rslt = $my->saveTBOrder();
-	echo $rslt;
-} else if($actionStr == "updateTBOrderStatus"){
-	if(empty($_GET["uid"]) || empty($_GET["buyer"]) || empty($_GET["status"])){
+	echo $rslt; // uid
+} else if($actionStr == "updateProductStatus"){
+	if(empty($_GET["uid"]) || empty($_GET["status"])){
 		return ;
 	} 
-	$my = new MyYaBid();
-	$rslt = $my->updateTBOrderStatus($_GET["uid"], $_GET["status"]);
+	$my = new MyMontb();
+	$rslt = $my->updateProductInfoStatus($_GET["uid"], $_GET["status"]);
+	//$rslt = $my->updateTBOrderStatus($_GET["uid"], $_GET["status"]);
+	//echo $rslt; // uid
+// ********** MB
 } else if($actionStr == "updateMBOrder"){
 	$uid = $_GET['uid'];
 	if($uid === null){
@@ -36,6 +40,12 @@ if($actionStr == "saveTBOrder"){
 	}
 	$my = new MyMontb();
 	$rslt = $my->orderMBOrder($uid);
+} else if($actionStr == "updateMBOrderStatus"){
+	if(empty($_GET["uid"]) || empty($_GET["status"])){
+		return ;
+	} 
+	$my = new MyMontb();
+	$rslt = $my->updateMBOrderStatus($_GET["uid"], $_GET["status"]);
 } else if($actionStr == "updateMBOrderNo"){
 	if(empty($_GET['uid']) || empty($_GET['mbOrderNo'])){
 		echo "[ERROR]Parameter is NULL";
@@ -52,6 +62,24 @@ if($actionStr == "saveTBOrder"){
 	$rslt = $my->updateMBOrderByTranfserNo($_GET['uid'],$_GET['transferNoGuoji'],$_GET['transferNoGuonei']);
 
 
+} else if($actionStr == "makePinyouChina"){
+	$productUidList = $_GET['productUidList'];
+	if(empty($productUidList)){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$rslt = $my->makePinyou($productUidList, "cn");
+	echo $rslt;
+} else if($actionStr == "makePinyouJapan"){
+	$productUidList = $_GET['productUidList'];
+	if(empty($productUidList)){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$rslt = $my->makePinyou($productUidList, "jp");
+	echo $rslt;
 
 } else if($actionStr == "convertHanziToPY"){
 	$hanzi = $_GET['hanzi'];
@@ -64,11 +92,48 @@ if($actionStr == "saveTBOrder"){
 	echo $rslt;
 	
 //***********service action**************
-// listOrderByEmptyMBOrderOne input:NONE; ouput:OrderObject;
-} else if($actionStr == "listOrderByEmptyMBOrderOne"){
+// listMBOrderByEmptyMBOrderOne input:NONE; ouput:ProductObject;
+} else if($actionStr == "listMBOrderByEmptyMBOrderOne"){
 	$my = new MyMontb();
-	return $my->listOrderByEmptyMBOrderOne();
+	$data = $my->listMBOrderByEmptyMBOrderOne();
+	if(empty($data)){
+		echo "";
+	}else{
+		echo json_encode($data);
+	}
+	return;
 // updateMBOrderNo input:uid ; mbOrderNo; output:NONE;
+// see to updateMBOrderNo
+// listProductInfoByMBUid input:NONE; ouput: List Of ProductObject;
+} else if($actionStr == "listProductInfoByMBUid"){
+	$mbUid = $_GET['mbUid'];
+	if($mbUid === null){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	echo json_encode($my->listProductInfoByMBUid($mbUid));
+	return;
+// listMBOrderByEmptyMBOrderOne input:NONE; ouput:MBOrderObject;
+} else if($actionStr == "listProductInfoByEmptyPriceOne"){
+	$my = new MyMontb();
+	$data = $my->listProductInfoByEmptyPriceOne();
+	if(empty($data)){
+		echo "";
+	}else{
+		echo json_encode($data);
+	}
+	return;
+// listMBOrderByEmptyMBOrderOne input:productUid,priceOffTax,stock; ouput:NONE;
+} else if($actionStr == "updateProductInfoByStock"){
+	$uid = $_GET['uid'];
+	if($uid === null){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$my->updateProductInfoByStock($_GET['uid'],$_GET['priceOffTax'],$_GET['stock']);
+	return;
 	
 	
 } else {	

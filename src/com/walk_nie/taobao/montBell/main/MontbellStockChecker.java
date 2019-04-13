@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-
 import org.apache.http.client.utils.DateUtils;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.json.Json;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
@@ -26,6 +26,7 @@ import com.walk_nie.taobao.object.StockObject;
 import com.walk_nie.taobao.object.TaobaoOrderProductInfo;
 import com.walk_nie.taobao.util.BaobeiUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellStockChecker {
@@ -298,6 +299,7 @@ public class MontbellStockChecker {
 			price = price.replace("価格", "");
 			price = price.replace(",", "");
 			price = price.replace("¥", "");
+			price = price.replace("アウトレット", "");
 			price = price.trim();
 		}
 				
@@ -493,5 +495,96 @@ public class MontbellStockChecker {
 		}
 		File oFile = new File(MontBellUtil.rootPathName,outFileName);
 		NieUtil.appendToFile(oFile,stockLines);
+	}
+
+	public void processForWebService() throws Exception {
+		StockObject stockInfo = readInStockInfoFromWebService();
+		if (stockInfo == null)
+			return;
+		List<StockObject> stockListMontbell = getMontbellStockInfo(stockInfo.productId);
+		for (StockObject st : stockListMontbell) {
+
+			if (!StringUtil.isBlank(stockInfo.colorName) && stockInfo.colorName.equalsIgnoreCase(st.colorName)
+					&& !StringUtil.isBlank(stockInfo.sizeName) && stockInfo.sizeName.equalsIgnoreCase(st.sizeName)) {
+				stockInfo.priceJPY = st.priceJPY;
+				stockInfo.stockStatus = st.stockStatus;
+				break;
+			}
+			if (!StringUtil.isBlank(stockInfo.colorName) && stockInfo.colorName.equalsIgnoreCase(st.colorName)
+					&& StringUtil.isBlank(stockInfo.sizeName)) {
+				stockInfo.priceJPY = st.priceJPY;
+				stockInfo.stockStatus = st.stockStatus;
+				break;
+			}
+			if (StringUtil.isBlank(stockInfo.colorName)
+					&& !StringUtil.isBlank(stockInfo.sizeName) && stockInfo.sizeName.equalsIgnoreCase(st.sizeName)) {
+				stockInfo.priceJPY = st.priceJPY;
+				stockInfo.stockStatus = st.stockStatus;
+				break;
+			}
+			if (StringUtil.isBlank(stockInfo.colorName)
+					&& StringUtil.isBlank(stockInfo.sizeName)) {
+				stockInfo.priceJPY = st.priceJPY;
+				stockInfo.stockStatus = st.stockStatus;
+				break;
+			}
+		}
+		if (StringUtil.isBlank(stockInfo.priceJPY)) {
+			System.out.println("[ERROR]failure to get price! productId=" + stockInfo.productId);
+			return;
+		}
+		reactStockResultToWebServer(stockInfo);
+		
+	}
+
+	private void reactStockResultToWebServer(StockObject stockInfo) {
+		Map<String,String> param = Maps.newHashMap();
+		param.put("action", "updateProductInfoByStock");
+		param.put("uid", stockInfo.uid);
+		param.put("priceOffTax", stockInfo.priceJPY);
+		if (!StringUtil.isBlank(stockInfo.stockStatus)) {
+			param.put("stock", stockInfo.stockStatus);
+		}
+		// /myphp/mymontb/action.php?action=updateMBOrderNo
+		NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.react.url"), param);
+	}
+
+	private StockObject readInStockInfoFromWebService() {
+		Map<String,String> param = Maps.newHashMap();
+		param.put("action", "listProductInfoByEmptyPriceOne");
+		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
+		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
+		if(StringUtil.isBlank(orderLine)){
+			System.out.println("[INFO]Nothing to stock");
+			return null;
+		}
+		if(orderLine.indexOf("ERROR") != -1){
+			System.out.println("[ERROR]" + orderLine);
+			return null;
+		}
+		Json j = new Json();
+		Map<String,Object> objMap = null ;
+		try{
+			objMap = j.toType(orderLine, Map.class);
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+
+		StockObject obj = new StockObject();
+		obj.uid = (String)objMap.get("uid");
+		String pid = (String)objMap.get("productId");
+			String[] newP = pid.split("-");
+			if (newP.length > 2) {
+				pid = newP[2];
+			}else if (newP.length > 1) {
+				pid = newP[1];
+			} else {
+				pid = newP[0];
+			}
+		obj.productId = pid;
+		obj.colorName = (String)objMap.get("colorName");
+		obj.sizeName = (String)objMap.get("sizeName");
+		return obj;
 	}
 }

@@ -30,11 +30,11 @@ class TBOrderObject
     public $dingdanDt = '';
     
     public $maijiadianzhiHanzi = '';
-	public $transferWay = ""; // zhiYou,pinYou
+	public $transferWay = ""; // mbzhiYou;wozhiYou,pinYou
     
-    public $status = ''; // st,mbordering,mbordered,mbfh,mboff,fin
+    public $status = ''; // deprecated! see to ProductObject#status
 	
-	public $mbUid = "";
+	public $mbUid = ""; // deprecated! see to ProductObject#mbUid
 	
     //public $productObjList;
 }
@@ -51,6 +51,8 @@ class ProductObject
     
     public $priceOffTax = 0;
     public $stock = "";
+	
+    public $status = ''; // st,mbordering,mbordered,mbfh,mboff,fin
 }
 
 ?>

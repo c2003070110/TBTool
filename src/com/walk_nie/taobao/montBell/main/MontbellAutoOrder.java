@@ -67,8 +67,13 @@ public class MontbellAutoOrder {
 		TaobaoOrderInfo orderInfo = readInOrderInfoFromWebService();
 		if (orderInfo == null)
 			return;
-		WebDriver driver = logonForChina();
-		orderForChina(driver, orderInfo);
+		if("tokyo".equals(orderInfo.state)){
+			WebDriver driver = logonForJapan();
+			orderForJapan(driver, orderInfo);
+		}else{
+			WebDriver driver = logonForChina();
+			orderForChina(driver, orderInfo);
+		}
 		reactOrderResultToWebServer(orderInfo);
 		driver.close();
 	}
@@ -327,9 +332,12 @@ public class MontbellAutoOrder {
 		return driver;
 	}
 
-	protected void orderForJapan(WebDriver driver, File tempFile0) throws IOException {
-
+	protected void orderForJapan(WebDriver driver, File tempFile0)
+			throws IOException {
 		TaobaoOrderInfo orderInfo = readInOrderInfo(tempFile0);
+		orderForJapan(driver, orderInfo);
+	}
+	protected void orderForJapan(WebDriver driver, TaobaoOrderInfo orderInfo) throws IOException {
 		logOrderInfo(orderInfo);
 		
 		try{
@@ -405,19 +413,18 @@ public class MontbellAutoOrder {
 			if(orderInfo.crObj != null){
 				fillCreditCard(driver, orderInfo.crObj);
 			}
-			
-			String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
-			if(!("YES".equalsIgnoreCase(answ) || "Y".equals(answ))){
-				logOrderResult(orderInfo, null);
-				return;
-			}
+			// FIXME AUTO ORDER!!!
+//			String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
+//			if(!("YES".equalsIgnoreCase(answ) || "Y".equalsIgnoreCase(answ))){
+//				logOrderResult(orderInfo, null);
+//				return;
+//			}
 			
 			//  submit
 			weList = driver.findElements(By.tagName("input"));
 			for (WebElement we1 : weList) {
 				if ("image".equalsIgnoreCase(we1.getAttribute("type"))) {
-					// FIXME which?
-					if ("btn_next".equalsIgnoreCase(we1.getAttribute("name"))) {
+					if ("next".equalsIgnoreCase(we1.getAttribute("name"))) {
 						we1.click();
 						break;
 					}
@@ -425,8 +432,21 @@ public class MontbellAutoOrder {
 			}
 			NieUtil.mySleepBySecond(1);
 			
-			// TODO orderNo
 			String orderNo = "";
+			weList = driver.findElements(By.className("orderNo"));
+			for (WebElement we1 : weList) {
+				if ("p".equalsIgnoreCase(we1.getTagName())) {
+					String txt = we1.getText().trim();// 【受付番号：P19D07781】
+					if (txt.indexOf("受付番号") != -1) {
+						orderNo = txt.replaceAll("受付番号", "");
+						orderNo = orderNo.replaceAll("【", "");
+						orderNo = orderNo.replaceAll("】", "");
+						orderNo = orderNo.replaceAll("：", "");
+						orderNo = orderNo.replaceAll(" ", "");
+					}
+				}
+			}
+			orderInfo.mbOrderNo = orderNo;
 			
 			logOrderResult(orderInfo,orderNo);
 		}
@@ -593,12 +613,12 @@ public class MontbellAutoOrder {
 		if(orderInfo.crObj != null){
 			fillCreditCard(driver, orderInfo.crObj);
 		}
-		
-		String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
-		if(!("YES".equalsIgnoreCase(answ) || "Y".equalsIgnoreCase(answ))){
-			logOrderResult(orderInfo, null);
-			return;
-		}
+		// FIXME AUTO ORDER!!!
+//		String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
+//		if(!("YES".equalsIgnoreCase(answ) || "Y".equalsIgnoreCase(answ))){
+//			logOrderResult(orderInfo, null);
+//			return;
+//		}
 		
 		//  submit
 		weList = driver.findElements(By.tagName("input"));

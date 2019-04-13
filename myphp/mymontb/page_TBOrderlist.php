@@ -44,6 +44,10 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "mboff");
     });
+    $(document).on("click", "#btnCancel", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "cancel");
+    });
 });
 </script>
 </head>
@@ -55,23 +59,26 @@ $(function() {
 <?php
   $status = $_GET['status'];
   $maijia = $_GET['maijia'];
-  if($status == 'unorder'){
-	  $cssBgUnorder = "bg-success text-white";
-  }else if($status == 'ordered'){
-	  $cssBgOrdered= "bg-success text-white";
+  if($status == 'st'){
+	  $cssBgSt = "bg-success text-white";
+  }else if($status == 'mbordered'){
+	  $cssBgmbordered = "bg-success text-white";
   }else if($status == 'fin'){
 	  $cssBgfin= "bg-success text-white";
   }else if($status == 'mbfh'){
 	  $cssBgmbfh= "bg-success text-white";
+  }else if($status == 'mboff'){
+	  $cssBgmboff= "bg-success text-white";
   }else{
 	  $cssBgAll = "bg-success text-white";
   }
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=st&maijia=<?php echo $maijia ?>">start</a></li>
-    <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbordering&maijia=<?php echo $maijia ?>">MB未</a></li>
+    <li class="list-group-item <?php echo $cssBgSt ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=st&maijia=<?php echo $maijia ?>">start</a></li>
+    <li class="list-group-item <?php echo $cssBgmbordered ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbordered&maijia=<?php echo $maijia ?>">MB中</a></li>
     <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbfh&maijia=<?php echo $maijia ?>">mbfh</a></li>
     <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=fin&maijia=<?php echo $maijia ?>">fin</a></li>
+    <li class="list-group-item <?php echo $cssBgmboff ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mboff&maijia=<?php echo $maijia ?>">mboff</a></li>
     <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_TBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
@@ -120,19 +127,9 @@ $(function() {
 	  </a>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-secondary">
-<?php
-    if($data["status"] == 'st'){
-?>
 	  <a href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data['dingdanhao'] ?>
 	  </a>
-<?php
-    }else{
-?>
-	<?php echo $data['dingdanhao'] ?>
-<?php
-    }
-?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $data['dingdanDt'] ?></div>
 <?php
@@ -147,6 +144,7 @@ $(function() {
 		if($data["status"] == 'st'){
 ?>
 		<button class="btn btn-secondary actionBtn" id="btnMBoff" type="button">mboff</button>
+		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删除</button>
 <?php
 		}
 ?>

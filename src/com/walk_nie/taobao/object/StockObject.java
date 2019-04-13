@@ -2,6 +2,8 @@ package com.walk_nie.taobao.object;
 
 
 public class StockObject {
+	public String uid;
+	
 	public String productId;
 
 	public String priceJPY = "";

@@ -14,7 +14,7 @@ import org.apache.http.client.utils.DateUtils;
 
 import com.walk_nie.util.NieConfig;
 
-public class MontbellPYDemon {
+public class MontbellPinyinDemon {
 	private File logFile = null;
 
 	/**
@@ -23,7 +23,7 @@ public class MontbellPYDemon {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		MontbellPYDemon main = new MontbellPYDemon();
+		MontbellPinyinDemon main = new MontbellPinyinDemon();
 		main.execute();
 	}
 

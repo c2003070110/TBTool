@@ -1,8 +1,10 @@
 <?php
+
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 require __DIR__ . '/MyMontb.php';
+
 ?>
 <html lang="ja">
 <head>
@@ -86,6 +88,12 @@ $(function() {
 					if(arr2.length <2) continue;
 					if(arr2[0].indexOf("商家编码") == 0){
 						productId = arr2[1].replace(/^\s+|\s+$/g,'');
+						var wr = productId.split(/[-,_]+/);
+						if(wr.length == 3){
+							productId = wr[2];
+						}else{
+							productId = wr[0];
+						}
 					}
 					if(arr2[0].indexOf("颜色分类") == 0){
 						colorName = arr2[1].replace(/^\s+|\s+$/g,'');
@@ -114,7 +122,13 @@ $(function() {
 							  }
 						  );
 			jqxhr.done(function( msg ) {
-				location.reload();
+				var href = window.location.href;
+				if(href.indexOf("uid") == -1){
+					var url = href +"?uid="+msg;
+					window.location.href = url;
+				}else{
+					location.reload();
+				}
 			});
 		}
     });
@@ -146,10 +160,11 @@ $(function() {
 	$orderUid = $_GET['uid'];
   }
   $editFlag = ($orderUid === '');
+  $my = new MyMontb();
   if($orderUid !== ''){
-	$my = new MyMontb();
 	$orderObj = $my->listTBOrderInfoByUid($orderUid);
 	$editFlag = ($orderObj["status"] == 'st' || $orderObj["status"] == 'mbordering');
+	$editFlag = true;
   }
   //var_dump($orderObj);
 ?>
@@ -163,13 +178,13 @@ $(function() {
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
-		  <label for="dingdanhao">下单时间</label>
-		  <input type="text" class="form-control" id="dingdanDt" value="<?php echo $orderObj['dingdanDt'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
+		  <label for="dingdanhao">淘宝订单号</label>
+		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
-		  <label for="dingdanhao">淘宝订单号</label>
-		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
+		  <label for="dingdanhao">下单时间</label>
+		  <input type="text" class="form-control" id="dingdanDt" value="<?php echo $orderObj['dingdanDt'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
@@ -177,8 +192,19 @@ $(function() {
             <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
       </div>
+      <div class="row mb-4 form-group_product">
+        <div class="col-12">
+          <label for="transferWay">快递方式</label>
+          <select class="custom-select form-control parcelAmt" id="transferWay" <?php if(!$editFlag){?> disabled <?php } ?>>
+              <option value=""></option>
+              <option value="mbzhiYou" <?php if($orderObj['transferWay']=='mbzhiYou'){?> selected <?php } ?>>MB直邮</option>
+              <option value="wozhiYou" <?php if($orderObj['transferWay']=='wozhiYou'){?> selected <?php } ?>>WO直邮</option>
+              <option value="pinYou" <?php if($orderObj['transferWay']=='pinYou'){?> selected <?php } ?>>拼邮</option>
+          </select>
+        </div>
+      </div>
 <?php
-  if($orderObj["status"] == "" || $orderObj["status"] == 'st'){
+  if($editFlag){
 ?>
       <div class="row mb-4 form-group">
         <div class="col-4 themed-grid-col">
@@ -193,7 +219,7 @@ $(function() {
   }
 ?>
 <?php
-  if($orderUid === '' || $orderObj["status"] == 'st'){
+  if($editFlag){
 ?>
       <div class="row mb-4 form-group_product" id="productBox">
         <div class="col-4">
@@ -217,6 +243,7 @@ $(function() {
   }
 ?>
 <?php
+
   $prodArr = $my->listProductInfoByByTBOrderUid($orderUid);
   foreach($prodArr as $prodObj){
 ?>
@@ -227,35 +254,37 @@ $(function() {
         </div>
         <div class="col-3">
 		  <label for="colorName">color</label>
-		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?> <?php if(!$editFlag){?> readOnly <?php } ?>">
+		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
         </div>
         <div class="col-3">
 		  <label for="sizeName">size</label>
-		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?> <?php if(!$editFlag){?> readOnly <?php } ?>">
+		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
         </div>
+<?php
+    if($editFlag){
+?>
         <div class="col-1">
 		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>
 		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
         </div>
+<?php
+    }
+?>
       </div>
 <?php
   }
 ?>
-      <div class="row mb-4 form-group_product">
-        <div class="col-12">
-          <label for="transferWay">快递方式</label>
-          <select class="custom-select form-control parcelAmt" id="transferWay" <?php if(!$editFlag){?> disabled <?php } ?>>
-              <option value=""></option>
-              <option value="zhiYou" <?php if($orderObj['transferWay']=='zhiYou'){?> selected <?php } ?>>直邮</option>
-              <option value="pinYou" <?php if($orderObj['transferWay']=='pinYou'){?> selected <?php } ?>>拼邮</option>
-          </select>
-        </div>
-      </div>
+<?php
+    if($editFlag){
+?>
       <div class="row mb-4 form-group">
         <div class="col-5">
 		  <button type="button" id="btnSave" class="btn btn-secondary">SAVE</button>
         </div>
       </div>
+<?php
+    }
+?>
   </div>
 </div>
 </body>

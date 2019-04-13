@@ -1,8 +1,9 @@
 <?php
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-
+/*
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+*/
 require __DIR__ .'/MyMontb.php';
 ?>
 <html lang="ja">
@@ -23,22 +24,34 @@ require __DIR__ .'/MyMontb.php';
 <script type="text/javascript">
 var actionUrl = "<?php echo constant("URL_ACTION_MYMONTB") ?>";
 $(function() {
-    $(document).on("click", "#btnDelRow", function() {
-        var thisBox = $(this).parent().parent();
-		var param = {};
-		param.action = "deleteOrder";
-		param.uid = $(thisBox).find("#uid").val();
-        
+	var getMyBox = function(thisElement){
+		return $(thisElement).parent().parent();
+	}
+	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
-                         { type : "GET",
-                           data : param,
-                           dataType : "html" 
-                          }
-                      );
+			 { type : "GET",
+			   data : {"action":"updateMBOrderStatus", 
+					   "uid" : thisBox.find("#uid").val(),
+					   "status" : status
+			   },
+			   dataType : "html" 
+			  }
+		  );
         jqxhr.done(function( msg ) {
             location.reload();
         });
-        //thisBox.remove();
+	};
+    $(document).on("click", "#btnReOrding", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "ordering");
+    });
+    $(document).on("click", "#btnCancel", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "cancel");
+    });
+    $(document).on("click", "#btnReUnOrder", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "unorder");
     });
 });
 </script>
@@ -55,6 +68,8 @@ $(function() {
   }
   if($status == 'unorder'){
 	  $cssBgUnorder = "bg-success text-white";
+  }else if($status == 'ordering'){
+	  $cssBgOrdering= "bg-success text-white";
   }else if($status == 'ordered'){
 	  $cssBgOrdered= "bg-success text-white";
   }else if($status == 'fin'){
@@ -67,7 +82,7 @@ $(function() {
 ?>
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=unorder">unorder</a></li>
-    <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordering">ordering</a></li>
+    <li class="list-group-item <?php echo $cssBgOrdering ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordering">ordering</a></li>
     <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordered">ordered</a></li>
     <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=mbfh">MBFH</a></li>
     <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=fin">fin</a></li>
@@ -83,7 +98,7 @@ $(function() {
   }
 ?>
   <div class="row">
-    <div class="col-8 text-break themed-grid-col border border-primary bg-info text-white">收件人PY</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">收件人PY</div>
 <?php
     if($status == ''){
 ?>
@@ -102,6 +117,7 @@ $(function() {
 <?php
     }
 ?>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
@@ -115,7 +131,7 @@ $(function() {
 ?>
   <div class="row <?php echo $boxCss ?>">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-8 text-break themed-grid-col border border-secondary">
+    <div class="col-4 text-break themed-grid-col border border-secondary">
 	  <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
 <?php
     if(empty($data['firstName'])){
@@ -136,15 +152,40 @@ $(function() {
 <?php
     if($status == 'ordered'){
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $data['mbOrderNo'] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['mbOrderNo'] ?></div>
 <?php
     }else if($status == 'mbfh'){
     	$transferNo = empty($data['transferNoGuonei']) ? $data['transferNoGuoji'] : $data['transferNoGuonei'];
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $transferNo  ?></div>
+    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $transferNo  ?></div>
 <?php
     }
 ?>
+    <div class="col-4 text-break themed-grid-col border border-primary">
+
+<?php
+		if($data["status"] == 'unorder'){
+?>
+	    <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
+		  MB下单!
+	    </a> 
+		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删 除</button>
+<?php
+		}else if($data["status"] == 'ordering'){
+?>
+		<button class="btn btn-secondary actionBtn" id="btnReUnOrder" type="button">RE-UNOR</button>
+<?php
+		}else if($data["status"] == 'ordered'){
+?>
+		<button class="btn btn-secondary actionBtn" id="btnReOrding" type="button">RE-OR</button>
+<?php
+		}else if($data["status"] == 'mbfh'){
+?>
+		<button class="btn btn-secondary actionBtn" id="btnbdfh" type="button">fin</button>
+<?php
+		}
+?>
+	</div>
   </div>
 <?php
   }

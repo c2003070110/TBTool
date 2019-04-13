@@ -4,17 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 
 import org.seleniumhq.jetty9.util.StringUtil;
 
-import com.beust.jcommander.internal.Maps;
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.walk_nie.taobao.object.TaobaoOrderInfo;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 

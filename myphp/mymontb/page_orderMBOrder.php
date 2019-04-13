@@ -24,8 +24,9 @@ $(function(){
 	var validateLen = function(vStr,vlen){
 		var l = vStr.length;
 		if(l > vlen){
-			alert("too long!max len = " + vlen);
+			return "too long!max len = " + vlen;
 		}
+		return "";
 	};
     $(document).on("click", "#btnConvertHanziToPY", function() {
         var hanzi = $("#maijiadianzhiHanzi").val();
@@ -63,9 +64,16 @@ $(function(){
 		$("#tel").val(adrArr[idx++]);
 		$("#statePY").val(adrArr[idx++]);
 		$("#cityPY").val(adrArr[idx++]);
+		var rslt = validateLen($("#cityPY").val(),20);
+		if(rslt != "") {alert("[cityPY]" + rslt); return;}
 		$("#adr1PY").val(adrArr[idx++]);
+		var rslt = validateLen($("#adr1PY").val(),30);
+		if(rslt != "") {alert("[adr1PY]" + rslt); return;}
 		$("#adr2PY").val(adrArr[idx++]);
+		var rslt = validateLen($("#adr2PY").val(),30);
+		if(rslt != "") {alert("[adr2PY]" + rslt); return;}
 		$("#postcode").val(adrArr[idx++]);
+		
 	});
 	var formParameter = function(){
 		param = {};
@@ -83,6 +91,13 @@ $(function(){
 	};
     $(document).on("click", "#btnUpdate", function() {
         
+		var rslt = validateLen($("#cityPY").val(),20);
+		if(rslt != "") {alert("[cityPY]" + rslt); return;}
+		var rslt = validateLen($("#adr1PY").val(),30);
+		if(rslt != "") {alert("[adr1PY]" + rslt); return;}
+		var rslt = validateLen($("#adr2PY").val(),30);
+		if(rslt != "") {alert("[adr2PY]" + rslt); return;}
+		
 	    var param = formParameter();
 		param.action = "updateMBOrder";
         var jqxhr = $.ajax(actionUrl,
@@ -142,15 +157,18 @@ $(function(){
     });
     $(document).on("change", "#cityPY", function() {
         var thisVal = $("#cityPY").val();
-		validateLen(thisVal,20);
+		var rslt = validateLen(thisVal,20);
+		if(rslt != "") {alert("[cityPY]" + rslt); return;}
     }); 
     $(document).on("change", "#adr1PY", function() {
         var thisVal = $("#adr1PY").val();
-		validateLen(thisVal,30);
+		var rslt = validateLen(thisVal,30);
+		if(rslt != "") {alert("[adr1PY]" + rslt); return;}
     }); 
     $(document).on("change", "#adr2PY", function() {
         var thisVal = $("#adr2PY").val();
-		validateLen(thisVal,30);
+		var rslt = validateLen(thisVal,30);
+		if(rslt != "") {alert("[adr2PY]" + rslt); return;}
     }); 
 });
 </script>
@@ -173,7 +191,9 @@ $(function(){
   
   $productObjList = $my->listProductInfoByMBUid($orderUid);
   
-  $editFlag = ($orderObj["status"] == 'unorder' || $orderObj["status"] == 'ordered');
+  $editFlag = ($orderObj["status"] == 'unorder'  || $orderObj["status"] == 'ordering');
+  $isMyAddress = ($orderObj["tel"] == '08042001314'  || $orderObj["tel"] == '13879961238');
+  //var_dump($isMyAddress);
 ?>
   <input type="hidden" id="orderUid" value="<?php echo $orderUid ?>">
 <?php
@@ -237,10 +257,13 @@ $(function(){
       </div>
 <?php
   $prodSize = count($productObjList);
-  $lines = $tbOrderObj['maijiadianzhiHanzi'] . "\n";
+  $lines = "";
   for($i = 0, $size = $prodSize; $i < $size; ++$i) {
 	$p = $productObjList[$i];
-	$lines .= "商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . "\n";
+	//var_dump($p["tbUid"]);
+	$tbObj = $my->listTBOrderInfoByUid($p["tbUid"]);
+	//var_dump($tbObj);
+	$lines .= $tbObj["maijiadianzhiHanzi"] . " 商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . "\n";
   }
 ?>
       <div class="row mb-4 form-group">
@@ -249,17 +272,17 @@ $(function(){
 		</div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10">
+        <div class="col-12">
             <label for="maijiadianzhiHanzi">买家地址</label>
             <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $tbOrderObj['maijiadianzhiHanzi'] ?>" readOnly>
         </div>
-<?php if($editFlag){?> 
+<?php if($editFlag && !$isMyAddress){?> 
         <div class="col-2">
 		  <button type="button" id="btnConvertHanziToPY" class="btn btn-secondary" <?php if(!$editFlag){?> readOnly <?php } ?>>TO PY</button>
         </div>
 <?php } ?>
       </div>
-<?php if($editFlag){?> 
+<?php if($editFlag && !$isMyAddress){?> 
       <div class="row mb-4 form-group">
         <div class="col-12">
             <label for="maijiadianzhiPY">买家地址(拼音)</label>
@@ -333,7 +356,7 @@ $(function(){
 		  <button type="button" id="btnUpdate" class="btn btn-secondary">UPDATE</button>
         </div>
         <div class="col-5">
-		  <button type="button" id="btnOrder" class="btn btn-secondary">to order list</button>
+		  <button type="button" id="btnOrder" class="btn btn-secondary">TO ORDER</button>
         </div>
       </div>
 <?php } ?>
