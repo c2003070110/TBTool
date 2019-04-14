@@ -14,18 +14,20 @@ require __DIR__ .'/MyMontb.php';
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<!--
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+<!--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
 <script type="text/javascript">
 var actionUrl = "<?php echo constant("URL_ACTION_MYMONTB") ?>";
 $(function() {
+	$( "#accordion" ).accordion({
+      collapsible: true
+    });
 	var getMyBox = function(thisElement){
-		return $(thisElement).parent().parent();
+		return $(thisElement).parent().parent().parent();
 	}
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
@@ -52,6 +54,10 @@ $(function() {
     $(document).on("click", "#btnReUnOrder", function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "unorder");
+    });
+    $(document).on("click", "#btnfin", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "fin");
     });
 });
 </script>
@@ -84,9 +90,11 @@ $(function() {
     <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=unorder">unorder</a></li>
     <li class="list-group-item <?php echo $cssBgOrdering ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordering">ordering</a></li>
     <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordered">ordered</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_MBOrderlist.php">ALL</a></li>
+  </ul>
+  <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=mbfh">MBFH</a></li>
     <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=fin">fin</a></li>
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_MBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
 <?php
@@ -97,28 +105,7 @@ $(function() {
 	  $dataArr = $my->listAllMBOrderInfo();
   }
 ?>
-  <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">收件人PY</div>
-<?php
-    if($status == ''){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">status</div>
-<?php
-    }
-?>
-<?php
-    if($status == 'ordered'){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">MB官网订单号</div>
-<?php
-    }else if($status == 'mbfh'){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">快递号</div>
-<?php
-    }
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
-  </div>
+  <div id="accordion">
 <?php
   foreach ($dataArr as $data) {
 	  $boxCss = "bg-light";
@@ -128,69 +115,89 @@ $(function() {
 		  $boxCss = "bg-success text-white";
 	  }
 	  $boxCss = "";
-?>
-  <div class="row <?php echo $boxCss ?>">
-    <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-4 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
+?>  
+    <h3 class="bg-success"><?php echo $data['firstName']. " " . $data['lastName']. " " . $data['mbOrderNo'] ?></h3>
+      <div class="box <?php echo $boxCss ?> border border-primary mb-4 pl-2 ui-accordion">
+        <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
+        <div class="row mb-1 p-2">
+    	    <a class="btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
+              <?php echo $data['firstName']. " " . $data['lastName'] ; ?>
+    	    </a>
+	    </div>
+        <div class="row mb-1 p-2">
+	        <span class="border p-2"><?php echo $data['status'] ?></span>
+			<span class="border p-2"><?php echo $data['mbOrderNo'] ?></span>
+			<span class="border p-2"><?php echo $data['transferNoGuoji'] ?></span>
+			<span class="border p-2"><?php echo $data['transferNoGuonei'] ?></span>
+	    </div>
 <?php
-    if(empty($data['firstName'])){
-		echo "Order!";
-    }else{
-        echo $data['firstName']. " " . $data['lastName'] . " " . $data['tel'];
-    }
-?>
-	  </a>
-	</div>
-<?php
-    if($status == ''){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['status'] ?></div>
-<?php
-    }
-?>
-<?php
-    if($status == 'ordered'){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['mbOrderNo'] ?></div>
-<?php
-    }else if($status == 'mbfh'){
-    	$transferNo = empty($data['transferNoGuonei']) ? $data['transferNoGuoji'] : $data['transferNoGuonei'];
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $transferNo  ?></div>
-<?php
-    }
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary">
+		$dproductInfoArr = $my->listProductInfoByMBUid($data["uid"]);
+		$tbUidArr = array();
 
+		foreach ($dproductInfoArr as $productInfo) {	
+			if(!in_array($productInfo["tbUid"], $tbUidArr)){
+				$tbUidArr[] = $productInfo["tbUid"];
+			}
+		}
+		//var_dump( $tbUidArr);
+		foreach ($tbUidArr as $tbUid) {
+			$tbObj = $my->listTBOrderInfoByUid($tbUid);
+?>
+        <div class="row mb-1 p-2 col-12">
+    	    <a class="btn btn-primary" href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $tbObj['uid'] ?>">
+              <span><?php echo $tbObj["maijia"] ?></span>
+    	    </a>
+		    <span class="border p-2"><?php echo $tbObj["dingdanhao"] ?></span>
+		    <span class="border p-2"><?php echo $tbObj["dingdanDt"] ?></span>
+		    <span class="border p-2"><?php echo $tbObj["transferWay"] ?></span>
+		    <span class="border p-2"><?php echo $tbObj["maijiadianzhiHanzi"] ?></span>
+	    </div>
+<?php
+			$tbObj = $my->listTBOrderInfoByUid($tbUid);
+			$dproductInfoArr = $my->listProductInfoByByTBOrderUid($tbUid);
+			foreach ($dproductInfoArr as $productInfo) {
+?>
+        <div class="row mb-1 p-2">
+    	    <a class="btn btn-primary" href="https://webshop.montbell.jp/goods/disp.php?product_id=<?php echo $productInfo['productId'] ?>" target="blank">
+              <span>P<?php echo $productInfo["productId"] ?></span>
+    	    </a>
+		    <span class="border p-2"><?php echo $productInfo["colorName"] ?></span>
+		    <span class="border p-2"><?php echo $productInfo["sizeName"] ?></span>
+		    <span class="border p-2"><?php echo $productInfo["priceOffTax"] ?></span>
+	    </div>
+<?php
+			}
+        }
+?>
+        <div class="row mb-1 p-4">
 <?php
 		if($data["status"] == 'unorder'){
 ?>
-	    <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
-		  MB下单!
-	    </a> 
-		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删 除</button>
+	        <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
+	    	  MB下单!
+	        </a> 
+		    <button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删 除</button>
 <?php
 		}else if($data["status"] == 'ordering'){
 ?>
-		<button class="btn btn-secondary actionBtn" id="btnReUnOrder" type="button">RE-UNOR</button>
+	    	<button class="btn btn-secondary actionBtn" id="btnReUnOrder" type="button">RE-UNOR</button>
 <?php
 		}else if($data["status"] == 'ordered'){
 ?>
-		<button class="btn btn-secondary actionBtn" id="btnReOrding" type="button">RE-OR</button>
+	    	<button class="btn btn-secondary actionBtn" id="btnReOrding" type="button">RE-OR</button>
 <?php
 		}else if($data["status"] == 'mbfh'){
 ?>
-		<button class="btn btn-secondary actionBtn" id="btnbdfh" type="button">fin</button>
+	    	<button class="btn btn-secondary actionBtn" id="btnfin" type="button">fin</button>
 <?php
 		}
 ?>
-	</div>
-  </div>
+        </div>
+      </div>
 <?php
   }
 ?>
-
+  </div>
 </div>
 </body>
 </html>

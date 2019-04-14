@@ -246,22 +246,23 @@ $(function() {
 
   $prodArr = $my->listProductInfoByByTBOrderUid($orderUid);
   foreach($prodArr as $prodObj){
+	  $prodEditFlag = ($orderObj["status"] == 'st');
 ?>
       <div class="row mb-1 form-group_product" id="productBox">
         <div class="col-4">
 		  <label for="productId">productId</label>
-		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
+		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$prodEditFlag){?> readOnly <?php } ?>>
         </div>
         <div class="col-3">
 		  <label for="colorName">color</label>
-		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
+		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>" <?php if(!$prodEditFlag){?> readOnly <?php } ?>">
         </div>
         <div class="col-3">
 		  <label for="sizeName">size</label>
-		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
+		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>" <?php if(!$prodEditFlag){?> readOnly <?php } ?>">
         </div>
 <?php
-    if($editFlag){
+    if($prodEditFlag){
 ?>
         <div class="col-1">
 		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>

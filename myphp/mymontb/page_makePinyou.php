@@ -114,37 +114,32 @@ $(function() {
   <div class="box productbox border border-primary mb-4 pl-2">
     <input type="hidden" id="productUid" value="<?php echo $data['productUid'] ?>">
     <input type="hidden" id="tbUid" value="<?php echo $data['tbUid'] ?>">
-    <div class="row mb-1 form-group">
-      <div class="col-6">
-	    <label for="maijia">淘宝买家ID</label>
-	    <input type="text" class="form-control" id="maijia" value="<?php echo $data['maijia'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
+    <div class="row mb-1 pt-1">
+      <div class="col-4">
+		 <a class="btn btn-primary" href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['tbUid'] ?>">
+          <?php echo $data['maijia'] ?>
+        </a>
 	  </div>
-      <div class="col-6">
-	    <label for="dingdanDt">下单时间</label>
+      <div class="col-8">
 	    <input type="text" class="form-control" id="dingdanDt" value="<?php echo $data['dingdanDt'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
 	  </div>
     </div>
     <div class="row mb-1 form-group_product">
       <div class="col-4">
-	    <label for="productId">productId</label>
 		<input type="text" class="form-control" id="productId" value="<?php echo $data['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
       </div>
       <div class="col-4">
-		<label for="colorName">color</label>
 		<input type="text" class="form-control" id="colorName" value="<?php echo $data['colorName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
       </div>
       <div class="col-3">
-		<label for="sizeName">size</label>
 		<input type="text" class="form-control" id="sizeName" value="<?php echo $data['sizeName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
       </div>
     </div>
     <div class="row mb-1 form-group_product">
-      <div class="col-4">
-	    <label for="priceOffTax">priceOffTax</label>
+      <div class="col-6">
 		<input type="text" class="form-control priceOffTax" id="priceOffTax" value="<?php echo $data['priceOffTax'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
       </div>
-      <div class="col-4">
-		<label for="stock">stock</label>
+      <div class="col-6">
 		<input type="text" class="form-control" id="stock" value="<?php echo $data['stock'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
       </div>
     </div>
@@ -166,7 +161,7 @@ $(function() {
 	  <input type="text" class="form-control" id="ttlJPY" readOnly>
     </div>
   </div>
-  <div class="row mb-4">
+  <div class="row mb-4 pl-3">
 	<div class="col-6">
 	  <button type="button" id="btnPinyouJapan" class="btn btn-secondary">岛内 拼 邮!</button>
 	</div>
