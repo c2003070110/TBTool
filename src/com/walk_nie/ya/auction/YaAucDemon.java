@@ -1,15 +1,11 @@
 package com.walk_nie.ya.auction;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.List;
@@ -18,13 +14,9 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.DateUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
@@ -787,6 +779,16 @@ public class YaAucDemon {
 				NieConfig.getConfig("yahoo.user.password"));
 		driver.findElement(By.id("btnSubmit")).click();
 
+		NieUtil.mySleepBySecond(2);
+		
+		List<WebElement> eles = driver.findElements(By.cssSelector("div[class=\"yjmthloginarea\"]"));
+		for(WebElement ele:eles){
+			String txt = ele.getText();
+			if(txt.indexOf("ログアウト") != -1){
+				return driver;
+			}
+		}
+		
 		NieUtil.readLineFromSystemIn("Yahoo! login is finished? ANY KEY For already");
 
 		return driver;
