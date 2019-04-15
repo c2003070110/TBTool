@@ -308,10 +308,12 @@ class MyMontb
 		$dataArr = $tbl->select(['status', '==', "ordering"])->fetch();
 		foreach ($dataArr as $data) {
 			if(empty($data["mbOrderNo"]) &&
+				(!empty($data["firstName"]) && !empty($data["lastName"]) && !empty($data["tel"]))
+			   /*
 				(!empty($data["firstName"]) && !empty($data["lastName"]) && !empty($data["tel"])
 				  && !empty($data["postcode"]) && !empty($data["statePY"]) && !empty($data["cityPY"])
-				  && !empty($data["adr1PY"]) && !empty($data["adr2PY"]) && !empty($data["fukuanWay"])
-				)){
+				  && !empty($data["adr1PY"]) && !empty($data["adr2PY"]) && !empty($data["fukuanWay"])*/
+				){
 				return $data;
 			}
 		}

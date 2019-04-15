@@ -11,13 +11,13 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
-import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.json.Json;
+import org.seleniumhq.jetty9.util.StringUtil;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.walk_nie.taobao.montBell.MontBellUtil;
@@ -530,8 +530,10 @@ public class MontbellStockChecker {
 			}
 		}
 		if (StringUtil.isBlank(stockInfo.priceJPY)) {
-			System.out.println("[ERROR]failure to get price! productId=" + stockInfo.productId);
-			return;
+			stockInfo.priceJPY = "-999";
+			stockInfo.stockStatus = "断货";
+			//System.out.println("[ERROR]failure to get price! productId=" + stockInfo.productId);
+			//return;
 		}
 		reactStockResultToWebServer(stockInfo);
 		
@@ -555,7 +557,7 @@ public class MontbellStockChecker {
 		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
 		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
 		if(StringUtil.isBlank(orderLine)){
-			System.out.println("[INFO]Nothing to stock");
+			//System.out.println("[INFO]Nothing to stock");
 			return null;
 		}
 		if(orderLine.indexOf("ERROR") != -1){

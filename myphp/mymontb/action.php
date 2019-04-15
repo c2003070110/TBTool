@@ -123,7 +123,7 @@ if($actionStr == "saveTBOrder"){
 	$my = new MyMontb();
 	echo json_encode($my->listProductInfoByMBUid($mbUid));
 	return;
-// listMBOrderByEmptyMBOrderOne input:NONE; ouput:MBOrderObject;
+// listProductInfoByEmptyPriceOne input:NONE; ouput:MBOrderObject;
 } else if($actionStr == "listProductInfoByEmptyPriceOne"){
 	$my = new MyMontb();
 	$data = $my->listProductInfoByEmptyPriceOne();
@@ -133,7 +133,7 @@ if($actionStr == "saveTBOrder"){
 		echo json_encode($data);
 	}
 	return;
-// listMBOrderByEmptyMBOrderOne input:productUid,priceOffTax,stock; ouput:NONE;
+// updateProductInfoByStock input:productUid,priceOffTax,stock; ouput:NONE;
 } else if($actionStr == "updateProductInfoByStock"){
 	$uid = $_GET['uid'];
 	if($uid === null){

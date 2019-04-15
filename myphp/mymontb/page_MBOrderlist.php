@@ -173,6 +173,7 @@ $(function() {
 		    <span class="border p-2"><?php echo $productInfo["colorName"] ?></span>
 		    <span class="border p-2"><?php echo $productInfo["sizeName"] ?></span>
 		    <span class="border p-2"><?php echo $productInfo["priceOffTax"] ?></span>
+		    <span class="border p-2"><?php echo $productInfo["stock"] ?></span>
 	    </div>
 <?php
 			}

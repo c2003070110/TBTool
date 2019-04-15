@@ -76,6 +76,8 @@ public class MontbellAutoOrder {
 		}
 		reactOrderResultToWebServer(orderInfo);
 		driver.close();
+		NieUtil.mySleepBySecond(30);
+		
 	}
 	private void reactOrderResultToWebServer(TaobaoOrderInfo orderInfo) {
 		Map<String,String> param = Maps.newHashMap();
@@ -93,7 +95,7 @@ public class MontbellAutoOrder {
 		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
 		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
 		if(StringUtil.isBlank(orderLine)){
-			System.out.println("[INFO]Nothing to order");
+			//System.out.println("[INFO]Nothing to order");
 			return null;
 		}
 		if(orderLine.indexOf("ERROR") != -1){
@@ -430,7 +432,7 @@ public class MontbellAutoOrder {
 					}
 				}
 			}
-			NieUtil.mySleepBySecond(1);
+			NieUtil.mySleepBySecond(10);
 			
 			String orderNo = "";
 			weList = driver.findElements(By.className("orderNo"));
@@ -630,7 +632,7 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
-		NieUtil.mySleepBySecond(1);
+		NieUtil.mySleepBySecond(10);
 		
 		String orderNo = "";
 		weList = driver.findElements(By.className("orderNo"));

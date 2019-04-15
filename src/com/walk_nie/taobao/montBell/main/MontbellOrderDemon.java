@@ -33,7 +33,7 @@ public class MontbellOrderDemon {
 		MontbellAutoOrder order = new MontbellAutoOrder();
 		MontbellStockChecker stock = new MontbellStockChecker();
 
-		int interval = 60;// second
+		int interval = 0;// second
 		while (true) {
 			try {
 				long t1 = System.currentTimeMillis();
