@@ -146,6 +146,27 @@ $(function() {
 			location.reload();
         });
     });
+    $(document).on("click", "#btnDelete", function() {
+	    var param = formParameter();
+		param.action = "deleteTBOrder";
+        
+        var jqxhr = $.ajax(actionUrl,
+                         { type : "GET",
+                           data : param,
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+			if(msg != ""){
+				if(msg.indexOf("ERROR") == -1){
+					// success
+					$("#orderUid").val("");
+				}
+				alert(msg);
+			}
+			location.reload();
+        });
+    });
 });
 </script>
 </head>
@@ -243,10 +264,10 @@ $(function() {
   }
 ?>
 <?php
-
-  $prodArr = $my->listProductInfoByByTBOrderUid($orderUid);
+  $prodEditFlag = $editFlag;
+  $prodArr = $my->listProductInfoByByTBUid($orderUid);
   foreach($prodArr as $prodObj){
-	  $prodEditFlag = ($orderObj["status"] == 'st');
+	  $prodEditFlag = empty($prodObj["mbUid"]);
 ?>
       <div class="row mb-1 form-group_product" id="productBox">
         <div class="col-4">
@@ -275,17 +296,26 @@ $(function() {
 <?php
   }
 ?>
+      <div class="row mb-4 form-group">
 <?php
     if($editFlag){
 ?>
-      <div class="row mb-4 form-group">
         <div class="col-5">
 		  <button type="button" id="btnSave" class="btn btn-secondary">SAVE</button>
         </div>
-      </div>
 <?php
     }
 ?>
+<?php
+    if($prodEditFlag){
+?>
+        <div class="col-5">
+		  <button type="button" id="btnDelete" class="btn btn-secondary">删除</button>
+        </div>
+<?php
+    }
+?>
+      </div>
   </div>
 </div>
 </body>

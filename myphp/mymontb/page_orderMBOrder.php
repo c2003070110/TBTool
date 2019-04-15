@@ -187,13 +187,19 @@ $(function(){
   $my = new MyMontb();
   $orderObj = $my->listMBOrderInfoByUid($orderUid);
   
-  $tbOrderObj = $my->listTBOrderInfoByMBUid($orderUid);
+  //$tbOrderObj = $my->listTBOrderInfoByMBUid($orderUid);
   
   $productObjList = $my->listProductInfoByMBUid($orderUid);
   
   $editFlag = ($orderObj["status"] == 'unorder'  || $orderObj["status"] == 'ordering');
   $isMyAddress = ($orderObj["tel"] == '08042001314'  || $orderObj["tel"] == '13879961238');
   //var_dump($isMyAddress);
+  $tbUidArr = array();
+  foreach ($productObjList as $productInfo) {	
+	if(!in_array($productInfo["tbUid"], $tbUidArr)){
+		$tbUidArr[] = $productInfo["tbUid"];
+	}
+  }
 ?>
   <input type="hidden" id="orderUid" value="<?php echo $orderUid ?>">
 <?php
@@ -243,45 +249,38 @@ $(function(){
       </div>
 <?php
   }
+  foreach ($tbUidArr as $tbUid) {
+	  $tbObj = $my->listTBOrderInfoByUid($tbUid);
 ?>
   <div class="box">
       <div class="row mb-4 form-group">
-        <div class="col-10">
+        <div class="col-6">
 		  <label for="maijia">淘宝买家ID</label>
-		  <input type="text" class="form-control" id="maijia" value="<?php echo $tbOrderObj['maijia'] ?>" readOnly ></div>
-      </div>
-      <div class="row mb-4 form-group">
-        <div class="col-10">
+		  <input type="text" class="form-control" id="maijia" value="<?php echo $tbObj['maijia'] ?>" readOnly >
+        </div>
+        <div class="col-6">
 		  <label for="dingdanhao">淘宝订单号</label>
-		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $tbOrderObj['dingdanhao'] ?>" readOnly></div>
-      </div>
-<?php
-  $prodSize = count($productObjList);
-  $lines = "";
-  for($i = 0, $size = $prodSize; $i < $size; ++$i) {
-	$p = $productObjList[$i];
-	//var_dump($p["tbUid"]);
-	$tbObj = $my->listTBOrderInfoByUid($p["tbUid"]);
-	//var_dump($tbObj);
-	$lines .= $tbObj["maijiadianzhiHanzi"] . " 商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . "\n";
-  }
-?>
-      <div class="row mb-4 form-group">
-        <div class="col-8 themed-grid-col">
-		  <textarea id="tempTxtArea" rows="6" cols="35"><?php echo $lines ?></textarea>
-		</div>
+		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $tbObj['dingdanhao'] ?>" readOnly>
+        </div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
             <label for="maijiadianzhiHanzi">买家地址</label>
-            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $tbOrderObj['maijiadianzhiHanzi'] ?>" readOnly>
+            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $tbObj['maijiadianzhiHanzi'] ?>" readOnly>
         </div>
-<?php if($editFlag && !$isMyAddress){?> 
+<?php 
+      if($editFlag && !$isMyAddress){
+?> 
         <div class="col-2">
 		  <button type="button" id="btnConvertHanziToPY" class="btn btn-secondary" <?php if(!$editFlag){?> readOnly <?php } ?>>TO PY</button>
         </div>
-<?php } ?>
+<?php 
+      }
+?>
       </div>
+<?php 
+  }	  
+?>
 <?php if($editFlag && !$isMyAddress){?> 
       <div class="row mb-4 form-group">
         <div class="col-12">
@@ -299,6 +298,22 @@ $(function(){
 		</div>
       </div>
 <?php } ?>
+<?php
+  $prodSize = count($productObjList);
+  $lines = "";
+  for($i = 0, $size = $prodSize; $i < $size; ++$i) {
+	$p = $productObjList[$i];
+	//var_dump($p["tbUid"]);
+	$tbObj = $my->listTBOrderInfoByUid($p["tbUid"]);
+	//var_dump($tbObj);
+	$lines .= $tbObj["maijiadianzhiHanzi"] . " 商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . "\n";
+  }
+?>
+      <div class="row mb-4 form-group">
+        <div class="col-8 themed-grid-col">
+		  <textarea id="tempTxtArea" rows="6" cols="35"><?php echo $lines ?></textarea>
+		</div>
+      </div>
       <div class="row mb-4 form-group">
         <div class="col-6">
 		  <label for="maijiaName">First Name</label>

@@ -20,7 +20,6 @@ class MyMontb
 		$orderObj->dingdanhao = $_GET['dingdanhao'];
 		$orderObj->dingdanDt = $_GET['dingdanDt'];
 		$orderObj->maijiadianzhiHanzi = $_GET['maijiadianzhiHanzi'];
-		
 		$orderObj->transferWay = $_GET['transferWay'];
 		//var_dump($orderObj);
 		$mbUid = "";
@@ -53,9 +52,22 @@ class MyMontb
 				         ['maijiadianzhiHanzi', $orderObj->maijiadianzhiHanzi],
 				         ['transferWay', $orderObj->transferWay]);
 			//$mbUid = $tbOrdData["mbUid"];
-			
-			if(($orderObj->transferWay === "mbzhiYou" || $orderObj->transferWay === "wozhiYou") 
-				&& ($tbOrdData["transferWay"] !== "mbzhiYou" && $tbOrdData["transferWay"] !== "wozhiYou")){
+			//var_dump($orderObj->transferWay);
+			//var_dump($tbOrdData["transferWay"]);
+			if($tbOrdData["transferWay"] === "mbzhiYou" || $tbOrdData["transferWay"] === "wozhiYou"){
+				// TODO!!
+				$productDataArr = $this->listProductInfoByByTBUid($tbOrdData["uid"]);
+				$mbUidArr = array();
+				foreach ($productDataArr as $dataProd) {
+					if(!empty($dataProd["mbUid"])){
+						$mbUidArr[] = $dataProd["mbUid"];
+					}
+				}
+				foreach ($mbUidArr as $mbUid) {
+					$this->deleteMBOrderByMBUid($mbUid);
+				}
+			}
+			if(($orderObj->transferWay === "mbzhiYou" || $orderObj->transferWay === "wozhiYou")){
 				// insert 
 				$mbUid = uniqid("mb", true);
 				$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
@@ -69,13 +81,8 @@ class MyMontb
 					$mbObj->tel = "08042001314";
 				}
 				$tbl->insert($mbObj);
-			}else if(($orderObj->transferWay !== "mbzhiYou" && $orderObj->transferWay !== "wozhiYou") 
-				&& ($tbOrdData["transferWay"] === "mbzhiYou" || $tbOrdData["transferWay"] === "wozhiYou")){
-				// delete
-				$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
-				$tbl->select("uid","==",$tbOrdData["mbUid"])->delete();
 			}else{
-				$mbUid = $tbOrdData["mbUid"];
+				$mbUid = "";
 			}
 		}
 		
@@ -108,10 +115,17 @@ class MyMontb
 		
 		$tbData = $tbl->select(['uid', '==', $tbUid])
 					  ->fetch()[0];
-					  
+		if(empty($tbData)){
+			return "[ERROR]TBOrder do NOT exist!uid = " . $tbUid;
+		}
+		$productDataArr = $this->listProductInfoByByTBUid($tbUid);
+		foreach ($productDataArr as $dataProd) {
+			if(!empty($dataProd["mbUid"])){
+				return "[ERROR]MBOrder do exist!productUid = " . $dataProd["uid"];
+			}
+		}
 		$tbl->select(['uid', '==', $tbUid])->delete();
 		
-		$this->deleteMBOrderByMBUid($tbData["mbUid"]);
 		$this->deleteProductInfoByTBUid($tbData["tbUid"]);
 	}
 	/*
@@ -183,6 +197,8 @@ class MyMontb
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
 		$tbl->select(['uid', '==', $mbUid])->delete();
+		
+		$this->clearProductInfoForMBUidByMBUid($mbUid);
 	}
 	public function updateMBOrder(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
@@ -367,7 +383,7 @@ class MyMontb
 		
 		return $tbl->select(['mbUid', '==', $mbUid])->fetch();
 	}
-	public function listProductInfoByByTBOrderUid($tbUid){
+	public function listProductInfoByByTBUid($tbUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
 		
@@ -394,8 +410,9 @@ class MyMontb
 		//var_dump($tbObjArr);
 		
 		foreach ($tbObjArr as $data) {
-			$dataProdArr = $this->listProductInfoByByTBOrderUid($data["uid"]);
+			$dataProdArr = $this->listProductInfoByByTBUid($data["uid"]);
 			foreach ($dataProdArr as $dataProd) {
+				
 				if(!empty($dataProd["mbUid"]))continue;
 				if($dataProd["status"] == "mboff")continue;
 				$dataProd["maijia"] = $data["maijia"];

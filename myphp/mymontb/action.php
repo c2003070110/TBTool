@@ -15,6 +15,15 @@ if($actionStr == "saveTBOrder"){
 	$my = new MyMontb();
 	$rslt = $my->saveTBOrder();
 	echo $rslt; // uid
+	return;
+} else if($actionStr == "deleteTBOrder"){
+	if(empty($_GET["uid"])){
+		return ;
+	} 
+	$my = new MyMontb();
+	$rslt = $my->deleteTBOrderByTBUid($_GET["uid"]);
+	echo $rslt; // success?failure?
+	return;
 } else if($actionStr == "updateProductStatus"){
 	if(empty($_GET["uid"]) || empty($_GET["status"])){
 		return ;

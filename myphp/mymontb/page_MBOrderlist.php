@@ -27,7 +27,7 @@ $(function() {
       collapsible: true
     });
 	var getMyBox = function(thisElement){
-		return $(thisElement).parent().parent().parent();
+		return $(thisElement).parent().parent();
 	}
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
@@ -104,6 +104,7 @@ $(function() {
   }else{
 	  $dataArr = $my->listAllMBOrderInfo();
   }
+  //var_dump($dataArr);
 ?>
   <div id="accordion">
 <?php
@@ -116,8 +117,16 @@ $(function() {
 	  }
 	  $boxCss = "";
 ?>  
-    <h3 class="bg-success"><?php echo $data['firstName']. " " . $data['lastName']. " " . $data['mbOrderNo'] ?></h3>
-      <div class="box <?php echo $boxCss ?> border border-primary mb-4 pl-2 ui-accordion">
+    <h3 class="bg-success">
+<?php
+	if(empty($data['firstName'])){
+		echo $data['uid'];
+	}else{
+		echo $data['firstName']. " " . $data['tel']. " " . $data['mbOrderNo'];
+	}
+?>  
+	</h3>
+      <div class="box <?php echo $boxCss ?> border border-primary mb-4 pl-2">
         <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
         <div class="row mb-1 p-2">
     	    <a class="btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
@@ -154,7 +163,7 @@ $(function() {
 	    </div>
 <?php
 			$tbObj = $my->listTBOrderInfoByUid($tbUid);
-			$dproductInfoArr = $my->listProductInfoByByTBOrderUid($tbUid);
+			$dproductInfoArr = $my->listProductInfoByByTBUid($tbUid);
 			foreach ($dproductInfoArr as $productInfo) {
 ?>
         <div class="row mb-1 p-2">

@@ -163,10 +163,10 @@ $(function() {
   </div>
   <div class="row mb-4 pl-3">
 	<div class="col-6">
-	  <button type="button" id="btnPinyouJapan" class="btn btn-secondary">岛内 拼 邮!</button>
+	  <button type="button" id="btnPinyouJapan" class="btn btn-secondary">WO 邮!</button>
 	</div>
 	<div class="col-6">
-	  <button type="button" id="btnPinyouChina" class="btn btn-secondary">国际 拼 邮!</button>
+	  <button type="button" id="btnPinyouChina" class="btn btn-secondary">MB 邮!</button>
 	</div>
   </div>
 </div>

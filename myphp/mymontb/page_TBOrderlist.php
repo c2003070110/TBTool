@@ -40,6 +40,7 @@ $(function() {
             location.reload();
         });
 	};
+	/*
     $(document).on("click", "#btnMBoff", function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "mboff");
@@ -48,6 +49,7 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "cancel");
     });
+	*/
 });
 </script>
 </head>
@@ -74,30 +76,30 @@ $(function() {
   
 ?>
   <div class="row">
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">淘宝订单号</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">下单日期</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">下单日期</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">快递方式</div>
+	<!--
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+	-->
   </div>
 <?php
   foreach ($dataArr as $data) {
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-3 text-break border border-secondary">
-	  <a href="/myphp/mymontb/page_TBOrderlist.php?maijia=<?php echo $data['maijia'] ?>">
+    <div class="col-4 text-break border border-secondary">
+	  <a href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data['maijia'] ?>
 	  </a>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data['dingdanhao'] ?>
-	  </a>
-	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $data['dingdanDt'] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['dingdanDt'] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['transferWay'] ?></div>
+	<!--
     <div class="col-3 text-break themed-grid-col border border-primary">
 		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删除</button>
     </div>
+	-->
   </div>
 <?php
   }
