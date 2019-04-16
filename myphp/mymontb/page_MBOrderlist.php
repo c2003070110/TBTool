@@ -104,6 +104,11 @@ $(function() {
   }else{
 	  $dataArr = $my->listAllMBOrderInfo();
   }
+  $sort = array();
+  foreach ((array) $dataArr as $key => $value) {
+	$sort[$key] = $value['mbOrderNo'];
+  }
+  array_multisort($sort, SORT_DESC, $dataArr);
   //var_dump($dataArr);
 ?>
   <div id="accordion">
@@ -119,10 +124,12 @@ $(function() {
 ?>  
     <h3 class="bg-success">
 <?php
-	if(empty($data['firstName'])){
+	    if(!empty($data['mbOrderNo'])){
+	    	echo $data['mbOrderNo'];
+	    }else if(!empty($data['tel'])){
+	    	echo $data['tel'];
+	    }else{
 		echo $data['uid'];
-	}else{
-		echo $data['firstName']. " " . $data['tel']. " " . $data['mbOrderNo'];
 	}
 ?>  
 	</h3>
@@ -134,10 +141,10 @@ $(function() {
     	    </a>
 	    </div>
         <div class="row mb-1 p-2">
-	        <span class="border p-2"><?php echo $data['status'] ?></span>
-			<span class="border p-2"><?php echo $data['mbOrderNo'] ?></span>
-			<span class="border p-2"><?php echo $data['transferNoGuoji'] ?></span>
-			<span class="border p-2"><?php echo $data['transferNoGuonei'] ?></span>
+	        <?php if(!empty($data['status'])){?><span class="border p-2"><?php echo $data['status'] } ?></span>
+	        <?php if(!empty($data['mbOrderNo'])){?><span class="border p-2"><?php echo $data['mbOrderNo'] } ?></span>
+	        <?php if(!empty($data['transferNoGuoji'])){?><span class="border p-2"><?php echo $data['transferNoGuoji'] } ?></span>
+	        <?php if(!empty($data['transferNoGuonei'])){?><span class="border p-2"><?php echo $data['transferNoGuonei'] } ?></span>
 	    </div>
 <?php
 		$dproductInfoArr = $my->listProductInfoByMBUid($data["uid"]);
@@ -148,9 +155,11 @@ $(function() {
 				$tbUidArr[] = $productInfo["tbUid"];
 			}
 		}
+		$lines = "";
 		//var_dump( $tbUidArr);
 		foreach ($tbUidArr as $tbUid) {
 			$tbObj = $my->listTBOrderInfoByUid($tbUid);
+			$lines .= $tbObj['maijiadianzhiHanzi'] . "\n";
 ?>
         <div class="row mb-1 p-2 col-12">
     	    <a class="btn btn-primary" href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $tbObj['uid'] ?>">
@@ -165,6 +174,7 @@ $(function() {
 			$tbObj = $my->listTBOrderInfoByUid($tbUid);
 			$dproductInfoArr = $my->listProductInfoByByTBUid($tbUid);
 			foreach ($dproductInfoArr as $productInfo) {
+				$lines .= $productInfo["productId"]." ".$productInfo["colorName"]." ".$productInfo["sizeName"] . "\n";
 ?>
         <div class="row mb-1 p-2">
     	    <a class="btn btn-primary" href="https://webshop.montbell.jp/goods/disp.php?product_id=<?php echo $productInfo['productId'] ?>" target="blank">
@@ -173,7 +183,6 @@ $(function() {
 		    <span class="border p-2"><?php echo $productInfo["colorName"] ?></span>
 		    <span class="border p-2"><?php echo $productInfo["sizeName"] ?></span>
 		    <span class="border p-2"><?php echo $productInfo["priceOffTax"] ?></span>
-		    <span class="border p-2"><?php echo $productInfo["stock"] ?></span>
 	    </div>
 <?php
 			}
@@ -202,6 +211,11 @@ $(function() {
 <?php
 		}
 ?>
+        </div>
+        <div class="row mb-4 form-group">
+          <div class="col-12">
+	        <textarea id="tempTxtArea" class="form-control" rows="3" cols="40"><?php echo $lines ?></textarea>
+	      </div>
         </div>
       </div>
 <?php

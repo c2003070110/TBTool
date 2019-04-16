@@ -104,6 +104,7 @@ class MyGiftCard
 		}
 		return $dataArr[0];
 	}
+	
 	public function getCode($codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
@@ -127,6 +128,26 @@ class MyGiftCard
 		
 		$tbl->select(['codeCd', '==', $codeCd])->update(['status', 'used'],['aucId', $aucId],['obidId', $obidId]);
 	}
+	public function finishCode($aucId, $obidId){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		$data = $tbl->select(['aucId', '==', $aucId, "and"],
+							 ['obidId', '==', $obidId, "and"])
+					->fetch();
+		if(empty($data)){
+			echo "[ERROR]to be updated code was NOT Exists!"
+			return;
+		}
+		if(count($data) != 1){
+			echo "[ERROR]to be updated code was NOT ONE!"
+			return;
+		}
+		$tbl->select(['aucId',  '==', $aucId,  "and"],
+					 ['obidId', '==', $obidId, "and"])
+			->update(['status', "fin"]);
+	}
+	
 	public function updateStatus($codeCd, $status){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));

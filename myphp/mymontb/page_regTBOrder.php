@@ -184,8 +184,7 @@ $(function() {
   $my = new MyMontb();
   if($orderUid !== ''){
 	$orderObj = $my->listTBOrderInfoByUid($orderUid);
-	$editFlag = ($orderObj["status"] == 'st' || $orderObj["status"] == 'mbordering');
-	$editFlag = true;
+	$editFlag = !($my->isTBOrderForMBOrderedByTBUid($orderUid));
   }
   //var_dump($orderObj);
 ?>
@@ -233,15 +232,9 @@ $(function() {
           <button type="button" id="btnConvert" class="btn btn-secondary">C o n v e r t !</button>
 		</div>
         <div class="col-8 themed-grid-col">
-		  <textarea id="tempTxtArea" rows="6" cols="35"></textarea>
+		  <textarea class="form-control" id="tempTxtArea" rows="6" cols="35"></textarea>
 		</div>
       </div>
-<?php
-  }
-?>
-<?php
-  if($editFlag){
-?>
       <div class="row mb-4 form-group_product" id="productBox">
         <div class="col-4">
 		  <label for="productId">productId</label>
@@ -264,26 +257,24 @@ $(function() {
   }
 ?>
 <?php
-  $prodEditFlag = $editFlag;
   $prodArr = $my->listProductInfoByByTBUid($orderUid);
   foreach($prodArr as $prodObj){
-	  $prodEditFlag = empty($prodObj["mbUid"]);
 ?>
       <div class="row mb-1 form-group_product" id="productBox">
         <div class="col-4">
 		  <label for="productId">productId</label>
-		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$prodEditFlag){?> readOnly <?php } ?>>
+		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
         <div class="col-3">
 		  <label for="colorName">color</label>
-		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>" <?php if(!$prodEditFlag){?> readOnly <?php } ?>">
+		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
         </div>
         <div class="col-3">
 		  <label for="sizeName">size</label>
-		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>" <?php if(!$prodEditFlag){?> readOnly <?php } ?>">
+		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
         </div>
 <?php
-    if($prodEditFlag){
+    if($editFlag){
 ?>
         <div class="col-1">
 		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>
@@ -303,12 +294,6 @@ $(function() {
         <div class="col-5">
 		  <button type="button" id="btnSave" class="btn btn-secondary">SAVE</button>
         </div>
-<?php
-    }
-?>
-<?php
-    if($prodEditFlag){
-?>
         <div class="col-5">
 		  <button type="button" id="btnDelete" class="btn btn-secondary">删除</button>
         </div>

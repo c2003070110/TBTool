@@ -58,53 +58,98 @@ $(function() {
 <?php
   include __DIR__ .'/subpage_toplink.php';
 ?>
-<?php
-  $maijia = $_GET['maijia'];
-?>
   <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbUnorder">mbUnorder</a></li>
+    <li class="list-group-item"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbOrdered">mbOrdered</a></li>
     <li class="list-group-item"><a href="/myphp/mymontb/page_TBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
 <?php
+  $status = $_GET['status'];
   $my = new MyMontb();
-  if (!empty($maijia)){
-	  $dataArr = $my->listTBOrderByMaijia($maijia);
+  $sort = array();
+  if (!empty($status) && $status == "mbUnorder"){
+	  $dataArr = $my->listTBOrderByMbUnorder();
+	  foreach ((array) $dataArr as $key => $value) {
+		$sort[$key] = $value['dingdanDt'];
+	  }
+	  array_multisort($sort, SORT_DESC, $dataArr);
+	
+  }else if (!empty($status) && $status == "mbOrdered"){
+	  $dataArr = $my->listTBOrderByMbOrdered();
+	  foreach ((array) $dataArr as $key => $value) {
+		$sort[$key] = $value['mbOrderNo'];
+	  }
+	  array_multisort($sort, SORT_DESC, $dataArr);
   }else{
-	  //var_dump($my);
 	  $dataArr = $my->listAllTBOrder();
+	  foreach ((array) $dataArr as $key => $value) {
+		$sort[$key] = $value['dingdanDt'];
+	  }
+	  array_multisort($sort, SORT_DESC, $dataArr);
   }
-  
 ?>
-  <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">淘宝买家ID</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">下单日期</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">快递方式</div>
-	<!--
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
-	-->
-  </div>
 <?php
   foreach ($dataArr as $data) {
 ?>
-  <div class="row">
+  <div class="box border border-primary mb-1">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-4 text-break border border-secondary">
-	  <a href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['uid'] ?>">
+    <div class="row mb-4 form-group">
+      <div class="col-4">
+	    <label for="maijia">淘宝买家ID</label>
+	    <a class="form-control btn btn-primary" href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data['maijia'] ?>
 	  </a>
 	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['dingdanDt'] ?></div>
-    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $data['transferWay'] ?></div>
-	<!--
-    <div class="col-3 text-break themed-grid-col border border-primary">
-		<button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删除</button>
+      <div class="col-4">
+	    <label for="dingdanDt">TB下单日期</label>
+	    <input type="text" class="form-control" id="dingdanDt" value="<?php echo $data['dingdanDt'] ?>" readOnly>
+	  </div>
+      <div class="col-4">
+	    <label for="transferWay">快递方式</label>
+	    <input type="text" class="form-control" id="transferWay" value="<?php echo $data['transferWay'] ?>" readOnly>
+	  </div>
     </div>
-	-->
+<?php
+    $dataProdArr = $my->listProductInfoByByTBUid($data['uid']);
+	$mbUidArr = array();
+	$lines = $data['maijiadianzhiHanzi'] . "\n";
+    foreach ($dataProdArr as $productInfo) {
+		$lines .= $productInfo["productId"]." ".$productInfo["colorName"]." ".$productInfo["sizeName"] . "\n";
+		if(empty($productInfo["mbUid"]))continue;
+		if(!in_array($productInfo["mbUid"], $mbUidArr)){
+			$mbUidArr[] = $productInfo["mbUid"];
+		}
+	}
+?>
+    <div class="row mb-4 form-group">
+      <div class="col-12">
+	    <textarea id="tempTxtArea" class="form-control" rows="3" cols="40"><?php echo $lines ?></textarea>
+	  </div>
+    </div>
+<?php
+    foreach ($mbUidArr as $mbUid) {
+		$mbOrderData = $my->listMBOrderInfoByUid($mbUid);  
+?>
+    <div class="row mb-4 form-group">
+      <div class="col-4">
+	    <label for="mbOrderNo">MB 官网订单号</label>
+	    <a class="form-control btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $mbOrderData['uid'] ?>">
+	      <?php echo $mbOrderData['mbOrderNo'] ?>
+	    </a>
+	  </div>
+      <div class="col-4">
+		  <label for="transferNoGuoji">Transfer No</label>
+		<input type="text" class="form-control" id="transferNoGuoji" value="<?php echo $mbOrderData['transferNoGuoji'] ?>">
+      </div>
+    </div>
+<?php
+	}
+?>
   </div>
 <?php
   }
 ?>
-
 </div>
 </body>
 </html>

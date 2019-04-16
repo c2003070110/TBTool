@@ -19,6 +19,7 @@ if($actionStr == "save"){
 	$myGiftCard = new MyGiftCard();
 	$rslt = $myGiftCard->saveCode($paramStr);
 	echo $rslt;
+
 } else if($actionStr == "get"){
 	$codeType = $_GET['codeType'];
 	if($codeType === null){
@@ -38,6 +39,17 @@ if($actionStr == "save"){
 	}
 	$myGiftCard = new MyGiftCard();
 	$myGiftCard->assetCode($codeCd, $auctionId, $obidId);
+} else if($actionStr == "fin"){
+	$auctionId = $_GET['auctionId'];
+	$obidId = $_GET['obidId'];
+	if(empty($auctionId) ||empty($obidId)){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	$myGiftCard->finishCode($auctionId, $obidId);
+	
+	
 } else if($actionStr == "DEL"){
 	$codeCd = $_GET['codeCd'];
 	if($codeCd === null){

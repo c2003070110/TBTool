@@ -6,7 +6,7 @@ class GiftCardObject
     public $codeType = '';
     public $codeCd = '';
 	
-    public $status = '';//unused,using,used,invalid
+    public $status = '';//unused,using,used,invalid,fin
 	
     public $aucId = '';
     public $obidId = '';

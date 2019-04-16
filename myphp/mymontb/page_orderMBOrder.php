@@ -289,7 +289,7 @@ $(function(){
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
-            <textarea  cols="40" rows="6" id="maijiadianzhiPY"  ></textarea >
+            <textarea class="form-control" cols="40" rows="6" id="maijiadianzhiPY"  ></textarea >
         </div>
       </div>
       <div class="row mb-4 form-group">
@@ -311,7 +311,7 @@ $(function(){
 ?>
       <div class="row mb-4 form-group">
         <div class="col-8 themed-grid-col">
-		  <textarea id="tempTxtArea" rows="6" cols="35"><?php echo $lines ?></textarea>
+		  <textarea class="form-control" id="tempTxtArea" rows="6" cols="35"><?php echo $lines ?></textarea>
 		</div>
       </div>
       <div class="row mb-4 form-group">

@@ -119,7 +119,11 @@ $(function() {
 <body class="py-4">
 <div id="container" class="container">
 <?php
-  $uid = $_GET['uid'];
+  include __DIR__ .'/subpage_toplink.php';
+?>
+<?php
+  $uid = empty($_GET['uid'])? "" : empty($_GET['uid']);
+  $codeType = empty($_GET['codeType']) ? "" : $_GET['codeType'];
   if(!empty($uid)){
 	$my = new MyGiftCard();
 	$obj = $my->listCodeByUid($uid);
@@ -157,15 +161,58 @@ $(function() {
             <label for="codeType">CodeType</label>
             <select class="custom-select d-block" id="codeType">
                 <option value="" selected></option>
+<?php
+  if($codeType == "" || $codeType == "PSNUSD"){
+?>
                 <option value="PSNUSD10" <?php if($obj['codeType']=='PSNUSD10'){?> selected <?php } ?>>PSN 10美元</option>
                 <option value="PSNUSD20" <?php if($obj['codeType']=='PSNUSD20'){?> selected <?php } ?>>PSN 20美元</option>
                 <option value="PSNUSD50" <?php if($obj['codeType']=='PSNUSD50'){?> selected <?php } ?>>PSN 50美元</option>
                 <option value="PSNUSD100" <?php if($obj['codeType']=='PSNUSD100'){?> selected <?php } ?>>PSN 100美元</option>
+<?php 
+  }
+  if($codeType == "" || $codeType == "PSNHKD"){
+?>
                 <option value="PSNHKD80" <?php if($obj['codeType']=='PSNHKD80'){?> selected <?php } ?>>PSN 80HKD</option>
+                <option value="PSNHKD160" <?php if($obj['codeType']=='PSNHKD160'){?> selected <?php } ?>>PSN 160HKD</option>
+                <option value="PSNHKD200" <?php if($obj['codeType']=='PSNHKD200'){?> selected <?php } ?>>PSN 200HKD</option>
+                <option value="PSNHKD300" <?php if($obj['codeType']=='PSNHKD300'){?> selected <?php } ?>>PSN 300HKD</option>
+                <option value="PSNHKD400" <?php if($obj['codeType']=='PSNHKD400'){?> selected <?php } ?>>PSN 400HKD</option>
+                <option value="PSNHKD500" <?php if($obj['codeType']=='PSNHKD500'){?> selected <?php } ?>>PSN 500HKD</option>
+                <option value="PSNHKD1000" <?php if($obj['codeType']=='PSNHKD1000'){?> selected <?php } ?>>PSN 1000HKD</option>
+<?php 
+  }
+  if($codeType == "" || $codeType == "XBOXUSD"){
+?>
                 <option value="XBOXUSD10" <?php if($obj['codeType']=='XBOXUSD10'){?> selected <?php } ?>>XBOX 10美元</option>
-                <option value="XBOXUSD20" <?php if($obj['codeType']=='XBOXUSD10'){?> selected <?php } ?>>XBOX 20美元</option>
+                <option value="XBOXUSD20" <?php if($obj['codeType']=='XBOXUSD20'){?> selected <?php } ?>>XBOX 20美元</option>
                 <option value="XBOXUSD50" <?php if($obj['codeType']=='XBOXUSD50'){?> selected <?php } ?>>XBOX 50美元</option>
                 <option value="XBOXUSD100" <?php if($obj['codeType']=='XBOXUSD100'){?> selected <?php } ?>>XBOX 100美元</option>
+<?php 
+  }
+  if($codeType == "" || $codeType == "GOOGLUSD"){
+?>
+                <option value="GOOGLUSD10" <?php if($obj['codeType']=='GOOGLUSD10'){?> selected <?php } ?>>GOOGLE 10美元</option>
+                <option value="GOOGLUSD20" <?php if($obj['codeType']=='GOOGLUSD20'){?> selected <?php } ?>>GOOGLE 20美元</option>
+                <option value="GOOGLUSD50" <?php if($obj['codeType']=='GOOGLUSD50'){?> selected <?php } ?>>GOOGLE 50美元</option>
+                <option value="GOOGLUSD100" <?php if($obj['codeType']=='GOOGLUSD100'){?> selected <?php } ?>>GOOGLE 100美元</option>
+<?php 
+  }
+  if($codeType == "" || $codeType == "AMZNUSD"){
+?>
+                <option value="AMZNUSD20" <?php if($obj['codeType']=='AMZNUSD20'){?> selected <?php } ?>>AMZN 20美元</option>
+                <option value="AMZNUSD50" <?php if($obj['codeType']=='AMZNUSD50'){?> selected <?php } ?>>AMZN 50美元</option>
+                <option value="AMZNUSD100" <?php if($obj['codeType']=='AMZNUSD100'){?> selected <?php } ?>>AMZN 100美元</option>
+<?php 
+  }
+  if($codeType == "" || $codeType == "STEAMUSD"){
+?>
+                <option value="STEAMUSD10" <?php if($obj['codeType']=='STEAMUSD10'){?> selected <?php } ?>>STEAM 10美元</option>
+                <option value="STEAMUSD20" <?php if($obj['codeType']=='STEAMUSD20'){?> selected <?php } ?>>STEAM 20美元</option>
+                <option value="STEAMUSD50" <?php if($obj['codeType']=='STEAMUSD50'){?> selected <?php } ?>>STEAM 50美元</option>
+                <option value="STEAMUSD100" <?php if($obj['codeType']=='STEAMUSD100'){?> selected <?php } ?>>STEAM 100美元</option>
+<?php 
+  }
+?>
             </select>
         </div>
 <?php

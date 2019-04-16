@@ -128,14 +128,15 @@ class MyMontb
 		
 		$this->deleteProductInfoByTBUid($tbData["tbUid"]);
 	}
-	/*
-	public function updateTBOrderForMBUidByUid($tbUid, $mbUid){
-		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
-		$tbl->select(['uid', '==', $tbUid])
-			->update(['mbUid', $mbUid]);
+	public function isTBOrderForMBOrderedByTBUid($tbUid){
+		$dataProdArr = $this->listProductInfoByByTBUid($tbUid);
+		foreach ($dataProdArr as $dataProd) {
+			if(!empty($dataProd["mbUid"])){
+				return true;
+			}
+		}
+		return false;
 	}
-	*/
 	public function listTBOrderInfoByUid($uid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
@@ -176,18 +177,52 @@ class MyMontb
 		
 		return $tbl->select(['mbUid', '==', $mbUid,'and'])->fetch()[0];
 	}
-
 	public function listTBOrderInfoByPinyou(){
-		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
 		$rsltArr = array();
-		$dataArr = $tbl->select("*")->fetch();
+		$dataArr = $this->listAllTBOrder();
 		foreach ($dataArr as $data) {
 			if($data["transferWay"] === 'pinYou'){
 				$rsltArr[] = $data;
 			}
 		}
-		//var_dump($rsltArr);
+		return $rsltArr;
+	}
+	public function listTBOrderByMbUnorder(){
+		$rsltArr = array();
+		$dataArr = $this->listAllTBOrder();
+		foreach ($dataArr as $data) {
+			$dataProdArr = $this->listProductInfoByByTBUid($data['uid']);
+			foreach ($dataProdArr as $dataProd) {
+				if(empty($dataProd["mbUid"])){
+					$rsltArr[] = $data;
+					break;
+				}
+			}
+		}
+		return $rsltArr;
+	}
+	public function listTBOrderByMbOrdered(){
+		$rsltArr = array();
+		$dataArr = $this->listAllTBOrder();
+		foreach ($dataArr as $data) {
+			$dataProdArr = $this->listProductInfoByByTBUid($data['uid']);
+			$mbOrderNo = "";
+			foreach ($dataProdArr as $dataProd) {
+				if(!empty($dataProd["mbUid"])){
+					$mbUidFlag = false;
+					$mbData = $this->listMBOrderInfoByUid($dataProd["mbUid"]);
+					$mbOrderNo = $mbData["mbOrderNo"];
+					if(!empty($mbOrderNo)){
+					    break;
+					}
+				}
+				
+			}
+			if(!empty($mbOrderNo)){
+				$data["mbOrderNo"] = $mbOrderNo;
+				$rsltArr[] = $data;
+			}
+		}
 		return $rsltArr;
 	}
 	

@@ -73,6 +73,9 @@ $(function() {
   }
 ?>
 <div id="container" class="container">
+<?php
+  include __DIR__ .'/subpage_toplink.php';
+?>
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item"><a href="/myphp/mygiftcard/regcode.php">REG</a></li>
   </ul>   
