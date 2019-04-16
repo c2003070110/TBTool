@@ -40,6 +40,10 @@ $(function() {
             location.reload();
         });
 	};
+    $(document).on("click", "#btnfin", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "fin");
+    });
 	/*
     $(document).on("click", "#btnMBoff", function() {
 		var thisBox = getMyBox(this);
@@ -57,16 +61,26 @@ $(function() {
 <div id="container" class="container">
 <?php
   include __DIR__ .'/subpage_toplink.php';
+  $status = $_GET['status'];
+  $my = new MyMontb();
+  if($status == 'mbUnorder'){
+	  $cssBgUnorder = "bg-success text-white";
+  }else if($status == 'mbOrdered'){
+	  $cssBgMBOrdered= "bg-success text-white";
+  }else if($status == 'mbfh'){
+	  $cssBgmbfh= "bg-success text-white";
+  }else{
+	  $cssBgAll = "bg-success text-white";
+  }
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbUnorder">mbUnorder</a></li>
-    <li class="list-group-item"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbOrdered">mbOrdered</a></li>
-    <li class="list-group-item"><a href="/myphp/mymontb/page_TBOrderlist.php">ALL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbUnorder">mbUnorder</a></li>
+    <li class="list-group-item <?php echo $cssBgMBOrdered ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbOrdered">mbOrdered</a></li>
+    <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbfh">mbfh</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_TBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
 <?php
-  $status = $_GET['status'];
-  $my = new MyMontb();
   $sort = array();
   if (!empty($status) && $status == "mbUnorder"){
 	  $dataArr = $my->listTBOrderByMbUnorder();
@@ -77,6 +91,13 @@ $(function() {
 	
   }else if (!empty($status) && $status == "mbOrdered"){
 	  $dataArr = $my->listTBOrderByMbOrdered();
+	  foreach ((array) $dataArr as $key => $value) {
+		$sort[$key] = $value['mbOrderNo'];
+	  }
+	  array_multisort($sort, SORT_DESC, $dataArr);
+	
+  }else if (!empty($status) && $status == "mbfh"){
+	  $dataArr = $my->listTBOrderByMbFahuo();
 	  foreach ((array) $dataArr as $key => $value) {
 		$sort[$key] = $value['mbOrderNo'];
 	  }
@@ -95,19 +116,21 @@ $(function() {
   <div class="box border border-primary mb-1">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
     <div class="row mb-4 form-group">
-      <div class="col-4">
+      <div class="col-7">
 	    <label for="maijia">淘宝买家ID</label>
 	    <a class="form-control btn btn-primary" href="/myphp/mymontb/page_regTBOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data['maijia'] ?>
 	  </a>
-	</div>
-      <div class="col-4">
-	    <label for="dingdanDt">TB下单日期</label>
-	    <input type="text" class="form-control" id="dingdanDt" value="<?php echo $data['dingdanDt'] ?>" readOnly>
 	  </div>
-      <div class="col-4">
+      <div class="col-5">
 	    <label for="transferWay">快递方式</label>
 	    <input type="text" class="form-control" id="transferWay" value="<?php echo $data['transferWay'] ?>" readOnly>
+	  </div>
+    </div>
+    <div class="row mb-4 form-group">
+      <div class="col-12">
+	    <label for="dingdanDt">TB下单日期</label>
+	    <input type="text" class="form-control" id="dingdanDt" value="<?php echo $data['dingdanDt'] ?>" readOnly>
 	  </div>
     </div>
 <?php
@@ -132,13 +155,13 @@ $(function() {
 		$mbOrderData = $my->listMBOrderInfoByUid($mbUid);  
 ?>
     <div class="row mb-4 form-group">
-      <div class="col-4">
+      <div class="col-5">
 	    <label for="mbOrderNo">MB 官网订单号</label>
-	    <a class="form-control btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $mbOrderData['uid'] ?>">
+	    <a class="form-control btn btn-success" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $mbOrderData['uid'] ?>">
 	      <?php echo $mbOrderData['mbOrderNo'] ?>
 	    </a>
 	  </div>
-      <div class="col-4">
+      <div class="col-7">
 		  <label for="transferNoGuoji">Transfer No</label>
 		<input type="text" class="form-control" id="transferNoGuoji" value="<?php echo $mbOrderData['transferNoGuoji'] ?>">
       </div>

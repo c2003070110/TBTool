@@ -310,7 +310,7 @@ $(function(){
   }
 ?>
       <div class="row mb-4 form-group">
-        <div class="col-8 themed-grid-col">
+        <div class="col-12 themed-grid-col">
 		  <textarea class="form-control" id="tempTxtArea" rows="6" cols="35"><?php echo $lines ?></textarea>
 		</div>
       </div>

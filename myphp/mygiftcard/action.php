@@ -27,7 +27,7 @@ if($actionStr == "save"){
 		return;
 	}
 	$myGiftCard = new MyGiftCard();
-	$rslt = $myGiftCard->getCode($codeType);
+	$rslt = $myGiftCard->getCodeV2($codeType);
 	echo $rslt;
 } else if($actionStr == "asset"){
 	$codeCd = $_GET['codeCd'];

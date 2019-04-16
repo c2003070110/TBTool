@@ -50,7 +50,7 @@ $(function() {
 <?php
   $myGiftCard = new MyGiftCard();
   $status = $_GET['status'];
-  $codeType = $_GET['codeType'];
+  $codeType = empty($_GET['codeType']) ? "" : $_GET['codeType'];
   if(!empty($status) && !empty($codeType)){
       $dataArr = $myGiftCard->listStockByStatusAndCodeType($status, $codeType);
   }else if(!empty($status)){
@@ -81,10 +81,10 @@ $(function() {
   </ul>   
   <hr class="mb-2"> 
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php">ALL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused">unused</a></li>
-    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using">using</a></li>
-    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used">used</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php?codeType=<?php echo $_GET['uid'] ?>">ALL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused&codeType=<?php echo $_GET['uid'] ?>">unused</a></li>
+    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using&codeType=<?php echo $_GET['uid'] ?>">using</a></li>
+    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used&codeType=<?php echo $_GET['uid'] ?>">used</a></li>
   </ul> 
   <hr class="mb-2">   
   <div class="row">

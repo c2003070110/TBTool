@@ -68,10 +68,7 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?>
 <?php
-  $status = '';
-  if(isset($_GET['status'])){
-	$status = $_GET['status'];
-  }
+  $status = $_GET['status'];
   if($status == 'unorder'){
 	  $cssBgUnorder = "bg-success text-white";
   }else if($status == 'ordering'){
@@ -99,7 +96,7 @@ $(function() {
   <hr class="mb-4">
 <?php
   $my = new MyMontb();
-  if ($status !== ''){
+  if (!empty($status)){
 	  $dataArr = $my->listMBOrderInfoByStatus($status);
   }else{
 	  $dataArr = $my->listAllMBOrderInfo();
@@ -114,13 +111,6 @@ $(function() {
   <div id="accordion">
 <?php
   foreach ($dataArr as $data) {
-	  $boxCss = "bg-light";
-	  if($data['status'] == 'unorder'){
-		  $boxCss = "bg-warning text-white";
-	  }else if($data['status'] == 'ordered'){
-		  $boxCss = "bg-success text-white";
-	  }
-	  $boxCss = "";
 ?>  
     <h3 class="bg-success">
 <?php
@@ -129,11 +119,11 @@ $(function() {
 	    }else if(!empty($data['tel'])){
 	    	echo $data['tel'];
 	    }else{
-		echo $data['uid'];
-	}
+			echo $data['uid'];
+		}
 ?>  
 	</h3>
-      <div class="box <?php echo $boxCss ?> border border-primary mb-4 pl-2">
+      <div class="box border border-primary mb-4 pl-2">
         <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
         <div class="row mb-1 p-2">
     	    <a class="btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
@@ -141,21 +131,22 @@ $(function() {
     	    </a>
 	    </div>
         <div class="row mb-1 p-2">
-	        <?php if(!empty($data['status'])){?><span class="border p-2"><?php echo $data['status'] } ?></span>
-	        <?php if(!empty($data['mbOrderNo'])){?><span class="border p-2"><?php echo $data['mbOrderNo'] } ?></span>
-	        <?php if(!empty($data['transferNoGuoji'])){?><span class="border p-2"><?php echo $data['transferNoGuoji'] } ?></span>
-	        <?php if(!empty($data['transferNoGuonei'])){?><span class="border p-2"><?php echo $data['transferNoGuonei'] } ?></span>
+	        <?php if(!empty($data['status'])){?><span class="border p-2"><?php echo $data['status']; } ?></span>
+	        <?php if(!empty($data['mbOrderNo'])){?><span class="border p-2"><?php echo $data['mbOrderNo']; } ?></span>
+	        <?php if(!empty($data['transferNoGuoji'])){?><span class="border p-2"><?php echo $data['transferNoGuoji']; } ?></span>
+	        <?php if(!empty($data['transferNoGuonei'])){?><span class="border p-2"><?php echo $data['transferNoGuonei']; } ?></span>
 	    </div>
 <?php
 		$dproductInfoArr = $my->listProductInfoByMBUid($data["uid"]);
 		$tbUidArr = array();
-
 		foreach ($dproductInfoArr as $productInfo) {	
 			if(!in_array($productInfo["tbUid"], $tbUidArr)){
 				$tbUidArr[] = $productInfo["tbUid"];
 			}
 		}
 		$lines = "";
+?>
+<?php
 		//var_dump( $tbUidArr);
 		foreach ($tbUidArr as $tbUid) {
 			$tbObj = $my->listTBOrderInfoByUid($tbUid);

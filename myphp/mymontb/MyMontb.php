@@ -197,6 +197,11 @@ class MyMontb
 					$rsltArr[] = $data;
 					break;
 				}
+				$mbData = $this->listMBOrderInfoByUid($dataProd["mbUid"]);
+				if($mbData["status"] == "unorder" || $mbData["status"] == "ordering"){
+					$rsltArr[] = $data;
+					break;
+				}
 			}
 		}
 		return $rsltArr;
@@ -209,10 +214,9 @@ class MyMontb
 			$mbOrderNo = "";
 			foreach ($dataProdArr as $dataProd) {
 				if(!empty($dataProd["mbUid"])){
-					$mbUidFlag = false;
 					$mbData = $this->listMBOrderInfoByUid($dataProd["mbUid"]);
-					$mbOrderNo = $mbData["mbOrderNo"];
-					if(!empty($mbOrderNo)){
+					if($mbData["status"] == "ordered"){
+						$mbOrderNo = $mbData["mbOrderNo"];
 					    break;
 					}
 				}
@@ -220,6 +224,32 @@ class MyMontb
 			}
 			if(!empty($mbOrderNo)){
 				$data["mbOrderNo"] = $mbOrderNo;
+				$rsltArr[] = $data;
+			}
+		}
+		return $rsltArr;
+	}
+	public function listTBOrderByMbFahuo(){
+		$rsltArr = array();
+		$dataArr = $this->listAllTBOrder();
+		foreach ($dataArr as $data) {
+			$dataProdArr = $this->listProductInfoByByTBUid($data['uid']);
+			$mbOrderNo = "";
+			$transferNoGuoji = "";
+			foreach ($dataProdArr as $dataProd) {
+				if(!empty($dataProd["mbUid"])){
+					$mbUidFlag = false;
+					$mbData = $this->listMBOrderInfoByUid($dataProd["mbUid"]);
+					if($mbData["status"] == "mbfh"){
+						$mbOrderNo = $mbData["mbOrderNo"];
+						$transferNoGuoji = $mbData["transferNoGuoji"];
+					    break;
+					}
+				}
+			}
+			if(!empty($mbOrderNo)){
+				$data["mbOrderNo"] = $mbOrderNo;
+				$data["transferNoGuoji"] = $transferNoGuoji;
 				$rsltArr[] = $data;
 			}
 		}

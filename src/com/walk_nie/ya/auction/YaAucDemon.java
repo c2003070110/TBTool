@@ -45,6 +45,12 @@ public class YaAucDemon {
 	public static void main(String[] args) throws IOException {
 
 		YaAucDemon main = new YaAucDemon();
+//		main.init();
+//		YaSoldObject yaObj = new YaSoldObject ();
+//		yaObj.title = "[PSNUSD30]";
+//		yaObj.qtty = 1;
+//		String rslt =  main.composeSendMessage(yaObj);
+//		System.out.println(rslt);
 		main.execute();
 	}
 
@@ -333,7 +339,7 @@ public class YaAucDemon {
 		for (String s : sp) {
 			String key = getIdentifierKeyFromTitle(s);
 			for (int i = 0; i < yaObj.qtty; i++) {
-				String code = getUnusedCode(key);
+				String code = getUnusedCode(key);// codeType:codeCd;codeType:codeCd;
 				if (StringUtil.isBlank(code)) {
 					String msg = String.format(errMsgFmt, yaObj.auctionId,
 							yaObj.obider, key);
@@ -341,8 +347,18 @@ public class YaAucDemon {
 					return null;
 				}
 				yaObj.sendCode += " " + code;
-				codeSendOnce.add(code);
-				sb.append(keyMsgPrefix.get(key)).append(" ").append(code).append("\n");
+				String[] spa = code.split(";");
+				for (String sps : spa) {
+					String[] spaa = sps.split(":");
+					if(spaa.length != 2){
+						String msg = String.format(errMsgFmt, yaObj.auctionId,
+								yaObj.obider, key);
+						log(msg);
+						return null;
+					}
+					codeSendOnce.add(spaa[1]);
+					sb.append(keyMsgPrefix.get(spaa[0])).append(" ").append(spaa[1]).append("\n");
+				}
 			}
 		}
 

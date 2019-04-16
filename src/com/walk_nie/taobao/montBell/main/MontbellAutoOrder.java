@@ -85,7 +85,7 @@ public class MontbellAutoOrder {
 		param.put("uid", orderInfo.uid);
 		param.put("mbOrderNo", orderInfo.mbOrderNo);
 		// /myphp/mymontb/action.php?action=updateMBOrderNo
-		NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.react.url"), param);
+		NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 	}
 
 	private TaobaoOrderInfo readInOrderInfoFromWebService() {
@@ -93,7 +93,7 @@ public class MontbellAutoOrder {
 		Map<String,String> param = Maps.newHashMap();
 		param.put("action", "listMBOrderByEmptyMBOrderOne");
 		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
-		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
+		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 		if(StringUtil.isBlank(orderLine)){
 			//System.out.println("[INFO]Nothing to order");
 			return null;
@@ -127,7 +127,7 @@ public class MontbellAutoOrder {
 		param.put("action", "listProductInfoByMBUid");
 		param.put("mbUid", tbOrderInfo.uid);
 		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
-		String productLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
+		String productLine = NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 		if(StringUtil.isBlank(productLine)){
 			System.out.println("[INFO]order with NONE product.mbuid=" + tbOrderInfo.uid);
 			return null;

@@ -105,6 +105,80 @@ class MyGiftCard
 		return $dataArr[0];
 	}
 	
+	public function getCodeV2($codeType){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		$dataArr = $tbl->select(['codeType', '==', $codeType, 'and'],['status', '==', 'unused', 'and'])->fetch();
+		if(!empty($dataArr)){
+			$rsltCd = $data["codeCd"];
+			$tbl->select(['codeCd', '==', $rsltCd])->update(['status', 'using']);
+			return $codeType . ":" . $dataArr["codeCd"];
+		}
+		// compose!
+		$rslt = "";
+		$codeCdArr = array();
+		if($codeType == "PSNUSD20"){
+			$dataArr = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr) < 2){
+				return "";
+			}
+			$codeCdArr[] = $dataArr[0]["codeCd"];
+			$codeCdArr[] = $dataArr[1]["codeCd"];
+			$rslt = "PSNUSD10:" . $dataArr[0]  . ";PSNUSD10:" . $dataArr[1];
+		}
+		if($codeType == "PSNUSD30"){
+			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr2) > 0 &&  count($dataArr1) > 0){
+				// 30 = 10+20
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$rslt = "PSNUSD10:" . $codeCdArr[0]  . ";PSNUSD20:" . $codeCdArr[0];
+			}
+			if(count($dataArr1) > 2){
+				// 30 = 10+10+10
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr1[2]["codeCd"];
+				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD10:" . $codeCdArr[2];
+			}
+		}
+		if($codeType == "PSNUSD40"){
+			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			
+			if(count($dataArr2) > 1){
+				// 40 = 20+20
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$rslt = "PSNUSD20:" . $codeCdArr[0] . ";PSNUSD20:" . $codeCdArr[1];
+			}
+			if(count($dataArr2) > 0 &&  count($dataArr1) > 1){
+				// 40 = 10+10+20
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD20:" . $codeCdArr[2];
+			}
+			if(count($dataArr1) > 3){
+				// 40 = 10+10+10+10
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr1[2]["codeCd"];
+				$codeCdArr[] = $dataArr1[3]["codeCd"];
+				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1]
+    	     		 . ";PSNUSD10:" . $codeCdArr[2] . ";PSNUSD10:" . $codeCdArr[3];
+			}
+		}
+		foreach ($codeCdArr as $codeCd) {
+			$tbl->select(['codeCd', '==', $codeCd])->update(['status', 'using']);
+		}
+		//var_dump($codeCdArr);
+		//var_dump($rslt);
+		return $rslt;
+	}
+	
 	public function getCode($codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
@@ -136,11 +210,11 @@ class MyGiftCard
 							 ['obidId', '==', $obidId, "and"])
 					->fetch();
 		if(empty($data)){
-			echo "[ERROR]to be updated code was NOT Exists!"
+			echo "[ERROR]to be updated code was NOT Exists!";
 			return;
 		}
 		if(count($data) != 1){
-			echo "[ERROR]to be updated code was NOT ONE!"
+			echo "[ERROR]to be updated code was NOT ONE!";
 			return;
 		}
 		$tbl->select(['aucId',  '==', $aucId,  "and"],
@@ -179,14 +253,29 @@ class MyGiftCard
 	public function listStockByStatusAndCodeType($status, $codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		$rsltArr = array();
+		$dataArr = $tbl->select(['status', '==', $status, 'and'],['codeType', '==', $codeType, 'and'])->fetch();
+		foreach ($dataArr as $data) {
+			if(strpos($data["codeType"], $codeType) !== false){
+				$rsltArr[] = $data;
+			}
+		}
 		
-		return $tbl->select(['status', '==', $status, 'and'],['codeType', '==', $codeType, 'and'])->fetch();
+		return $rsltArr;
 	}
 	public function listStockByCodeType($codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
-		return $tbl->select(['codeType', '==', $codeType])->fetch();
+		$rsltArr = array();
+		$dataArr =  $tbl->select("*")->fetch();
+		foreach ($dataArr as $data) {
+			//var_dump(strpos($data["codeType"], $codeType));
+			if(strpos($data["codeType"], $codeType) !== false){
+				$rsltArr[] = $data;
+			}
+		}
+		return $rsltArr;
 	}
 }
 ?>
