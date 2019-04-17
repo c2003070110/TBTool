@@ -45,12 +45,17 @@ public class YaAucDemon {
 	public static void main(String[] args) throws IOException {
 
 		YaAucDemon main = new YaAucDemon();
-//		main.init();
-//		YaSoldObject yaObj = new YaSoldObject ();
-//		yaObj.title = "[PSNUSD30]";
-//		yaObj.qtty = 1;
-//		String rslt =  main.composeSendMessage(yaObj);
-//		System.out.println(rslt);
+		/*
+		main.init();
+		YaSoldObject yaObj = new YaSoldObject ();
+		yaObj.title = "[PSNUSD40]";
+		yaObj.qtty = 1;
+		String rslt =  main.composeSendMessage(yaObj);
+		yaObj.auctionId = "tst001";
+		yaObj.obider = "tst001";
+		main.save(yaObj);
+		System.out.println(rslt);
+		*/
 		main.execute();
 	}
 
@@ -450,10 +455,12 @@ public class YaAucDemon {
 		param.put("action", "asset");
 		param.put("auctionId", yaObj.auctionId);
 		param.put("obidId", yaObj.obider);
+		String codeS = "";
 		for (String code : codeSendOnce) {
-			param.put("codeCd", code);
-			NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
+			codeS +=code + ";";
 		}
+		param.put("codeCd", codeS.substring(0, codeS.length() - 1));
+		NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 	}
 
 	private void review(WebDriver driver) {
@@ -541,7 +548,7 @@ public class YaAucDemon {
 	}
 
 
-	private void finishCode(WebDriver driver) {
+	private void finishCode(WebDriver driver) throws UnsupportedOperationException, IOException {
 		driver.get(myaucinfoUrl);
 		WebElement weTbl = driver.findElement(By.cssSelector("div[id=\"modItemNewList\"]"))
 				.findElement(By.tagName("table"));

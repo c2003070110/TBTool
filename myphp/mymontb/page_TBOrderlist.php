@@ -64,19 +64,19 @@ $(function() {
   $status = $_GET['status'];
   $my = new MyMontb();
   if($status == 'mbUnorder'){
-	  $cssBgUnorder = "bg-success text-white";
+	  $cssBgUnorder = "bg-warning text-white";
   }else if($status == 'mbOrdered'){
-	  $cssBgMBOrdered= "bg-success text-white";
+	  $cssBgMBOrdered= "bg-warning text-white";
   }else if($status == 'mbfh'){
-	  $cssBgmbfh= "bg-success text-white";
+	  $cssBgmbfh= "bg-warning text-white";
   }else{
-	  $cssBgAll = "bg-success text-white";
+	  $cssBgAll = "bg-warning text-white";
   }
 ?>
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbUnorder">mbUnorder</a></li>
     <li class="list-group-item <?php echo $cssBgMBOrdered ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbOrdered">mbOrdered</a></li>
-    <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbfh">mbfh</a></li>
+    <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbfh">MBFH</a></li>
     <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_TBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
@@ -158,7 +158,7 @@ $(function() {
       <div class="col-5">
 	    <label for="mbOrderNo">MB 官网订单号</label>
 	    <a class="form-control btn btn-success" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $mbOrderData['uid'] ?>">
-	      <?php echo $mbOrderData['mbOrderNo'] ?>
+	      <?php echo (!empty($mbOrderData['mbOrderNo']) ? $mbOrderData['mbOrderNo'] : "MB未")?>
 	    </a>
 	  </div>
       <div class="col-7">

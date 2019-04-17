@@ -539,7 +539,7 @@ public class MontbellStockChecker {
 		
 	}
 
-	private void reactStockResultToWebServer(StockObject stockInfo) {
+	private void reactStockResultToWebServer(StockObject stockInfo) throws UnsupportedOperationException, IOException {
 		Map<String,String> param = Maps.newHashMap();
 		param.put("action", "updateProductInfoByStock");
 		param.put("uid", stockInfo.uid);
@@ -548,14 +548,14 @@ public class MontbellStockChecker {
 			param.put("stock", stockInfo.stockStatus);
 		}
 		// /myphp/mymontb/action.php?action=updateMBOrderNo
-		NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.react.url"), param);
+		NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 	}
 
-	private StockObject readInStockInfoFromWebService() {
+	private StockObject readInStockInfoFromWebService() throws UnsupportedOperationException, IOException {
 		Map<String,String> param = Maps.newHashMap();
 		param.put("action", "listProductInfoByEmptyPriceOne");
 		// /myphp/mymontb/action.php?action=listOrderByEmptyMBOrderOne
-		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.orderforChina.orderInfo.get.url"), param);
+		String orderLine = NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 		if(StringUtil.isBlank(orderLine)){
 			//System.out.println("[INFO]Nothing to stock");
 			return null;

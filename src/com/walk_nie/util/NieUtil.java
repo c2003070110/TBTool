@@ -51,14 +51,14 @@ public class NieUtil {
 	}
 	
 
-	public static String httpGet(String url, Map<String, String> param) {
+	public static String httpGet(String url, Map<String, String> param) throws UnsupportedOperationException, IOException {
 
 		String p = urlEncodeUTF8(param);
 		HttpClient client = HttpClientBuilder.create().build();
 		String urlT = url + "?" + p;
 		//log("[INFO][httpGet][URL]" + urlT);
 		HttpGet request = new HttpGet(urlT);
-		try {
+		//try {
 			HttpResponse response = client.execute(request);
 			int statusCode = response.getStatusLine().getStatusCode();
 
@@ -75,11 +75,11 @@ public class NieUtil {
 				return result.toString();
 			}
 			
-		} catch (Exception ex) {
+		//} catch (Exception ex) {
 			//log("[ERROR][URL]" + request.getRequestLine().getUri() + "[INFO]" + ex.getMessage());
-			ex.printStackTrace();
-		}
-		return "";
+		//	ex.printStackTrace();
+		//}
+		//return "";
 	}
 	private static String urlEncodeUTF8(Map<?,?> map) {
 		if(map == null){

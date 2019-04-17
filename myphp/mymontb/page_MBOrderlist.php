@@ -70,28 +70,26 @@ $(function() {
 <?php
   $status = $_GET['status'];
   if($status == 'unorder'){
-	  $cssBgUnorder = "bg-success text-white";
+	  $cssBgUnorder = "bg-warning text-white";
   }else if($status == 'ordering'){
-	  $cssBgOrdering= "bg-success text-white";
+	  $cssBgOrdering= "bg-warning text-white";
   }else if($status == 'ordered'){
-	  $cssBgOrdered= "bg-success text-white";
+	  $cssBgOrdered= "bg-warning text-white";
   }else if($status == 'fin'){
-	  $cssBgfin= "bg-success text-white";
+	  $cssBgfin= "bg-warning text-white";
   }else if($status == 'mbfh'){
-	  $cssBgmbfh= "bg-success text-white";
+	  $cssBgmbfh= "bg-warning text-white";
   }else{
-	  $cssBgAll = "bg-success text-white";
+	  $cssBgAll = "bg-warning text-white";
   }
 ?>
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgUnorder ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=unorder">unorder</a></li>
     <li class="list-group-item <?php echo $cssBgOrdering ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordering">ordering</a></li>
     <li class="list-group-item <?php echo $cssBgOrdered ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=ordered">ordered</a></li>
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_MBOrderlist.php">ALL</a></li>
-  </ul>
-  <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=mbfh">MBFH</a></li>
-    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=fin">fin</a></li>
+    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mymontb/page_MBOrderlist.php?status=fin">FIN</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_MBOrderlist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
 <?php
@@ -111,23 +109,25 @@ $(function() {
   <div id="accordion">
 <?php
   foreach ($dataArr as $data) {
-?>  
-    <h3 class="bg-success">
-<?php
+	  $h3Txt = "";
 	    if(!empty($data['mbOrderNo'])){
-	    	echo $data['mbOrderNo'];
-	    }else if(!empty($data['tel'])){
-	    	echo $data['tel'];
+		  $h3Txt = $data['mbOrderNo'];
 	    }else{
-			echo $data['uid'];
+		  $h3Txt = "MB未";
+	  }
+	  $orderDtllinkTxt = "";
+	  if(!empty($data['firstName'])){
+	      $orderDtllinkTxt = $data['firstName']. " " . $data['lastName'];
+	  }else{
+		  $orderDtllinkTxt = "Adr未";
 		}
 ?>  
-	</h3>
+    <h3 class="bg-success"><?php echo $h3Txt ?></h3>
       <div class="box border border-primary mb-4 pl-2">
         <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
         <div class="row mb-1 p-2">
     	    <a class="btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
-              <?php echo $data['firstName']. " " . $data['lastName'] ; ?>
+              <?php echo $orderDtllinkTxt ?>
     	    </a>
 	    </div>
         <div class="row mb-1 p-2">
@@ -203,12 +203,18 @@ $(function() {
 		}
 ?>
         </div>
+<?php
+		if($data["status"] == 'mbfh'){
+?>
         <div class="row mb-4 form-group">
           <div class="col-12">
 	        <textarea id="tempTxtArea" class="form-control" rows="3" cols="40"><?php echo $lines ?></textarea>
 	      </div>
         </div>
       </div>
+<?php
+		}
+?>
 <?php
   }
 ?>

@@ -34,7 +34,7 @@ import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoOrder {
-	private long lastestTime = System.currentTimeMillis();
+	//private long lastestTime = System.currentTimeMillis();
 	protected BufferedReader stdReader = null;
 	private String inFileName = "order-in.txt";
 	private String ooutFileName ="order-out.txt";
@@ -79,7 +79,7 @@ public class MontbellAutoOrder {
 		NieUtil.mySleepBySecond(30);
 		
 	}
-	private void reactOrderResultToWebServer(TaobaoOrderInfo orderInfo) {
+	private void reactOrderResultToWebServer(TaobaoOrderInfo orderInfo) throws UnsupportedOperationException, IOException {
 		Map<String,String> param = Maps.newHashMap();
 		param.put("action", "updateMBOrderNo");
 		param.put("uid", orderInfo.uid);
@@ -88,7 +88,7 @@ public class MontbellAutoOrder {
 		NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 	}
 
-	private TaobaoOrderInfo readInOrderInfoFromWebService() {
+	private TaobaoOrderInfo readInOrderInfoFromWebService() throws UnsupportedOperationException, IOException {
 
 		Map<String,String> param = Maps.newHashMap();
 		param.put("action", "listMBOrderByEmptyMBOrderOne");
@@ -432,7 +432,7 @@ public class MontbellAutoOrder {
 					}
 				}
 			}
-			NieUtil.mySleepBySecond(10);
+			NieUtil.mySleepBySecond(15);
 			
 			String orderNo = "";
 			weList = driver.findElements(By.className("orderNo"));
@@ -488,7 +488,10 @@ public class MontbellAutoOrder {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
+					List<WebElement> tst = driver.findElements(By.cssSelector("img[id=\"pcheck\"]"));
+					if(tst == null || tst.isEmpty()){
+						return Boolean.FALSE;
+					}
 					return Boolean.TRUE;
 				} catch (Exception e) {
 
@@ -518,8 +521,11 @@ public class MontbellAutoOrder {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					driver.findElements(By
+					List<WebElement> tst = driver.findElements(By
 							.cssSelector("input[name=\"destination_id\"]"));
+					if(tst == null || tst.isEmpty()){
+						return Boolean.FALSE;
+					}
 					return Boolean.TRUE;
 				} catch (Exception e) {
 				}
@@ -554,7 +560,10 @@ public class MontbellAutoOrder {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					driver.findElements(By.cssSelector("input[name=\"dest_first_name\""));
+					WebElement tst = driver.findElement(By.cssSelector("input[name=\"dest_first_name\""));
+					if(tst == null){
+						return Boolean.FALSE;
+					}
 					return Boolean.TRUE;
 				} catch (Exception e) {
 				}
@@ -603,7 +612,10 @@ public class MontbellAutoOrder {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					driver.findElements(By.id("contents"));
+					List<WebElement> tst = driver.findElements(By.id("contents"));
+					if(tst == null || tst.isEmpty()){
+						return Boolean.FALSE;
+					}
 					return Boolean.TRUE;
 				} catch (Exception e) {
 
@@ -632,6 +644,22 @@ public class MontbellAutoOrder {
 				}
 			}
 		}
+		wait1 = new WebDriverWait(driver, 20);
+		wait1.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					List<WebElement> tst = driver.findElements(By.className("orderNo"));
+					if(tst == null || tst.isEmpty()){
+						return Boolean.FALSE;
+					}
+					return Boolean.TRUE;
+				} catch (Exception e) {
+
+				}
+				return Boolean.FALSE;
+			}
+		});
 		NieUtil.mySleepBySecond(10);
 		
 		String orderNo = "";

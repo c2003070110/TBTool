@@ -143,7 +143,13 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
+			var href = window.location.href;
+			if(href.indexOf("uid") == -1){
+				var url = href +"?uid="+msg;
+				window.location.href = url;
+			}else{
 			location.reload();
+			}
         });
     });
     $(document).on("click", "#btnDelete", function() {
@@ -186,7 +192,7 @@ $(function() {
 	$orderObj = $my->listTBOrderInfoByUid($orderUid);
 	$editFlag = !($my->isTBOrderForMBOrderedByTBUid($orderUid));
   }
-  //var_dump($orderObj);
+  //var_dump($editFlag);
 ?>
   <input type="hidden" id="orderUid" value="<?php echo $orderUid ?>">
   <input type="hidden" id="status" value="<?php echo $orderObj["status"] ?>">
@@ -209,7 +215,7 @@ $(function() {
       <div class="row mb-4 form-group">
         <div class="col-12">
             <label for="maijiadianzhiHanzi">买家地址</label>
-            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $orderObj['maijiadianzhiHanzi'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
+            <textarea class="form-control" cols="40" rows="2" id="maijiadianzhiHanzi" <?php if(!$editFlag){?> readOnly <?php } ?>><?php echo $orderObj['maijiadianzhiHanzi'] ?></textarea >
         </div>
       </div>
       <div class="row mb-4 form-group_product">

@@ -131,7 +131,12 @@ class MyMontb
 	public function isTBOrderForMBOrderedByTBUid($tbUid){
 		$dataProdArr = $this->listProductInfoByByTBUid($tbUid);
 		foreach ($dataProdArr as $dataProd) {
-			if(!empty($dataProd["mbUid"])){
+			if(empty($dataProd["mbUid"])){
+				return false;
+			}
+			$dataMB = $this->listMBOrderInfoByUid($dataProd["mbUid"]);
+			//var_dump($dataMB);
+			if(!empty($dataMB) && $dataMB["status"] !== "unorder"){
 				return true;
 			}
 		}

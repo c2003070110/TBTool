@@ -266,14 +266,17 @@ $(function(){
       <div class="row mb-4 form-group">
         <div class="col-12">
             <label for="maijiadianzhiHanzi">买家地址</label>
-            <input type="text" class="form-control" id="maijiadianzhiHanzi" value="<?php echo $tbObj['maijiadianzhiHanzi'] ?>" readOnly>
+            <textarea class="form-control" cols="40" rows="2" id="maijiadianzhiHanzi"><?php echo $tbObj['maijiadianzhiHanzi'] ?></textarea >
+        </div>
         </div>
 <?php 
       if($editFlag && !$isMyAddress){
 ?> 
-        <div class="col-2">
+      <div class="row mb-4 form-group">
+        <div class="col-12">
 		  <button type="button" id="btnConvertHanziToPY" class="btn btn-secondary" <?php if(!$editFlag){?> readOnly <?php } ?>>TO PY</button>
         </div>
+      </div>
 <?php 
       }
 ?>
@@ -306,12 +309,13 @@ $(function(){
 	//var_dump($p["tbUid"]);
 	$tbObj = $my->listTBOrderInfoByUid($p["tbUid"]);
 	//var_dump($tbObj);
-	$lines .= $tbObj["maijiadianzhiHanzi"] . " 商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . "\n";
+	$lines .= " 商家编码:" . $p["productId"] . ' 颜色分类:' . $p["colorName"] . ';尺码:' . $p["sizeName"] . ';JPY:' . $p["priceOffTax"] . "\n";
   }
 ?>
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
-		  <textarea class="form-control" id="tempTxtArea" rows="6" cols="35"><?php echo $lines ?></textarea>
+		  <label for="tempTxtAreaProd">product</label>
+		  <textarea class="form-control" id="tempTxtAreaProd" rows="2" cols="40"><?php echo $lines ?></textarea>
 		</div>
       </div>
       <div class="row mb-4 form-group">
