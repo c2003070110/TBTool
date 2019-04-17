@@ -113,7 +113,12 @@ class MyGiftCard
 		}else if($codeType == "PSNUSD50"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
-			if(count($dataArr2) > 1 && count($dataArr1)>0){
+			$dataArr3 = $tbl->select(['codeType', '==', 'PSNUSD25', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr3) > 1){
+				$codeCdArr[] = $dataArr3[0]["codeCd"];
+				$codeCdArr[] = $dataArr3[1]["codeCd"];
+				$rslt = "PSNUSD25:" . $codeCdArr[0] . ";PSNUSD25:" . $codeCdArr[1];
+			}else if(count($dataArr2) > 1 && count($dataArr1)>0){
 				// 50 = 20 + 20 + 10
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$codeCdArr[] = $dataArr2[1]["codeCd"];
@@ -141,7 +146,7 @@ class MyGiftCard
 			if(count($dataArr1) > 1){
 				$codeCdArr[] = $dataArr1[0]["codeCd"];
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
-				$rslt = "PSNUSD50:" . $codeCdArr[0] . ";PSNUSD50:" . $codeCdArr[1] 
+				$rslt = "PSNUSD50:" . $codeCdArr[0] . ";PSNUSD50:" . $codeCdArr[1];
 			}
 		}
 		foreach ($codeCdArr as $codeCd) {

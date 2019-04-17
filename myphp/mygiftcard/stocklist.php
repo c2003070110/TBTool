@@ -61,15 +61,15 @@ $(function() {
       $dataArr = $myGiftCard->listStock();
   }
   if($status == 'unused'){
-	  $cssBgUnused = "bg-success text-white";
+	  $cssBgUnused = "bg-warning text-white";
   }else if($status == 'using'){
-	  $cssBgUsing = "bg-success text-white";
+	  $cssBgUsing = "bg-warning text-white";
   }else if($status == 'used'){
-	  $cssBgUsed = "bg-success text-white";
+	  $cssBgUsed = "bg-warning text-white";
   }else if($status == 'invalid'){
-	  $cssBgInvalid = "bg-success text-white";
+	  $cssBgInvalid = "bg-warning text-white";
   }else{
-	  $cssBgAll = "bg-success text-white";
+	  $cssBgAll = "bg-warning text-white";
   }
 ?>
 <div id="container" class="container">

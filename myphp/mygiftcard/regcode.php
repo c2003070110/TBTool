@@ -167,6 +167,7 @@ $(function() {
 ?>
                 <option value="PSNUSD10" <?php if($obj['codeType']=='PSNUSD10'){?> selected <?php } ?>>PSN 10美元</option>
                 <option value="PSNUSD20" <?php if($obj['codeType']=='PSNUSD20'){?> selected <?php } ?>>PSN 20美元</option>
+                <option value="PSNUSD25" <?php if($obj['codeType']=='PSNUSD25'){?> selected <?php } ?>>PSN 25美元</option>
                 <option value="PSNUSD30" <?php if($obj['codeType']=='PSNUSD30'){?> selected <?php } ?>>PSN 30美元</option>
                 <option value="PSNUSD40" <?php if($obj['codeType']=='PSNUSD40'){?> selected <?php } ?>>PSN 40美元</option>
                 <option value="PSNUSD50" <?php if($obj['codeType']=='PSNUSD50'){?> selected <?php } ?>>PSN 50美元</option>

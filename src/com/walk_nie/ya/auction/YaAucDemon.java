@@ -19,6 +19,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -294,9 +295,15 @@ public class YaAucDemon {
 		msgFormWe.findElement(By.cssSelector("textarea[id=\"textarea\"]"))
 				.sendKeys(message);
 		// 送信
-		msgFormWe.findElement(By.cssSelector("input[id=\"submitButton\"]"))
-				.click();
-
+		WebElement summitBtn = msgFormWe.findElement(By.cssSelector("input[id=\"submitButton\"]"));
+//		summitBtn.click();
+		
+//		Actions actions = new Actions(driver);
+//		actions.moveToElement(summitBtn).click().build().perform();
+		
+		JavascriptExecutor executor = (JavascriptExecutor)driver;
+		executor.executeScript("arguments[0].click();", summitBtn);
+		
 		NieUtil.mySleepBySecond(1);
 
 		// 発送連絡をする
@@ -351,6 +358,7 @@ public class YaAucDemon {
 					log(msg);
 					return null;
 				}
+				log("[INFO][getUnusedCode]" + code);
 				yaObj.sendCode += " " + code;
 				String[] spa = code.split(";");
 				for (String sps : spa) {
@@ -577,7 +585,7 @@ public class YaAucDemon {
 			hrefList.add(href);
 		}
 		if(hrefList.isEmpty()){
-			log("[RSLT]There is NONE to review.");
+			//log("[RSLT]There is NONE Auction to be finish");
 			return;
 		}
 		for (String href : hrefList) {

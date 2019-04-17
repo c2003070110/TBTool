@@ -63,27 +63,39 @@ public class MontbellAutoOrder {
 		}
 	}
 
-	public void processForWebService() throws IOException{
+	public void processForWebService() throws IOException {
 		TaobaoOrderInfo orderInfo = readInOrderInfoFromWebService();
 		if (orderInfo == null)
 			return;
-		if("tokyo".equals(orderInfo.state)){
-			WebDriver driver = logonForJapan();
-			orderForJapan(driver, orderInfo);
-		}else{
-			WebDriver driver = logonForChina();
-			orderForChina(driver, orderInfo);
+		try {
+			if ("tokyo".equals(orderInfo.state)) {
+				WebDriver driver = logonForJapan();
+				orderForJapan(driver, orderInfo);
+				driver.close();
+			} else {
+				WebDriver driver = logonForChina();
+				orderForChina(driver, orderInfo);
+				driver.close();
+			}
+			reactOrderResultToWebServer(orderInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			reactOrderResultToWebServer(orderInfo);
 		}
-		reactOrderResultToWebServer(orderInfo);
-		driver.close();
-		NieUtil.mySleepBySecond(30);
-		
+		NieUtil.mySleepBySecond(15);
 	}
 	private void reactOrderResultToWebServer(TaobaoOrderInfo orderInfo) throws UnsupportedOperationException, IOException {
 		Map<String,String> param = Maps.newHashMap();
-		param.put("action", "updateMBOrderNo");
-		param.put("uid", orderInfo.uid);
-		param.put("mbOrderNo", orderInfo.mbOrderNo);
+		if(StringUtil.isBlank(orderInfo.mbOrderNo)){
+			//  error!
+			param.put("action", "updateMBOrderStatus");
+			param.put("uid", orderInfo.uid);
+			param.put("status", "unorder");
+		}else{
+			param.put("action", "updateMBOrderNo");
+			param.put("uid", orderInfo.uid);
+			param.put("mbOrderNo", orderInfo.mbOrderNo);
+		}
 		// /myphp/mymontb/action.php?action=updateMBOrderNo
 		NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"), param);
 	}
@@ -144,7 +156,7 @@ public class MontbellAutoOrder {
 			ex.printStackTrace();
 			return null;
 		}
-		 List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
+		List<TaobaoOrderProductInfo> productInfos = Lists.newArrayList();
 		for(Map<String,Object> pMap :pMapList){
 			TaobaoOrderProductInfo p = new TaobaoOrderProductInfo();
 			String pid = (String)pMap.get("productId");
@@ -159,7 +171,17 @@ public class MontbellAutoOrder {
 			if(StringUtil.isBlank(p.qtty)){
 				p.qtty = "1";
 			}
-			productInfos.add(p);
+			boolean dup = false;
+			for(TaobaoOrderProductInfo pe : productInfos){
+				if(pe.productId.equals(p.productId) &&pe.colorName.equals(p.colorName) &&pe.sizeName.equals(p.sizeName)){
+					pe.qtty = Integer.parseInt(pe.qtty) + Integer.parseInt(p.qtty) +"";
+					dup = true;
+					break;
+				}
+			}
+			if (!dup) {
+				productInfos.add(p);
+			}
 		}
 		tbOrderInfo.productInfos = productInfos; 
 		return tbOrderInfo;
@@ -432,7 +454,23 @@ public class MontbellAutoOrder {
 					}
 				}
 			}
-			NieUtil.mySleepBySecond(15);
+			WebDriverWait wait1 = new WebDriverWait(driver, 20);
+			wait1.until(new ExpectedCondition<Boolean>() {
+				@Override
+				public Boolean apply(WebDriver driver) {
+					try {
+						List<WebElement> tst = driver.findElements(By.className("orderNo"));
+						if(tst == null || tst.isEmpty()){
+							return Boolean.FALSE;
+						}
+						return Boolean.TRUE;
+					} catch (Exception e) {
+
+					}
+					return Boolean.FALSE;
+				}
+			});
+			NieUtil.mySleepBySecond(5);
 			
 			String orderNo = "";
 			weList = driver.findElements(By.className("orderNo"));
@@ -628,7 +666,7 @@ public class MontbellAutoOrder {
 			fillCreditCard(driver, orderInfo.crObj);
 		}
 		// FIXME AUTO ORDER!!!
-//		String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem ? Y/N");
+//		String answ = NieUtil.readLineFromSystemIn("The Order is NO Problem? Y for continue Y/N");
 //		if(!("YES".equalsIgnoreCase(answ) || "Y".equalsIgnoreCase(answ))){
 //			logOrderResult(orderInfo, null);
 //			return;
@@ -660,7 +698,7 @@ public class MontbellAutoOrder {
 				return Boolean.FALSE;
 			}
 		});
-		NieUtil.mySleepBySecond(10);
+		NieUtil.mySleepBySecond(5);
 		
 		String orderNo = "";
 		weList = driver.findElements(By.className("orderNo"));

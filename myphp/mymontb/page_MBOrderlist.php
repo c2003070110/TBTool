@@ -163,8 +163,15 @@ $(function() {
 	    </div>
 <?php
 			$tbObj = $my->listTBOrderInfoByUid($tbUid);
-			$dproductInfoArr = $my->listProductInfoByByTBUid($tbUid);
-			foreach ($dproductInfoArr as $productInfo) {
+			$dproductInfoArr2 = $my->listProductInfoByByTBUid($tbUid);
+			foreach ($dproductInfoArr2 as $productInfo) {
+				$isTarget = false;
+				foreach ($dproductInfoArr as $productInfo1) {
+					if($productInfo["uid"] === $productInfo1["uid"]){
+						$isTarget = true;break;
+					}
+				}
+				if($isTarget === false)continue;
 				$lines .= $productInfo["productId"]." ".$productInfo["colorName"]." ".$productInfo["sizeName"] . "\n";
 ?>
         <div class="row mb-1 p-2">
@@ -174,6 +181,7 @@ $(function() {
 		    <span class="border p-2"><?php echo $productInfo["colorName"] ?></span>
 		    <span class="border p-2"><?php echo $productInfo["sizeName"] ?></span>
 		    <span class="border p-2"><?php echo $productInfo["priceOffTax"] ?></span>
+		    <span class="border p-2"><?php echo $productInfo["stock"] ?></span>
 	    </div>
 <?php
 			}
@@ -211,10 +219,10 @@ $(function() {
 	        <textarea id="tempTxtArea" class="form-control" rows="3" cols="40"><?php echo $lines ?></textarea>
 	      </div>
         </div>
-      </div>
 <?php
 		}
 ?>
+      </div>
 <?php
   }
 ?>
