@@ -6,6 +6,7 @@ require __DIR__ .'/crunchDB/crunchResource.php';
 define("CRDB_PATH", __DIR__ . "/db"); 
 
 define("TBL_MYGIFTCODE_CODE", "mygiftcode.code"); 
+define("TBL_MYGIFTCODE_BID", "mygiftcode.bid"); 
 
 define("TBL_MYDAIGOU_ITEM_INFO", "mydaigou.item.info"); 
 

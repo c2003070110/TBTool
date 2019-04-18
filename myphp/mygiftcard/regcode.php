@@ -55,7 +55,13 @@ $(function() {
                       );
         jqxhr.done(function( msg ) {
             alert(msg);
-            $("#codeCd").val("");
+			if(msg.indexOf("ERROR") == -1){
+				var cd = $("#codeCd").val();
+				var txtA = $("#tempTxtArea").val();
+				txtA = txtA.replace(cd,"");
+				$("#tempTxtArea").val(txtA);
+				$("#codeCd").val("");
+			}
         });
     });
     $(document).on("click", ".actionBtn", function() {
@@ -130,10 +136,6 @@ $(function() {
 	$obj = $my->listCodeByUid($uid);
   }
 ?>
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php">stock list</a></li>
-  </ul>   
-  <hr class="mb-4">
   <input type="hidden" id="uid" value="<?php echo $uid ?>">
   <div class="box">
 <?php

@@ -68,6 +68,8 @@ $(function() {
 	  $cssBgUsed = "bg-warning text-white";
   }else if($status == 'invalid'){
 	  $cssBgInvalid = "bg-warning text-white";
+  }else if($status == 'fin'){
+	  $cssBgfin = "bg-warning text-white";
   }else{
 	  $cssBgAll = "bg-warning text-white";
   }
@@ -77,14 +79,11 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a href="/myphp/mygiftcard/regcode.php">REG</a></li>
-  </ul>   
-  <hr class="mb-2"> 
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php?codeType=<?php echo $_GET['uid'] ?>">ALL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused&codeType=<?php echo $_GET['uid'] ?>">unused</a></li>
-    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using&codeType=<?php echo $_GET['uid'] ?>">using</a></li>
-    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used&codeType=<?php echo $_GET['uid'] ?>">used</a></li>
+    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php?codeType=<?php echo $_GET['codeType'] ?>">ALL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused&codeType=<?php echo $_GET['codeType'] ?>">unused</a></li>
+    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using&codeType=<?php echo $_GET['codeType'] ?>">using</a></li>
+    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used&codeType=<?php echo $_GET['codeType'] ?>">used</a></li>
+    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mygiftcard/stocklist.php?status=fin&codeType=<?php echo $_GET['codeType'] ?>">fin</a></li>
   </ul> 
   <hr class="mb-2">   
   <div class="row">

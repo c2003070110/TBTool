@@ -8,8 +8,28 @@ class GiftCardObject
 	
     public $status = '';//unused,using,used,invalid,fin
 	
-    public $aucId = '';
+    public $bidId = '';// aucId->bidId
     public $obidId = '';
+	
+	public $dtReg = '';// date time
+	public $dtGot = '';// date time
+	public $dtAsset = '';// date time
+	public $dtFinish = '';// date time
+}
+class BidObject
+{
+    public $uid = '';
+    public $bidId = '';
+    public $obidId = '';
+	
+    public $status = '';//bided paid sent fin
+	public $dtAdd = '';// date time
+	
+    public $msg = "";
+    public $replymsg = "";
+    public $msgStatus = '';//wait ignore aplied sent
+	public $dtMsg = '';// date time
+	
 }
 
 ?>

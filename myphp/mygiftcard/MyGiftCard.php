@@ -23,19 +23,20 @@ class MyGiftCard
 		$cardObj->codeType = $codeType;
 		$cardObj->codeCd = $codeCd;
 		$cardObj->status = 'unused';
-		$cardObj->aucId = "";
+		$cardObj->dtReg = date("YmdGis");
+		$cardObj->bidId = "";
 		$cardObj->obidId = "";
 		$q = $tbl->select(['codeCd', '==', $cardObj->codeCd], 'and');
 		$cnt = $q->count();
 		if($cnt == 0){
 			$tbl->insert($cardObj);
+			$resultStr = "[INSERT]success";
 		}else{
-			
 			$tbl->select(['codeCd', '==', $cardObj->codeCd])
 				->update(['orderNo', $cardObj->orderNo], 
 				         ['codeType', $cardObj->codeType]);
+			$resultStr = "[UPDATE]success";
 		}
-		$resultStr = "success";
 		return $resultStr;
 	}
 	public function listCodeByUid($uid){
@@ -49,14 +50,119 @@ class MyGiftCard
 		return $dataArr[0];
 	}
 	
-	public function getCodeV2($codeType){
+	public function addBid($bidId, $obidId){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		$cardObj = new GiftCardObject();
+		$cardObj->uid = uniqid();
+		$cardObj->bidId = $bidId;
+		$cardObj->obidId = $obidId;
+		$cardObj->status = 'bided';
+		$cardObj->dtAdd = date("YmdGis");
+		$tbl->insert($cardObj);
+	}
+	public function addBidMsg($bidId, $obidId,$msg){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		if(empty($bidId) || empty($obidId) || empty($msg)){
+			return;
+		}
+		$data = $tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])->fetch()[0];
+		if(empty($data)){
+			return;
+		}
+		$dtMsg = date("YmdGis");
+		$tbl->select(['uid', '==', $data["uid"]])
+			->update(['msg', $msg],['msgStatus', "wait"],['dtMsg', $dtMsg]);
+	}
+	public function deleteBid($bidId, $obidId){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
+			->delete();
+	}
+	public function updateBidStatus($bidId, $obidId,$toStatus){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		if(empty($bidId) || empty($obidId)){
+			return;
+		}
+		$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
+			->update(['status', $toStatus]);
+	}
+	public function updateBidMsgReply($bidId, $obidId, $replyMsg){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		if(empty($bidId) || empty($obidId) || empty($replyMsg)){
+			return;
+		}
+		$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
+			->update(['replymsg', $replyMsg],['msgStatus', "aplied"]);
+	}
+	public function updateBidMsgStatus($bidId, $obidId, $toStatus){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		if(empty($bidId) || empty($obidId) || empty($toStatus)){
+			return;
+		}
+		if($toStatus == "sent" || $toStatus == "ignore"){
+			$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
+				->update(['msgStatus', $toStatus],['replymsg', ""]);
+		}else{
+			$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
+				->update(['msgStatus', $toStatus]);
+		}
+	}
+	public function getAplyBidMsgOne(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		$data = $tbl->select(['msgStatus', '==', "aplied"])->fetch()[0];
+		if(empty($data)){
+			return "";
+		}
+		return $data;
+	}
+	public function listAllBid(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		return $tbl->select('*')->fetch();
+	}
+	public function listBidByStatus($status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		return $tbl->select(['status', '==', $status])->fetch();
+	}
+	public function listBidByMsgStatus($status){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		if(empty($status)){
+			return $tbl->select(['msgStatus', '==', $status])->fetch();
+		}else{
+			return $this->listAllBid();
+		}
+	}
+	
+	
+	
+	public function getCodeV2($codeType,$bidId, $obidId){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
+		$this->updateBidStatus($bidId, $obidId, 'paid');
+		$dtGot = date("YmdGis");
 		$dataArr = $tbl->select(['codeType', '==', $codeType, 'and'],['status', '==', 'unused', 'and'])->fetch();
 		if(!empty($dataArr)){
 			$rsltCd = $dataArr[0]["codeCd"];
-			$tbl->select(['codeCd', '==', $rsltCd])->update(['status', 'using']);
+			$tbl->select(['codeCd', '==', $rsltCd])->update(['status', 'using'],['dtGot', $dtGot]);
+			$this->updateBidStatus($bidId, $obidId, 'sent');
+			
 			return $codeType . ":" . $rsltCd;
 		}
 		// compose!
@@ -88,8 +194,8 @@ class MyGiftCard
 		}else if($codeType == "PSNUSD40"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
-			var_dump(count($dataArr1));
-			var_dump(count($dataArr2));
+			//var_dump(count($dataArr1));
+			//var_dump(count($dataArr2));
 			if(count($dataArr2) > 1){
 				// 40 = 20+20
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
@@ -150,13 +256,28 @@ class MyGiftCard
 			}
 		}
 		foreach ($codeCdArr as $codeCd) {
-			$tbl->select(['codeCd', '==', $codeCd])->update(['status', 'using']);
+			$tbl->select(['codeCd', '==', $codeCd])->update(['status', 'using'],['dtGot', $dtGot]);
+		}
+		if(!empty($codeCdArr)){
+			$this->updateBidStatus($bidId, $obidId, 'sent');
 		}
 		//var_dump($codeCdArr);
 		//var_dump($rslt);
 		return $rslt;
 	}
 	
+	public function stockCheck($codeType){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		$dataArr = $tbl->select(['codeType', '==', $codeType])->fetch();
+		if(empty($dataArr)){
+			return "false";
+		}
+		return "true";
+	}
+	
+	//***deprecated
 	public function getCode($codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
@@ -174,35 +295,39 @@ class MyGiftCard
 		}
 		return "";
 	}
-	public function assetCode($codeCd,$aucId,$obidId){
+	public function assetCode($codeCd,$bidId,$obidId){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		$codeCds = explode(";", $codeCd);
 		if(empty($codeCds)){
 			return;
 		}
+		$dtAsset = date("YmdGis");
 		foreach ($codeCds as $data) {
-			$tbl->select(['codeCd', '==', $data])->update(['status', 'used'],['aucId', $aucId],['obidId', $obidId]);
+			$tbl->select(['codeCd', '==', $data])
+			    ->update(['status', 'used'],
+				         ['bidId', $bidId],
+						 ['obidId', $obidId],
+						 ['dtAsset', $dtAsset]);
 		}
+		$this->updateBidStatus($bidId, $obidId, 'sent');
 	}
-	public function finishCode($aucId, $obidId){
+	public function finishCode($bidId, $obidId){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
-		$data = $tbl->select(['aucId', '==', $aucId, "and"],
+		$data = $tbl->select(['bidId', '==', $bidId, "and"],
 							 ['obidId', '==', $obidId, "and"])
 					->fetch();
 		if(empty($data)){
 			echo "[ERROR]to be updated code was NOT Exists!";
 			return;
 		}
-		if(count($data) != 1){
-			echo "[ERROR]to be updated code was NOT ONE!";
-			return;
-		}
-		$tbl->select(['aucId',  '==', $aucId,  "and"],
+		$dtFinish = date("YmdGis");
+		$tbl->select(['bidId',  '==', $bidId,  "and"],
 					 ['obidId', '==', $obidId, "and"])
-			->update(['status', "fin"]);
+			->update(['status', "fin"],['dtFinish', $dtFinish]);
+		$this->updateBidStatus($bidId, $obidId, 'fin');
 	}
 	
 	public function updateStatus($codeCd, $status){
@@ -237,7 +362,8 @@ class MyGiftCard
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		$rsltArr = array();
-		$dataArr = $tbl->select(['status', '==', $status, 'and'],['codeType', '==', $codeType, 'and'])->fetch();
+		//$dataArr = $tbl->select(['status', '==', $status, 'and'],['codeType', '==', $codeType, 'and'])->fetch();
+		$dataArr = $tbl->select(['status', '==', $status, 'and'])->fetch();
 		foreach ($dataArr as $data) {
 			if(strpos($data["codeType"], $codeType) !== false){
 				$rsltArr[] = $data;
