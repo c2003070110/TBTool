@@ -25,6 +25,6 @@ if (endsWith($selfName, "stocklist.php")) {
     <li class="list-group-item"><a href="/myphp/mygiftcard/regcode.php">REG</a></li>
     <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=using">stocklist</a></li>
     <li class="list-group-item"><a href="/myphp/mygiftcard/bidlist.php?status=paid">bidlist</a></li>
-    <li class="list-group-item"><a href="/myphp/mygiftcard/msglist.php?status=waiting">msglist</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/msglist.php?status=wait">msglist</a></li>
   </ul>   
   <hr class="mb-2"> 

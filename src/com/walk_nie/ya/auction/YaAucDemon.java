@@ -117,7 +117,7 @@ public class YaAucDemon {
 			return;
 		}
 		
-		addBided(driver, lastestNoticeList);
+		//addBided(driver, lastestNoticeList);
 		
 		if (hasPaid(driver, lastestNoticeList)) {
 			send(driver, lastestNoticeList);
@@ -225,7 +225,7 @@ public class YaAucDemon {
 		for (YaNoticeObject obj : lastestNoticeList) {
 			String title = obj.title;
 
-			if (!title.startsWith("XXX:")) {// TODO
+			if (!title.startsWith("取引メッセージ:")) {
 				continue;
 			}
 			if (!isAutoSendTarget(title)) {
@@ -238,13 +238,28 @@ public class YaAucDemon {
 
 			YaSoldObject yaObj = parseSold(rootWe);
 			
-			String msg = "";// TODO
+			StringBuffer msg = new StringBuffer();// TODO
+			WebElement messagelistWe = null;
+			try {
+				messagelistWe = driver.findElement(By.id("messagelist"));
+			} catch (Exception e) {
+
+				continue;
+			}
+			if (messagelistWe == null) {
+				continue;
+			}
+			List<WebElement> ddWes = messagelistWe.findElements(By
+					.tagName("dd"));
+			for (WebElement ddWe : ddWes) {
+				msg.append(ddWe.getText()).append("\n");
+			}
 			
 			Map<String, String> param = Maps.newHashMap();
 			param.put("action", "addBidMsg");
 			param.put("bidId", yaObj.auctionId);
 			param.put("obidId", yaObj.obider);
-			param.put("msg", msg);
+			param.put("msg", msg.toString());
 			
 			try {
 				String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
@@ -259,7 +274,7 @@ public class YaAucDemon {
 		}
 	}
 
-	private void addBided(WebDriver driver,List<YaNoticeObject> lastestNoticeList) {
+	protected void addBided(WebDriver driver,List<YaNoticeObject> lastestNoticeList) {
 		
 		for (YaNoticeObject obj : lastestNoticeList) {
 			String title = obj.title;
@@ -272,15 +287,16 @@ public class YaAucDemon {
 			}
 			driver.get(obj.href);
 			
-			WebElement rootWe = driver.findElement(By
-					.cssSelector("div[id=\"yjContentsBody\"]"));
-
-			YaSoldObject yaObj = parseSold(rootWe);
+			// FIXME how to get auctioniId & obider?
+//			WebElement rootWe = driver.findElement(By
+//					.cssSelector("div[id=\"yjContentsBody\"]"));
+//
+//			YaSoldObject yaObj = parseSold(rootWe);
 			
 			Map<String, String> param = Maps.newHashMap();
 			param.put("action", "bided");
-			param.put("bidId", yaObj.auctionId);
-			param.put("obidId", yaObj.obider);
+			//param.put("bidId", yaObj.auctionId);
+			//param.put("obidId", yaObj.obider);
 			
 			try {
 				String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);

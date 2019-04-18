@@ -137,7 +137,7 @@ if($actionStr == "save"){
 	$myGiftCard = new MyGiftCard();
 	$rslt = $myGiftCard->deleteCode($codeCd);
 	echo $rslt;
-} else if($actionStr == "US" || $actionStr == "RE" || $actionStr == "INV"){
+} else if($actionStr == "US" || $actionStr == "RE" || $actionStr == "INV" || $actionStr == "FIN"){
 	$codeCd = $_GET['codeCd'];
 	if($codeCd === null){
 		echo "[Fatal]Parameter is NULL";
@@ -150,6 +150,8 @@ if($actionStr == "save"){
 		$rslt = $myGiftCard->updateStatus($codeCd, 'unused');
 	}else if ($actionStr == "INV"){
 		$rslt = $myGiftCard->updateStatus($codeCd, 'invalid');
+	}else if ($actionStr == "FIN"){
+		$rslt = $myGiftCard->updateStatus($codeCd, 'fin');
 	}
 	echo $rslt;
 	

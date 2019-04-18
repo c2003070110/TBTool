@@ -3,7 +3,7 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
-require __DIR__ .'/MyMontb.php';
+require __DIR__ .'/MyGiftCard.php';
 ?>
 <html lang="ja">
 <head>
@@ -118,11 +118,13 @@ $(function() {
   </ul>
   <hr class="mb-4">
 <?php
+  $dataArr = array();
   if (!empty($status)){
 	  $dataArr = $my->listBidByMsgStatus($status);
   }else{
 	  $dataArr = $my->listBidByMsgStatus("");
   }
+  //var_dump($dataArr);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
 	$sort[$key] = $value['dtMsg'];

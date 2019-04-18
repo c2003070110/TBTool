@@ -60,6 +60,22 @@ $(function() {
   }else{
       $dataArr = $myGiftCard->listStock();
   }
+  $sort = array();
+  foreach ((array) $dataArr as $key => $value) {
+	  if(empty($status)){
+		  $sort[$key] = $value['dtReg'];
+	  }else if($status === "unused"){
+		  $sort[$key] = $value['dtReg'];
+	  }else if($status === "using"){
+		  $sort[$key] = $value['dtGot'];
+	  }else if($status === "used"){
+		  $sort[$key] = $value['dtAsset'];
+	  }else if($status === "fin"){
+		  $sort[$key] = $value['dtFinish'];
+	  }
+  }
+  array_multisort($sort, SORT_DESC, $dataArr);
+  
   if($status == 'unused'){
 	  $cssBgUnused = "bg-warning text-white";
   }else if($status == 'using'){
@@ -96,7 +112,8 @@ $(function() {
     }
 ?>
 <?php
-    if($status == 'unused' || $status == 'using' || $status == 'used'){
+    //if($status == 'unused' || $status == 'using' || $status == 'used'){
+	if($status == 'unused' || $status == 'using'){
 ?>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
 <?php
@@ -105,7 +122,13 @@ $(function() {
 <?php
     if($status == 'used'){
 ?>
+    <div class="col-4 themed-grid-col border border-primary bg-info text-white">orderType</div>
     <div class="col-4 themed-grid-col border border-primary bg-info text-white">AucId</div>
+<?php
+    }else if($status == 'fin'){
+?>
+    <div class="col-4 themed-grid-col border border-primary bg-info text-white">OrderNo</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
 <?php
     }else{
 ?>
@@ -132,7 +155,8 @@ $(function() {
     }
 ?>
 <?php
-    if($status == 'unused' || $status == 'using' || $status == 'used'){
+    if($status == 'unused' || $status == 'using'){
+    //if($status == 'unused' || $status == 'using' || $status == 'used'){
 ?>
     <div class="col-4 text-break themed-grid-col border border-secondary">
 <?php 
@@ -150,6 +174,7 @@ $(function() {
   }else if($data["status"] == 'used') {
 ?>
       <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+      <button type="button" id="btnFin" class="btn btn-secondary actionBtn">FIN</button>
 <?php 
   }else if($data["status"] == 'invalid') {
 ?>
@@ -164,11 +189,17 @@ $(function() {
 <?php
     if($status == 'used'){
 ?>
+    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
     <div class="col-4 themed-grid-col border border-secondary">
 	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['aucId'] ?>" target="blank">
 	    <?php echo $data["aucId"] ?>
 	  </a>
     </div>
+<?php
+    }else if($status == 'fin'){
+?>
+    <div id="orderNo" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["orderNo"] ?></div>
+    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
 <?php
     }else{
 ?>

@@ -54,27 +54,27 @@ class MyGiftCard
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
 		
-		$cardObj = new GiftCardObject();
-		$cardObj->uid = uniqid();
-		$cardObj->bidId = $bidId;
-		$cardObj->obidId = $obidId;
-		$cardObj->status = 'bided';
-		$cardObj->dtAdd = date("YmdGis");
-		$tbl->insert($cardObj);
+		$data = new BidObject();
+		$data->uid = uniqid();
+		$data->bidId = $bidId;
+		$data->obidId = $obidId;
+		$data->status = 'bided';
+		$data->dtAdd = date("YmdGis");
+		//var_dump($data);
+		$tbl->insert($data);
 	}
-	public function addBidMsg($bidId, $obidId,$msg){
+	public function addBidMsg($bidId, $obidId, $msg){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
-		
 		if(empty($bidId) || empty($obidId) || empty($msg)){
 			return;
 		}
 		$data = $tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])->fetch()[0];
 		if(empty($data)){
-			return;
+			$this->addBid($bidId, $obidId);
 		}
 		$dtMsg = date("YmdGis");
-		$tbl->select(['uid', '==', $data["uid"]])
+		$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
 			->update(['msg', $msg],['msgStatus', "wait"],['dtMsg', $dtMsg]);
 	}
 	public function deleteBid($bidId, $obidId){
@@ -169,6 +169,7 @@ class MyGiftCard
 		$rslt = "";
 		$codeCdArr = array();
 		if($codeType == "PSNUSD20"){
+			/*
 			$dataArr = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr) < 2){
 				return "";
@@ -176,7 +177,8 @@ class MyGiftCard
 			$codeCdArr[] = $dataArr[0]["codeCd"];
 			$codeCdArr[] = $dataArr[1]["codeCd"];
 			$rslt = "PSNUSD10:" . $codeCdArr[0]  . ";PSNUSD10:" . $codeCdArr[1];
-		}else if($codeType == "PSNUSD30"){
+			*/
+		/*}else if($codeType == "PSNUSD30"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr2) > 0 &&  count($dataArr1) > 0){
@@ -190,8 +192,9 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
 				$codeCdArr[] = $dataArr1[2]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD10:" . $codeCdArr[2];
+			}else{
 			}
-		}else if($codeType == "PSNUSD40"){
+		*/}else if($codeType == "PSNUSD40"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			//var_dump(count($dataArr1));
@@ -201,7 +204,7 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$codeCdArr[] = $dataArr2[1]["codeCd"];
 				$rslt = "PSNUSD20:" . $codeCdArr[0] . ";PSNUSD20:" . $codeCdArr[1];
-			}else if(count($dataArr2) > 0 &&  count($dataArr1) > 1){
+			/*}else if(count($dataArr2) > 0 &&  count($dataArr1) > 1){
 				// 40 = 10+10+20
 				$codeCdArr[] = $dataArr1[0]["codeCd"];
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
@@ -215,16 +218,18 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr1[3]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1]
     	     		 . ";PSNUSD10:" . $codeCdArr[2] . ";PSNUSD10:" . $codeCdArr[3];
+			*/}else{
 			}
 		}else if($codeType == "PSNUSD50"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr3 = $tbl->select(['codeType', '==', 'PSNUSD25', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr3) > 1){
+				// 50 = 25 + 25
 				$codeCdArr[] = $dataArr3[0]["codeCd"];
 				$codeCdArr[] = $dataArr3[1]["codeCd"];
 				$rslt = "PSNUSD25:" . $codeCdArr[0] . ";PSNUSD25:" . $codeCdArr[1];
-			}else if(count($dataArr2) > 1 && count($dataArr1)>0){
+			/*}else if(count($dataArr2) > 1 && count($dataArr1)>0){
 				// 50 = 20 + 20 + 10
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$codeCdArr[] = $dataArr2[1]["codeCd"];
@@ -246,6 +251,8 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr1[4]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD10:" . $codeCdArr[2]
 						. ";PSNUSD10:" . $codeCdArr[3] . ";PSNUSD10:" . $codeCdArr[4];
+			*/
+			}else{
 			}
 		}else if($codeType == "PSNUSD100"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD50', 'and'],['status', '==', 'unused', 'and'])->fetch();

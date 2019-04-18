@@ -258,9 +258,11 @@ $(function() {
     }else if($obj["status"] == 'used') {
 ?>
       <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
+      <button type="button" id="btnFin" class="btn btn-secondary actionBtn">FIN</button>
 <?php 
     }else if($obj["status"] == 'invalid') {
 ?>
+      <button type="button" id="btnReuse" class="btn btn-secondary actionBtn">RE</button>
       <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php 
     }else if($obj["status"] == 'fin') {
