@@ -50,17 +50,23 @@ class MyGiftCard
 		return $dataArr[0];
 	}
 	
-	public function addBid($bidId, $obidId){
+	public function addBid($bidId, $obidId, $codeType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		
+		$data = $tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])->fetch();
+		if(!empty($data)){
+			return;
+		}
 		
 		$data = new BidObject();
 		$data->uid = uniqid();
 		$data->bidId = $bidId;
 		$data->obidId = $obidId;
+		$data->codeType = $codeType;
 		$data->status = 'bided';
 		$data->dtAdd = date("YmdGis");
-		//var_dump($data);
+		
 		$tbl->insert($data);
 	}
 	public function addBidMsg($bidId, $obidId, $msg){
@@ -71,7 +77,7 @@ class MyGiftCard
 		}
 		$data = $tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])->fetch()[0];
 		if(empty($data)){
-			$this->addBid($bidId, $obidId);
+			return;
 		}
 		$dtMsg = date("YmdGis");
 		$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
@@ -142,7 +148,7 @@ class MyGiftCard
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
 		
-		if(empty($status)){
+		if(!empty($status)){
 			return $tbl->select(['msgStatus', '==', $status])->fetch();
 		}else{
 			return $this->listAllBid();
@@ -160,7 +166,9 @@ class MyGiftCard
 		$dataArr = $tbl->select(['codeType', '==', $codeType, 'and'],['status', '==', 'unused', 'and'])->fetch();
 		if(!empty($dataArr)){
 			$rsltCd = $dataArr[0]["codeCd"];
-			$tbl->select(['codeCd', '==', $rsltCd])->update(['status', 'using'],['dtGot', $dtGot]);
+			$tbl->select(['codeCd', '==', $rsltCd])
+			    ->update(['status', 'using'],['dtGot', $dtGot],
+				         ['bidId', $bidId],['obidId', $obidId]);
 			$this->updateBidStatus($bidId, $obidId, 'sent');
 			
 			return $codeType . ":" . $rsltCd;
@@ -263,7 +271,9 @@ class MyGiftCard
 			}
 		}
 		foreach ($codeCdArr as $codeCd) {
-			$tbl->select(['codeCd', '==', $codeCd])->update(['status', 'using'],['dtGot', $dtGot]);
+			$tbl->select(['codeCd', '==', $codeCd])
+			    ->update(['status', 'using'],['dtGot', $dtGot],
+				         ['bidId', $bidId],['obidId', $obidId]);
 		}
 		if(!empty($codeCdArr)){
 			$this->updateBidStatus($bidId, $obidId, 'sent');

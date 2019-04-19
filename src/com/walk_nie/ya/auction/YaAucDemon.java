@@ -122,7 +122,7 @@ public class YaAucDemon {
 		if (hasPaid(driver, lastestNoticeList)) {
 			send(driver, lastestNoticeList);
 		} else {
-			log("[RSLT]There is NONE to sent.");
+			//log("[RSLT]There is NONE to sent.");
 		}
 		long t2 = System.currentTimeMillis();
 		long dif = t2 - t1;
@@ -160,19 +160,20 @@ public class YaAucDemon {
 	}
 
 	private void publishBidMsg(WebDriver driver) {
-		Map<String, String> param = Maps.newHashMap();
-		param.put("action", "getAplyBidMsgOne");
 
 		try {
+			Map<String, String> param = Maps.newHashMap();
+			param.put("action", "getAplyBidMsgOne");
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isBlank(rslt)) {
-				// System.out.println("[INFO]Nothing to order");
 				return;
 			}
-			log("[INFO][addBidMsg][getAplyBidMsgOne]" + rslt);
+			
+			log("[INFO][Service:getAplyBidMsgOne][Result]" + rslt);
 			if (rslt.indexOf("ERROR") != -1) {
 				return;
 			}
+			
 			Json j = new Json();
 			Map<String, Object> objMap = null;
 			try {
@@ -203,7 +204,7 @@ public class YaAucDemon {
 				param.put("status", "sent");
 				String rslt1 = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 				if (StringUtil.isNotBlank(rslt1)) {
-					log("[INFO][addBidMsg][updateBidMsgStatus]" + rslt1);
+					log("[INFO][Service:updateBidMsgStatus][Result]" + rslt1);
 				}
 
 			} catch (Exception ex) {
@@ -238,7 +239,7 @@ public class YaAucDemon {
 
 			YaSoldObject yaObj = parseSold(rootWe);
 			
-			StringBuffer msg = new StringBuffer();// TODO
+			StringBuffer msg = new StringBuffer();
 			WebElement messagelistWe = null;
 			try {
 				messagelistWe = driver.findElement(By.id("messagelist"));
@@ -254,23 +255,26 @@ public class YaAucDemon {
 			for (WebElement ddWe : ddWes) {
 				msg.append(ddWe.getText()).append("\n");
 			}
-			
-			Map<String, String> param = Maps.newHashMap();
-			param.put("action", "addBidMsg");
-			param.put("bidId", yaObj.auctionId);
-			param.put("obidId", yaObj.obider);
-			param.put("msg", msg.toString());
-			
-			try {
-				String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
-				if (StringUtil.isNotBlank(rslt)) {
-					log("[INFO][addBidMsg]" + rslt);
-				}
-			} catch (Exception e) {
-				log("[ERROR][addBidMsg]" + e.getMessage());
-				log(e);
-				e.printStackTrace();
+			addBidMsgToWebService(yaObj.auctionId,yaObj.obider,msg.toString());
+		}
+	}
+	private void addBidMsgToWebService(String auctionId,String obidId,String msg) {
+
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "addBidMsg");
+		param.put("bidId", auctionId);
+		param.put("obidId", obidId);
+		param.put("msg", msg);
+		
+		try {
+			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
+			if (StringUtil.isNotBlank(rslt)) {
+				log("[INFO][Service:addBidMsg][Result]" + rslt);
 			}
+		} catch (Exception e) {
+			log("[ERROR][addBidMsg]" + e.getMessage());
+			log(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -285,29 +289,55 @@ public class YaAucDemon {
 			if (!isAutoSendTarget(title)) {
 				continue;
 			}
-			driver.get(obj.href);
-			
-			// FIXME how to get auctioniId & obider?
-//			WebElement rootWe = driver.findElement(By
-//					.cssSelector("div[id=\"yjContentsBody\"]"));
-//
-//			YaSoldObject yaObj = parseSold(rootWe);
-			
-			Map<String, String> param = Maps.newHashMap();
-			param.put("action", "bided");
-			//param.put("bidId", yaObj.auctionId);
-			//param.put("obidId", yaObj.obider);
-			
-			try {
-				String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
-				if (StringUtil.isNotBlank(rslt)) {
-					log("[INFO][addBided]" + rslt);
-				}
-			} catch (Exception e) {
-				log("[ERROR][addBided]" + e.getMessage());
-				log(e);
-				e.printStackTrace();
+			String urlStr = obj.href;
+			if (obj.href.indexOf("?") != -1) {
+				urlStr = obj.href.substring(0, obj.href.indexOf("?"));
 			}
+			driver.get(urlStr);
+
+			String obiderId = "";// TODO how to get??
+			List<WebElement> wes = driver.findElements(By.tagName("td"));
+			String finder = "XXXX";
+			for(WebElement we:wes){
+				String txt =we.getText();
+				if(txt.startsWith(finder)){
+					String[] sparr = txt.split(" ");
+					for(String sp:sparr){
+						if(sp.startsWith(finder)){
+							obiderId = 	sp.replace(finder, "");
+							obiderId = 	obiderId.trim();
+							break;
+						}
+					}
+					break;
+				}
+			}
+			String auctionId = urlStr.substring(urlStr.lastIndexOf("/") + 1);
+			if (addBidedToWebService(auctionId, obiderId, obj.identifierToken)) {
+				driver.get(obj.href);
+			}
+		}
+	}
+	private boolean addBidedToWebService(String auctionId,String obidId,String codeType) {
+
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "bided");
+		param.put("bidId", auctionId);
+		param.put("obidId", obidId);
+		param.put("codeType", codeType);
+		
+		try {
+			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
+			if (StringUtil.isNotBlank(rslt)) {
+				log("[INFO][Service:bided][Result]" + rslt);
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			log("[ERROR][addBided]" + e.getMessage());
+			log(e);
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -361,7 +391,7 @@ public class YaAucDemon {
 
 	private boolean hasPaid(WebDriver driver, List<YaNoticeObject> lastestNoticeList) {
 
-		log("[hasPaid][START]Is There any auction paid?");
+		//log("[hasPaid][START]Is There any auction paid?");
 		for (YaNoticeObject obj : lastestNoticeList) {
 			String title = obj.title;
 
@@ -372,17 +402,17 @@ public class YaAucDemon {
 				continue;
 			}
 
-			log("[hasPaid][END]There are some auction which had paid!");
+			//log("[hasPaid][END]There are some auction which had paid!");
 			return true;
 		}
-		log("[hasPaid][END]There are NONE auction which had paid!");
+		//log("[hasPaid][END]There are NONE auction which had paid!");
 		return false;
 	}
 
 	private void send(WebDriver driver, List<YaNoticeObject> lastestNoticeList) throws IOException, URISyntaxException {
 
 		List<String> autoSendHrefList = Lists.newArrayList();
-		log("[SEND]START");
+		//log("[SEND]START");
 		for (YaNoticeObject obj : lastestNoticeList) {
 			String href = obj.href;
 
@@ -396,17 +426,15 @@ public class YaAucDemon {
 			
 			autoSendHrefList.add(href);
 		}
-		//String urlFmt = "https://contact.auctions.yahoo.co.jp/seller/top?aid=%s&bid=%s";
 		for (String href : autoSendHrefList) {
-			YaSoldObject yaObjTemp = parseYaObjectFromUrl(href);
-			log("[SEND][SETING][auctionId]" + yaObjTemp.auctionId +"[obider]" + yaObjTemp.obider);
-			driver.get(String.format(bidUrlFmt, yaObjTemp.auctionId,
-					yaObjTemp.obider));
-			
+			YaSoldObject yaObj = parseYaObjectFromUrl(href);
+			log("[SEND][SETING][auctionId]" + yaObj.auctionId + "[obider]" + yaObj.obider);
+			driver.get(String.format(bidUrlFmt, yaObj.auctionId, yaObj.obider));
+
 			WebElement rootWe = driver.findElement(By
 					.cssSelector("div[id=\"yjContentsBody\"]"));
 
-			YaSoldObject yaObj = parseSold(rootWe);
+			//YaSoldObject yaObj = parseSold(rootWe);
 
 			WebElement sendBtnWe = null;
 			List<WebElement> weList = rootWe.findElements(By
@@ -427,7 +455,7 @@ public class YaAucDemon {
 			if (codeList == null || codeList.isEmpty()) {
 				continue;
 			}
-			String message = composeSendMessage(yaObj, codeList);
+			String message = composeSendMessage(codeList);
 			yaObj.statusMsg = message;
 			if (StringUtil.isBlank(message)) {
 				continue;
@@ -441,7 +469,7 @@ public class YaAucDemon {
 			
 			driver.get(href);
 		}
-		log("[SEND]END");
+		//log("[SEND]END");
 	}
 
 	private YaSoldObject parseYaObjectFromUrl(String href) {
@@ -534,7 +562,7 @@ public class YaAucDemon {
 				log(msg);
 				return null;
 			}
-			log("[INFO][getUnusedCode]" + code);
+			log("[INFO][Service:getUnusedCode][Result]" + code);
 			String[] spa = code.split(";");
 			for (String sps : spa) {
 				String[] spaa = sps.split(":");
@@ -559,7 +587,7 @@ public class YaAucDemon {
 		return codeList;
 	}
 
-	private String composeSendMessage(YaSoldObject yaObj, List<YaSendCodeObject> codeSendOnceList) throws IOException {
+	private String composeSendMessage(List<YaSendCodeObject> codeSendOnceList) throws IOException {
 		StringBuffer sb = new StringBuffer();
 
 		List<String> list1 = NieConfig.getConfigByPrefix("yahoo.auction.autosend.message.prev");
@@ -567,7 +595,9 @@ public class YaAucDemon {
 			sb.append(str).append("\n");
 		}
 		for (YaSendCodeObject codeObj : codeSendOnceList) {
-			sb.append(keyMsgPrefix.get(codeObj.codeType)).append(" ").append(codeObj.codeCd).append("\n");
+			String str = keyMsgPrefix.get(codeObj.codeType);
+			str = str == null ? "" : str + " ";
+			sb.append(str).append(codeObj.codeCd).append("\n");
 		}
 		list1 = NieConfig.getConfigByPrefix("yahoo.auction.autosend.message.suffix");
 		for (String str : list1) {
@@ -656,7 +686,7 @@ public class YaAucDemon {
 		param.put("codeCd", codeS.substring(0, codeS.length() - 1));
 		String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 		if (StringUtil.isNotBlank(rslt)) {
-			log("[INFO][addBided]" + rslt);
+			log("[INFO][Service:asset][Result]" + rslt);
 		}
 	}
 
@@ -674,7 +704,7 @@ public class YaAucDemon {
 			hrefList.add(href);
 		}
 		if(hrefList.isEmpty()){
-			log("[RSLT]There is NONE to review.");
+			//log("[RSLT]There is NONE to review.");
 			return;
 		}
 		for (String href : hrefList) {
@@ -763,7 +793,7 @@ public class YaAucDemon {
 			}
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isNotBlank(rslt)) {
-				log(rslt);
+				log("[INFO][Service:fin][Result]" + rslt);
 			}
 		}
 	}
@@ -827,7 +857,7 @@ public class YaAucDemon {
 	}
 
 	private boolean hasStock(YaNoticeObject obj) {
-		String stockCheckKey = "[24時間]";// TODO
+		String stockCheckKey = "[24時間]";
 		if(obj.title.indexOf(stockCheckKey) == -1){
 			// none for stock check
 			return true;
@@ -839,9 +869,9 @@ public class YaAucDemon {
 		try {
 			String s = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isNotBlank(s)) {
-				log("[INFO][hasStock]" +s);
+				log("[INFO][Service:stockCheck][Result]" + s);
 			}
-			return Boolean.getBoolean(s);
+			return new Boolean(s).booleanValue();
 		} catch (UnsupportedOperationException | IOException e) {
 			e.printStackTrace();
 			log("[ERROR][hasStock]" + e.getMessage());

@@ -24,7 +24,7 @@ require __DIR__ .'/MyGiftCard.php';
 var actionUrl = "<?php echo constant("URL_ACTION_MYGIFTCARD") ?>";
 $(function() {
 	var getMyBox = function(thisElement){
-		return $(thisElement).parent().parent();
+		return $(thisElement).parent().parent().parent();
 	}
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
@@ -42,13 +42,12 @@ $(function() {
 	};
     $(document).on("click", "#btnGetMsgTemplate1", function() {
 		var thisBox = getMyBox(this);
-		var msg = "";// TODO
+		var msg = "ご連絡、ご評価ありがとうございます。また、機会があれば、その時もよろしくお願いします。";
 		$(thisBox).find("#replymsg").val(msg);
-        updateStatus(thisBox, "fin");
     });
     $(document).on("click", "#btnGetMsgTemplate2", function() {
 		var thisBox = getMyBox(this);
-		var msg = "";// TODO
+		var msg = "承知いたします。お待ちております。";
 		$(thisBox).find("#replymsg").val(msg);
     });
     $(document).on("click", "#btnReply", function() {
@@ -124,7 +123,7 @@ $(function() {
   }else{
 	  $dataArr = $my->listBidByMsgStatus("");
   }
-  //var_dump($dataArr);
+  //var_dump($status);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
 	$sort[$key] = $value['dtMsg'];
@@ -141,7 +140,7 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-6">
 	    <label for="maijia">bidId</label>
-	    <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['bidId'] ?>" target="blank">
+	    <a class="form-control btn btn-primary" href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['bidId'] ?>" target="blank">
 	      <?php echo $data["bidId"] ?>
 	    </a>
 	  </div>
@@ -156,15 +155,9 @@ $(function() {
 		<textarea class="form-control" cols="40" rows="4" id="msgBid"><?php echo $data['msg'] ?></textarea >
 	  </div>
     </div>
-<?php 
-  if($data["status"] == 'bided') {
+<?php
+    if($data["msgStatus"] == "wait" || $data["msgStatus"] == "ignore"){
 ?>
-    <div class="row mb-4 form-group">
-      <div class="col-12">
-	    <label for="replymsg">reply msg</label>
-		<textarea class="form-control" cols="40" rows="4" id="replymsg"></textarea >
-	  </div>
-    </div>
     <div class="row mb-4 form-group">
       <div class="col-3">
 	    <button type="button" id="btnGetMsgTemplate1" class="btn btn-secondary">get tempate1</button>
@@ -173,14 +166,28 @@ $(function() {
 	    <button type="button" id="btnGetMsgTemplate2" class="btn btn-secondary">get tempate2</button>
 	  </div>
       <div class="col-3">
-	    <button type="button" id="btnReply" class="btn btn-secondary">reply</button>
-	  </div>
-      <div class="col-3">
 	    <button type="button" id="btnIgnore" class="btn btn-secondary">ignore</button>
 	  </div>
     </div>
-<?php 
-  }
+<?php
+    }
+?>
+    <div class="row mb-4 form-group">
+      <div class="col-12">
+	    <label for="replymsg">reply msg</label>
+		<textarea class="form-control" cols="40" rows="4" id="replymsg"><?php echo $data['replymsg'] ?></textarea >
+	  </div>
+    </div>
+<?php
+    if($data["msgStatus"] == "wait" || $data["msgStatus"] == "ignore"){
+?>
+    <div class="row mb-4 form-group">
+      <div class="col-8">
+	    <button type="button" id="btnReply" class="btn btn-secondary">reply</button>
+	  </div>
+    </div>
+<?php
+    }
 ?>
   </div>
 <?php

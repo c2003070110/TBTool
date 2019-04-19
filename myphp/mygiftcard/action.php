@@ -24,12 +24,13 @@ if($actionStr == "save"){
 } else if($actionStr == "bided"){
 	$bidId = $_GET['bidId'];
 	$obidId = $_GET['obidId'];
+	$codeType = $_GET['codeType'];
 	if(empty($bidId) || empty($obidId)){
 		echo "[Fatal]Parameter is NULL";
 		return;
 	}
 	$myGiftCard = new MyGiftCard();
-	$myGiftCard->addBid($bidId, $obidId);
+	$myGiftCard->addBid($bidId, $obidId,$codeType);
 } else if($actionStr == "get"){
 	$codeType = $_GET['codeType'];
 	if($codeType === null){
@@ -82,7 +83,7 @@ if($actionStr == "save"){
 	$myGiftCard->addBidMsg($bidId, $obidId, $msg);
 } else if($actionStr == "getAplyBidMsgOne"){
 	$myGiftCard = new MyGiftCard();
-	$rslt = $myGiftCard->getAplyBidMsgOne();// BidObject
+	$data = $myGiftCard->getAplyBidMsgOne();// BidObject
 	if(empty($data)){
 		echo "";
 	}else{

@@ -191,8 +191,8 @@ $(function() {
 ?>
     <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
     <div class="col-4 themed-grid-col border border-secondary">
-	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['aucId'] ?>" target="blank">
-	    <?php echo $data["aucId"] ?>
+	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['bidId'] ?>" target="blank">
+	    <?php echo $data["bidId"] ?>
 	  </a>
     </div>
 <?php

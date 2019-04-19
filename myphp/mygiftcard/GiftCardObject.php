@@ -22,6 +22,8 @@ class BidObject
     public $bidId = '';
     public $obidId = '';
 	
+    public $codeType = '';
+	
     public $status = '';//bided paid sent fin
 	public $dtAdd = '';// date time
 	
