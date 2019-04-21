@@ -109,10 +109,10 @@ $(function() {
   }
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgwait ?>"><a href="/myphp/mygiftcard/msglist.php?status=wait">wait</a></li>
-    <li class="list-group-item <?php echo $cssBgignore ?>"><a href="/myphp/mygiftcard/msglist.php?status=ignore">ignore</a></li>
-    <li class="list-group-item <?php echo $cssBgaplied ?>"><a href="/myphp/mygiftcard/msglist.php?status=aplied">aplied</a></li>
-    <li class="list-group-item <?php echo $cssBgsent ?>"><a href="/myphp/mygiftcard/msglist.php?status=sent">sent</a></li>
+    <li class="list-group-item <?php echo $cssBgwait ?>"><a href="/myphp/mygiftcard/msglist.php?status=wait">待处理</a></li>
+    <li class="list-group-item <?php echo $cssBgignore ?>"><a href="/myphp/mygiftcard/msglist.php?status=ignore">不理</a></li>
+    <li class="list-group-item <?php echo $cssBgaplied ?>"><a href="/myphp/mygiftcard/msglist.php?status=aplied">回复</a></li>
+    <li class="list-group-item <?php echo $cssBgsent ?>"><a href="/myphp/mygiftcard/msglist.php?status=sent">发送</a></li>
     <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/msglist.php">ALL</a></li>
   </ul>
   <hr class="mb-4">
@@ -140,7 +140,7 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-6">
 	    <label for="maijia">bidId</label>
-	    <a class="form-control btn btn-primary" href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['bidId'] ?>" target="blank">
+	    <a class="form-control btn btn-primary" href="https://contact.auctions.yahoo.co.jp/seller/top?aid=<?php echo $data['bidId'] ?>" target="blank">
 	      <?php echo $data["bidId"] ?>
 	    </a>
 	  </div>

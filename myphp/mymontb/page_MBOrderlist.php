@@ -133,7 +133,11 @@ $(function() {
         <div class="row mb-1 p-2">
 	        <?php if(!empty($data['status'])){?><span class="border p-2"><?php echo $data['status']; } ?></span>
 	        <?php if(!empty($data['mbOrderNo'])){?><span class="border p-2"><?php echo $data['mbOrderNo']; } ?></span>
-	        <?php if(!empty($data['transferNoGuoji'])){?><span class="border p-2"><?php echo $data['transferNoGuoji']; } ?></span>
+<?php 	if(!empty($data['transferNoGuoji'])){ ?>
+    	    <a class="btn btn-primary" href="https://t.17track.net/zh-cn#nums=<?php echo $data['transferNoGuoji'] ?>" target="blank">
+              <?php echo $data['transferNoGuoji'] ?>
+    	    </a>
+<?php   } ?>
 	        <?php if(!empty($data['transferNoGuonei'])){?><span class="border p-2"><?php echo $data['transferNoGuonei']; } ?></span>
 	    </div>
 <?php

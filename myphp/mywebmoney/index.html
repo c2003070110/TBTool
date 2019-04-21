@@ -1,0 +1,67 @@
+
+<html lang="ja">
+<head>
+<title>見積もり</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!--
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+var actionUrl = "/myphp/mywebmoney/action.php";
+$(function() {
+    $(document).on("change", ".form-control", function() {
+        var huilv = parseInt($("#myhuilv").val());
+		var amtJPY = parseInt($("#amtJPY").val());
+		var calc = Math.ceil((amtJPY * huilv)/1000);
+		$("#amtCNY").val(calc);
+    });
+	var jqxhr = $.ajax(actionUrl,
+					 { type : "GET",
+					   data : {"action" : "getHuilv"},
+					   dataType : "html" 
+					  }
+				  );
+	jqxhr.done(function( msg ) {
+		$("#myhuilv").val(msg);
+		$("#huilv").text(msg);
+	})
+});
+</script>
+</head>
+<body class="py-4">
+<div id="container" class="container">
+  <input type="hidden" id="myhuilv" value="">
+  <h3>金额计算</h3>
+  <div class="row mb-4 form-group">
+    <div class="col-12 themed-grid-col">
+	  <label for="orderNo">请输入您需要代充多少日元</label>
+	  <input type="text" class="form-control" id="amtJPY" >
+	</div>
+  </div>
+  <h4>本店汇率是 1000日元＝<span id="huilv"></span>人民币</h4>
+  <!--
+  <div class="row mb-4 form-group">
+    <div class="col-12 themed-grid-col">
+	  <button type="button" id="btnCalc" class="btn btn-secondary">计    算</button>
+	</div>
+  </div>
+  -->
+  <div class="row mb-4 form-group">
+    <div class="col-12 themed-grid-col">
+	  <label for="orderNo">您需要支付人民币</label>
+	  <input type="text" class="form-control" id="amtCNY" readonly>
+	</div>
+  </div>
+  <h4>汇率低，无代购费，快速代充！</h4>
+  <h4><a class="btn btn-secondary" href="" >点击这里，进入淘宝店铺 付款</a></h4>
+</div>
+</body>
+</html>

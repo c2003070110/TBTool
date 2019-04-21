@@ -25,7 +25,12 @@ class BidObject
     public $codeType = '';
 	
     public $status = '';//bided paid sent fin
+	
 	public $dtAdd = '';// date time
+	//public $dtBid = '';// date time
+	public $dtpaid = '';// date time
+	public $dtsend = '';// date time
+	public $dtfin = '';// date time
 	
     public $msg = "";
     public $replymsg = "";

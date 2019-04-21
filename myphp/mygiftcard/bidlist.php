@@ -48,6 +48,12 @@ $(function() {
   }else{
       $dataArr = $myGiftCard->listAllBid();
   }
+  $sort = array();
+  foreach ((array) $dataArr as $key => $value) {
+	  $sort[$key] = $value['dtAdd'];
+  }
+  array_multisort($sort, SORT_DESC, $dataArr);
+  
   if($status == 'bided'){
 	  $cssBgbided = "bg-warning text-white";
   }else if($status == 'paid'){
@@ -65,11 +71,11 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?> 
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgbided ?>"><a href="/myphp/mygiftcard/bidlist.php?status=bided">bided</a></li>
-    <li class="list-group-item <?php echo $cssBgpaid ?>"><a href="/myphp/mygiftcard/bidlist.php?status=paid">paid</a></li>
-    <li class="list-group-item <?php echo $cssBgsent ?>"><a href="/myphp/mygiftcard/bidlist.php?status=sent">sent</a></li>
-    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mygiftcard/bidlist.php?status=fin">fin</a></li>
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/bidlist.php">ALL</a></li>
+    <li class="list-group-item <?php echo $cssBgbided ?>"><a href="/myphp/mygiftcard/bidlist.php?status=bided">未付</a></li>
+    <li class="list-group-item <?php echo $cssBgpaid ?>"><a href="/myphp/mygiftcard/bidlist.php?status=paid">未发</a></li>
+    <li class="list-group-item <?php echo $cssBgsent ?>"><a href="/myphp/mygiftcard/bidlist.php?status=sent">未收</a></li>
+    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mygiftcard/bidlist.php?status=fin">完结</a></li>
+    <!--<li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/bidlist.php">ALL</a></li>-->
   </ul> 
   <hr class="mb-2">   
   <div class="row">
@@ -85,8 +91,8 @@ $(function() {
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
     <input type="hidden" id="bidId" value="<?php echo $data["bidId"] ?>">
     <input type="hidden" id="obidId" value="<?php echo $data["obidId"] ?>">
-    <div class="col-3 themed-grid-col border border-secondary">
-	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['bidId'] ?>" target="blank">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
+	  <a href="https://contact.auctions.yahoo.co.jp/seller/top?aid=<?php echo $data['bidId'] ?>" target="blank">
 	    <?php echo $data["bidId"] ?>
 	  </a>
     </div>
@@ -106,6 +112,10 @@ $(function() {
   }else if($data["status"] == 'sent') {
 ?>
       <button type="button" id="btnFinish" class="btn btn-secondary actionBtn">finishBid</button>
+<?php 
+  }else if($data["status"] == 'fin') {
+?>
+      <div class="text-break themed-grid-col"><?php echo substr($data["dtAdd"],0,8) ?></div>
 <?php 
   }
 ?>

@@ -95,19 +95,19 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php?codeType=<?php echo $_GET['codeType'] ?>">ALL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused&codeType=<?php echo $_GET['codeType'] ?>">unused</a></li>
-    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using&codeType=<?php echo $_GET['codeType'] ?>">using</a></li>
-    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used&codeType=<?php echo $_GET['codeType'] ?>">used</a></li>
-    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mygiftcard/stocklist.php?status=fin&codeType=<?php echo $_GET['codeType'] ?>">fin</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mygiftcard/stocklist.php?status=unused&codeType=<?php echo $_GET['codeType'] ?>">待用</a></li>
+    <li class="list-group-item <?php echo $cssBgUsed ?>"><a href="/myphp/mygiftcard/stocklist.php?status=used&codeType=<?php echo $_GET['codeType'] ?>">已发</a></li>
+    <li class="list-group-item <?php echo $cssBgfin ?>"><a href="/myphp/mygiftcard/stocklist.php?status=fin&codeType=<?php echo $_GET['codeType'] ?>">完结</a></li>
+    <li class="list-group-item <?php echo $cssBgUsing ?>"><a href="/myphp/mygiftcard/stocklist.php?status=using&codeType=<?php echo $_GET['codeType'] ?>">已配</a></li>
+    <!--<li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mygiftcard/stocklist.php?codeType=<?php echo $_GET['codeType'] ?>">ALL</a></li>-->
   </ul> 
   <hr class="mb-2">   
   <div class="row">
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeCd</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">卡号</div>
 <?php
     if($status == ''){
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">状态</div>
 <?php
     }
 ?>
@@ -122,17 +122,17 @@ $(function() {
 <?php
     if($status == 'used'){
 ?>
-    <div class="col-4 themed-grid-col border border-primary bg-info text-white">orderType</div>
-    <div class="col-4 themed-grid-col border border-primary bg-info text-white">AucId</div>
+    <div class="col-4 themed-grid-col border border-primary bg-info text-white">类型</div>
+    <div class="col-4 themed-grid-col border border-primary bg-info text-white">得拍URL</div>
 <?php
     }else if($status == 'fin'){
 ?>
-    <div class="col-4 themed-grid-col border border-primary bg-info text-white">OrderNo</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
+    <div class="col-4 themed-grid-col border border-primary bg-info text-white">TB单号</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">类型</div>
 <?php
     }else{
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">CodeType</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">类型</div>
 <?php
     }
 ?>
@@ -191,7 +191,7 @@ $(function() {
 ?>
     <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
     <div class="col-4 themed-grid-col border border-secondary">
-	  <a href="https://page.auctions.yahoo.co.jp/jp/auction/<?php echo $data['bidId'] ?>" target="blank">
+	  <a href="https://contact.auctions.yahoo.co.jp/seller/top?aid=<?php echo $data['bidId'] ?>" target="blank">
 	    <?php echo $data["bidId"] ?>
 	  </a>
     </div>

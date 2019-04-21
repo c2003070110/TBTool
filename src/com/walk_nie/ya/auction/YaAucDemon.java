@@ -117,7 +117,7 @@ public class YaAucDemon {
 			return;
 		}
 		
-		//addBided(driver, lastestNoticeList);
+		addBided(driver, lastestNoticeList);
 		
 		if (hasPaid(driver, lastestNoticeList)) {
 			send(driver, lastestNoticeList);
@@ -181,9 +181,9 @@ public class YaAucDemon {
 
 				String auctionId = (String) objMap.get("bidId");
 				String obider = (String) objMap.get("obidId");
-				String msg = (String) objMap.get("msg");
-				log("[publishBidMsg][auctionId]" + auctionId + "[obider]" + obider + "[msg]" + msg);
-				if (StringUtil.isBlank(msg)) {
+				String replymsg = (String) objMap.get("replymsg");
+				log("[publishBidMsg][auctionId]" + auctionId + "[obider]" + obider + "[msg]" + replymsg);
+				if (StringUtil.isBlank(replymsg)) {
 					return;
 				}
 				driver.get(String.format(bidUrlFmt, auctionId, obider));
@@ -191,7 +191,7 @@ public class YaAucDemon {
 				WebElement rootWe = driver.findElement(By.cssSelector("div[id=\"yjContentsBody\"]"));
 
 				WebElement msgFormWe = rootWe.findElement(By.cssSelector("div[id=\"msgForm\"]"));
-				msgFormWe.findElement(By.cssSelector("textarea[id=\"textarea\"]")).sendKeys(msg);
+				msgFormWe.findElement(By.cssSelector("textarea[id=\"textarea\"]")).sendKeys(replymsg);
 
 				WebElement summitBtn = msgFormWe.findElement(By.cssSelector("input[id=\"submitButton\"]"));
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
@@ -295,19 +295,16 @@ public class YaAucDemon {
 			}
 			driver.get(urlStr);
 
-			String obiderId = "";// TODO how to get??
+			String obiderId = "";
 			List<WebElement> wes = driver.findElements(By.tagName("td"));
-			String finder = "XXXX";
+			String finder = "/ 評価：";
 			for(WebElement we:wes){
 				String txt =we.getText();
-				if(txt.startsWith(finder)){
-					String[] sparr = txt.split(" ");
-					for(String sp:sparr){
-						if(sp.startsWith(finder)){
-							obiderId = 	sp.replace(finder, "");
-							obiderId = 	obiderId.trim();
-							break;
-						}
+				if(txt.indexOf(finder) != -1){
+					String[] sparr = txt.split("/");
+					if(sparr.length > 1){
+						obiderId = 	sparr[0].replaceAll(" ", "");
+						obiderId = 	obiderId.trim();
 					}
 					break;
 				}
@@ -342,11 +339,17 @@ public class YaAucDemon {
 	}
 
 	private List<YaNoticeObject> getLastestNotice(WebDriver driver) {
-		driver.get(myaucinfoUrl);
-		WebElement weTbl = driver.findElement(
-				By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
-				By.tagName("table"));
 		List<YaNoticeObject> list = Lists.newArrayList();
+		driver.get(myaucinfoUrl);
+		WebElement weTbl = null;
+		try {
+			weTbl = driver.findElement(
+					By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
+					By.tagName("table"));
+		} catch (Exception e) {
+			log("[INFO][getLastestNotice]There are NONE notice!");
+			return list;
+		}
 		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
 		for (WebElement trWe : trWeList) {
 			List<WebElement> tdWeList = trWe.findElements(By.tagName("td"));
@@ -411,11 +414,10 @@ public class YaAucDemon {
 
 	private void send(WebDriver driver, List<YaNoticeObject> lastestNoticeList) throws IOException, URISyntaxException {
 
-		List<String> autoSendHrefList = Lists.newArrayList();
+		List<YaNoticeObject> sendTargetList = Lists.newArrayList();
+		
 		//log("[SEND]START");
 		for (YaNoticeObject obj : lastestNoticeList) {
-			String href = obj.href;
-
 			String title = obj.title;
 			if (!title.startsWith("支払い完了:")) {
 				continue;
@@ -424,10 +426,10 @@ public class YaAucDemon {
 				continue;
 			}
 			
-			autoSendHrefList.add(href);
+			sendTargetList.add(obj);
 		}
-		for (String href : autoSendHrefList) {
-			YaSoldObject yaObj = parseYaObjectFromUrl(href);
+		for (YaNoticeObject obj : sendTargetList) {
+			YaSoldObject yaObj = parseYaObjectFromUrl(obj.href);
 			log("[SEND][SETING][auctionId]" + yaObj.auctionId + "[obider]" + yaObj.obider);
 			driver.get(String.format(bidUrlFmt, yaObj.auctionId, yaObj.obider));
 
@@ -447,11 +449,11 @@ public class YaAucDemon {
 			}
 			if (sendBtnWe == null) {
 				log("[ERROR][This Auction has sent!][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
-				driver.get(href);
+				driver.get(obj.href);
 				continue;
 			}
 
-			List<YaSendCodeObject> codeList = getUnusedCode(yaObj);
+			List<YaSendCodeObject> codeList = getUnusedCode(obj.identifierToken,yaObj.auctionId,yaObj.obider);
 			if (codeList == null || codeList.isEmpty()) {
 				continue;
 			}
@@ -467,7 +469,7 @@ public class YaAucDemon {
 			// 発送済みコードを保存
 			save(yaObj, codeList);
 			
-			driver.get(href);
+			driver.get(obj.href);
 		}
 		//log("[SEND]END");
 	}
@@ -544,21 +546,20 @@ public class YaAucDemon {
 		NieUtil.mySleepBySecond(1);
 	}
 
-	private List<YaSendCodeObject> getUnusedCode(YaSoldObject yaObj) {
+	private List<YaSendCodeObject> getUnusedCode(String key,String auctionId,String obider) {
 		List<YaSendCodeObject> codeList = Lists.newArrayList();
 		String errMsgFmt = "[ERROR]NONE unused code!!![auctionId]%s[obider]%s[key]%s";
-		String key = getIdentifierKeyFromTitle(yaObj.title);
 		try {
 			Map<String, String> param = Maps.newHashMap();
 			param.put("action", "get");
 			param.put("codeType", key);
-			param.put("bidId", yaObj.auctionId);
-			param.put("obidId", yaObj.obider);
+			param.put("bidId", auctionId);
+			param.put("obidId", obider);
 			// return codeType:codeCd;codeType:codeCd;
 			String code = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 
 			if (StringUtil.isBlank(code)) {
-				String msg = String.format(errMsgFmt, yaObj.auctionId, yaObj.obider, key);
+				String msg = String.format(errMsgFmt, auctionId, obider, key);
 				log(msg);
 				return null;
 			}
@@ -567,15 +568,15 @@ public class YaAucDemon {
 			for (String sps : spa) {
 				String[] spaa = sps.split(":");
 				if (spaa.length != 2) {
-					String msg = String.format(errMsgFmt, yaObj.auctionId, yaObj.obider, key);
+					String msg = String.format(errMsgFmt, auctionId, obider, key);
 					log(msg);
 					return null;
 				}
 				YaSendCodeObject codeObj = new YaSendCodeObject();
 				codeObj.codeType = spaa[0];
 				codeObj.codeCd = spaa[1];
-				codeObj.obider = yaObj.obider;
-				codeObj.auctionId = yaObj.auctionId;
+				codeObj.obider = obider;
+				codeObj.auctionId = auctionId;
 				codeList.add(codeObj);
 			}
 		} catch (IOException e) {

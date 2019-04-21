@@ -3,7 +3,7 @@ require __DIR__ .'/crunchDB/crunchDB.php';
 require __DIR__ .'/crunchDB/crunchTable.php';
 require __DIR__ .'/crunchDB/crunchResource.php';
 
-define("CRDB_PATH", __DIR__ . "/db"); 
+define("CRDB_PATH", "/home/nie2019/myphp/db"); 
 
 define("TBL_MYGIFTCODE_CODE", "mygiftcode.code"); 
 define("TBL_MYGIFTCODE_BID", "mygiftcode.bid"); 
@@ -29,5 +29,7 @@ define("TBL_MYYABID_PARCEL_INFO", "myyabid.parcel.info");
 define("TBL_MYYABID_TAOBAO_DINGDAN_INFO", "myyabid.taobao.dingdan.info"); 
 
 define("TBL_MYYABID_BID_INFO", "myyabid.bid.info"); 
+
+define("TBL_MYWEBMONEY_DAICHONG", "mywebmoney.daichong.info"); 
 
 ?>

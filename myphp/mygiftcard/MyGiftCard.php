@@ -149,9 +149,9 @@ class MyGiftCard
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
 		
 		if(!empty($status)){
-			return $tbl->select(['msgStatus', '==', $status])->fetch();
+			return $tbl->select(['msgStatus', '==', $status,'and'],['msg', '!==', ""])->fetch();
 		}else{
-			return $this->listAllBid();
+			return $tbl->select(['msg','!==', ""])->fetch();
 		}
 	}
 	
@@ -177,7 +177,7 @@ class MyGiftCard
 		$rslt = "";
 		$codeCdArr = array();
 		if($codeType == "PSNUSD20"){
-			/*
+			
 			$dataArr = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr) < 2){
 				return "";
@@ -185,7 +185,7 @@ class MyGiftCard
 			$codeCdArr[] = $dataArr[0]["codeCd"];
 			$codeCdArr[] = $dataArr[1]["codeCd"];
 			$rslt = "PSNUSD10:" . $codeCdArr[0]  . ";PSNUSD10:" . $codeCdArr[1];
-			*/
+			
 		/*}else if($codeType == "PSNUSD30"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
@@ -205,20 +205,18 @@ class MyGiftCard
 		*/}else if($codeType == "PSNUSD40"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
-			//var_dump(count($dataArr1));
-			//var_dump(count($dataArr2));
 			if(count($dataArr2) > 1){
 				// 40 = 20+20
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$codeCdArr[] = $dataArr2[1]["codeCd"];
 				$rslt = "PSNUSD20:" . $codeCdArr[0] . ";PSNUSD20:" . $codeCdArr[1];
-			/*}else if(count($dataArr2) > 0 &&  count($dataArr1) > 1){
+			}else if(count($dataArr2) > 0 &&  count($dataArr1) > 1){
 				// 40 = 10+10+20
 				$codeCdArr[] = $dataArr1[0]["codeCd"];
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD20:" . $codeCdArr[2];
-			}else if(count($dataArr1) > 3){
+			/*}else if(count($dataArr1) > 3){
 				// 40 = 10+10+10+10
 				$codeCdArr[] = $dataArr1[0]["codeCd"];
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
