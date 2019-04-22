@@ -117,12 +117,19 @@ public class WebMoneyDemon {
 		try {
 			driver.get(noticeObj.url);
 		} catch (Exception e) {
-			sendCheckResultAction(noticeObj.uid, "URL错误！！", "URL错误！！");
+			sendCheckResultAction(noticeObj.uid, "[ERROR]URL", "[ERROR]URL");
 			return;
 		}
-		WebElement weRoot = driver.findElement(By.id("constract"));
-		WebElement we2 = weRoot.findElement(By.id("shopInfo"));
-		WebElement we3 = we2.findElement(By.id("shopComent"));
+		WebElement weRoot = null, we2 = null, we3 = null;
+		try {
+			weRoot = driver.findElement(By.id("constract"));
+			we2 = weRoot.findElement(By.id("shopInfo"));
+			we3 = we2.findElement(By.id("shopComent"));
+		} catch (Exception e) {
+			String txt = driver.findElement(By.tagName("body")).getText();
+			sendCheckResultAction(noticeObj.uid, "[ERROR]" + txt, "[ERROR]" + txt);
+			return;
+		}
 		String shopComment = we3.getText();
 		StringBuffer sb = new StringBuffer();
 		List<WebElement> wes = weRoot.findElements(By.tagName("tr"));
@@ -218,11 +225,18 @@ public class WebMoneyDemon {
 		try {
 			driver.get(checkedObj.url);
 		} catch (Exception e) {
-			sendPayResultAction(checkedObj.uid, false, "URL错误！！");
+			sendPayResultAction(checkedObj.uid, false, "[ERROR]URL");
 			return;
 		}
-		WebElement weRoot = driver.findElement(By.id("main"));
-		WebElement pmw = weRoot.findElement(By.id("payment_way_select"));
+		WebElement weRoot = null, pmw = null;
+		try {
+			weRoot = driver.findElement(By.id("main"));
+			pmw = weRoot.findElement(By.id("payment_way_select"));
+		} catch (Exception e) {
+			String txt = driver.findElement(By.tagName("body")).getText();
+			sendPayResultAction(checkedObj.uid, false, "[ERROR]" + txt);
+			return;
+		}
 		if (checkedObj.payway.equals("prepaidNo")
 				|| checkedObj.payway.equals("cardcase")) {
 			List<WebElement> wea = pmw.findElement(

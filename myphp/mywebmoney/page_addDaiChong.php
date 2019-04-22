@@ -66,36 +66,27 @@ $(function() {
     <div class="row mb-2 form-group">
       <div class="col-10">
         <label for="url">代充的链接 URL</label>
-      </div>
-    </div>
-    <div class="row mb-2 form-group data-row">
-      <div class="col-10">
         <input type="text" class="form-control urlInput" id="url" value="<?php echo $obj['url'] ?>">
       </div>
     </div>
     <div class="row mb-2 form-group data-row">
-      <div class="col-4">
+      <div class="col-10">
         <label for="atmJPY">代充日元</label>
-      </div>
-      <div class="col-4">
-        <label for="tbBuyer">TB买家ID</label>
-      </div>
-      <div class="col-4">
-        <label for="payway">PayWay</label>
+        <input type="text" class="form-control" id="atmJPY" value="<?php echo $obj['atmJPY'] ?>">
       </div>
     </div>
     <div class="row mb-2 form-group data-row">
-      <div class="col-4">
-        <input type="text" class="form-control urlInput" id="atmJPY" value="<?php echo $obj['atmJPY'] ?>">
+      <div class="col-10">
+        <label for="tbBuyer">TB买家ID</label>
+        <input type="text" class="form-control" id="tbBuyer" value="<?php echo $obj['tbBuyer'] ?>">
       </div>
-      <div class="col-4">
-        <input type="text" class="form-control priceInput" id="tbBuyer" value="<?php echo $obj['tbBuyer'] ?>">
-      </div>
-      <div class="col-4">
-        <select class="custom-select d-block" id="payway">
-          <option value="" ></option>
-          <option value="prepaidNo" <?php if($obj['payway']=='prepaidNo'){?> selected <?php } ?>>prepaidNo</option>
+    </div>
+    <div class="row mb-2 form-group data-row">
+      <div class="col-10">
+        <label for="payway">PayWay</label>
+        <select class="custom-select d-block form-control" id="payway">
           <option value="wallet" <?php if($obj['payway']=='wallet'){?> selected <?php } ?>>wallet</option>
+          <option value="prepaidNo" <?php if($obj['payway']=='prepaidNo'){?> selected <?php } ?>>prepaidNo</option>
           <option value="cardcase" <?php if($obj['payway']=='cardcase'){?> selected <?php } ?>>cardcase</option>
         </select>
       </div>
@@ -103,7 +94,7 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-4"></div>
       <div class="col-8 ">
-        <button class="btn btn-secondary actionBtn" id="btnAdd" type="button">a d d ！！</button>
+        <button class="btn btn-secondary" id="btnAdd" type="button">a d d ！！</button>
       </div>
     </div>
 </div>
