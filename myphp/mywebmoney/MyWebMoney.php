@@ -14,7 +14,7 @@ class MyWebMoney
 		return $myhuilv->listByHuilvDiv("YA");
 	}
 	
-	public function addDaiChong($uid, $url, $atmJPY, $tbBuyer, $payway){
+	public function addDaiChong($uid, $url, $amtJPY, $tbBuyer, $payway){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYWEBMONEY_DAICHONG"));
 		
@@ -28,7 +28,7 @@ class MyWebMoney
 			$data->uid = uniqid();
 			$data->tbBuyer = $tbBuyer;
 			$data->url = $url;
-			$data->atmJPY = $atmJPY;
+			$data->amtJPY = $amtJPY;
 			$data->payway = $payway;
 			$data->status = 'checkwait';
 			$data->dtAdd = date("YmdGis");
@@ -39,7 +39,7 @@ class MyWebMoney
 			$tbl->select(['uid', '==', $uid])
 				->update(['tbBuyer', $tbBuyer],
 						 ['url', $url],
-						 ['atmJPY', $atmJPY],
+						 ['amtJPY', $amtJPY],
 						 ['payway', $payway]);
 			return $uid;
 		}

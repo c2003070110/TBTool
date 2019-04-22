@@ -29,7 +29,7 @@ $(function() {
 			   data : {"action":"addDaiChong", 
 					   "uid" : $("#uid").val(),
 					   "url" : $("#url").val(), 
-					   "atmJPY" : $("#atmJPY").val(), 
+					   "amtJPY" : $("#amtJPY").val(), 
 					   "tbBuyer" : $("#tbBuyer").val(), 
 					   "payway" : $("#payway").val()
 			   },
@@ -42,8 +42,12 @@ $(function() {
 				return;
 			}
 			var href = window.location.href;
-			var url = href +"?uid="+msg;
-			window.location.href = url;
+			if(msg.indexOf("uid") != -1){
+				window.location.reload();
+			}else{
+				var url = href +"?uid="+msg;
+				window.location.href = url;
+			}
         });
     });
 });
@@ -71,8 +75,8 @@ $(function() {
     </div>
     <div class="row mb-2 form-group data-row">
       <div class="col-10">
-        <label for="atmJPY">代充日元</label>
-        <input type="text" class="form-control" id="atmJPY" value="<?php echo $obj['atmJPY'] ?>">
+        <label for="amtJPY">代充日元</label>
+        <input type="text" class="form-control" id="amtJPY" value="<?php echo $obj['amtJPY'] ?>">
       </div>
     </div>
     <div class="row mb-2 form-group data-row">

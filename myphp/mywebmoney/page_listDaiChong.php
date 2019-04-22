@@ -19,7 +19,7 @@ require __DIR__ .'/MyWebMoney.php';
 var actionUrl = "<?php echo constant("URL_ACTION_MYWEBMONEY") ?>";
 $(function() {
 	var getMyBox = function(thisElement){
-		return $(thisElement).parent().parent().parent();
+		return $(thisElement).parent().parent();
 	}
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
@@ -54,6 +54,10 @@ $(function() {
     $(document).on("click", "#btnRepay", function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "topay");
+    });
+    $(document).on("click", "#btnReCheck", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "checkwait");
     });
 });
 </script>
@@ -120,7 +124,7 @@ $(function() {
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
     <div class="col-3 themed-grid-col border border-secondary">
 	  <a href="/myphp/mywebmoney/page_addDaiChong.php?uid=<?php echo $data["uid"] ?>">
-	    <?php echo $data["atmJPY"] ?>
+	    <?php echo $data["amtJPY"] ?>
 	  </a>
 	</div>
 <?php 
@@ -142,6 +146,7 @@ $(function() {
 <?php 
   if($data["status"] == 'checked') {
 ?>
+      <button type="button" id="btnReCheck" class="btn btn-secondary actionBtn">reCheck</button>
       <button type="button" id="btnTopay" class="btn btn-secondary actionBtn">topay</button>
       <button type="button" id="btnDel" class="btn btn-secondary actionBtn">del</button>
 <?php 
@@ -151,6 +156,7 @@ $(function() {
 <?php 
   }else if($data["status"] == 'topay') {
 ?>
+      <button type="button" id="btnReCheck" class="btn btn-secondary actionBtn">reCheck</button>
       <button type="button" id="btnPaid" class="btn btn-secondary actionBtn">paid</button>
       <button type="button" id="btnDel" class="btn btn-secondary actionBtn">del</button>
 <?php 

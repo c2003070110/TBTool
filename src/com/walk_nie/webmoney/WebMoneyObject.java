@@ -3,6 +3,6 @@ package com.walk_nie.webmoney;
 public class WebMoneyObject {
 	String uid = "";
 	String url= "";
-	String amt="";
+	String amtJPY="";
 	String payway = ""; //prepaidNo,wallet,cardcase
 }

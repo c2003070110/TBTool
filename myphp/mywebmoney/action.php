@@ -23,16 +23,16 @@ if($actionStr == "getHuilv"){
 } else if($actionStr == "addDaiChong"){
 	$uid = $_GET["uid"];
 	$url = $_GET["url"];
-	$atmJPY = $_GET["atmJPY"];
+	$amtJPY = $_GET["amtJPY"];
 	$tbBuyer = $_GET["tbBuyer"];
 	$payway = $_GET["payway"];
 	
-	if(empty($_GET["url"]) || empty($_GET["atmJPY"]) || empty($_GET["payway"])){
+	if(empty($_GET["url"]) || empty($_GET["amtJPY"]) || empty($_GET["payway"])){
 		echo "[ERROR]PARAMETER";
 		return;
 	} 
 	$my = new MyWebMoney();
-	$uid = $my->addDaiChong($uid, $url, $atmJPY, $tbBuyer, $payway);
+	$uid = $my->addDaiChong($uid, $url, $amtJPY, $tbBuyer, $payway);
 	echo $uid;
 } else if($actionStr == "updateDaichongStatus"){
 	$uid = $_GET["uid"];
@@ -49,6 +49,9 @@ if($actionStr == "getHuilv"){
 } else if($actionStr == "getLastestNoticeOne"){
 	$my = new MyWebMoney();
 	$data = $my->getLastestNoticeOne();//WebMoneyObject
+	$data["realShopComment"] = "";
+	$data["realItemName"] = "";
+	$data["payResult"] = "";
 	if(empty($data)){
 		echo "";
 	}else{
@@ -68,6 +71,9 @@ if($actionStr == "getHuilv"){
 } else if($actionStr == "getCheckedNoticeOne"){
 	$my = new MyWebMoney();
 	$data = $my->getCheckedNoticeOne();//WebMoneyObject
+	$data["realShopComment"] = "";
+	$data["realItemName"] = "";
+	$data["payResult"] = "";
 	if(empty($data)){
 		echo "";
 	}else{
@@ -77,7 +83,7 @@ if($actionStr == "getHuilv"){
 	$uid = $_GET["uid"];
 	$payResult = $_GET["payResult"];
 	
-	if(empty($_GET["uid"]) || empty($_GET["itemInfo"])){
+	if(empty($uid) || empty($payResult)){
 		echo "[ERROR]PARAMETER";
 		return;
 	} 

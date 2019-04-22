@@ -98,7 +98,7 @@ public class WebMoneyDemon {
 			objMap = j.toType(line, Map.class);
 			lastestNotice.uid = (String) objMap.get("uid");
 			lastestNotice.url = (String) objMap.get("url");
-			lastestNotice.amt = (String) objMap.get("amt");
+			lastestNotice.amtJPY = (String) objMap.get("amtJPY");
 			lastestNotice.payway = (String) objMap.get("payway");
 			if (StringUtil.isBlank(lastestNotice.url)) {
 				log("[ERROR][getLastestNotice]URL is NULL!!");
@@ -198,18 +198,18 @@ public class WebMoneyDemon {
 			objMap = j.toType(line, Map.class);
 			checkedNotice.uid = (String) objMap.get("uid");
 			checkedNotice.url = (String) objMap.get("url");
-			checkedNotice.amt = (String) objMap.get("amt");
+			checkedNotice.amtJPY = (String) objMap.get("amtJPY");
 			checkedNotice.payway = (String) objMap.get("payway");
 			if (StringUtil.isBlank(checkedNotice.url)) {
-				log("[ERROR][getLastestNotice]URL is NULL!!");
+				log("[ERROR][getChecked]URL is NULL!!");
 				return null;
 			}
-			if (StringUtil.isBlank(checkedNotice.amt)) {
-				log("[ERROR][getLastestNotice]金額 is NULL!!");
+			if (StringUtil.isBlank(checkedNotice.amtJPY)) {
+				log("[ERROR][getChecked]金額 is NULL!!");
 				return null;
 			}
 			if (StringUtil.isBlank(checkedNotice.payway)) {
-				log("[ERROR][getLastestNotice]支付方式 is NULL!!");
+				log("[ERROR][getChecked]支付方式 is NULL!!");
 				return null;
 			}
 		} catch (Exception e) {
@@ -272,20 +272,22 @@ public class WebMoneyDemon {
 			
 			// result..
 			weRoot = driver.findElement(By.id("main"));
-			List<WebElement>  weError= weRoot.findElements(By.id("lessAmountArea"));
-			if(weError == null || weError.isEmpty()){
+			List<WebElement>  weError1= weRoot.findElements(By.cssSelector("span[class=\"error\""));
+			if(weError1 == null || weError1.isEmpty()){
 				payResult = true;
 			}else{
 				payResult = false;
-				payResultStr = weError.get(0).getText();
+				payResultStr = weError1.get(0).getText();
 			}
-			wepin = weRoot.findElement(By.id("input_pin_area"));
-			weError = wepin.findElements(By.className("error"));
-			if(weError == null || weError.isEmpty()){
-				payResult = true;
-			}else{
-				payResult = false;
-				payResultStr = weError.get(0).getText();
+			if (payResult) {
+				List<WebElement> weError = weRoot.findElements(By
+						.id("lessAmountArea"));
+				if (weError == null || weError.isEmpty()) {
+					payResult = true;
+				} else {
+					payResult = false;
+					payResultStr = weError.get(0).getText();
+				}
 			}
 			// TODO take a screen shot
 		} else if (checkedObj.payway.equals("cardcase")) {
@@ -304,28 +306,30 @@ public class WebMoneyDemon {
 					NieConfig.getConfig("webmoney.pay.wallet.id"));
 			wepin.findElement(By.id("PSW")).sendKeys(
 					NieConfig.getConfig("webmoney.pay.wallet.password"));
-			wepin.findElement(By.id("spw")).sendKeys(
+			wepin.findElement(By.cssSelector("input[name=\"spw\"]")).sendKeys(
 					NieConfig.getConfig("webmoney.pay.wallet.spassword"));
 			
 			wepin.findElement(By.id("btn_settle_wallet")).click();
-			NieUtil.mySleepBySecond(5);
+			NieUtil.mySleepBySecond(3);
 
 			// result..
 			weRoot = driver.findElement(By.id("main"));
-			List<WebElement>  weError= weRoot.findElements(By.id("lessAmountArea"));
-			if(weError == null || weError.isEmpty()){
+			List<WebElement>  weError1= weRoot.findElements(By.cssSelector("span[class=\"error\""));
+			if(weError1 == null || weError1.isEmpty()){
 				payResult = true;
 			}else{
 				payResult = false;
-				payResultStr = weError.get(0).getText();
+				payResultStr = weError1.get(0).getText();
 			}
-			wepin = weRoot.findElement(By.id("input_pin_area"));
-			weError = wepin.findElements(By.className("error"));
-			if(weError == null || weError.isEmpty()){
-				payResult = true;
-			}else{
-				payResult = false;
-				payResultStr = weError.get(0).getText();
+			if (payResult) {
+				List<WebElement> weError = weRoot.findElements(By
+						.id("lessAmountArea"));
+				if (weError == null || weError.isEmpty()) {
+					payResult = true;
+				} else {
+					payResult = false;
+					payResultStr = weError.get(0).getText();
+				}
 			}
 			// TODO take a screen shot
 		}

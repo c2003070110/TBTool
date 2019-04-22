@@ -7,7 +7,7 @@ class WebMoneyObject
     public $tbOrderNo = '';
 	
     public $url = '';
-    public $atmJPY = '';
+    public $amtJPY = '';
 	public $payway ="";//prepaidNo,wallet,cardcase
     
 	public $realShopComment ="";
