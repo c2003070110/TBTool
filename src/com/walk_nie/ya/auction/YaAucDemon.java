@@ -59,12 +59,14 @@ public class YaAucDemon {
 		main.save(yaObj);
 		System.out.println(rslt);
 		*/
-		main.execute();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		main.init(driver);
+		main.execute(driver);
 	}
 
 	public void execute() throws IOException {
-		init();
-		WebDriver driver = logon();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		init(driver);
 		int interval = Integer.parseInt(NieConfig
 				.getConfig("yahoo.auction.autosend.interval"));// second
 		while (true) {
@@ -94,6 +96,17 @@ public class YaAucDemon {
 		}
 	}
 
+	public void execute(WebDriver driver) throws IOException {
+		int interval = Integer.parseInt(NieConfig
+				.getConfig("yahoo.auction.autosend.interval"));// second
+		long t1 = System.currentTimeMillis();
+		
+		forSeller(driver,interval, t1);
+		
+		long t2 = System.currentTimeMillis();
+		forBuyer(driver,interval,t2);
+	}
+
 	private void forBuyer(WebDriver driver, int interval, long t2) {
 		// TODO 
 		// listItemByEmptyBidUidOne
@@ -110,7 +123,7 @@ public class YaAucDemon {
 		// updateItemStatusBdfhByBidId
 	}
 
-	private void forSeller(WebDriver driver, int interval, long t1) throws IOException, URISyntaxException {
+	private void forSeller(WebDriver driver, int interval, long t1) throws IOException {
 
 		List<YaNoticeObject> lastestNoticeList = getLastestNotice(driver);
 		if(lastestNoticeList == null || lastestNoticeList.isEmpty()){
@@ -376,7 +389,7 @@ public class YaAucDemon {
 		return list;
 	}
 
-	private void init() throws IOException {
+	public void init(WebDriver driver) throws IOException {
 
 		List<String> list1 = NieConfig
 				.getConfigByPrefix("yahoo.auction.autosend.key");
@@ -390,6 +403,8 @@ public class YaAucDemon {
 
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
+		
+		logon(driver);
 	}
 
 	private boolean hasPaid(WebDriver driver, List<YaNoticeObject> lastestNoticeList) {
@@ -412,7 +427,7 @@ public class YaAucDemon {
 		return false;
 	}
 
-	private void send(WebDriver driver, List<YaNoticeObject> lastestNoticeList) throws IOException, URISyntaxException {
+	private void send(WebDriver driver, List<YaNoticeObject> lastestNoticeList) throws IOException {
 
 		List<YaNoticeObject> sendTargetList = Lists.newArrayList();
 		
@@ -881,11 +896,10 @@ public class YaAucDemon {
 		}
 	}
 
-	private WebDriver logon() {
+	private WebDriver logon(WebDriver driver) {
 
 		String rootUrl = "https://auctions.yahoo.co.jp/user/jp/show/mystatus";
 
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		//WebDriver driver = WebDriverUtil.getHtmlUnitDriver();
 		driver.manage().window().setSize(new Dimension(960, 960));
 		driver.manage().window().setPosition(new Point(10, 10));

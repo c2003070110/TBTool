@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
+import org.openqa.selenium.WebDriver;
 
 import com.walk_nie.util.NieConfig;
 
 public class MontbellPinyinDemon {
+	MontbellPinyinMain py = new MontbellPinyinMain();
 	private File logFile = null;
 
 	/**
@@ -29,7 +29,6 @@ public class MontbellPinyinDemon {
 
 	public void execute()  {
 		init();
-		MontbellPinyinMain py = new MontbellPinyinMain();
 		
 		while (true) {
 			try {
@@ -39,8 +38,11 @@ public class MontbellPinyinDemon {
 			}
 		}
 	}
+	public void execute(WebDriver driver) throws Exception {
+		py.process();
+	}
 
-	private void init() {
+	public void init() {
 
 		logFile = new File(NieConfig.getConfig("montbell.log.file"));
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(
@@ -49,17 +51,17 @@ public class MontbellPinyinDemon {
 				java.util.logging.Level.OFF);
 	}
 
-	private void log(String string) {
-
-		String nowDateTimeStr = getNowDateTime();
-		try {
-			String str = "[" + nowDateTimeStr + "]" + string + "\n";
-			System.out.print(str);
-			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void log(String string) {
+//
+//		String nowDateTimeStr = getNowDateTime();
+//		try {
+//			String str = "[" + nowDateTimeStr + "]" + string + "\n";
+//			System.out.print(str);
+//			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private void log(Exception ex) {
 		try {

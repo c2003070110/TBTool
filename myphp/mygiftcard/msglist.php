@@ -87,6 +87,24 @@ $(function() {
             location.reload();
         });
     });
+    $(document).on("click", "#btnDelete", function() {
+		var thisBox = getMyBox(this);
+		var bidId = $(thisBox).find("#bidId").val();
+		var obidId = $(thisBox).find("#obidId").val();
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"updateBidMsgStatus", 
+					   "bidId" : bidId,
+					   "obidId" : obidId,
+					   "status" : "del"
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+            location.reload();
+        });
+    });
 });
 </script>
 </head>
@@ -189,6 +207,12 @@ $(function() {
 <?php
     }
 ?>
+    <hr class="mb-4">
+    <div class="row mb-4 form-group">
+      <div class="col-8">
+	    <button type="button" id="btnDelete" class="btn btn-secondary">DEL</button>
+	  </div>
+    </div>
   </div>
 <?php
   }

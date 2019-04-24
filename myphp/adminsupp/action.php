@@ -5,6 +5,7 @@
 //error_reporting(E_ALL);
 
 require __DIR__ .'/MyHuilv.php';
+require __DIR__ .'/MyBackup.php';
 $actionStr = $_GET['action'];
 
 if($actionStr === null){
@@ -23,6 +24,16 @@ if($actionStr == "saveMyhuilv"){
 	} 
 	$my = new MyHuilv();
 	$rslt = $my->updateHuilvByYinglian($_GET["huilvYL"]);
+	echo $rslt;
+
+//******* backup ********
+} else if($actionStr == "backupMyGiftCard"){
+	$my = new MyBackup();
+	$rslt = $my->backupMyGiftCard();
+	echo $rslt;
+} else if($actionStr == "backupMyMontbell"){
+	$my = new MyBackup();
+	$rslt = $my->backupMyMontbell();
 	echo $rslt;
 	
 	

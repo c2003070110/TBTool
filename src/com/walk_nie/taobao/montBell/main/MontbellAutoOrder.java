@@ -44,8 +44,12 @@ public class MontbellAutoOrder {
 	private WebDriver driver = null;
 	private List<CrObject> crObjList = Lists.newArrayList();
 
+	public MontbellAutoOrder(WebDriver driver){
+		this();
+		this.driver = driver;
+	}
 
-	public MontbellAutoOrder(){
+	private MontbellAutoOrder(){
 		try {
 			readInCrObject();
 		} catch (IOException e) {
@@ -71,11 +75,11 @@ public class MontbellAutoOrder {
 			if ("tokyo".equals(orderInfo.state)) {
 				WebDriver driver = logonForJapan();
 				orderForJapan(driver, orderInfo);
-				driver.close();
+				//driver.close();
 			} else {
 				WebDriver driver = logonForChina();
 				orderForChina(driver, orderInfo);
-				driver.close();
+				//driver.close();
 			}
 			reactOrderResultToWebServer(orderInfo);
 		} catch (Exception e) {

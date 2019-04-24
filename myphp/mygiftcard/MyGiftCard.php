@@ -117,6 +117,9 @@ class MyGiftCard
 		if($toStatus == "sent" || $toStatus == "ignore"){
 			$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
 				->update(['msgStatus', $toStatus],['replymsg', ""]);
+		}else if($toStatus == "del"){
+			$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
+				->update(['msgStatus', ""],['msg', ""],['replymsg', ""]);
 		}else{
 			$tbl->select(['bidId', '==', $bidId, 'and'],['obidId', '==', $obidId, 'and'])
 				->update(['msgStatus', $toStatus]);

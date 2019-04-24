@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -14,6 +15,8 @@ import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.json.Json;
@@ -76,6 +79,18 @@ public class WebMoneyDemon {
 			} catch (Exception ex) {
 				log(ex);
 			}
+		}
+	}
+
+	public void execute(WebDriver driver) {
+		WebMoneyObject noticeObj = getLastestNotice();
+		if (noticeObj != null) {
+			check(driver, noticeObj);
+		}
+
+		WebMoneyObject checkedObj = getChecked();
+		if (checkedObj != null) {
+			pay(driver, checkedObj);
 		}
 	}
 
@@ -289,16 +304,18 @@ public class WebMoneyDemon {
 					payResultStr = weError.get(0).getText();
 				}
 			}
-			// TODO take a screen shot
+			// take a screen shot
+			screenShot(driver, checkedObj);
 		} else if (checkedObj.payway.equals("cardcase")) {
-			// TODO
+			// TODO how to do?
 			weRoot = driver.findElement(By.id("main"));
 			WebElement wepin = weRoot.findElement(By.id("appSettleArea"));
 			
 			wepin.findElement(By.id("app_launchAppBtn")).click();
 			NieUtil.mySleepBySecond(5);
-			
-			// TODO take a screen shot
+
+			// take a screen shot
+			screenShot(driver, checkedObj);
 		} else if (checkedObj.payway.equals("wallet")) {
 			weRoot = driver.findElement(By.id("main"));
 			WebElement wepin = weRoot.findElement(By.id("walletArea"));
@@ -331,9 +348,22 @@ public class WebMoneyDemon {
 					payResultStr = weError.get(0).getText();
 				}
 			}
-			// TODO take a screen shot
+			// take a screen shot
+			screenShot(driver, checkedObj);
 		}
 		sendPayResultAction(checkedObj.uid, payResult, payResultStr);
+	}
+
+	private void screenShot(WebDriver driver, WebMoneyObject checkedObj) {
+		File saveTo = new File(NieConfig.getConfig("webmoney.demon.work.path") + "/orderShot",
+				DateUtils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + checkedObj.uid + ".jpg");
+		File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		try {
+			FileUtils.copyFile(screenshot, saveTo);
+		} catch (IOException e) {
+			log(e);
+			e.printStackTrace();
+		}
 	}
 
 	private void sendPayResultAction(String uid, boolean payResult,String payResultStr) {
@@ -361,7 +391,7 @@ public class WebMoneyDemon {
 		}
 	}
 
-	private void init() throws IOException {
+	public void init() throws IOException {
 
 		logFile = new File(
 				NieConfig.getConfig("webmoney.demon.log.file"));

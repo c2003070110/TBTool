@@ -79,10 +79,10 @@ $(function() {
   </ul> 
   <hr class="mb-2">   
   <div class="row">
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">bidId</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">bidId</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">codeType</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Status</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
+    <!--<div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Status</div>-->
+    <div class="col-5 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
   </div>
 <?php
   foreach ($dataArr as $data) {
@@ -91,14 +91,14 @@ $(function() {
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
     <input type="hidden" id="bidId" value="<?php echo $data["bidId"] ?>">
     <input type="hidden" id="obidId" value="<?php echo $data["obidId"] ?>">
-    <div class="col-3 text-break themed-grid-col border border-secondary">
+    <div class="col-4 text-break themed-grid-col border border-secondary">
 	  <a href="https://contact.auctions.yahoo.co.jp/seller/top?aid=<?php echo $data['bidId'] ?>" target="blank">
 	    <?php echo $data["bidId"] ?>
 	  </a>
     </div>
     <div class="col-3 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
-    <div class="col-3 text-break themed-grid-col border border-secondary"><?php echo $data["status"] ?></div>
-    <div class="col-3 text-break themed-grid-col border border-secondary">
+    <!--<div class="col-3 text-break themed-grid-col border border-secondary"><?php echo $data["status"] ?></div>-->
+    <div class="col-5 text-break themed-grid-col border border-secondary">
 <?php 
   if($data["status"] == 'bided') {
 ?>

@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.jsoup.helper.StringUtil;
+import org.openqa.selenium.WebDriver;
 
 import com.beust.jcommander.internal.Lists;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
@@ -20,6 +21,7 @@ import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderObject;
 import com.walk_nie.taobao.object.StockObject;
+import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieUtil;
 
 public class MontbellAutoMain {
@@ -36,7 +38,8 @@ public class MontbellAutoMain {
 
 	public void process() throws Exception {
 		pinyin = new MontbellPinyinMain();
-		montbellAutoOrder = new MontbellAutoOrder();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		montbellAutoOrder = new MontbellAutoOrder(driver);
 		while (true) {
 			try {
 				//
