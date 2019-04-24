@@ -53,14 +53,14 @@ $(function() {
 ?>
   <div class="box">
       <div class="row mb-4 form-group">
-        <div class="col-6">
-          <button type="button" id="btnMyGiftCardBackup" class="btn btn-secondary">MyGiftCard Backup</button>
+        <div class="col-12">
+          <button type="button" id="btnMyGiftCardBackup" class="btn btn-primary">MyGiftCard Backup</button>
         </div>
       </div>
       <hr class="mb-4">
       <div class="row mb-4 form-group">
-        <div class="col-6">
-          <button type="button" id="btnMyMontbellBackup" class="btn btn-secondary">My MontBell Backup</button>
+        <div class="col-12">
+          <button type="button" id="btnMyMontbellBackup" class="btn btn-primary">My MontBell Backup</button>
         </div>
       </div>
       <hr class="mb-4">

@@ -7,13 +7,13 @@ use cybrox\crunchdb\CrunchDB as CrunchDB;
 
 class MyHuilv
 {
-	public function save($huilvDiv, $plusplus, $myhuilv){
+	public function save($huilvDiv, $daigoufei, $myhuilv){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYHUILV_INFO"));
 		
 		$obj = new HuilvObject();
 		$obj->huilvDiv = $huilvDiv;
-		$obj->plusplus = $plusplus;
+		$obj->daigoufei = $daigoufei;
 		$obj->huilvVal = $myhuilv;
 		
 		$cnt = $tbl->select(['huilvDiv', '==', $obj->huilvDiv])->count();
@@ -22,7 +22,7 @@ class MyHuilv
 			return "insert!";
 		} else{
 			$tbl->select(['huilvDiv', '==', $obj->huilvDiv])
-				->update(['huilvVal', $obj->myhuilv]);
+				->update(['huilvVal', $obj->huilvVal],['daigoufei', $obj->daigoufei]);
 			return "update!";
 		}
 	}

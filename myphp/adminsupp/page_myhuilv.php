@@ -65,7 +65,7 @@ $(function() {
             alert(msg);
         });
     });
-    $(document).on("onchange", "#huilvDiv", function() {
+    $(document).on("change", "#huilvDiv", function() {
         
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
@@ -78,7 +78,7 @@ $(function() {
         jqxhr.done(function( msg ) {
         	var huilvObj = JSON.parse(msg);
             $("#daigoufei").val(huilvObj.daigoufei);
-            $("#myhuilv").val(huilvObj.myhuilv);
+            $("#myhuilv").val(huilvObj.huilvVal);
         });
     });
 });
@@ -91,35 +91,40 @@ $(function() {
 ?>
   <div class="box">
       <div class="row mb-4 form-group">
-        <button type="button" id="btnGetYLHV" class="btn btn-secondary actionBtn">get YingLian huilv</button>
+        <button type="button" id="btnGetYLHV" class="btn btn-primary">get YingLian huilv</button>
         <div class="col-6 themed-grid-col">
           <label for="huilv">YingLian</label>
           <input type="text" class="form-control" id="huilvYL">
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-6 themed-grid-col">
+        <div class="col-10 themed-grid-col">
             <label for="huilvDiv">huilv Div</label>
             <select class="custom-select d-block w-100" id="huilvDiv">
-                <option value="YA" selected>YA</option>
+                <option value="" selected></option>
+                <option value="YA">YA</option>
                 <option value="WM">webmoney</option>
             </select>
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-5 themed-grid-col">
+        <div class="col-10 themed-grid-col">
           <label for="plusplus">daigoufei</label>
-          <input type="text" class="form-control" id="daigoufei"?>">
+          <input type="text" class="form-control" id="daigoufei">
         </div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-6 themed-grid-col">
+        <div class="col-10 themed-grid-col">
           <label for="myhuilv">My huilv</label>
           <input type="text" class="form-control" id="myhuilv">
         </div>
-        <button type="button" id="btnSave" class="btn btn-secondary actionBtn">SAVE</button>
       </div>
       <hr class="mb-4">
+      <div class="row mb-4 form-group">
+        <div class="col-10 themed-grid-col">
+          <button type="button" id="btnSave" class="btn btn-primary">SAVE</button>
+        </div>
+      </div>
   </div>
 </div>
 </body>

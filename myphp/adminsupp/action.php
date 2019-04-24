@@ -1,5 +1,4 @@
 <?php
-
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
@@ -8,14 +7,20 @@ require __DIR__ .'/MyHuilv.php';
 require __DIR__ .'/MyBackup.php';
 $actionStr = $_GET['action'];
 
-if($actionStr === null){
+if(empty($actionStr)){
 	echo "[Fatal]Parameter Of [action] is NULL";
 	return;
 }
 
 if($actionStr == "saveMyhuilv"){
+	$huilvDiv = $_GET['huilvDiv'];
+	$daigoufei = $_GET['daigoufei'];
+	$myhuilv = $_GET['myhuilv'];
+	if(empty($huilvDiv) || empty($myhuilv)) {
+		return;
+	}
 	$my = new MyHuilv();
-	$rslt = $my->save($_GET['huilvDiv'],$_GET['plusplus'],$_GET['myhuilv']);
+	$rslt = $my->save($huilvDiv,$daigoufei,$myhuilv);
 	echo $rslt;
 } else if($actionStr == "updateYLHuilv"){
 	if(empty($_GET["huilvYL"])){
@@ -26,7 +31,7 @@ if($actionStr == "saveMyhuilv"){
 	$rslt = $my->updateHuilvByYinglian($_GET["huilvYL"]);
 	echo $rslt;
 
-if($actionStr == "getMyhuilvByHuilvDiv"){
+}else if($actionStr == "getMyhuilvByHuilvDiv"){
 	$huilvDiv = $_GET['huilvDiv'];
 	if(empty($huilvDiv)) {
 		return;
