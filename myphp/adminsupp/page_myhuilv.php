@@ -41,24 +41,23 @@ $(function() {
 					$("#huilvYL").val(huilvTxt);
 					
 					var huilvYL = parseFloat($("#huilvYL").val());
-                    var plusplus = parseFloat($("#plusplus").val());
-                    $("#myhuilv").val(huilvYL + plusplus);
+                    $("#myhuilv").val(huilvYL + 0.005);
 					break;
 				}
 			}
 	    });
-		
     });
     $(document).on("click", "#btnSave", function() {
         var myhuilv = parseFloat($("#myhuilv").val());
+        var daigoufei = parseInt($("#daigoufei").val());
         
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
                            data : {
 							   "action" : "saveMyhuilv", 
 							   "huilvDiv" : $("#huilvDiv").val(),
-							   "plusplus" : $("#plusplus").val(),
-						       "myhuilv" : myhuilv},
+						       "myhuilv" : myhuilv,
+							   "daigoufei" : daigoufei},
                            dataType : "html" 
                           }
                       );
@@ -66,10 +65,21 @@ $(function() {
             alert(msg);
         });
     });
-    $(document).on("change", ".form-control", function() {
-        var huilvYL = parseFloat($("#huilvYL").val());
-        var plusplus = parseFloat($("#plusplus").val());
-        $("#myhuilv").val(huilvYL + plusplus);
+    $(document).on("onchange", "#huilvDiv", function() {
+        
+        var jqxhr = $.ajax(actionUrl,
+                         { type : "GET",
+                           data : {
+							   "action" : "getMyhuilvByHuilvDiv", 
+							   "huilvDiv" : $("#huilvDiv").val()},
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+        	var huilvObj = JSON.parse(msg);
+            $("#daigoufei").val(huilvObj.daigoufei);
+            $("#myhuilv").val(huilvObj.myhuilv);
+        });
     });
 });
 </script>
@@ -84,7 +94,7 @@ $(function() {
         <button type="button" id="btnGetYLHV" class="btn btn-secondary actionBtn">get YingLian huilv</button>
         <div class="col-6 themed-grid-col">
           <label for="huilv">YingLian</label>
-          <input type="text" class="form-control" id="huilvYL" readonly>
+          <input type="text" class="form-control" id="huilvYL">
         </div>
       </div>
       <div class="row mb-4 form-group">
@@ -92,20 +102,20 @@ $(function() {
             <label for="huilvDiv">huilv Div</label>
             <select class="custom-select d-block w-100" id="huilvDiv">
                 <option value="YA" selected>YA</option>
-                <option value="daigou">Daigou</option>
+                <option value="WM">webmoney</option>
             </select>
         </div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-5 themed-grid-col">
-          <label for="plusplus">++</label>
-          <input type="text" class="form-control" id="plusplus" value="<?php echo constant("HUI_LV_PLUS") ?>">
+          <label for="plusplus">daigoufei</label>
+          <input type="text" class="form-control" id="daigoufei"?>">
         </div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-6 themed-grid-col">
           <label for="myhuilv">My huilv</label>
-          <input type="text" class="form-control" id="myhuilv" readonly>
+          <input type="text" class="form-control" id="myhuilv">
         </div>
         <button type="button" id="btnSave" class="btn btn-secondary actionBtn">SAVE</button>
       </div>

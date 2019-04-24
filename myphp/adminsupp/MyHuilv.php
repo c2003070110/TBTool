@@ -41,6 +41,11 @@ class MyHuilv
 		$data = $tbl->select('*')->fetch();
 		return $data;
 	}
+	public function getMyhuilvByHuilvDiv($huilvDiv){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYHUILV_INFO"));
+		return $tbl->select(['huilvDiv', '==', $huilvDiv])->fetch()[0];
+	}
 	public function listByHuilvDiv($huilvDiv){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYHUILV_INFO"));

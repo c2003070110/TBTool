@@ -2,7 +2,7 @@
 class HuilvObject
 {
     public $huilvDiv = '';
-	public $plusplus = '';
+	public $daigoufei = '';
     public $huilvVal = '';
 	
 }

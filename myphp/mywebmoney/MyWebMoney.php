@@ -11,7 +11,7 @@ class MyWebMoney
 {
 	public function getHuilv(){
 		$myhuilv = new MyHuilv();
-		return $myhuilv->listByHuilvDiv("YA");
+		return $myhuilv->listByHuilvDiv("WM");
 	}
 	
 	public function addDaiChong($uid, $url, $amtJPY, $tbBuyer, $payway){

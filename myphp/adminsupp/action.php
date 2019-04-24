@@ -26,6 +26,15 @@ if($actionStr == "saveMyhuilv"){
 	$rslt = $my->updateHuilvByYinglian($_GET["huilvYL"]);
 	echo $rslt;
 
+if($actionStr == "getMyhuilvByHuilvDiv"){
+	$huilvDiv = $_GET['huilvDiv'];
+	if(empty($huilvDiv)) {
+		return;
+	}
+	$my = new MyHuilv();
+	$rslt = $my->getMyhuilvByHuilvDiv($huilvDiv);
+	echo json_encode($rslt);
+
 //******* backup ********
 } else if($actionStr == "backupMyGiftCard"){
 	$my = new MyBackup();
