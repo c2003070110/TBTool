@@ -12,6 +12,8 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.URLName;
 import javax.mail.internet.InternetAddress;
 
 import org.openqa.selenium.By;
@@ -23,7 +25,6 @@ import org.openqa.selenium.json.Json;
 import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.google.common.collect.Maps;
-import com.sun.mail.pop3.POP3Store;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -41,7 +42,9 @@ public class AmznAutoRegistGiftCardDeamon {
 	public static void main(String[] args) throws IOException {
 
 		AmznAutoRegistGiftCardDeamon main = new AmznAutoRegistGiftCardDeamon();
-		main.execute();
+		main.init();
+		main.recieveCode();
+		//main.execute();
 		//main.init();
 		//AmznGiftCardObject noticeObj = main.getLastestNotice();
 		//main.finishAmazonNoticeForAddCode(noticeObj.uid, main.mailAddress);
@@ -87,17 +90,21 @@ public class AmznAutoRegistGiftCardDeamon {
 			Map<String, Object> objMap = null;
 			objMap = j.toType(rslt, Map.class);
 			lastestNotice.uid = (String) objMap.get("uid");
+			if (StringUtil.isBlank(lastestNotice.uid)) {
+				NieUtil.log(logFile, "[ERROR][getLastestNotice]uid is NULL!!");
+				return null;
+			}
 			lastestNotice.amt = (String) objMap.get("amt");
-			lastestNotice.qtty = Integer.parseInt((String)objMap.get("qtty"));
-			lastestNotice.payway = (String) objMap.get("payway");
 			if (StringUtil.isBlank(lastestNotice.amt)) {
 				NieUtil.log(logFile, "[ERROR][getLastestNotice]AMT is NULL!!");
 				return null;
 			}
+			lastestNotice.qtty = Integer.parseInt((String)objMap.get("qtty"));
 			if (lastestNotice.qtty == 0) {
 				NieUtil.log(logFile, "[ERROR][getLastestNotice]QTTY is ZERO!!");
 				return null;
 			}
+			lastestNotice.payway = (String) objMap.get("payway");
 			if (StringUtil.isBlank(lastestNotice.payway)) {
 				NieUtil.log(logFile, "[ERROR][getLastestNotice]payway is NULL!!");
 				return null;
@@ -116,12 +123,30 @@ public class AmznAutoRegistGiftCardDeamon {
 		try {
 
 			Properties properties = new Properties();
-			properties.put("mail.pop3.host", NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.host"));
+			properties.put("mail.imap.host", NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.imap.host"));
+			properties.put("mail.imap.port", NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.imap.port"));
+			properties.put("mail.imap.timeout", 3000);
+			properties.put("mail.imap.ssl.enable", true);
+				
+			//properties.put("mail.pop3.starttls.enable", "true");
 			Session emailSession = Session.getDefaultInstance(properties);
-			POP3Store emailStore = (POP3Store) emailSession.getStore("pop3");
-			emailStore.connect(mailAddress, NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.password"));
-			Folder emailFolder = emailStore.getFolder("INBOX");
-			emailFolder.open(Folder.READ_WRITE);// READ_WRITE ?
+			URLName url = new URLName(NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.type"), 
+					NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.imap.host"), 
+					Integer.parseInt(NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.imap.port")), 
+					"amazonGift", 
+					NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.account"), 
+					NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.password"));
+			Store emailStore = emailSession.getStore(url);
+			emailStore.connect();
+			Folder emailFolder = emailStore.getFolder(url);
+			emailFolder.open(Folder.READ_WRITE);
+//			Store emailStore =  emailSession.getStore(NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.type"));
+//			emailStore.connect(NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.imap.host"),
+//					Integer.parseInt(NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.imap.port")),
+//					NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.account"), 
+//					NieConfig.getConfig("amazon.auto.regist.giftcard.rec.mail.password"));
+//			Folder emailFolder = emailStore.getFolder("INBOX");
+//			emailFolder.open(Folder.READ_WRITE);// READ_WRITE ?
 
 			Message[] messages = emailFolder.getMessages();
 			for (int i = 0; i < messages.length; i++) {
@@ -183,33 +208,35 @@ public class AmznAutoRegistGiftCardDeamon {
 
 	public void orderCode(WebDriver driver ,AmznGiftCardObject giftObj) {
 	
-		String orderUrl = "XXXX";
-		for (int i = 0; i < giftObj.qtty; i++) {
+		String orderUrl = "https://www.amazon.co.jp/Amazon%E3%82%AE%E3%83%95%E3%83%88%E5%88%B8-1_JP_Email-Amazon%E3%82%AE%E3%83%95%E3%83%88%E5%88%B8-E%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%BF%E3%82%A4%E3%83%97-Amazon%E3%83%99%E3%83%BC%E3%82%B7%E3%83%83%E3%82%AF/dp/B004N3APGO/ref=lp_3131877051_1_1?s=gift-cards&ie=UTF8&qid=1556203876&sr=1-1";
+		//for (int i = 0; i < giftObj.qtty; i++) {
 			driver.get(orderUrl);
 			try {
 				// fill
-				WebElement el1 = driver.findElement(By.cssSelector("input[id=\"XXX\"]"));
+				WebElement el1 = driver.findElement(By.cssSelector("input[id=\"gc-order-form-custom-amount\"]"));
 				el1.sendKeys(giftObj.amt);
-				WebElement el2 = driver.findElement(By.cssSelector("input[id=\"XXX\"]"));
+				WebElement el2 = driver.findElement(By.cssSelector("textarea[id=\"gc-order-form-recipients\"]"));
 				el2.sendKeys(mailAddress);
-				WebElement el3 = driver.findElement(By.cssSelector("input[id=\"XXX\"]"));
-				el3.click();
-
-				// payment
+				WebElement el3 = driver.findElement(By.cssSelector("input[id=\"gc-order-form-quantity\"]"));
+				el3.sendKeys(giftObj.qtty+"");
 				WebElement el4 = driver.findElement(By.cssSelector("input[id=\"XXX\"]"));
 				el4.click();
 
-				// order
-				WebElement el5 = driver.findElement(By.cssSelector("input[id=\"XXX\"]"));
+				// payment  カートに入れる
+				WebElement el5 = driver.findElement(By.cssSelector("input[id=\"gc-buy-box-atc\"]"));
 				el5.click();
+
+				// order 				  今すぐ購入
+				//WebElement el5 = driver.findElement(By.cssSelector("input[id=\"gc-buy-box-bn\"]"));
+				//el5.click();
 			} catch (Exception e) {
 
 				e.printStackTrace();
 				NieUtil.log(logFile, "[ERROR][orderCode]" + e.getMessage());
 				NieUtil.log(logFile, e);
-				break;
+				//break;
 			}
-		}
+		//}
 
 		finishAmazonNoticeForAddCode(giftObj.uid, mailAddress);
 	}
@@ -251,7 +278,7 @@ public class AmznAutoRegistGiftCardDeamon {
 	private void logon(WebDriver driver) {
 
 		// TODO
-		String rootUrl = "XXXXX";
+		String rootUrl = "https://www.amazon.co.jp/ap/signin?_encoding=UTF8&ignoreAuthState=1&openid.assoc_handle=jpflex&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.co.jp%2F%3Fref_%3Dnav_signin&switch_account=";
 
 		driver.manage().window().setSize(new Dimension(960, 960));
 		driver.manage().window().setPosition(new Point(10, 10));
@@ -267,10 +294,10 @@ public class AmznAutoRegistGiftCardDeamon {
 
 		NieUtil.mySleepBySecond(2);
 		
-		List<WebElement> eles = driver.findElements(By.cssSelector("div[class=\"FIXME\"]"));
+		List<WebElement> eles = driver.findElements(By.cssSelector("span[id=\"glow-ingress-line2\"]"));
 		for(WebElement ele:eles){
-			String txt = ele.getText();
-			if(txt.indexOf("FIXME") != -1){
+			String txt = ele.getText().replaceAll(" ", "");
+			if(txt.indexOf("123-0845‌") != -1){
 				return;
 			}
 		}
