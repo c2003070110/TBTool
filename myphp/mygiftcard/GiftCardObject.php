@@ -38,5 +38,21 @@ class BidObject
 	public $dtMsg = '';// date time
 	
 }
+class AmznOrderObject
+{
+    public $uid = '';
+    public $amt = '';
+    public $qtty = '';
+    public $payway = '';
+	
+    public $mailAddress = '';
+	public $dtAdd = '';// date time
+	public $dtOrdered = '';// date time
+	public $dtFin = '';// date time
+	
+    public $status = '';//unorder ordered fin
+	
+	
+}
 
 ?>

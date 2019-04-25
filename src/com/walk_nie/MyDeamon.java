@@ -1,18 +1,12 @@
 package com.walk_nie;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.charset.Charset;
-import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.http.client.utils.DateUtils;
 import org.openqa.selenium.WebDriver;
 
+import com.walk_nie.amzn.AmznAutoRegistGiftCardDeamon;
 import com.walk_nie.taobao.montBell.main.MontbellOrderDemon;
 import com.walk_nie.taobao.montBell.main.MontbellPinyinDemon;
 import com.walk_nie.taobao.util.WebDriverUtil;
@@ -27,6 +21,7 @@ public class MyDeamon {
 	protected WebMoneyDemon webMoneyDemon = new WebMoneyDemon();
 	protected MontbellPinyinDemon montbellPinyinDemon = new MontbellPinyinDemon();
 	protected MontbellOrderDemon montbellOrderDemon = new MontbellOrderDemon();
+	protected AmznAutoRegistGiftCardDeamon amznAutoRegistGiftCardDeamon = new AmznAutoRegistGiftCardDeamon();
 	/**
 	 * @param args
 	 * @throws IOException
@@ -50,16 +45,17 @@ public class MyDeamon {
 				webMoneyDemon.execute(driver);
 				montbellPinyinDemon.execute(driver);
 				montbellOrderDemon.execute(driver);
+				amznAutoRegistGiftCardDeamon.execute(driver);
 				
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
 				if (dif < interval * 1000) {
-					log("[SLEEP]zzzZZZzzz...");
+					NieUtil.log(logFile, "[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
 							.intValue());
 				}
 			} catch (Exception ex) {
-				log(ex);
+				NieUtil.log(logFile, ex);
 			}
 		}
 	}
@@ -77,34 +73,7 @@ public class MyDeamon {
 		webMoneyDemon.init();
 		montbellPinyinDemon.init();
 		montbellOrderDemon.init();
-	}
-	private void log(String string) {
-
-		String nowDateTimeStr = getNowDateTime();
-		try {
-			String str = "[" + nowDateTimeStr + "]" + string + "\n";
-			System.out.print(str);
-			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void log(Exception ex) {
-		try {
-			PrintStream ps = new PrintStream(new FileOutputStream(logFile,true));
-			ex.printStackTrace(ps);
-			ps.flush();
-			ps.close();
-			ex.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		amznAutoRegistGiftCardDeamon.init(driver);
 	}
 	
-	private String getNowDateTime(){
-        TimeZone tz2 = TimeZone.getTimeZone("Asia/Tokyo");
-        Calendar cal1 = Calendar.getInstance(tz2);
-		return DateUtils.formatDate(cal1.getTime(), "yyyy-MM-dd HH:mm:ss");
-	}
 }

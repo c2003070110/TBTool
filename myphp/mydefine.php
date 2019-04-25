@@ -7,6 +7,7 @@ define("CRDB_PATH", "/home/nie2019/myphp/db");
 
 define("TBL_MYGIFTCODE_CODE", "mygiftcode.code"); 
 define("TBL_MYGIFTCODE_BID", "mygiftcode.bid"); 
+define("TBL_MYGIFTCODE_AMZN_ORDER", "mygiftcode.amzn.order"); 
 
 define("TBL_MYDAIGOU_ITEM_INFO", "mydaigou.item.info"); 
 

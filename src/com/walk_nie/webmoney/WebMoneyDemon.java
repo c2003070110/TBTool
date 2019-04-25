@@ -1,15 +1,10 @@
 package com.walk_nie.webmoney;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -72,12 +67,12 @@ public class WebMoneyDemon {
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
 				if (dif < interval * 1000) {
-					log("[SLEEP]zzzZZZzzz...");
+					NieUtil.log(logFile, "[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
 							.intValue());
 				}
 			} catch (Exception ex) {
-				log(ex);
+				NieUtil.log(logFile, ex);
 			}
 		}
 	}
@@ -106,7 +101,7 @@ public class WebMoneyDemon {
 			if (StringUtil.isBlank(line)) {
 				return null;
 			}
-			log("[INFO][Service:getLastestNoticeOne][Result]" + line);
+			NieUtil.log(logFile, "[INFO][Service:getLastestNoticeOne][Result]" + line);
 
 			Json j = new Json();
 			Map<String, Object> objMap = null;
@@ -116,12 +111,12 @@ public class WebMoneyDemon {
 			lastestNotice.amtJPY = (String) objMap.get("amtJPY");
 			lastestNotice.payway = (String) objMap.get("payway");
 			if (StringUtil.isBlank(lastestNotice.url)) {
-				log("[ERROR][getLastestNotice]URL is NULL!!");
+				NieUtil.log(logFile, "[ERROR][getLastestNotice]URL is NULL!!");
 				return null;
 			}
 		} catch (Exception e) {
-			log("[ERROR][getLastestNotice]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][getLastestNotice]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			return null;
 		}
 
@@ -186,10 +181,10 @@ public class WebMoneyDemon {
 			if (StringUtil.isBlank(line)) {
 				return;
 			}
-			log("[INFO][Service:updateCheckResult][Result]" + line);
+			NieUtil.log(logFile, "[INFO][Service:updateCheckResult][Result]" + line);
 		} catch (Exception e) {
-			log("[ERROR][check]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][check]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			return;
 		}
 	}
@@ -206,7 +201,7 @@ public class WebMoneyDemon {
 			if (StringUtil.isBlank(line)) {
 				return null;
 			}
-			log("[INFO][Service:getCheckedNoticeOne][Result]" + line);
+			NieUtil.log(logFile, "[INFO][Service:getCheckedNoticeOne][Result]" + line);
 
 			Json j = new Json();
 			Map<String, Object> objMap = null;
@@ -216,20 +211,20 @@ public class WebMoneyDemon {
 			checkedNotice.amtJPY = (String) objMap.get("amtJPY");
 			checkedNotice.payway = (String) objMap.get("payway");
 			if (StringUtil.isBlank(checkedNotice.url)) {
-				log("[ERROR][getChecked]URL is NULL!!");
+				NieUtil.log(logFile, "[ERROR][getChecked]URL is NULL!!");
 				return null;
 			}
 			if (StringUtil.isBlank(checkedNotice.amtJPY)) {
-				log("[ERROR][getChecked]金額 is NULL!!");
+				NieUtil.log(logFile, "[ERROR][getChecked]金額 is NULL!!");
 				return null;
 			}
 			if (StringUtil.isBlank(checkedNotice.payway)) {
-				log("[ERROR][getChecked]支付方式 is NULL!!");
+				NieUtil.log(logFile, "[ERROR][getChecked]支付方式 is NULL!!");
 				return null;
 			}
 		} catch (Exception e) {
-			log("[ERROR][getChecked]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][getChecked]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			return null;
 		}
 
@@ -361,7 +356,7 @@ public class WebMoneyDemon {
 		try {
 			FileUtils.copyFile(screenshot, saveTo);
 		} catch (IOException e) {
-			log(e);
+			NieUtil.log(logFile, e);
 			e.printStackTrace();
 		}
 	}
@@ -383,10 +378,10 @@ public class WebMoneyDemon {
 			if (StringUtil.isBlank(line)) {
 				return ;
 			}
-			log("[INFO][Service:requireCheck][Result]" + line);
+			NieUtil.log(logFile, "[INFO][Service:requireCheck][Result]" + line);
 		} catch (Exception e) {
-			log("[ERROR][check]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][check]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			return ;
 		}
 	}
@@ -398,36 +393,6 @@ public class WebMoneyDemon {
 
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
-	}
- 
-	private void log(String string) {
-
-		String nowDateTimeStr = getNowDateTime();
-		try {
-			String str = "[" + nowDateTimeStr + "]" + string + "\n";
-			System.out.print(str);
-			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void log(Exception ex) {
-		try {
-			PrintStream ps = new PrintStream(new FileOutputStream(logFile,true));
-			ex.printStackTrace(ps);
-			ps.flush();
-			ps.close();
-			ex.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private String getNowDateTime(){
-        TimeZone tz2 = TimeZone.getTimeZone("Asia/Tokyo");
-        Calendar cal1 = Calendar.getInstance(tz2);
-		return DateUtils.formatDate(cal1.getTime(), "yyyy-MM-dd HH:mm:ss");
 	}
 
 }

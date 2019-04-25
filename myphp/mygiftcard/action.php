@@ -19,8 +19,41 @@ if($actionStr == "save"){
 	$myGiftCard = new MyGiftCard();
 	$rslt = $myGiftCard->saveCode($paramStr);
 	echo $rslt;
+} else if($actionStr == "saveAmznOrder"){
+	$uid = $_GET['uid'];
+	$qtty = $_GET['qtty'];
+	$amt = $_GET['amt'];
+	$payway = $_GET['payway'];
+	if(empty($qtty) || empty($amt) || empty($payway)){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	$rslt = $myGiftCard->saveAmznOrder($uid, $amt, $qtty, $payway);
+	echo $rslt;
+} else if($actionStr == "updateAmznOrderStatus"){
+	$uid = $_GET['uid'];
+	$tostatus = $_GET['status'];
+	if(empty($uid) || empty($tostatus)){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	$rslt = $myGiftCard->updateAmznOrderStatus($uid, $tostatus);
+	echo $rslt;
 
 // **** service action
+} else if($actionStr == "addCode"){
+	$orderNo = $_GET['orderNo'];
+	$codeType = $_GET['codeType'];
+	$codeCd = $_GET['codeCd'];
+	if(empty($codeType) || empty($codeCd)){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	$rslt = $myGiftCard->addCode($orderNo, $codeType, $codeCd);
+	echo $rslt;
 } else if($actionStr == "bided"){
 	$bidId = $_GET['bidId'];
 	$obidId = $_GET['obidId'];
@@ -109,6 +142,25 @@ if($actionStr == "save"){
 	}
 	$myGiftCard = new MyGiftCard();
 	$myGiftCard->updateBidMsgReply($bidId, $obidId, $msg);
+	
+} else if($actionStr == "getAmazonNoticeForAddCode"){
+	$myGiftCard = new MyGiftCard();
+	$data = $myGiftCard->getAmznOrderUnorderedOne();
+	if(empty($data)){
+		echo "";
+	}else{
+		echo json_encode($data);
+	}
+} else if($actionStr == "finishAmazonNoticeForAddCode"){
+	$uid = $_GET['uid'];
+	$mailAddress = $_GET['mailAddress'];
+	if(empty($uid) || empty($mailAddress)){
+		echo "[Fatal]Parameter is NULL";
+		return;
+	}
+	$myGiftCard = new MyGiftCard();
+	$myGiftCard->finishAmazonNoticeForAddCode($uid, $mailAddress);
+	
 // **** service end
 	
 } else if($actionStr == "DelBid" || $actionStr == "paid" || $actionStr == "send" || $actionStr == "finishBid"){

@@ -29,5 +29,7 @@ if (endsWith($selfName, "stocklist.php")) {
     <li class="list-group-item"><a href="/myphp/mygiftcard/stocklist.php?status=unused">库存</a></li>
     <li class="list-group-item"><a href="/myphp/mygiftcard/bidlist.php?status=paid">得拍</a></li>
     <li class="list-group-item"><a href="/myphp/mygiftcard/msglist.php?status=wait">消息</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/page_makeAmznOrder.php">amzn</a></li>
+    <li class="list-group-item"><a href="/myphp/mygiftcard/page_amznOrderList.php">amznlist</a></li>
   </ul>   
   <hr class="mb-2"> 

@@ -1,21 +1,16 @@
 package com.walk_nie.ya.auction;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.DateUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -86,12 +81,12 @@ public class YaAucDemon {
 				t2 = System.currentTimeMillis();
 				dif = t2 - t1;
 				if (dif < interval * 1000) {
-					log("[SLEEP]zzzZZZzzz...");
+					NieUtil.log(logFile, "[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000))
 							.intValue());
 				}
 			} catch (Exception ex) {
-				log(ex);
+				NieUtil.log(logFile, ex);
 			}
 		}
 	}
@@ -135,7 +130,7 @@ public class YaAucDemon {
 		if (hasPaid(driver, lastestNoticeList)) {
 			send(driver, lastestNoticeList);
 		} else {
-			//log("[RSLT]There is NONE to sent.");
+			//NieUtil.log(logFile, "[RSLT]There is NONE to sent.");
 		}
 		long t2 = System.currentTimeMillis();
 		long dif = t2 - t1;
@@ -182,7 +177,7 @@ public class YaAucDemon {
 				return;
 			}
 			
-			log("[INFO][Service:getAplyBidMsgOne][Result]" + rslt);
+			NieUtil.log(logFile, "[INFO][Service:getAplyBidMsgOne][Result]" + rslt);
 			if (rslt.indexOf("ERROR") != -1) {
 				return;
 			}
@@ -195,7 +190,7 @@ public class YaAucDemon {
 				String auctionId = (String) objMap.get("bidId");
 				String obider = (String) objMap.get("obidId");
 				String replymsg = (String) objMap.get("replymsg");
-				log("[publishBidMsg][auctionId]" + auctionId + "[obider]" + obider + "[msg]" + replymsg);
+				NieUtil.log(logFile, "[publishBidMsg][auctionId]" + auctionId + "[obider]" + obider + "[msg]" + replymsg);
 				if (StringUtil.isBlank(replymsg)) {
 					return;
 				}
@@ -217,18 +212,18 @@ public class YaAucDemon {
 				param.put("status", "sent");
 				String rslt1 = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 				if (StringUtil.isNotBlank(rslt1)) {
-					log("[INFO][Service:updateBidMsgStatus][Result]" + rslt1);
+					NieUtil.log(logFile, "[INFO][Service:updateBidMsgStatus][Result]" + rslt1);
 				}
 
 			} catch (Exception ex) {
-				log("[ERROR][addBidMsg]" + ex.getMessage());
-				log(ex);
+				NieUtil.log(logFile, "[ERROR][addBidMsg]" + ex.getMessage());
+				NieUtil.log(logFile, ex);
 				ex.printStackTrace();
 				return;
 			}
 		} catch (Exception e) {
-			log("[ERROR][addBidMsg]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][addBidMsg]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			e.printStackTrace();
 			return;
 		}
@@ -282,11 +277,11 @@ public class YaAucDemon {
 		try {
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isNotBlank(rslt)) {
-				log("[INFO][Service:addBidMsg][Result]" + rslt);
+				NieUtil.log(logFile, "[INFO][Service:addBidMsg][Result]" + rslt);
 			}
 		} catch (Exception e) {
-			log("[ERROR][addBidMsg]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][addBidMsg]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			e.printStackTrace();
 		}
 	}
@@ -339,13 +334,13 @@ public class YaAucDemon {
 		try {
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isNotBlank(rslt)) {
-				log("[INFO][Service:bided][Result]" + rslt);
+				NieUtil.log(logFile, "[INFO][Service:bided][Result]" + rslt);
 				return false;
 			}
 			return true;
 		} catch (Exception e) {
-			log("[ERROR][addBided]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][addBided]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			e.printStackTrace();
 			return false;
 		}
@@ -360,7 +355,7 @@ public class YaAucDemon {
 					By.cssSelector("div[id=\"modItemNewList\"]")).findElement(
 					By.tagName("table"));
 		} catch (Exception e) {
-			log("[INFO][getLastestNotice]There are NONE notice!");
+			NieUtil.log(logFile, "[INFO][getLastestNotice]There are NONE notice!");
 			return list;
 		}
 		List<WebElement> trWeList = weTbl.findElements(By.tagName("tr"));
@@ -409,7 +404,7 @@ public class YaAucDemon {
 
 	private boolean hasPaid(WebDriver driver, List<YaNoticeObject> lastestNoticeList) {
 
-		//log("[hasPaid][START]Is There any auction paid?");
+		//NieUtil.log(logFile, "[hasPaid][START]Is There any auction paid?");
 		for (YaNoticeObject obj : lastestNoticeList) {
 			String title = obj.title;
 
@@ -420,10 +415,10 @@ public class YaAucDemon {
 				continue;
 			}
 
-			//log("[hasPaid][END]There are some auction which had paid!");
+			//NieUtil.log(logFile, "[hasPaid][END]There are some auction which had paid!");
 			return true;
 		}
-		//log("[hasPaid][END]There are NONE auction which had paid!");
+		//NieUtil.log(logFile, "[hasPaid][END]There are NONE auction which had paid!");
 		return false;
 	}
 
@@ -431,7 +426,7 @@ public class YaAucDemon {
 
 		List<YaNoticeObject> sendTargetList = Lists.newArrayList();
 		
-		//log("[SEND]START");
+		//NieUtil.log(logFile, "[SEND]START");
 		for (YaNoticeObject obj : lastestNoticeList) {
 			String title = obj.title;
 			if (!title.startsWith("支払い完了:")) {
@@ -445,7 +440,7 @@ public class YaAucDemon {
 		}
 		for (YaNoticeObject obj : sendTargetList) {
 			YaSoldObject yaObj = parseYaObjectFromUrl(obj.href);
-			log("[SEND][SETING][auctionId]" + yaObj.auctionId + "[obider]" + yaObj.obider);
+			NieUtil.log(logFile, "[SEND][SETING][auctionId]" + yaObj.auctionId + "[obider]" + yaObj.obider);
 			driver.get(String.format(bidUrlFmt, yaObj.auctionId, yaObj.obider));
 
 			WebElement rootWe = driver.findElement(By
@@ -463,7 +458,7 @@ public class YaAucDemon {
 				}
 			}
 			if (sendBtnWe == null) {
-				log("[ERROR][This Auction has sent!][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+				NieUtil.log(logFile, "[ERROR][This Auction has sent!][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 				driver.get(obj.href);
 				continue;
 			}
@@ -486,7 +481,7 @@ public class YaAucDemon {
 			
 			driver.get(obj.href);
 		}
-		//log("[SEND]END");
+		//NieUtil.log(logFile, "[SEND]END");
 	}
 
 	private YaSoldObject parseYaObjectFromUrl(String href) {
@@ -505,13 +500,13 @@ public class YaAucDemon {
 			return yaObj;
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
-			log(e);
+			NieUtil.log(logFile, e);
 		}
 		return null;
 	}
 
 	private void doSend(WebDriver driver, WebElement rootWe, WebElement sendBtnWe, String message, YaSoldObject yaObj) {
-		log("[Sending][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+		NieUtil.log(logFile, "[Sending][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 
 		WebElement msgFormWe = rootWe.findElement(By
 				.cssSelector("div[id=\"msgForm\"]"));
@@ -557,7 +552,7 @@ public class YaAucDemon {
 		}
 		String msgFmt = "[SUCC]sent sucessfully!![auctionId]%s[obider]%s[msg]%s";
 		String msg = String.format(msgFmt, yaObj.auctionId, yaObj.obider, message);
-		log(msg);
+		NieUtil.log(logFile,msg);
 		NieUtil.mySleepBySecond(1);
 	}
 
@@ -575,16 +570,16 @@ public class YaAucDemon {
 
 			if (StringUtil.isBlank(code)) {
 				String msg = String.format(errMsgFmt, auctionId, obider, key);
-				log(msg);
+				NieUtil.log(logFile, msg);
 				return null;
 			}
-			log("[INFO][Service:getUnusedCode][Result]" + code);
+			NieUtil.log(logFile, "[INFO][Service:getUnusedCode][Result]" + code);
 			String[] spa = code.split(";");
 			for (String sps : spa) {
 				String[] spaa = sps.split(":");
 				if (spaa.length != 2) {
 					String msg = String.format(errMsgFmt, auctionId, obider, key);
-					log(msg);
+					NieUtil.log(logFile, msg);
 					return null;
 				}
 				YaSendCodeObject codeObj = new YaSendCodeObject();
@@ -595,8 +590,8 @@ public class YaAucDemon {
 				codeList.add(codeObj);
 			}
 		} catch (IOException e) {
-			log("[ERROR][getCode]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][getCode]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			e.printStackTrace();
 			return null;
 		}
@@ -688,7 +683,7 @@ public class YaAucDemon {
 				.getConfig("yahoo.auction.autosend.hadSent.file");
 		List<String> l = Lists.newArrayList();
 		String fmt = "%s\t%s\t%s\t%s\t%s";
-		l.add(String.format(fmt, getNowDateTime(), yaObj.auctionId, yaObj.obider, yaObj.title,yaObj.statusMsg));
+		l.add(String.format(fmt, NieUtil.getNowDateTime(), yaObj.auctionId, yaObj.obider, yaObj.title,yaObj.statusMsg));
 		FileUtils.writeLines(new File(hadSendFile), l, true);
 
 		Map<String,String> param = Maps.newHashMap();
@@ -702,7 +697,7 @@ public class YaAucDemon {
 		param.put("codeCd", codeS.substring(0, codeS.length() - 1));
 		String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 		if (StringUtil.isNotBlank(rslt)) {
-			log("[INFO][Service:asset][Result]" + rslt);
+			NieUtil.log(logFile, "[INFO][Service:asset][Result]" + rslt);
 		}
 	}
 
@@ -720,7 +715,7 @@ public class YaAucDemon {
 			hrefList.add(href);
 		}
 		if(hrefList.isEmpty()){
-			//log("[RSLT]There is NONE to review.");
+			//NieUtil.log(logFile, "[RSLT]There is NONE to review.");
 			return;
 		}
 		for (String href : hrefList) {
@@ -749,7 +744,7 @@ public class YaAucDemon {
 	}
 	private void doReview(WebDriver driver, YaSoldObject yaObj) {
 
-		log("[Reviewing][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
+		NieUtil.log(logFile, "[Reviewing][auctionId]" + yaObj.auctionId +"[obider]" + yaObj.obider);
 		List<WebElement> weList = driver.findElements(By.tagName("input"));
 		for (WebElement we : weList) {
 			if ("定型コメント入力".equals(we.getAttribute("value"))) {
@@ -774,7 +769,7 @@ public class YaAucDemon {
 		}
 		String msgFmt = "[SUCC]Review sucessfully!![auctionId]%s[obider]%s";
 		String msg = String.format(msgFmt, yaObj.auctionId, yaObj.obider);
-		log(msg);
+		NieUtil.log(logFile, msg);
 	}
 
 
@@ -793,7 +788,7 @@ public class YaAucDemon {
 			hrefList.add(href);
 		}
 		if(hrefList.isEmpty()){
-			//log("[RSLT]There is NONE Auction to be finish");
+			//NieUtil.log(logFile, "[RSLT]There is NONE Auction to be finish");
 			return;
 		}
 		for (String href : hrefList) {
@@ -809,7 +804,7 @@ public class YaAucDemon {
 			}
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isNotBlank(rslt)) {
-				log("[INFO][Service:fin][Result]" + rslt);
+				NieUtil.log(logFile, "[INFO][Service:fin][Result]" + rslt);
 			}
 		}
 	}
@@ -830,7 +825,7 @@ public class YaAucDemon {
 		}
 		for (YaNoticeObject str : list) {
 			try {
-				log("[republish][publishing]" + str.title);
+				NieUtil.log(logFile, "[republish][publishing]" + str.title);
 				String t = str.href;
 				int idx = t.lastIndexOf("?");
 				if (idx != -1) {
@@ -885,13 +880,13 @@ public class YaAucDemon {
 		try {
 			String s = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
 			if (StringUtil.isNotBlank(s)) {
-				log("[INFO][Service:stockCheck][Result]" + s);
+				NieUtil.log(logFile, "[INFO][Service:stockCheck][Result]" + s);
 			}
 			return new Boolean(s).booleanValue();
 		} catch (UnsupportedOperationException | IOException e) {
 			e.printStackTrace();
-			log("[ERROR][hasStock]" + e.getMessage());
-			log(e);
+			NieUtil.log(logFile, "[ERROR][hasStock]" + e.getMessage());
+			NieUtil.log(logFile, e);
 			return false;
 		}
 	}
@@ -930,36 +925,6 @@ public class YaAucDemon {
 		NieUtil.readLineFromSystemIn("Yahoo! login is finished? ANY KEY For already");
 
 		return driver;
-	}
-
-	private void log(String string) {
-
-		String nowDateTimeStr = getNowDateTime();
-		try {
-			String str = "[" + nowDateTimeStr + "]" + string + "\n";
-			System.out.print(str);
-			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void log(Exception ex) {
-		try {
-			PrintStream ps = new PrintStream(new FileOutputStream(logFile,true));
-			ex.printStackTrace(ps);
-			ps.flush();
-			ps.close();
-			ex.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private String getNowDateTime(){
-        TimeZone tz2 = TimeZone.getTimeZone("Asia/Tokyo");
-        Calendar cal1 = Calendar.getInstance(tz2);
-		return DateUtils.formatDate(cal1.getTime(), "yyyy-MM-dd HH:mm:ss");
 	}
 
 }

@@ -39,6 +39,29 @@ class MyGiftCard
 		}
 		return $resultStr;
 	}
+	public function addCode($orderNo, $codeType, $codeCd){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
+		
+		$cnt = $tbl->select(['codeCd', '==', $codeCd], 'and')->count();
+		if($cnt !== 0){
+			$resultStr = "[ERROR][Code is already registed]" . $codeCd;
+			return $resultStr; 
+		}
+		
+		$cardObj = new GiftCardObject();
+		$cardObj->uid = uniqid();
+		$cardObj->orderNo = $orderNo;
+		$cardObj->codeType = $codeType;
+		$cardObj->codeCd = $codeCd;
+		$cardObj->status = 'unused';
+		$cardObj->dtReg = date("YmdGis");
+		$cardObj->bidId = "";
+		$cardObj->obidId = "";
+		$tbl->insert($cardObj);
+		$resultStr = "[INSERT]success";
+		return $resultStr;
+	}
 	public function listCodeByUid($uid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
@@ -403,6 +426,85 @@ class MyGiftCard
 			}
 		}
 		return $rsltArr;
+	}
+	
+	//********* amazon gift card order************::
+	public function listAmznOrderByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		
+		return $tbl->select(["uid"], "===", $uid)->fetch()[0];
+	}
+	public function listAllAmznOrder(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		
+		return $tbl->select('*')->fetch();
+	}
+	
+	public function saveAmznOrder($uid, $amt, $qtty, $payway){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		
+		if(!empty($uid)){
+			$tbl->select(['uid', '==', $uid])->update(["amt",$amt],["qtty",$qtty],["payway",$payway]);
+			return $uid;
+		}
+		
+		$data = new AmznOrderObject();
+		$data->uid = uniqid();
+		$data->amt = $amt;
+		$data->qtty = $qtty;
+		$data->payway = $payway;
+		$data->status = 'unorder';
+		$data->dtAdd = date("YmdGis");
+		
+		$tbl->insert($data);
+		return $data->uid;
+	}
+	public function updateAmznOrderStatus($uid, $toStatus){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		
+		if(empty($uid) || empty($toStatus)){
+			return;
+		}
+		if($toStatus == "unorder"){
+			$tbl->select(['uid', '==', $uid])
+				->update(['dtAdd', date("YmdGis")],['dtOrdered', ""],['dtFin', ""],
+						 ['status', $toStatus]);
+		}else if($toStatus == "ordered"){
+			$tbl->select(['uid', '==', $uid])
+				->update(['dtOrdered', date("YmdGis")],['dtFin', ""],
+						 ['status', $toStatus]);
+		}else if($toStatus == "fin"){
+			$tbl->select(['uid', '==', $uid])
+				->update(['dtFin', date("YmdGis")],
+						 ['status', $toStatus]);
+		}else if($toStatus == "del"){
+			$tbl->select(['uid', '==', $uid])
+				->delete();
+		}
+	}
+	public function finishAmazonNoticeForAddCode($uid, $mailAddress){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		if(empty($uid) || empty($mailAddress)){
+			return;
+		}
+		$tbl->select(['uid', '==', $uid, 'and'])
+			->update(['dtOrdered', date("YmdGis")],['mailAddress', $mailAddress],
+					 ['status', "ordered"]);
+	}
+	public function getAmznOrderUnorderedOne(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		
+		$data = $tbl->select(['status', '==', "unorder"])->fetch()[0];
+		if(empty($data)){
+			return "";
+		}
+		return $data;
 	}
 }
 ?>

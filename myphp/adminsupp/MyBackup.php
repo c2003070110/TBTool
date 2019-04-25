@@ -12,13 +12,13 @@ class MyBackup
 		
 		$today = date("YmdGis");
 		
-		$dataFin = $tbl->select(['status', '==', $fin])->fetch();
-		$dataInvalid = $tbl->select(['status', '==', $invalid])->fetch();
+		$dataFin = $tbl->select(['status', '==', "fin"])->fetch();
+		$dataInvalid = $tbl->select(['status', '==', "invalid"])->fetch();
 		$dataAll = array_merge($dataFin, $dataInvalid);
 		if(empty($dataAll)){
 			return "There are NONE Data to backup";
 		}
-		$tblBackup = $cdb->table(constant("TBL_MYGIFTCODE_CODE") . "-" . $today);
+		$tblBackup = $cdb->table(constant("TBL_MYGIFTCODE_CODE") . ".backup-" . $today);
 		foreach ($dataAll as $data) {
 			$tblBackup->insert($data);
 			$tbl->select(['uid', '==', $data["uid"]])->delete();
@@ -26,11 +26,11 @@ class MyBackup
 		
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
 		
-		$dataAll = $tbl->select(['status', '==', $fin])->fetch();
+		$dataAll = $tbl->select(['status', '==', "fin"])->fetch();
 		if(empty($dataAll)){
 			return "There are NONE Data to backup";
 		}
-		$tblBackup = $cdb->table(constant("TBL_MYGIFTCODE_BID") . "-" . $today);
+		$tblBackup = $cdb->table(constant("TBL_MYGIFTCODE_BID") . ".backup-" . $today);
 		foreach ($dataAll as $data) {
 			$tblBackup->insert($data);
 			$tbl->select(['uid', '==', $data["uid"]])->delete();
@@ -40,17 +40,17 @@ class MyBackup
 	public function backupMyMontbell(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tblMB = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
-		$tblMBBackup = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO") . "-" . $today);
+		$tblMBBackup = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO") . ".backup-" . $today);
 		
 		$tblTB = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
-		$tblTBBackup = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO") . "-" . $today);
+		$tblTBBackup = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO") . ".backup-" . $today);
 		$tblProd = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
-		$tblProdBackup = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO") . "-" . $today);
+		$tblProdBackup = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO") . ".backup-" . $today);
 		
 		$today = date("YmdGis");
 		
-		$dataFin = $tblMB->select(['status', '==', $fin])->fetch();
-		$dataInvalid = $tblMB->select(['status', '==', $cancel])->fetch();
+		$dataFin = $tblMB->select(['status', '==', "fin"])->fetch();
+		$dataInvalid = $tblMB->select(['status', '==', "cancel"])->fetch();
 		$dataAll = array_merge($dataFin, $dataInvalid);
 		if(empty($dataAll)){
 			return "There are NONE Data to backup";

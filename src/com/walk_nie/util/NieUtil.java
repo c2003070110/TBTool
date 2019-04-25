@@ -2,12 +2,16 @@ package com.walk_nie.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +60,7 @@ public class NieUtil {
 		String p = urlEncodeUTF8(param);
 		HttpClient client = HttpClientBuilder.create().build();
 		String urlT = url + "?" + p;
+		System.out.println(urlT);
 		//log("[INFO][httpGet][URL]" + urlT);
 		HttpGet request = new HttpGet(urlT);
 		//try {
@@ -106,5 +111,38 @@ public class NieUtil {
             return "";
         }
     }
+	
+	public static String getNowDateTime(){
+        //TimeZone tz2 = TimeZone.getTimeZone("Asia/Tokyo");
+        //Calendar cal1 = Calendar.getInstance(tz2);
+        Date dt = new Date(System.currentTimeMillis());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(dt);
+		//return DateUtils.formatDate(dt, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	public static void log(File logFile,String string) {
+
+		String nowDateTimeStr = NieUtil.getNowDateTime();
+		try {
+			String str = "[" + nowDateTimeStr + "]" + string + "\n";
+			System.out.print(str);
+			FileUtils.write(logFile, str, Charset.forName("UTF-8"), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void log(File logFile,Exception ex) {
+		try {
+			PrintStream ps = new PrintStream(new FileOutputStream(logFile,true));
+			ex.printStackTrace(ps);
+			ps.flush();
+			ps.close();
+			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
