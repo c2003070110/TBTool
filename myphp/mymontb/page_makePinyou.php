@@ -50,7 +50,7 @@ $(function() {
             location.reload();
         });
     });
-    $(document).on("click", "#btnPinyouChina", function() {
+    $(document).on("click", "#btnPinyouChinaPX", function() {
 		var itemBoxes = $(".productbox");
 		var productUidList = [];
 		for(var i=0; i<itemBoxes.length; i++){
@@ -59,7 +59,26 @@ $(function() {
 		}
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":"makePinyouChina", 
+			   data : {"action":"makePinyouChinaPX", 
+					   "productUidList" : productUidList
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+            location.reload();
+        });
+    });
+    $(document).on("click", "#btnPinyouChinaMJ", function() {
+		var itemBoxes = $(".productbox");
+		var productUidList = [];
+		for(var i=0; i<itemBoxes.length; i++){
+			var urlVal = $(itemBoxes[i]).find("#productUid").val();
+			productUidList[i] = urlVal;
+		}
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"makePinyouChinaMJ", 
 					   "productUidList" : productUidList
 			   },
 			   dataType : "html" 
@@ -162,11 +181,14 @@ $(function() {
     </div>
   </div>
   <div class="row mb-4 pl-3">
-	<div class="col-6">
+	<div class="col-4">
 	  <button type="button" id="btnPinyouJapan" class="btn btn-secondary">WO 邮!</button>
 	</div>
-	<div class="col-6">
-	  <button type="button" id="btnPinyouChina" class="btn btn-secondary">MB 邮!</button>
+	<div class="col-4">
+	  <button type="button" id="btnPinyouChinaMJ" class="btn btn-secondary">MB 邮MJ!</button>
+	</div>
+	<div class="col-4">
+	  <button type="button" id="btnPinyouChinaPX" class="btn btn-secondary">MB 邮PX!</button>
 	</div>
   </div>
 </div>

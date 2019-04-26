@@ -162,8 +162,11 @@ $(function() {
 	    </a>
 	  </div>
       <div class="col-7">
-		  <label for="transferNoGuoji">Transfer No</label>
-		<input type="text" class="form-control" id="transferNoGuoji" value="<?php echo $mbOrderData['transferNoGuoji'] ?>">
+<?php 	if(!empty($mbOrderData['transferNoGuoji'])){ ?>
+    	    <a class="btn btn-primary" href="https://t.17track.net/zh-cn#nums=<?php echo $mbOrderData['transferNoGuoji'] ?>" target="blank">
+              <?php echo $data['transferNoGuoji'] ?>
+    	    </a>
+<?php   } ?>
       </div>
     </div>
 <?php

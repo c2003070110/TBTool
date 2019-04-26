@@ -50,7 +50,8 @@ class MyMontb
 				         ['dingdanhao', $orderObj->dingdanhao],
 				         ['dingdanDt', $orderObj->dingdanDt],
 				         ['maijiadianzhiHanzi', $orderObj->maijiadianzhiHanzi],
-				         ['transferWay', $orderObj->transferWay]);
+						 ['transferWay', $orderObj->transferWay]
+						 );
 			//$mbUid = $tbOrdData["mbUid"];
 			//var_dump($orderObj->transferWay);
 			//var_dump($tbOrdData["transferWay"]);
@@ -90,7 +91,7 @@ class MyMontb
 		$prodlines = explode(";", $prodliststr);
 		$prodArr = array();
 		for($i = 0, $size = count($prodlines); $i < $size; ++$i) {
-			list($productId,$colorName,$sizeName) = explode(",", $prodlines[$i]);
+			list($prodUid,$productId,$colorName,$sizeName) = explode(",", $prodlines[$i]);
 			if($productId == null)continue;
 			$prodObj = new ProductObject();
 			$prodObj->uid = uniqid("p", true) . $i;
@@ -100,6 +101,14 @@ class MyMontb
 			$prodObj->tbUid = $tbOrderUid;
 			$prodObj->mbUid = $mbUid;
 			$orderObj->status = $status;
+			if(!empty($prodUid)){
+				$prodInfoOld = $this->listProductInfoByByUid($prodUid);
+				if(!empty($prodUid)){
+					$prodObj->mbUid = $prodInfoOld["mbUid"];
+					$prodObj->priceOffTax = $prodInfoOld["priceOffTax"];
+					$prodObj->stock = $prodInfoOld["stock"];
+				}
+			}
 			$prodArr[] = $prodObj;
 		}
 		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
@@ -182,6 +191,7 @@ class MyMontb
 		
 		return $tbl->select(['mbUid', '==', $mbUid,'and'])->fetch()[0];
 	}
+	/*
 	public function listTBOrderInfoByPinyou(){
 		$rsltArr = array();
 		$dataArr = $this->listAllTBOrder();
@@ -192,6 +202,7 @@ class MyMontb
 		}
 		return $rsltArr;
 	}
+	*/
 	public function listTBOrderByMbUnorder(){
 		$rsltArr = array();
 		$dataArr = $this->listAllTBOrder();
@@ -449,6 +460,12 @@ class MyMontb
 		$tbl->select(['mbUid', '==', $mbUid])
 			->update(['mbUid', '']);
 	}
+	public function listProductInfoByByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		
+		return $tbl->select(['uid', '==', $uid])->fetch()[0];
+	}
 	public function listProductInfoByMBUid($mbUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
@@ -477,23 +494,18 @@ class MyMontb
 	public function listProductInfoByPinyou(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		$dataArr = $tbl->select("*")->fetch();
 		$rsltArr = array();
-		$tbObjArr = $this->listTBOrderInfoByPinyou();
-		//var_dump($tbObjArr);
-		
-		foreach ($tbObjArr as $data) {
-			$dataProdArr = $this->listProductInfoByByTBUid($data["uid"]);
-			foreach ($dataProdArr as $dataProd) {
-				
-				if(!empty($dataProd["mbUid"]))continue;
-				if($dataProd["status"] == "mboff")continue;
-				$dataProd["maijia"] = $data["maijia"];
-				$dataProd["dingdanhao"] = $data["dingdanhao"];
-				$dataProd["dingdanDt"] = $data["dingdanDt"];
-				$dataProd["tbUid"] = $data["uid"];
-				$dataProd["productUid"] = $dataProd["uid"];
-				$rsltArr[] = $dataProd;
-			}
+		foreach ($dataArr as $dataProd) {
+			if(!empty($dataProd["mbUid"])) continue;
+			$tbInfo = $this->listTBOrderInfoByUid($dataProd["tbUid"]);
+			//var_dump($tbInfo);
+			$dataProd["maijia"] = $tbInfo["maijia"];
+			$dataProd["dingdanhao"] = $tbInfo["dingdanhao"];
+			$dataProd["dingdanDt"] = $tbInfo["dingdanDt"];
+			$dataProd["tbUid"] = $tbInfo["uid"];
+			$dataProd["productUid"] = $dataProd["uid"];
+			$rsltArr[] = $dataProd;
 		}
 		return $rsltArr;
 	}
@@ -511,7 +523,7 @@ class MyMontb
 			$mbObj->lastName = "tokyo";
 			$mbObj->statePY = "tokyo";
 			$mbObj->tel = "08042001314";
-		}else{
+		}else if($pinyouType === "cnPX"){
 			$mbObj->firstName = "Peng";
 			$mbObj->lastName = "Juan";
 			$mbObj->tel = "13879961238";
@@ -520,6 +532,7 @@ class MyMontb
 			$mbObj->cityPY = "PingXiang Shi";
 			$mbObj->adr1PY = "AnYuan Qu FengHuangJie JieDao";
 			$mbObj->adr2PY = "GongYuan Lu ChengShi FengQing";
+		}else{
 		}
 		$tbl->insert($mbObj);
 		

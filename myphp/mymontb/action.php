@@ -71,14 +71,23 @@ if($actionStr == "saveTBOrder"){
 	$rslt = $my->updateMBOrderByTranfserNo($_GET['uid'],$_GET['transferNoGuoji'],$_GET['transferNoGuonei']);
 
 
-} else if($actionStr == "makePinyouChina"){
+} else if($actionStr == "makePinyouChinaMJ"){
 	$productUidList = $_GET['productUidList'];
 	if(empty($productUidList)){
 		echo "[ERROR]Parameter is NULL";
 		return;
 	}
 	$my = new MyMontb();
-	$rslt = $my->makePinyou($productUidList, "cn");
+	$rslt = $my->makePinyou($productUidList, "cnMJ");
+	echo $rslt;
+} else if($actionStr == "makePinyouChinaPX"){
+	$productUidList = $_GET['productUidList'];
+	if(empty($productUidList)){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$rslt = $my->makePinyou($productUidList, "cnPX");
 	echo $rslt;
 } else if($actionStr == "makePinyouJapan"){
 	$productUidList = $_GET['productUidList'];
