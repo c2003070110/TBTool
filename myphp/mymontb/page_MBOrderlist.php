@@ -24,7 +24,12 @@ require __DIR__ .'/MyMontb.php';
 var actionUrl = "<?php echo constant("URL_ACTION_MYMONTB") ?>";
 $(function() {
 	$( "#accordion" ).accordion({
-      collapsible: true
+      collapsible: true,
+	  heightStyle: "content",
+	  icons: {
+			header: "ui-icon-circle-arrow-e",
+			activeHeader: "ui-icon-circle-arrow-s"
+		}
     });
 	var getMyBox = function(thisElement){
 		return $(thisElement).parent().parent();
@@ -195,7 +200,7 @@ $(function() {
 <?php
 		if($data["status"] == 'unorder'){
 ?>
-	        <a href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
+	        <a class="btn btn-primary" href="/myphp/mymontb/page_orderMBOrder.php?uid=<?php echo $data['uid'] ?>">
 	    	  MB下单!
 	        </a> 
 		    <button class="btn btn-secondary actionBtn" id="btnCancel" type="button">删 除</button>

@@ -40,7 +40,6 @@ class MyBackup
 	public function backupMyMontbell(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tblMB = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
-		$today = date("YmdGis");
 		$tblMBBackup = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO") . ".backup-" . $today);
 		
 		$tblTB = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
@@ -48,6 +47,7 @@ class MyBackup
 		$tblProd = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
 		$tblProdBackup = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO") . ".backup-" . $today);
 		
+		$today = date("YmdGis");
 		
 		$dataFin = $tblMB->select(['status', '==', "fin"])->fetch();
 		$dataInvalid = $tblMB->select(['status', '==', "cancel"])->fetch();

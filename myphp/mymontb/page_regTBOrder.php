@@ -61,11 +61,12 @@ $(function() {
 		var itemBoxes = $(".form-group_product");
 		var productList = "";
 		for(var i=0; i<itemBoxes.length; i++){
+			var prodUid = $(itemBoxes[i]).find("#prodUid").val();
 			var productId = $(itemBoxes[i]).find("#productId").val();
 			if(productId == "" || productId == undefined) continue;
 			var colorName = $(itemBoxes[i]).find("#colorName").val();
 			var sizeName = $(itemBoxes[i]).find("#sizeName").val();
-            productList = productList + productId.replace(/^\s+|\s+$/g,'') + "," + colorName.replace(/^\s+|\s+$/g,'') + "," + sizeName.replace(/^\s+|\s+$/g,'');
+            productList = productList + prodUid.replace(/^\s+|\s+$/g,'') + "," + productId.replace(/^\s+|\s+$/g,'') + "," + colorName.replace(/^\s+|\s+$/g,'') + "," + sizeName.replace(/^\s+|\s+$/g,'');
 			if(i != itemBoxes.length){
 				productList = productList +";";
 			}
@@ -106,7 +107,7 @@ $(function() {
 					}
 				}
 				if(productId != ""){
-					productList = productList + productId + "," + colorName + "," + sizeName +";";
+					productList = productList + "," + productId + "," + colorName + "," + sizeName +";";
 				}
 			}
 		}
@@ -202,11 +203,13 @@ $(function() {
 		  <label for="maijia">淘宝买家ID</label>
 		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
+	  <!--
       <div class="row mb-4 form-group">
         <div class="col-12">
 		  <label for="dingdanhao">淘宝订单号</label>
 		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
+	  -->
       <div class="row mb-4 form-group">
         <div class="col-12">
 		  <label for="dingdanhao">下单时间</label>
@@ -242,11 +245,11 @@ $(function() {
 		</div>
       </div>
       <div class="row mb-4 form-group_product" id="productBox">
-        <div class="col-4">
+        <div class="col-3">
 		  <label for="productId">productId</label>
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
         </div>
-        <div class="col-4">
+        <div class="col-3">
 		  <label for="colorName">color</label>
 		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>">
         </div>
@@ -254,7 +257,7 @@ $(function() {
 		  <label for="sizeName">size</label>
 		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>">
         </div>
-        <div class="col-1">
+        <div class="col-2">
 		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>
 		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
         </div>
@@ -267,23 +270,20 @@ $(function() {
   foreach($prodArr as $prodObj){
 ?>
       <div class="row mb-1 form-group_product" id="productBox">
-        <div class="col-4">
-		  <label for="productId">productId</label>
+	    <input type="hidden" id="prodUid" value="<?php echo $prodObj['uid'] ?>">
+        <div class="col-3">
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
         <div class="col-3">
-		  <label for="colorName">color</label>
 		  <input type="text" class="form-control" id="colorName" value="<?php echo $prodObj['colorName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
         </div>
         <div class="col-3">
-		  <label for="sizeName">size</label>
 		  <input type="text" class="form-control" id="sizeName" value="<?php echo $prodObj['sizeName'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>">
         </div>
 <?php
     if($editFlag){
 ?>
-        <div class="col-1">
-		  <button type="button" id="btnAddProduct" class="btn btn-secondary">N</button>
+        <div class="col-2">
 		  <button type="button" id="btnDelProduct" class="btn btn-secondary">D</button>
         </div>
 <?php

@@ -254,14 +254,16 @@ $(function(){
 ?>
   <div class="box">
       <div class="row mb-4 form-group">
-        <div class="col-6">
+        <div class="col-10">
 		  <label for="maijia">淘宝买家ID</label>
 		  <input type="text" class="form-control" id="maijia" value="<?php echo $tbObj['maijia'] ?>" readOnly >
         </div>
+		<!--
         <div class="col-6">
 		  <label for="dingdanhao">淘宝订单号</label>
 		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $tbObj['dingdanhao'] ?>" readOnly>
         </div>
+		-->
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">

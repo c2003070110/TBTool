@@ -498,45 +498,44 @@ public class MontbellStockChecker {
 	}
 
 	public void processForWebService() throws Exception {
-		StockObject stockInfo = readInStockInfoFromWebService();
-		if (stockInfo == null)
-			return;
-		List<StockObject> stockListMontbell = getMontbellStockInfo(stockInfo.productId);
-		for (StockObject st : stockListMontbell) {
+		while (true) {
+			StockObject stockInfo = readInStockInfoFromWebService();
+			if (stockInfo == null)
+				return;
+			List<StockObject> stockListMontbell = getMontbellStockInfo(stockInfo.productId);
+			for (StockObject st : stockListMontbell) {
 
-			if (!StringUtil.isBlank(stockInfo.colorName) && stockInfo.colorName.equalsIgnoreCase(st.colorName)
-					&& !StringUtil.isBlank(stockInfo.sizeName) && stockInfo.sizeName.equalsIgnoreCase(st.sizeName)) {
-				stockInfo.priceJPY = st.priceJPY;
-				stockInfo.stockStatus = st.stockStatus;
-				break;
+				if (!StringUtil.isBlank(stockInfo.colorName) && stockInfo.colorName.equalsIgnoreCase(st.colorName)
+						&& !StringUtil.isBlank(stockInfo.sizeName)
+						&& stockInfo.sizeName.equalsIgnoreCase(st.sizeName)) {
+					stockInfo.priceJPY = st.priceJPY;
+					stockInfo.stockStatus = st.stockStatus;
+					break;
+				}
+				if (!StringUtil.isBlank(stockInfo.colorName) && stockInfo.colorName.equalsIgnoreCase(st.colorName)
+						&& StringUtil.isBlank(stockInfo.sizeName)) {
+					stockInfo.priceJPY = st.priceJPY;
+					stockInfo.stockStatus = st.stockStatus;
+					break;
+				}
+				if (StringUtil.isBlank(stockInfo.colorName) && !StringUtil.isBlank(stockInfo.sizeName)
+						&& stockInfo.sizeName.equalsIgnoreCase(st.sizeName)) {
+					stockInfo.priceJPY = st.priceJPY;
+					stockInfo.stockStatus = st.stockStatus;
+					break;
+				}
+				if (StringUtil.isBlank(stockInfo.colorName) && StringUtil.isBlank(stockInfo.sizeName)) {
+					stockInfo.priceJPY = st.priceJPY;
+					stockInfo.stockStatus = st.stockStatus;
+					break;
+				}
 			}
-			if (!StringUtil.isBlank(stockInfo.colorName) && stockInfo.colorName.equalsIgnoreCase(st.colorName)
-					&& StringUtil.isBlank(stockInfo.sizeName)) {
-				stockInfo.priceJPY = st.priceJPY;
-				stockInfo.stockStatus = st.stockStatus;
-				break;
+			if (StringUtil.isBlank(stockInfo.priceJPY)) {
+				stockInfo.priceJPY = "-9999999";
+				stockInfo.stockStatus = "断货";
 			}
-			if (StringUtil.isBlank(stockInfo.colorName)
-					&& !StringUtil.isBlank(stockInfo.sizeName) && stockInfo.sizeName.equalsIgnoreCase(st.sizeName)) {
-				stockInfo.priceJPY = st.priceJPY;
-				stockInfo.stockStatus = st.stockStatus;
-				break;
-			}
-			if (StringUtil.isBlank(stockInfo.colorName)
-					&& StringUtil.isBlank(stockInfo.sizeName)) {
-				stockInfo.priceJPY = st.priceJPY;
-				stockInfo.stockStatus = st.stockStatus;
-				break;
-			}
+			reactStockResultToWebServer(stockInfo);
 		}
-		if (StringUtil.isBlank(stockInfo.priceJPY)) {
-			stockInfo.priceJPY = "-999";
-			stockInfo.stockStatus = "断货";
-			//System.out.println("[ERROR]failure to get price! productId=" + stockInfo.productId);
-			//return;
-		}
-		reactStockResultToWebServer(stockInfo);
-		
 	}
 
 	private void reactStockResultToWebServer(StockObject stockInfo) throws UnsupportedOperationException, IOException {

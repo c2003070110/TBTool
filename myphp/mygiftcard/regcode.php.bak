@@ -143,24 +143,24 @@ $(function() {
 ?>
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
-		  <textarea class="form-control" id="tempTxtArea" rows="6" cols="45"></textarea>
+		  <textarea id="tempTxtArea" rows="6" cols="45"></textarea>
 		</div>
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
-          <button type="button" id="btnConvert" class="btn btn-primary">C o n v e r t !</button>
+          <button type="button" id="btnConvert" class="btn btn-secondary">C o n v e r t !</button>
 		</div>
       </div>
 <?php 
   }
 ?>
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col">
+        <div class="col-12 themed-grid-col">
 		  <label for="orderNo">TB单号</label>
 		  <input type="text" class="form-control" id="orderNo" value="<?php echo $obj['orderNo'] ?>"></div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col">
+        <div class="col-8 themed-grid-col">
             <label for="codeType">CodeType</label>
             <select class="custom-select d-block" id="codeType">
                 <option value="" selected></option>
@@ -226,35 +226,31 @@ $(function() {
 -->
 <?php 
   }
-  if($codeType == "" || $codeType == "AMZNJPY"){
-?>
-                <option value="AMZNJPY100"  <?php if($obj['codeType']=='AMZNJPY100'){?> selected <?php } ?>>AMZN 100JPY</option>
-                <option value="AMZNJPY500"  <?php if($obj['codeType']=='AMZNJPY500'){?> selected <?php } ?>>AMZN 500JPY</option>
-                <option value="AMZNJPY1000" <?php if($obj['codeType']=='AMZNJPY1000'){?> selected <?php } ?>>AMZN 1000JPY</option>
-<?php
-  }
 ?>
             </select>
+        </div>
+<?php
+  if(empty($uid)){
+?>
+        <div class="col-4 themed-grid-col">
+          <button type="button" id="btnSave" class="btn btn-secondary">save</button>
 		</div>
+<?php 
+  }
+?>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-10 themed-grid-col">
+        <div class="col-12 themed-grid-col">
             <label for="codeCd">CodeCd</label>
             <input type="text" class="form-control" id="codeCd" value="<?php echo $obj['codeCd'] ?>">
         </div>
       </div>
+<?php
+  if(!empty($uid)){
+?>
       <hr class="mb-4">
       <div class="row mb-4 form-group">
-<?php
-  if(empty($uid)){
-?>
-        <div class="col-6 themed-grid-col">
-          <button type="button" id="btnSave" class="btn btn-secondary">save</button>
-		</div>
-<?php
-  }
-?>
-        <div class="col-6 themed-grid-col">
+        <div class="col-12 themed-grid-col">
 <?php 
     if($obj["status"] == 'unused') {
 ?>
