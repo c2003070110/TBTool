@@ -52,7 +52,7 @@ class MyMontb
 				         ['maijiadianzhiHanzi', $orderObj->maijiadianzhiHanzi],
 						 ['transferWay', $orderObj->transferWay]
 						 );
-			//$mbUid = $tbOrdData["mbUid"];
+			
 			//var_dump($orderObj->transferWay);
 			//var_dump($tbOrdData["transferWay"]);
 			if($tbOrdData["transferWay"] === "mbzhiYou" || $tbOrdData["transferWay"] === "wozhiYou"){
@@ -104,7 +104,7 @@ class MyMontb
 			if(!empty($prodUid)){
 				$prodInfoOld = $this->listProductInfoByByUid($prodUid);
 				if(!empty($prodUid)){
-					$prodObj->mbUid = $prodInfoOld["mbUid"];
+					//$prodObj->mbUid = $prodInfoOld["mbUid"];
 					$prodObj->priceOffTax = $prodInfoOld["priceOffTax"];
 					$prodObj->stock = $prodInfoOld["stock"];
 				}
@@ -411,6 +411,20 @@ class MyMontb
 	
 	
 	//*********PRODUCT ********
+	/*
+	public function deleteProductInfoByDUSH(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		$dataArr = $tbl->select("*")->fetch();
+		foreach ($dataArr as $data) {
+			$tb = $this->listTBOrderInfoByUid($data["tbUid"]);
+			if(empty($tb)){
+				var_dump($data["uid"]);
+				$tbl->select(['uid', '==', $data["uid"]])->delete();
+			}
+		}
+	}
+	*/
 	public function deleteProductInfoByTBUid($tbUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
@@ -503,7 +517,7 @@ class MyMontb
 			$dataProd["maijia"] = $tbInfo["maijia"];
 			$dataProd["dingdanhao"] = $tbInfo["dingdanhao"];
 			$dataProd["dingdanDt"] = $tbInfo["dingdanDt"];
-			$dataProd["tbUid"] = $tbInfo["uid"];
+			//$dataProd["tbUid"] = $tbInfo["uid"];
 			$dataProd["productUid"] = $dataProd["uid"];
 			$rsltArr[] = $dataProd;
 		}

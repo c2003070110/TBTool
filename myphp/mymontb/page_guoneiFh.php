@@ -66,7 +66,7 @@ $(function() {
 <body class="py-4">
 <div id="container" class="container">
 <?php
-  include __DIR__ .'/subpage_toplink.php';
+  //include __DIR__ .'/subpage_toplink.php';
 ?>
 <?php
   $my = new MyMontb();
@@ -86,12 +86,12 @@ $(function() {
   }
   $sort = array();
   foreach ((array) $prodArr as $key => $value) {
-	$sort[$key] = $value['maijia'];
+	$sort[$key] = $value['dingdanDt'];
   }
-  array_multisort($sort, SORT_DESC, $prodArr);
+  array_multisort($sort, SORT_ASC, $prodArr);
   //var_dump($prodArr);
 ?>
-  <h3>guonei fahuo</h3>
+  <h3>需要国内发货的买家</h3>
   <hr class="mb-4">
 <?php
   $tbUid = "";
@@ -114,7 +114,8 @@ $(function() {
 ?>  
     <div class="row form-group">
       <div class="col-12">
-		<textarea class="form-control" cols="40" rows="5" ><?php echo $line ?></textarea >
+	    <pre style="overflow: auto;white-space:pre-wrap;"><?php echo $line ?></pre>
+		<!---<textarea class="form-control" cols="40" rows="5" ><?php echo $line ?></textarea >-->
 	  </div> 
 	</div> 
     <hr class="mb-4">

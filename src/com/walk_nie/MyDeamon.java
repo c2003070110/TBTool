@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 
 import org.openqa.selenium.WebDriver;
 
+import com.walk_nie.amzn.AmznAutoRegistGiftCardDeamon;
 import com.walk_nie.taobao.montBell.main.MontbellOrderDemon;
-import com.walk_nie.taobao.montBell.main.MontbellPinyinDemon;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -18,9 +18,9 @@ public class MyDeamon {
 	private File logFile = null;
 	protected YaAucDemon yaAucDemon = new YaAucDemon();
 	protected WebMoneyDemon webMoneyDemon = new WebMoneyDemon();
-	protected MontbellPinyinDemon montbellPinyinDemon = new MontbellPinyinDemon();
+	//protected MontbellPinyinDemon montbellPinyinDemon = new MontbellPinyinDemon();
 	protected MontbellOrderDemon montbellOrderDemon = new MontbellOrderDemon();
-	//protected AmznAutoRegistGiftCardDeamon amznAutoRegistGiftCardDeamon = new AmznAutoRegistGiftCardDeamon();
+	protected AmznAutoRegistGiftCardDeamon amznAutoRegistGiftCardDeamon = new AmznAutoRegistGiftCardDeamon();
 	/**
 	 * @param args
 	 * @throws IOException
@@ -42,9 +42,9 @@ public class MyDeamon {
 				
 				yaAucDemon.execute(driver);
 				webMoneyDemon.execute(driver);
-				montbellPinyinDemon.execute(driver);
+				//montbellPinyinDemon.execute(driver);
 				montbellOrderDemon.execute(driver);
-				//amznAutoRegistGiftCardDeamon.execute(driver);
+				amznAutoRegistGiftCardDeamon.execute(driver);
 				
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
@@ -70,9 +70,9 @@ public class MyDeamon {
 		
 		yaAucDemon.init(driver);
 		webMoneyDemon.init();
-		montbellPinyinDemon.init();
+		//montbellPinyinDemon.init();
 		montbellOrderDemon.init();
-		//amznAutoRegistGiftCardDeamon.init(driver);
+		amznAutoRegistGiftCardDeamon.init(driver);
 	}
 	
 }

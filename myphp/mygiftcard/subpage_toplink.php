@@ -23,9 +23,9 @@ if (endsWith($selfName, "stocklist.php")) {
           <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=PSNHKD&status=<?php echo $_GET['status'] ?>">PSN HKD</a>
           <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=XBOXUSD&status=<?php echo $_GET['status'] ?>">XBOX USD</a>
           <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=GOOGLUSD&status=<?php echo $_GET['status'] ?>">GOOGLE USD</a>
-          <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=AMZNUSD&status=<?php echo $_GET['status'] ?>">Amazon USD</a>
           <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=STEAMUSD&status=<?php echo $_GET['status'] ?>">STEAM USD</a>
 		  <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=AMZNUSD&status=<?php echo $_GET['status'] ?>">Amazon USD</a>
           <a class="dropdown-item" href="/myphp/mygiftcard/<?php echo $thisFile ?>?codeType=AMZNJPY&status=<?php echo $_GET['status'] ?>">Amazon JPY</a>
         </div>
       </li>

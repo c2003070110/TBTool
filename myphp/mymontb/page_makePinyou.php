@@ -128,6 +128,7 @@ $(function() {
 ?>
 <?php
   foreach ($dataArr as $data) {
+	  //var_dump($data);
 	  $editFlag = false;
 ?>
   <div class="box productbox border border-primary mb-4 pl-2">
