@@ -92,18 +92,18 @@ public class AmznAutoRegistGiftCardDeamon {
 	}
 	public void execute(WebDriver driver) throws IOException, MessagingException {
 		// FIXME CANNOT open the login page on the VPS
-//		driver.get("https://www.amazon.co.jp");
-//		if(!isLogon){
-//			logon(driver);
-//		}
-//		if(!isLogon){
-//			NieUtil.log(logFile, "[ERROR]amazon login is failure!!!");
-//			return;
-//		}
-//		AmznGiftCardObject noticeObj = getLastestNotice();
-//		if (noticeObj != null) {
-//			orderCode(driver, noticeObj);
-//		}
+		driver.get("https://www.amazon.co.jp");
+		if(!isLogon){
+			logon(driver);
+		}
+		if(!isLogon){
+			NieUtil.log(logFile, "[ERROR]amazon login is failure!!!");
+			return;
+		}
+		AmznGiftCardObject noticeObj = getLastestNotice();
+		if (noticeObj != null) {
+			orderCode(driver, noticeObj);
+		}
 		recieveCode();
 	}
 	

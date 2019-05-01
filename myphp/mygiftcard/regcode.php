@@ -145,8 +145,11 @@ $(function() {
 		</div>
       </div>
       <div class="row mb-4 form-group">
-        <div class="col-12 themed-grid-col">
+        <div class="col-6 themed-grid-col">
           <button type="button" id="btnConvert" class="btn btn-primary">C o n v e r t !</button>
+		</div>
+        <div class="col-6 themed-grid-col">
+          <button type="button" id="btnSave" class="btn btn-primary">S A V E !</button>
 		</div>
       </div>
 <?php 
@@ -241,15 +244,6 @@ $(function() {
       </div>
       <hr class="mb-4">
       <div class="row mb-4 form-group">
-<?php
-  if(empty($uid)){
-?>
-        <div class="col-6 themed-grid-col">
-          <button type="button" id="btnSave" class="btn btn-secondary">save</button>
-		</div>
-<?php
-  }
-?>
         <div class="col-6 themed-grid-col">
 <?php 
     if($obj["status"] == 'unused') {

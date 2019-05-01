@@ -336,7 +336,7 @@ class MyYaBid
 		if(empty($itemObj)){
 			return;
 		}
-		$this->updateItemStatus($itemObj["buyer"], $itemObj["uid"], $toStatus)
+		$this->updateItemStatus($itemObj["buyer"], $itemObj["uid"], $toStatus);
 	}
 	public function updateItemPriceByBidId($bidId){
 		$bidObj = $this->listBidByBidId($bidId);

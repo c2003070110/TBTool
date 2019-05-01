@@ -13,9 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.json.Json;
@@ -896,8 +894,8 @@ public class YaAucDemon {
 		String rootUrl = "https://auctions.yahoo.co.jp/user/jp/show/mystatus";
 
 		//WebDriver driver = WebDriverUtil.getHtmlUnitDriver();
-		driver.manage().window().setSize(new Dimension(960, 960));
-		driver.manage().window().setPosition(new Point(10, 10));
+		//driver.manage().window().setSize(new Dimension(960, 960));
+		//driver.manage().window().setPosition(new Point(10, 10));
 		driver.get(rootUrl);
 		if (!driver.findElements(By.id("idBox")).isEmpty()) {
 			WebElement el1 = driver.findElements(By.id("idBox")).get(0);
