@@ -6,12 +6,12 @@ require __DIR__ . '/ObjectClass.php';
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
 
-class MyBilibili
+class MyVideoTr
 {
-	public function addBilibiliByUrl($url){
+	public function addVideoByUrl($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
-		$obj = new BilibiliObject();
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$obj = new MyVideoObject();
 		$uid = uniqid("bili", true);
 		$obj->uid = $uid;
 		$obj->url = $url;
@@ -19,9 +19,9 @@ class MyBilibili
 		$tbl->insert($obj);
 		return $uid;
 	}
-	public function updateByBilibiliInfo($uid, $title, $uper){
+	public function updateByVideoInfo($uid, $title, $uper){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
 			->update(['title', $title],
 					 ['uper', $uper],
@@ -29,14 +29,14 @@ class MyBilibili
 	}
 	public function updateByYTInfo($uid, $ytSearchRslt){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
 			->update(['ytSearchRslt', $ytSearchRslt],
 					 ['dtparsed', date("YmdGis")]);
 	}
 	public function updateByDownloadInfo($uid, $dlVideoPath){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
 			->update(['dlVideoPath', $dlVideoPath],
 			         ['status', 'dled'],
@@ -44,7 +44,7 @@ class MyBilibili
 	}
 	public function updateByUploadInfo($uid, $ytVideoUrl){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
 			->update(['dlVideoPath', $ytVideoUrl],
 			         ['status', 'uled'],
@@ -52,7 +52,7 @@ class MyBilibili
 	}
 	public function updateByStatus($uid, $toStatus){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		if(empty($uid) || empty($toStatus)){
 			return;
@@ -69,7 +69,7 @@ class MyBilibili
 	
 	public function getByBiliNewOne($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
@@ -81,7 +81,7 @@ class MyBilibili
 	}
 	public function getByYTNewOne($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
@@ -93,7 +93,7 @@ class MyBilibili
 	}
 	public function getByTodownloadOne($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
@@ -105,7 +105,7 @@ class MyBilibili
 	}
 	public function getByTouploadOne($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
@@ -117,7 +117,7 @@ class MyBilibili
 	}
 	public function listByTodownload(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
@@ -129,7 +129,7 @@ class MyBilibili
 	}
 	public function listByToupload(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
@@ -141,7 +141,7 @@ class MyBilibili
 	}
 	public function listByUploaded(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYBILIBILI_BILI"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {

@@ -2,7 +2,7 @@
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
-require __DIR__ .'/MyBilibili.php';
+require __DIR__ .'/MyVideoTr.php';
 ?>
 <html lang="ja">
 <head>
@@ -14,7 +14,7 @@ require __DIR__ .'/MyBilibili.php';
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
-var actionUrl = "<?php echo constant("URL_ACTION_MYGIFTCARD") ?>";
+var actionUrl = "<?php echo constant("URL_ACTION_MYVIDEOTR") ?>";
 $(function() {
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
@@ -46,7 +46,7 @@ $(function() {
 </head>
 <body class="py-4">
 <?php
-  $my = new MyBilibili();
+  $my = new MyVideoTr();
   $status = $_GET['status'];
   if(empty($status) || $status == "toDL"){
 	  $dataArr = $my->listByTodownload();

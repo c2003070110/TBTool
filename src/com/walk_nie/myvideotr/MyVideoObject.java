@@ -1,6 +1,6 @@
-package com.walk_nie.bilibili;
+package com.walk_nie.myvideotr;
 
-public class BilibiliObject {
+public class MyVideoObject {
 	String uid = "";
 	String amt= "";
 	int qtty=0;

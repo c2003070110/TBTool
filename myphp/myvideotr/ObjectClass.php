@@ -1,5 +1,5 @@
 <?php
-class BilibiliObject
+class MyVideoObject
 {
     public $uid = '';
     

@@ -41,20 +41,14 @@ public class YaAucDemon {
 	public static void main(String[] args) throws IOException {
 
 		YaAucDemon main = new YaAucDemon();
-		/*
-		main.init();
-		YaSoldObject yaObj = new YaSoldObject ();
-		yaObj.title = "[PSNUSD40]";
-		yaObj.qtty = 1;
-		String rslt =  main.composeSendMessage(yaObj);
-		yaObj.auctionId = "tst001";
-		yaObj.obider = "tst001";
-		main.save(yaObj);
-		System.out.println(rslt);
-		*/
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		main.init(driver);
-		main.execute(driver);
+		// FOR TEST
+		main.getUnusedCode("AMZNJPY15", "XXX", "XX", 2);
+		
+//		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+//		main.init(driver);
+//		main.execute(driver);
 	}
 
 	public void execute() throws IOException {
@@ -460,8 +454,8 @@ public class YaAucDemon {
 				driver.get(obj.href);
 				continue;
 			}
-
-			List<YaSendCodeObject> codeList = getUnusedCode(obj.identifierToken,yaObj.auctionId,yaObj.obider);
+			List<YaSendCodeObject> codeList = getUnusedCode(
+					obj.identifierToken, yaObj.auctionId, yaObj.obider,yaObj.qtty);
 			if (codeList == null || codeList.isEmpty()) {
 				continue;
 			}
@@ -554,44 +548,54 @@ public class YaAucDemon {
 		NieUtil.mySleepBySecond(1);
 	}
 
-	private List<YaSendCodeObject> getUnusedCode(String key,String auctionId,String obider) {
+	private List<YaSendCodeObject> getUnusedCode(String key, String auctionId,
+			String obider, int qtty) {
 		List<YaSendCodeObject> codeList = Lists.newArrayList();
 		String errMsgFmt = "[ERROR]NONE unused code!!![auctionId]%s[obider]%s[key]%s";
-		try {
-			Map<String, String> param = Maps.newHashMap();
-			param.put("action", "get");
-			param.put("codeType", key);
-			param.put("bidId", auctionId);
-			param.put("obidId", obider);
-			// return codeType:codeCd;codeType:codeCd;
-			String code = NieUtil.httpGet(NieConfig.getConfig("yahoo.auction.autosend.service.url"), param);
+		for (int i = 0; i < qtty; i++) {
+			try {
+				Map<String, String> param = Maps.newHashMap();
+				param.put("action", "get");
+				param.put("codeType", key);
+				param.put("bidId", auctionId);
+				param.put("obidId", obider);
+				// return codeType:codeCd;codeType:codeCd;
+				String code = NieUtil
+						.httpGet(
+								NieConfig
+										.getConfig("yahoo.auction.autosend.service.url"),
+								param);
 
-			if (StringUtil.isBlank(code)) {
-				String msg = String.format(errMsgFmt, auctionId, obider, key);
-				NieUtil.log(logFile, msg);
-				return null;
-			}
-			NieUtil.log(logFile, "[INFO][Service:getUnusedCode][Result]" + code);
-			String[] spa = code.split(";");
-			for (String sps : spa) {
-				String[] spaa = sps.split(":");
-				if (spaa.length != 2) {
-					String msg = String.format(errMsgFmt, auctionId, obider, key);
+				if (StringUtil.isBlank(code)) {
+					String msg = String.format(errMsgFmt, auctionId, obider,
+							key);
 					NieUtil.log(logFile, msg);
 					return null;
 				}
-				YaSendCodeObject codeObj = new YaSendCodeObject();
-				codeObj.codeType = spaa[0];
-				codeObj.codeCd = spaa[1];
-				codeObj.obider = obider;
-				codeObj.auctionId = auctionId;
-				codeList.add(codeObj);
+				NieUtil.log(logFile, "[INFO][Service:getUnusedCode][Result]"
+						+ code);
+				String[] spa = code.split(";");
+				for (String sps : spa) {
+					String[] spaa = sps.split(":");
+					if (spaa.length != 2) {
+						String msg = String.format(errMsgFmt, auctionId,
+								obider, key);
+						NieUtil.log(logFile, msg);
+						return null;
+					}
+					YaSendCodeObject codeObj = new YaSendCodeObject();
+					codeObj.codeType = spaa[0];
+					codeObj.codeCd = spaa[1];
+					codeObj.obider = obider;
+					codeObj.auctionId = auctionId;
+					codeList.add(codeObj);
+				}
+			} catch (IOException e) {
+				NieUtil.log(logFile, "[ERROR][getCode]" + e.getMessage());
+				NieUtil.log(logFile, e);
+				e.printStackTrace();
+				return null;
 			}
-		} catch (IOException e) {
-			NieUtil.log(logFile, "[ERROR][getCode]" + e.getMessage());
-			NieUtil.log(logFile, e);
-			e.printStackTrace();
-			return null;
 		}
 		return codeList;
 	}

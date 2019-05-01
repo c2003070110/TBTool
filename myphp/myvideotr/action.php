@@ -4,7 +4,7 @@
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 
-require_once __DIR__ .'/MyBilibili.php';
+require_once __DIR__ .'/MyVideoTr.php';
 $actionStr = $_GET['action'];
 
 if(empty($actionStr)){
@@ -18,8 +18,8 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
-	$my = new MyBilibili();
-	$rslt = $my->addBilibiliByUrl($url);
+	$my = new MyVideoTr();
+	$rslt = $my->addVideoByUrl($url);
 	echo $rslt;
 } else if($actionStr == "updateStatus"){
 	$uid = $_GET["uid"];
@@ -28,16 +28,16 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
-	$my = new MyBilibili();
+	$my = new MyVideoTr();
 	$rslt = $my->updateByStatus($uid, $status);
 
 
 //*****service action******	
 } else if($actionStr == "getByBiliNewOne"){
-	$my = new MyBilibili();
+	$my = new MyVideoTr();
 	$rslt = $my->listByNewOne();
 	echo $rslt["url"];
-} elseuidif($actionStr == "updateByBilibiliInfo"){
+} elseuidif($actionStr == "updateByVideoInfo"){
 	$uid = $_GET["uid"];
 	$title = $_GET["title"];
 	$uper = $_GET["uper"];
@@ -45,12 +45,12 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
-	$my = new MyBilibili();
-	$rslt = $my->updateByBilibiliInfo($uid, $title, $uper);
+	$my = new MyVideoTr();
+	$rslt = $my->updateByVideoInfo($uid, $title, $uper);
 	echo $rslt;
 } else if($actionStr == "getByYTNewOne"){
-	$my = new MyBilibili();
-	$rslt = $my->listByNewOne();//BilibiliObject
+	$my = new MyVideoTr();
+	$rslt = $my->listByNewOne();//MyVideoObject
 	if(empty($data)){
 		echo "";
 	}else{
@@ -63,12 +63,12 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
-	$my = new MyBilibili();
+	$my = new MyVideoTr();
 	$rslt = $my->updateByYTInfo($uid, $ytSearchRslt);
 	echo $rslt;
 } else if($actionStr == "getByTodownloadOne"){
-	$my = new MyBilibili();
-	$rslt = $my->getByTodownloadOne();//BilibiliObject
+	$my = new MyVideoTr();
+	$rslt = $my->getByTodownloadOne();//MyVideoObject
 	if(empty($data)){
 		echo "";
 	}else{
@@ -81,12 +81,12 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
-	$my = new MyBilibili();
+	$my = new MyVideoTr();
 	$rslt = $my->updateByDownloadInfo($uid, $dlVideoPath);
 	echo $rslt;
 } else if($actionStr == "getByTouploadOne"){
-	$my = new MyBilibili();
-	$rslt = $my->getByTouploadOne();//BilibiliObject
+	$my = new MyVideoTr();
+	$rslt = $my->getByTouploadOne();//MyVideoObject
 	if(empty($data)){
 		echo "";
 	}else{
@@ -99,7 +99,7 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
-	$my = new MyBilibili();
+	$my = new MyVideoTr();
 	$rslt = $my->updateByUploadInfo($uid, $ytVideoUrl);
 	echo $rslt;
 	

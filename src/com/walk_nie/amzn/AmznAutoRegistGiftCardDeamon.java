@@ -137,10 +137,14 @@ public class AmznAutoRegistGiftCardDeamon {
 				return null;
 			}
 			lastestNotice.payway = (String) objMap.get("payway");
-			if (StringUtil.isBlank(lastestNotice.payway)) {
-				NieUtil.log(logFile, "[ERROR][getLastestNotice]payway is NULL!!");
-				return null;
+			lastestNotice.mailAddress = (String) objMap.get("mailAddress");
+			if (StringUtil.isBlank(lastestNotice.mailAddress)) {
+				lastestNotice.mailAddress = this.mailAddress;
 			}
+//			if (StringUtil.isBlank(lastestNotice.payway)) {
+//				NieUtil.log(logFile, "[ERROR][getLastestNotice]payway is NULL!!");
+//				return null;
+//			}
 			return lastestNotice;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,7 +181,7 @@ public class AmznAutoRegistGiftCardDeamon {
 			for (int i = 0; i < messages.length; i++) {
 				Message message = messages[i];
 				String subj = message.getSubject();
-				if (subj.indexOf("ギフト券") == -1) {
+				if (subj.indexOf("Amazonギフト券") == -1) {
 					continue;
 				}
 				boolean isTarget = false;
@@ -218,9 +222,27 @@ public class AmznAutoRegistGiftCardDeamon {
 					for(int ii= 0;ii<els.size();ii++){
 						Element el =els.get(ii);
 						String txt = el.text();
-						if(txt.startsWith("￥")){
-							if(txt.equals("￥100")){
-								codeType = "AMZNJPY100";
+						if (txt.startsWith("￥")) {
+							if (txt.equals("￥15")) {
+								codeType = "AMZNJPY15";
+							} else if (txt.equals("￥20")) {
+								codeType = "AMZNJPY20";
+							} else if (txt.equals("￥30")) {
+								codeType = "AMZNJPY30";
+							} else if (txt.equals("￥40")) {
+								codeType = "AMZNJPY40";
+							} else if (txt.equals("￥50")) {
+								codeType = "AMZNJPY50";
+							} else if (txt.equals("￥60")) {
+								codeType = "AMZNJPY60";
+							} else if (txt.equals("￥70")) {
+								codeType = "AMZNJPY70";
+							} else if (txt.equals("￥80")) {
+								codeType = "AMZNJPY80";
+							} else if (txt.equals("￥90")) {
+								codeType = "AMZNJPY90";
+							} else 	if (txt.equals("￥100")) {
+									codeType = "AMZNJPY100";
 							}
 							break;
 						}
@@ -303,7 +325,7 @@ public class AmznAutoRegistGiftCardDeamon {
 			el12.click();
 			el2.click();
 			el2.clear();
-			el2.sendKeys(mailAddress);
+			el2.sendKeys(giftObj.mailAddress);
 			el3.click();
 			el3.clear();
 			el3.sendKeys(giftObj.qtty + "");
@@ -342,7 +364,7 @@ public class AmznAutoRegistGiftCardDeamon {
 			// break;
 		}
 
-		finishAmazonNoticeForAddCode(giftObj.uid, mailAddress);
+		finishAmazonNoticeForAddCode(giftObj.uid, giftObj.mailAddress);
 	}
 
 	private void finishAmazonNoticeForAddCode(String uid,String mailAddress) {

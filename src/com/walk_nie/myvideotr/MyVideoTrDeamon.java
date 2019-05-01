@@ -1,4 +1,4 @@
-package com.walk_nie.bilibili;
+package com.walk_nie.myvideotr;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
-public class BlibiliDeamon {
+public class MyVideoTrDeamon {
 
 	private File logFile = null;
 	/**
@@ -37,7 +37,7 @@ public class BlibiliDeamon {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		BlibiliDeamon main = new BlibiliDeamon();
+		MyVideoTrDeamon main = new MyVideoTrDeamon();
 		main.execute();
 		//main.init();
 		//AmznGiftCardObject noticeObj = main.getLastestNotice();
@@ -65,21 +65,21 @@ public class BlibiliDeamon {
 	}
 	public void execute(WebDriver driver) throws IOException, MessagingException {
 
-		BilibiliObject noticeObj = getLastestNotice();
+		MyVideoObject noticeObj = getLastestNotice();
 		if (noticeObj != null) {
 			orderCode(driver, noticeObj);
 		}
 		recieveCode();
 	}
 	
-	private BilibiliObject getLastestNotice() {
+	private MyVideoObject getLastestNotice() {
 		try {
 			Map<String, String> param = Maps.newHashMap();
 			param.put("action", "getAmazonNoticeForAddCode");
 			
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("amazon.auto.regist.giftcard.service.url"), param);
 			NieUtil.log(logFile, "[INFO][Service:getAmazonNoticeForAddCode][RESULT]" + rslt);
-			BilibiliObject lastestNotice  = new  BilibiliObject();
+			MyVideoObject lastestNotice  = new  MyVideoObject();
 			Json j = new Json();
 			Map<String, Object> objMap = null;
 			objMap = j.toType(rslt, Map.class);
@@ -128,7 +128,7 @@ public class BlibiliDeamon {
 		}
 	}
 
-	public void orderCode(WebDriver driver ,BilibiliObject giftObj) {
+	public void orderCode(WebDriver driver ,MyVideoObject giftObj) {
 	
 		String orderUrl = "XXXX";
 		for (int i = 0; i < giftObj.qtty; i++) {

@@ -4,6 +4,6 @@ public class AmznGiftCardObject {
 	String uid = "";
 	String amt= "";
 	int qtty=0;
-	//String mailAddress = ""; //
+	String mailAddress = ""; //
 	String payway = ""; //
 }

@@ -2,7 +2,7 @@
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
-  require __DIR__ .'/MyBilibili.php';
+  require __DIR__ .'/MyVideoTr.php';
 ?>
 <html lang="ja">
 <head>
@@ -20,7 +20,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script type="text/javascript">
-var actionUrl = "<?php echo constant("URL_ACTION_MYBILIBILI") ?>";
+var actionUrl = "<?php echo constant("URL_ACTION_MYVIDEOTR") ?>";
 $(function() {
     $(document).on("click", "#btnAdd", function() {
         var jqxhr = $.ajax(actionUrl,
@@ -55,7 +55,7 @@ $(function() {
 <?php
   $uid = empty($_GET['uid'])? "" : $_GET['uid'];
   if(!empty($uid)){
-	$my = new MyBilibili();
+	$my = new MyVideoTr();
 	$obj = $my->listByUid($uid);
   }
 ?>
