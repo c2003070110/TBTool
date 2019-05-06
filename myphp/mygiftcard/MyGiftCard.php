@@ -419,10 +419,22 @@ class MyGiftCard
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_CODE"));
 		
-		$dataArr = $tbl->select(['codeType', '==', $codeType])->fetch();
+		$dataArr = $tbl->select(['codeType', '==', $codeType, 'and'],
+		                        ['status', '==', 'unused', 'and'])->fetch();
 		if(empty($dataArr)){
 			return "false";
 		}
+		$cnt = count($dataArr);
+		$tbl1 = $cdb->table(constant("TBL_MYGIFTCODE_BID"));
+		$dataArr1 = $tbl1->select(['codeType', '==', $codeType, 'and'],
+		                          ['status', '==', 'bided', 'and'])->fetch();
+		$cnt1 = count($dataArr1);
+		//var_dump($cnt);
+		//var_dump($cnt1);
+		if($cnt <= $cnt1){
+			return "false";
+		}
+		
 		return "true";
 	}
 	
