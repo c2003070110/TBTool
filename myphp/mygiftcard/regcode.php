@@ -210,6 +210,8 @@ $(function() {
   }
   if($codeType == "" || $codeType == "AMZNUSD"){
 ?>
+                <option value="AMZNUSD5" <?php if($obj['codeType']=='AMZNUSD5'){?> selected <?php } ?>>AMZN 5美元</option>
+                <option value="AMZNUSD10" <?php if($obj['codeType']=='AMZNUSD10'){?> selected <?php } ?>>AMZN 10美元</option>
                 <option value="AMZNUSD20" <?php if($obj['codeType']=='AMZNUSD20'){?> selected <?php } ?>>AMZN 20美元</option>
                 <option value="AMZNUSD50" <?php if($obj['codeType']=='AMZNUSD50'){?> selected <?php } ?>>AMZN 50美元</option>
                 <option value="AMZNUSD100" <?php if($obj['codeType']=='AMZNUSD100'){?> selected <?php } ?>>AMZN 100美元</option>
@@ -227,8 +229,16 @@ $(function() {
   }
   if($codeType == "" || $codeType == "AMZNJPY"){
 ?>
+                <option value="AMZNJPY15"  <?php if($obj['codeType']=='AMZNJPY15'){?> selected <?php } ?>>AMZN 15JPY</option>
+                <option value="AMZNJPY20"  <?php if($obj['codeType']=='AMZNJPY20'){?> selected <?php } ?>>AMZN 20JPY</option>
+                <option value="AMZNJPY30"  <?php if($obj['codeType']=='AMZNJPY30'){?> selected <?php } ?>>AMZN 30JPY</option>
+                <option value="AMZNJPY40"  <?php if($obj['codeType']=='AMZNJPY40'){?> selected <?php } ?>>AMZN 40JPY</option>
+                <option value="AMZNJPY50"  <?php if($obj['codeType']=='AMZNJPY50'){?> selected <?php } ?>>AMZN 50JPY</option>
+                <option value="AMZNJPY60"  <?php if($obj['codeType']=='AMZNJPY60'){?> selected <?php } ?>>AMZN 60JPY</option>
+                <option value="AMZNJPY70"  <?php if($obj['codeType']=='AMZNJPY70'){?> selected <?php } ?>>AMZN 70JPY</option>
+                <option value="AMZNJPY80"  <?php if($obj['codeType']=='AMZNJPY80'){?> selected <?php } ?>>AMZN 80JPY</option>
+                <option value="AMZNJPY90"  <?php if($obj['codeType']=='AMZNJPY90'){?> selected <?php } ?>>AMZN 90JPY</option>
                 <option value="AMZNJPY100"  <?php if($obj['codeType']=='AMZNJPY100'){?> selected <?php } ?>>AMZN 100JPY</option>
-                <option value="AMZNJPY500"  <?php if($obj['codeType']=='AMZNJPY500'){?> selected <?php } ?>>AMZN 500JPY</option>
                 <option value="AMZNJPY1000" <?php if($obj['codeType']=='AMZNJPY1000'){?> selected <?php } ?>>AMZN 1000JPY</option>
 <?php
   }

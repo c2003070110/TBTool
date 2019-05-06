@@ -5,7 +5,6 @@ require __DIR__ . '/ObjectClass.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
-
 class MyVideoTr
 {
 	public function addVideoByUrl($url){
@@ -15,17 +14,21 @@ class MyVideoTr
 		$uid = uniqid("bili", true);
 		$obj->uid = $uid;
 		$obj->url = $url;
+		$obj->status = "added";
 		$obj->dtAdd = date("YmdGis");
 		$tbl->insert($obj);
 		return $uid;
 	}
-	public function updateByVideoInfo($uid, $title, $uper){
+	public function updateByVideoUper($uid, $title, $uper, $ytSearchRsltr, $urlTrue){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
 			->update(['title', $title],
 					 ['uper', $uper],
+					 ['ytSearchRslt', $ytSearchRslt],
+					 ['urlTrue', $urlTrue],
 					 ['dtparsed', date("YmdGis")]);
+		$this->updateByStatus($uid, "parsed");
 	}
 	public function updateByYTInfo($uid, $ytSearchRslt){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
@@ -67,37 +70,37 @@ class MyVideoTr
 	}
 	
 	
-	public function getByBiliNewOne($url){
+	public function listByNewOne(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if(empty($data["uper"]) )
+			if($data["status"] === "added" ){
 				return $data;
 			}
 		}
 		return NULL;
 	}
-	public function getByYTNewOne($url){
+	public function getByYTNewOne(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if(empty($data["ytSearchRslt"]) )
+			if(empty($data["ytSearchRslt"]) ){
 				return $data;
 			}
 		}
 		return NULL;
 	}
-	public function getByTodownloadOne($url){
+	public function getByTodownloadOne(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "todl" )
+			if($data["status"] === "todl" ){
 				return $data;
 			}
 		}
@@ -109,7 +112,7 @@ class MyVideoTr
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "dled" || $data["status"] === "toul" )
+			if($data["status"] === "toul" ){
 				return $data;
 			}
 		}
@@ -121,11 +124,13 @@ class MyVideoTr
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "added" || $data["status"] === "parsed" || $data["status"] === "todl" )
+			if($data["status"] === "parsed"){
+			//if($data["status"] === "added" || $data["status"] === "parsed" || $data["status"] === "todl" ){
 				$rslt[] = $data;
 			}
 		}
-		return rslt;
+		//var_dump($rslt);
+		return $rslt;
 	}
 	public function listByToupload(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
@@ -133,11 +138,11 @@ class MyVideoTr
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "dled")
+			if($data["status"] === "dled"){
 				$rslt[] = $data;
 			}
 		}
-		return rslt;
+		return $rslt;
 	}
 	public function listByUploaded(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
@@ -145,11 +150,17 @@ class MyVideoTr
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "uled")
+			if($data["status"] === "uled"){
 				$rslt[] = $data;
 			}
 		}
-		return rslt;
+		return $rslt;
+	}
+	public function listByAll(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$dataArr = $tbl->select("*")->fetch();
+		return $dataArr;
 	}
 }
 ?>

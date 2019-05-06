@@ -86,12 +86,13 @@ $(function() {
   </div>
 <?php
   foreach ($dataArr as $data) {
+	  $counter++;
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
     <input type="hidden" id="bidId" value="<?php echo $data["bidId"] ?>">
     <input type="hidden" id="obidId" value="<?php echo $data["obidId"] ?>">
-    <div class="col-4 text-break themed-grid-col border border-secondary">
+    <div class="col-4 text-break themed-grid-col border border-secondary"><?php echo $counter ?>
 	  <a href="https://contact.auctions.yahoo.co.jp/seller/top?aid=<?php echo $data['bidId'] ?>" target="blank">
 	    <?php echo $data["bidId"] ?>
 	  </a>

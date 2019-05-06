@@ -43,12 +43,20 @@ public class YaAucDemon {
 		YaAucDemon main = new YaAucDemon();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		main.init(driver);
-		// FOR TEST
-		main.getUnusedCode("AMZNJPY15", "XXX", "XX", 2);
 		
-//		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-//		main.init(driver);
-//		main.execute(driver);
+		// FOR TEST
+//		List<YaNoticeObject> lastestNoticeList = Lists.newArrayList();
+//		YaNoticeObject yaObj = new YaNoticeObject();
+//		yaObj.title ="支払い完了:[即決][即時発送][3分内番号通知][土日祝も]アマゾン Amazon ギフト券 15円 住所不要 評価任意 無制限入札[AMZNJPY15]";
+//		yaObj.href = "https://contact.auctions.yahoo.co.jp/seller/top?aid=u275294410&syid=yiyi2014jp&bid=aromari0407&oid=60802725-1756757115-9062737";
+//		yaObj.identifierToken = main.getIdentifierKeyFromTitle(yaObj.title);
+//		lastestNoticeList.add(yaObj);
+//		main.send(driver, lastestNoticeList );
+
+		// FOR TEST
+		//main.getUnusedCode("AMZNJPY15", "XXX", "XX", 2);
+		
+		main.execute(driver);
 	}
 
 	public void execute() throws IOException {
@@ -438,7 +446,7 @@ public class YaAucDemon {
 			WebElement rootWe = driver.findElement(By
 					.cssSelector("div[id=\"yjContentsBody\"]"));
 
-			//YaSoldObject yaObj = parseSold(rootWe);
+			YaSoldObject yaObjPar = parseSold(rootWe);
 
 			WebElement sendBtnWe = null;
 			List<WebElement> weList = rootWe.findElements(By
@@ -455,7 +463,7 @@ public class YaAucDemon {
 				continue;
 			}
 			List<YaSendCodeObject> codeList = getUnusedCode(
-					obj.identifierToken, yaObj.auctionId, yaObj.obider,yaObj.qtty);
+					obj.identifierToken, yaObj.auctionId, yaObj.obider,yaObjPar.qtty);
 			if (codeList == null || codeList.isEmpty()) {
 				continue;
 			}
@@ -870,7 +878,7 @@ public class YaAucDemon {
 	}
 
 	private boolean hasStock(YaNoticeObject obj) {
-		String stockCheckKey = "[24時間]";
+		String stockCheckKey = "[3分内番号通知]";
 		if(obj.title.indexOf(stockCheckKey) == -1){
 			// none for stock check
 			return true;

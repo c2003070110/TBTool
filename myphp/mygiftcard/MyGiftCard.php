@@ -212,7 +212,7 @@ class MyGiftCard
 			$codeCdArr[] = $dataArr[1]["codeCd"];
 			$rslt = "PSNUSD10:" . $codeCdArr[0]  . ";PSNUSD10:" . $codeCdArr[1];
 			
-		/*}else if($codeType == "PSNUSD30"){
+		}else if($codeType == "PSNUSD30"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr2) > 0 &&  count($dataArr1) > 0){
@@ -228,7 +228,7 @@ class MyGiftCard
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD10:" . $codeCdArr[2];
 			}else{
 			}
-		*/}else if($codeType == "PSNUSD40"){
+		}else if($codeType == "PSNUSD40"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr2) > 1){
@@ -242,7 +242,7 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD20:" . $codeCdArr[2];
-			/*}else if(count($dataArr1) > 3){
+			}else if(count($dataArr1) > 3){
 				// 40 = 10+10+10+10
 				$codeCdArr[] = $dataArr1[0]["codeCd"];
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
@@ -250,7 +250,7 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr1[3]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1]
     	     		 . ";PSNUSD10:" . $codeCdArr[2] . ";PSNUSD10:" . $codeCdArr[3];
-			*/}else{
+			}else{
 			}
 		}else if($codeType == "PSNUSD50"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
@@ -261,7 +261,7 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr3[0]["codeCd"];
 				$codeCdArr[] = $dataArr3[1]["codeCd"];
 				$rslt = "PSNUSD25:" . $codeCdArr[0] . ";PSNUSD25:" . $codeCdArr[1];
-			/*}else if(count($dataArr2) > 1 && count($dataArr1)>0){
+			}else if(count($dataArr2) > 1 && count($dataArr1)>0){
 				// 50 = 20 + 20 + 10
 				$codeCdArr[] = $dataArr2[0]["codeCd"];
 				$codeCdArr[] = $dataArr2[1]["codeCd"];
@@ -283,16 +283,124 @@ class MyGiftCard
 				$codeCdArr[] = $dataArr1[4]["codeCd"];
 				$rslt = "PSNUSD10:" . $codeCdArr[0] . ";PSNUSD10:" . $codeCdArr[1] . ";PSNUSD10:" . $codeCdArr[2]
 						. ";PSNUSD10:" . $codeCdArr[3] . ";PSNUSD10:" . $codeCdArr[4];
-			*/
 			}else{
 			}
 		}else if($codeType == "PSNUSD100"){
 			$dataArr1 = $tbl->select(['codeType', '==', 'PSNUSD50', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr2 = $tbl->select(['codeType', '==', 'PSNUSD25', 'and'],['status', '==', 'unused', 'and'])->fetch();
 			if(count($dataArr1) > 1){
 				$codeCdArr[] = $dataArr1[0]["codeCd"];
 				$codeCdArr[] = $dataArr1[1]["codeCd"];
 				$rslt = "PSNUSD50:" . $codeCdArr[0] . ";PSNUSD50:" . $codeCdArr[1];
+			}else if(count($dataArr1) > 0 && count($dataArr2) > 1){
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$rslt = "PSNUSD50:" . $codeCdArr[0] . ";PSNUSD25:" . $codeCdArr[1] . ";PSNUSD25:" . $codeCdArr[2];
+			}else if(count($dataArr2) > 3){
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$codeCdArr[] = $dataArr2[2]["codeCd"];
+				$codeCdArr[] = $dataArr2[3]["codeCd"];
+				$rslt = "PSNUSD25:" . $codeCdArr[0] . ";PSNUSD25:" . $codeCdArr[1] . ";PSNUSD25:" . $codeCdArr[2] . ";PSNUSD25:" . $codeCdArr[3];
+			}				
+		} else if($codeType == "AMZNUSD20"){
+			
+			$dataArr = $tbl->select(['codeType', '==', 'AMZNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr) < 2){
+				return "";
 			}
+			$codeCdArr[] = $dataArr[0]["codeCd"];
+			$codeCdArr[] = $dataArr[1]["codeCd"];
+			$rslt = "AMZNUSD10:" . $codeCdArr[0]  . ";AMZNUSD10:" . $codeCdArr[1];
+		}else if($codeType == "AMZNUSD40"){
+			$dataArr1 = $tbl->select(['codeType', '==', 'AMZNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr2 = $tbl->select(['codeType', '==', 'AMZNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr2) > 1){
+				// 40 = 20+20
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$rslt = "AMZNUSD20:" . $codeCdArr[0] . ";AMZNUSD20:" . $codeCdArr[1];
+			}else if(count($dataArr2) > 0 &&  count($dataArr1) > 1){
+				// 40 = 10+10+20
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$rslt = "AMZNUSD10:" . $codeCdArr[0] . ";AMZNUSD10:" . $codeCdArr[1] . ";AMZNUSD20:" . $codeCdArr[2];
+			}else if(count($dataArr1) > 3){
+				// 40 = 10+10+10+10
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr1[2]["codeCd"];
+				$codeCdArr[] = $dataArr1[3]["codeCd"];
+				$rslt = "AMZNUSD10:" . $codeCdArr[0] . ";AMZNUSD10:" . $codeCdArr[1]
+    	     		 . ";AMZNUSD10:" . $codeCdArr[2] . ";AMZNUSD10:" . $codeCdArr[3];
+			}
+		}else if($codeType == "AMZNUSD50"){
+			$dataArr1 = $tbl->select(['codeType', '==', 'AMZNUSD10', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr2 = $tbl->select(['codeType', '==', 'AMZNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr3 = $tbl->select(['codeType', '==', 'AMZNUSD25', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr3) > 1){
+				// 50 = 25 + 25
+				$codeCdArr[] = $dataArr3[0]["codeCd"];
+				$codeCdArr[] = $dataArr3[1]["codeCd"];
+				$rslt = "AMZNUSD25:" . $codeCdArr[0] . ";AMZNUSD25:" . $codeCdArr[1];
+			}else if(count($dataArr2) > 1 && count($dataArr1)>0){
+				// 50 = 20 + 20 + 10
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$rslt = "AMZNUSD20:" . $codeCdArr[0] . ";AMZNUSD20:" . $codeCdArr[1] . ";AMZNUSD10:" . $codeCdArr[2];
+			}else if(count($dataArr2) > 0 && count($dataArr1) > 2){
+				// 50 = 20 + 10 + 10 + 10
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr1[2]["codeCd"];
+				$rslt = "AMZNUSD20:" . $codeCdArr[0] . ";AMZNUSD10:" . $codeCdArr[1] . ";AMZNUSD10:" . $codeCdArr[2] . ";AMZNUSD10:" . $codeCdArr[3];
+			}else if(count($dataArr2) == 0 && count($dataArr1) > 4){
+				// 50 = 10 + 10 + 10 + 10 + 10
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$codeCdArr[] = $dataArr1[2]["codeCd"];
+				$codeCdArr[] = $dataArr1[3]["codeCd"];
+				$codeCdArr[] = $dataArr1[4]["codeCd"];
+				$rslt = "AMZNUSD10:" . $codeCdArr[0] . ";AMZNUSD10:" . $codeCdArr[1] . ";AMZNUSD10:" . $codeCdArr[2]
+						. ";AMZNUSD10:" . $codeCdArr[3] . ";AMZNUSD10:" . $codeCdArr[4];
+			}else{
+			}
+		}else if($codeType == "AMZNUSD100"){
+			$dataArr1 = $tbl->select(['codeType', '==', 'AMZNUSD50', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr2 = $tbl->select(['codeType', '==', 'AMZNUSD25', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			$dataArr3 = $tbl->select(['codeType', '==', 'AMZNUSD20', 'and'],['status', '==', 'unused', 'and'])->fetch();
+			if(count($dataArr1) > 1){
+				// 50 + 50
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr1[1]["codeCd"];
+				$rslt = "AMZNUSD50:" . $codeCdArr[0] . ";AMZNUSD50:" . $codeCdArr[1];
+			}else if(count($dataArr1) > 0 && count($dataArr2) > 1){
+				// 50 + 25 + 25
+				$codeCdArr[] = $dataArr1[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$rslt = "AMZNUSD50:" . $codeCdArr[0] . ";AMZNUSD25:" . $codeCdArr[1] . ";AMZNUSD25:" . $codeCdArr[2];
+			}else if(count($dataArr2) > 3){
+				// 25 + 25 + 25 + 25
+				$codeCdArr[] = $dataArr2[0]["codeCd"];
+				$codeCdArr[] = $dataArr2[1]["codeCd"];
+				$codeCdArr[] = $dataArr2[2]["codeCd"];
+				$codeCdArr[] = $dataArr2[3]["codeCd"];
+				$rslt = "AMZNUSD25:" . $codeCdArr[0] . ";AMZNUSD25:" . $codeCdArr[1] . ";AMZNUSD25:" . $codeCdArr[2] . ";AMZNUSD25:" . $codeCdArr[3];
+			}else if(count($dataArr3) > 4){
+				// 20 + 20 + 20 + 20 + 20
+				$codeCdArr[] = $dataArr3[0]["codeCd"];
+				$codeCdArr[] = $dataArr3[1]["codeCd"];
+				$codeCdArr[] = $dataArr3[2]["codeCd"];
+				$codeCdArr[] = $dataArr3[3]["codeCd"];
+				$codeCdArr[] = $dataArr3[4]["codeCd"];
+				$rslt = "AMZNUSD20:" . $codeCdArr[0] . ";AMZNUSD20:" . $codeCdArr[1] . ";AMZNUSD20:" . $codeCdArr[2]
+         				. ";AMZNUSD20:" . $codeCdArr[3] . ";AMZNUSD20:" . $codeCdArr[4];
+			}	
 		}
 		foreach ($codeCdArr as $codeCd) {
 			$tbl->select(['codeCd', '==', $codeCd])
@@ -432,8 +540,9 @@ class MyGiftCard
 	public function listAmznOrderByUid($uid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
-		
-		return $tbl->select(["uid"], "===", $uid)->fetch()[0];
+		$data =  $tbl->select(["uid", "==", $uid])->fetch()[0];
+		//var_dump($data);
+		return $data;
 	}
 	public function listAllAmznOrder(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
@@ -442,7 +551,7 @@ class MyGiftCard
 		return $tbl->select('*')->fetch();
 	}
 	
-	public function saveAmznOrder($uid, $amt, $qtty, $payway){
+	public function saveAmznOrder($uid, $amt, $qtty, $payway, $mailAddress){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYGIFTCODE_AMZN_ORDER"));
 		
@@ -456,6 +565,7 @@ class MyGiftCard
 		$data->amt = $amt;
 		$data->qtty = $qtty;
 		$data->payway = $payway;
+		$data->mailAddress = $mailAddress;
 		$data->status = 'unorder';
 		$data->dtAdd = date("YmdGis");
 		

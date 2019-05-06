@@ -25,9 +25,9 @@ $(function() {
         var thisBox = $(this).parent().parent();
         var actionName = $(this).html();
 
-        var orderNoVal = thisBox.find("#orderNo").text();
-        var codeTypeVal = thisBox.find("#codeType").text();
-        var codeCdVal = thisBox.find("#codeCd").text();
+        var orderNoVal = thisBox.find("#orderNo").val();
+        var codeTypeVal = thisBox.find("#codeType").val();
+        var codeCdVal = thisBox.find("#codeCd").val();
         
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
@@ -138,19 +138,22 @@ $(function() {
 ?>
   </div>
 <?php
+  $counter = 0;
   foreach ($dataArr as $data) {
+	  $counter++;
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
-    <div id="codeCd" class="col-4 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/mygiftcard/regcode.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data["codeCd"] ?>
-	  </a>
+    <input type="hidden" id="codeCd" value="<?php echo $data["codeCd"] ?>">
+    <input type="hidden" id="codeType" value="<?php echo $data["codeType"] ?>">
+    <input type="hidden" id="orderNo" value="<?php echo $data["orderNo"] ?>">
+    <div class="col-4 text-break themed-grid-col border border-secondary"><?php echo $counter ?>
+	  <a href="/myphp/mygiftcard/regcode.php?uid=<?php echo $data['uid'] ?>"><?php echo $data["codeCd"] ?></a>
 	</div>
 <?php
     if($status == ''){
 ?>
-    <div id="status" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["status"] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["status"] ?></div>
 <?php
     }
 ?>
@@ -164,7 +167,7 @@ $(function() {
 ?>
       <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
       <button type="button" id="btnUsded" class="btn btn-secondary actionBtn">US</button>
-      <button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>
+      <!--<button type="button" id="btnInlid" class="btn btn-secondary actionBtn">INV</button>-->
 <?php 
   }else if($data["status"] == 'using') {
 ?>
@@ -189,7 +192,7 @@ $(function() {
 <?php
     if($status == 'used'){
 ?>
-    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
     <div class="col-4 themed-grid-col border border-secondary">
 	  <a href="https://contact.auctions.yahoo.co.jp/seller/top?aid=<?php echo $data['bidId'] ?>" target="blank">
 	    <?php echo $data["bidId"] ?>
@@ -198,15 +201,13 @@ $(function() {
 <?php
     }else if($status == 'fin'){
 ?>
-    <div id="orderNo" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["orderNo"] ?></div>
-    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["orderNo"] ?></div>
+    <div class="col-4 text-break themed-grid-col border border-secondary"><?php echo $data["codeType"] ?></div>
 <?php
     }else{
 ?>
-    <div id="codeType" class="col-4 text-break themed-grid-col border border-secondary">
-	  <a href="/myphp/mygiftcard/stocklist.php?status=<?php echo $status ?>&codeType=<?php echo $data["codeType"] ?>">
-	    <?php echo $data["codeType"] ?>
-	  </a>
+    <div class="col-4 text-break themed-grid-col border border-secondary">
+	  <a href="/myphp/mygiftcard/stocklist.php?status=<?php echo $status ?>&codeType=<?php echo $data["codeType"] ?>"><?php echo $data["codeType"] ?></a>
 	</div>
 <?php
     }

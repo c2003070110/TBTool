@@ -25,7 +25,7 @@ $(function() {
     $(document).on("click", "#btnAdd", function() {
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":"addMyBid", 
+			   data : {"action":"addByUrl", 
 					   "url" : $("#url").val()
 			   },
 			   dataType : "html" 

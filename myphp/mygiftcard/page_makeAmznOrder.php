@@ -45,6 +45,7 @@ $(function() {
 			alert("amt or qtty is NULL!");
             return;
         }
+        var mailAddress = $("#mailAddress").val();
         
         var jqxhr = $.ajax(actionUrl,
                          { type : "GET",
@@ -52,13 +53,14 @@ $(function() {
 									"uid" : $("#uid").val(), 
 									"payway" : $("#payway").val(),
 									"amt" : amt, 
-									"qtty" : qtty
+									"qtty" : qtty, 
+									"mailAddress" : mailAddress
 									},
                            dataType : "html" 
                           }
                       );
         jqxhr.done(function( msg ) {
-			if(msg.indexOf("ERROR") == -1){
+			if(msg.indexOf("ERROR") == -1 && msg.indexOf("Fatal") == -1){
 				var href = window.location.href;
 				if(href.indexOf("uid") == -1){
 					var url = href +"?uid="+msg;
@@ -106,7 +108,7 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?>
 <?php
-  $uid = empty($_GET['uid'])? "" : $_GET['uid'];
+  $uid = $_GET['uid'];
   if(!empty($uid)){
 	$my = new MyGiftCard();
 	$obj = $my->listAmznOrderByUid($uid);
@@ -124,6 +126,7 @@ $(function() {
 		  <label for="qtty">qtty</label>
 		  <input type="text" class="form-control" id="qtty" value="<?php echo $obj['qtty'] ?>"></div>
       </div>
+	  <!--
       <div class="row mb-4 form-group">
         <div class="col-10 themed-grid-col">
             <label for="payway">payway</label>
@@ -133,10 +136,11 @@ $(function() {
             </select>
         </div>
       </div>
+	  -->
       <div class="row mb-4 form-group">
         <div class="col-12 themed-grid-col">
 		  <label for="mailAddress">mailAddress</label>
-		  <input type="text" class="form-control" id="mailAddress" value="<?php echo $obj['mailAddress'] ?>" readonly></div>
+		  <input type="text" class="form-control" id="mailAddress" value="<?php echo $obj['mailAddress'] ?>" ></div>
       </div>
 <?php 
     if(empty($uid) || $obj["status"] == 'unorder') {

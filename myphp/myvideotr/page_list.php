@@ -19,7 +19,7 @@ $(function() {
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":"updateMBOrderStatus", 
+			   data : {"action":"updateStatus", 
 					   "uid" : thisBox.find("#uid").val(),
 					   "status" : status
 			   },
@@ -41,6 +41,10 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "toul");
     });
+    $(document).on("click", "#btnToDownload", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "todl");
+    });
 });
 </script>
 </head>
@@ -48,13 +52,17 @@ $(function() {
 <?php
   $my = new MyVideoTr();
   $status = $_GET['status'];
-  if(empty($status) || $status == "toDL"){
+  if(empty($status)){
+	  $dataArr = $my->listByAll();
+  //
+  }else if ($status == "toDL"){
 	  $dataArr = $my->listByTodownload();
   }else if($status == "toUL"){
 	  $dataArr = $my->listByToupload();
   }else if($status == "uploaded"){
 	  $dataArr = $my->listByUploaded();
-  }
+  };
+  //var_dump($dataArr);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
 	  if(empty($status) || $status == "toDL"){
@@ -72,9 +80,10 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?>
   <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mybilibili/page_list.php?status=toDL">to DL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mybilibili/page_list.php?status=toUL">to UL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/mybilibili/page_list.php?status=uploaded">UPLOADED</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toDL">to DL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toUL">to UL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=uploaded">UPLOADED</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php">ALL</a></li>
   </ul> 
   <hr class="mb-2">   
   <div class="row">
@@ -121,7 +130,7 @@ $(function() {
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
-	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
+	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
 	</div>
 <?php
     }else if($status == "toUL"){

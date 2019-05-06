@@ -113,10 +113,10 @@ public class AmznAutoRegistGiftCardDeamon {
 			param.put("action", "getAmazonNoticeForAddCode");
 			
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("amazon.auto.regist.giftcard.service.url"), param);
-			NieUtil.log(logFile, "[INFO][Service:getAmazonNoticeForAddCode][RESULT]" + rslt);
 			if(StringUtil.isBlank(rslt)){
 				return null;
 			}
+			NieUtil.log(logFile, "[INFO][Service:getAmazonNoticeForAddCode][RESULT]" + rslt);
 			AmznGiftCardObject lastestNotice  = new  AmznGiftCardObject();
 			Json j = new Json();
 			Map<String, Object> objMap = null;
@@ -290,8 +290,10 @@ public class AmznAutoRegistGiftCardDeamon {
 			NieUtil.log(logFile, "[INFO][Service:addCode][Param]" + "[orderNo]" + orderNo + "[codeType]" + orderNo + "[codeCd]" + codeCd);
 			
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("amazon.auto.regist.giftcard.service.url"), param);
-			
-			NieUtil.log(logFile, "[INFO][Service:addCode][RESULT]" + rslt);
+
+			if (!StringUtil.isBlank(rslt)) {
+				NieUtil.log(logFile, "[INFO][Service:addCode][RESULT]" + rslt);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			NieUtil.log(logFile, "[ERROR][Service:addCode]" + e.getMessage());
@@ -377,7 +379,11 @@ public class AmznAutoRegistGiftCardDeamon {
 
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("amazon.auto.regist.giftcard.service.url"), param);
 
-			NieUtil.log(logFile, "[INFO][Service:finishAmazonNoticeForAddCode][RESULT]" + rslt);
+			if (!StringUtil.isBlank(rslt)) {
+				NieUtil.log(logFile,
+						"[INFO][Service:finishAmazonNoticeForAddCode][RESULT]"
+								+ rslt);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			NieUtil.log(logFile, "[ERROR][Service:addCode]" + e.getMessage());

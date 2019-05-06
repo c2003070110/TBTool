@@ -24,12 +24,13 @@ if($actionStr == "save"){
 	$qtty = $_GET['qtty'];
 	$amt = $_GET['amt'];
 	$payway = $_GET['payway'];
-	if(empty($qtty) || empty($amt) || empty($payway)){
+	$mailAddress = $_GET['mailAddress'];
+	if(empty($qtty) || empty($amt)){
 		echo "[Fatal]Parameter is NULL";
 		return;
 	}
 	$myGiftCard = new MyGiftCard();
-	$rslt = $myGiftCard->saveAmznOrder($uid, $amt, $qtty, $payway);
+	$rslt = $myGiftCard->saveAmznOrder($uid, $amt, $qtty, $payway, $mailAddress);
 	echo $rslt;
 } else if($actionStr == "updateAmznOrderStatus"){
 	$uid = $_GET['uid'];
