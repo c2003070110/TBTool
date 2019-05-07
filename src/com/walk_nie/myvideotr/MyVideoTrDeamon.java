@@ -513,12 +513,13 @@ public class MyVideoTrDeamon {
 
 	private void parseForBilibili(WebDriver driver, MyVideoObject videoObj) {
 
-		// TODO
-		List<WebElement> wes = driver.findElements(By.cssSelector("h2[class=\"title\"]"));
+		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"viewbox_report\"]"));
+		List<WebElement> wes = el1.findElements(By.cssSelector("h1[class=\"video-title\"]"));
 		if(!wes.isEmpty()){
 			videoObj.title = wes.get(0).getText();
 		}
-		wes = driver.findElements(By.cssSelector("a[class=\"media-user\"]"));
+		el1 = driver.findElement(By.cssSelector("div[id=\"v_upinfo\"]"));
+		wes = driver.findElements(By.cssSelector("a[class=\"username\"]"));
 		if(!wes.isEmpty()){
 			videoObj.uper = wes.get(0).getText();
 		}
