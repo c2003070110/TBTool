@@ -37,9 +37,9 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "del");
     });
-    $(document).on("click", "#btnToUpload", function() {
+    $(document).on("click", "#btnToMerge", function() {
 		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "toul");
+        updateStatus(thisBox, "tomg");
     });
     $(document).on("click", "#btnToDownload", function() {
 		var thisBox = getMyBox(this);
@@ -53,27 +53,14 @@ $(function() {
   $my = new MyVideoTr();
   $status = $_GET['status'];
   if(empty($status)){
-	  $dataArr = $my->listByAll();
+	  $dataArr = $my->listFromGroupByAll();
   //
   }else if ($status == "toDL"){
-	  $dataArr = $my->listByTodownload();
-  }else if($status == "toUL"){
-	  $dataArr = $my->listByToupload();
-  }else if($status == "uploaded"){
-	  $dataArr = $my->listByUploaded();
+	  $dataArr = $my->listGroupByTodownload();
+  }else if($status == "toMG"){
+	  $dataArr = $my->listGroupByToupload();
   };
   //var_dump($dataArr);
-  $sort = array();
-  foreach ((array) $dataArr as $key => $value) {
-	  if(empty($status) || $status == "toDL"){
-		  $sort[$key] = $value['dtAdd'];
-	  }else if($status === "toUL"){
-		  $sort[$key] = $value['dtdled'];
-	  }else if($status === "uploaded"){
-		  $sort[$key] = $value['dtuled'];
-	  }
-  }
-  array_multisort($sort, SORT_DESC, $dataArr);
 ?>
 <div id="container" class="container">
 <?php
@@ -81,7 +68,7 @@ $(function() {
 ?>
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toDL">to DL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toUL">to UL</a></li>
+    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toMG">to MG</a></li>
     <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=uploaded">UPLOADED</a></li>
     <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php">ALL</a></li>
   </ul> 
@@ -97,16 +84,10 @@ $(function() {
 <?php
     }else if($status == "toUL"){
 ?>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">groupId</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">title</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">ytSearchRslt</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
-<?php
-    }else if($status == "uploaded"){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">title</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">YTURL</div>
 <?php
     }
 ?>
@@ -120,10 +101,10 @@ $(function() {
     if(empty($status) || $status == "toDL"){
 ?>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["title"] ?>
+	  <?php echo $data["groupId"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["uper"] ?>
+	  <?php echo $data["title"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <?php echo $data["ytSearchRslt"] ?>
@@ -133,34 +114,22 @@ $(function() {
 	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
 	</div>
 <?php
-    }else if($status == "toUL"){
+    }else if($status == "toMG"){
 ?>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+	  <?php echo $data["groupId"] ?>
+	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["title"] ?>
 	  </a>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["uper"] ?>
-	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <?php echo $data["ytSearchRslt"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
-	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
-	</div>
-<?php
-    }else if($status == "uploaded"){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["title"] ?>
-	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["uper"] ?>
-	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["ytVideoUrl"] ?>
+	  <button type="button" id="btnToMerge" class="btn btn-secondary actionBtn">to MG</button>
 	</div>
 <?php
     }

@@ -45,13 +45,13 @@ if($actionStr == "addByUrl"){
 	$title = $_GET["title"];
 	$uper = $_GET["uper"];
 	$ytSearchRslt = $_GET["ytSearchRslt"];
-	$urlTrue = $_GET["urlTrue"];
+	$videoUrl = $_GET["videoUrl"];
 	if(empty($uid)){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
 	$my = new MyVideoTr();
-	$rslt = $my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $urlTrue);
+	$rslt = $my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
 	echo $rslt;
 } else if($actionStr == "getByTodownloadOne"){
 	$my = new MyVideoTr();
@@ -69,6 +69,58 @@ if($actionStr == "addByUrl"){
 	}else{
 		echo json_encode($rslt);
 	}
+} else if($actionStr == "getByTomergeOne"){
+	$my = new MyVideoTr();
+	$rslt = $my->getByTomergeOne();//MyVideoObject
+	if(empty($rslt)){
+		echo "";
+	}else{
+		echo json_encode($rslt);
+	}
+} else if($actionStr == "listByGroupUid"){
+	$groupUid = $_GET["groupUid"];
+	if(empty($groupUid)){
+		echo "[Fatal]Parameter is NULL";
+		return ;
+	}
+	$my = new MyVideoTr();
+	$rslt = $my->listByGroupUid($groupUid);//MyVideoObject
+	if(empty($rslt)){
+		echo "";
+	}else{
+		echo json_encode($rslt);
+	}
+} else if($actionStr == "listVideoStatusByUrl"){
+	$url = $_GET["url"];
+	if(empty($url)){
+		echo "[Fatal]Parameter is NULL";
+		return ;
+	}
+	$my = new MyVideoTr();
+	$rslt = $my->listVideoStatusByUrl($url);
+	if(empty($rslt)){
+		echo "";
+	}else{
+		echo json_encode($rslt);
+	}
+} else if($actionStr == "insertVideo"){
+	$url = $_GET["url"];
+	$videoUrl = $_GET["videoUrl"];
+	$title = $_GET["title"];
+	$uper = $_GET["uper"];
+	$groupUid = $_GET["groupUid"];
+	$ytSearchRslt = $_GET["ytSearchRslt"];
+	if(empty($url) || empty($videoUrl)){
+		echo "[Fatal]Parameter is NULL";
+		return ;
+	}
+	$my = new MyVideoTr();
+	$uid = $my->addVideoByUrl($url);
+	$my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
+	if(!empty($groupUid)){
+		$my->updateByGroupUid($uid, $groupUid);
+	}
+	echo $uid;
 /*	
 } else if($actionStr == "getByYTNewOne"){
 	$my = new MyVideoTr();

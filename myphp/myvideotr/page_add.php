@@ -53,7 +53,7 @@ $(function() {
 ?>
   
 <?php
-  $uid = empty($_GET['uid'])? "" : $_GET['uid'];
+  $uid = $_GET['uid'];
   if(!empty($uid)){
 	$my = new MyVideoTr();
 	$obj = $my->listByUid($uid);
@@ -64,23 +64,22 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
 	    <label for="url">链接 URL</label>
-	    <input type="text" class="form-control" id="url" value="<?php echo $obj['url'] ?>">
+	    <input type="text" class="form-control" id="url" value="<?php echo $obj['url'] ?>" <?php if(!empty($uid)) echo "readOnly" ?> >
 	  </div>
     </div>
-
 <?php 
   if(!empty($uid)){
 ?>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
 	    <label for="title">title</label>
-	    <input type="text" class="form-control" id="title" value="<?php echo $obj['title'] ?>" readonly>
+	    <input type="text" class="form-control" id="title" value="<?php echo $obj['title'] ?>" >
 	  </div>
     </div>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
 	    <label for="title">uper</label>
-	    <input type="text" class="form-control" id="uper" value="<?php echo $obj['uper'] ?>" readonly>
+	    <input type="text" class="form-control" id="uper" value="<?php echo $obj['uper'] ?>" >
 	  </div>
     </div>
     <div class="row mb-4 form-group">
@@ -95,7 +94,7 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-4"></div>
       <div class="col-8 ">
-        <button class="btn btn-secondary actionBtn" id="btnAdd" type="button">a d d ！！</button>
+        <button class="btn btn-secondary actionBtn" id="btnAdd" type="button">S A V E ！！</button>
       </div>
     </div>
   </div>

@@ -2,9 +2,10 @@
 class MyVideoObject
 {
     public $uid = '';
+    public $groupUid = '';// for ##
     
     public $url = '';
-    public $urlTrue = '';
+    public $videoUrl = '';
     
     public $uper = '';
     public $title = '';
@@ -15,8 +16,8 @@ class MyVideoObject
 	
 	public $ytVideoUrl = "";
 	
-	// addurl -> parse url -> youtube? -> download video -> upload to youtubue
-    public $status = ''; // added;parsed;todl;dled;toul;uled;parsefailure;dlfailure;
+	// addurl -> parse url -> youtube?merge? -> download video -> upload to youtubue
+    public $status = ''; // added;parsed;todl;dled;tomg;toul;uled;parsefailure;dlfailure;mgfailure;;ulfailure
 	
 	public $dtAdd = '';// date time
 	public $dtparsed = '';// date time

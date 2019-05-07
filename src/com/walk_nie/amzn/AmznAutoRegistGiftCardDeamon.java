@@ -42,6 +42,8 @@ public class AmznAutoRegistGiftCardDeamon {
 //	private int qtty = 0;
 	private String mailAddress = null;
 	private boolean isLogon = false;
+	
+	private long startStamp = 0;
 	/**
 	 * @param args
 	 * @throws IOException
@@ -91,15 +93,13 @@ public class AmznAutoRegistGiftCardDeamon {
 		}
 	}
 	public void execute(WebDriver driver) throws IOException, MessagingException {
-		// FIXME CANNOT open the login page on the VPS
-		driver.get("https://www.amazon.co.jp");
-		if(!isLogon){
-			logon(driver);
-		}
-		if(!isLogon){
+		//
+		logon(driver);
+		if (!isLogon) {
 			NieUtil.log(logFile, "[ERROR]amazon login is failure!!!");
 			return;
 		}
+		
 		AmznGiftCardObject noticeObj = getLastestNotice();
 		if (noticeObj != null) {
 			orderCode(driver, noticeObj);
@@ -407,7 +407,21 @@ public class AmznAutoRegistGiftCardDeamon {
 	}
 
 	private void logon(WebDriver driver) {
+		long nowStamp = System.currentTimeMillis();
+		if (isLogon && (nowStamp - startStamp < 1000 * 60 * 10)) {
+			return;
+		}
+		startStamp = System.currentTimeMillis();
 
+		driver.get("https://www.amazon.co.jp");
+		// TODO
+		List<WebElement> wes = driver.findElements(By.cssSelector("XX[id=\"XXX\"]"));
+		for(WebElement we :wes){
+			if("XXXXX".equals(we.getText())){
+				return;
+			}
+		}
+		
 		String rootUrl = "https://www.amazon.co.jp/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.co.jp%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_newcust&prevRID=2E61HR8PF7YBXKCHYVWB&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=jpflex&openid.mode=checkid_setup&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&pageId=jpflex&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&ubid=356-6494969-6939236";
 
 		// driver.manage().window().setSize(new Dimension(960, 960));

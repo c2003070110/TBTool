@@ -3,7 +3,7 @@ package com.walk_nie.myvideotr;
 public class MyVideoObject {
 	String uid = "";
 	String url = "";
-	String urlTrue = "";
+	String videoUrl = "";
 
 	String uper = "";
 	String title = "";
@@ -11,4 +11,6 @@ public class MyVideoObject {
 	String ytSearchRslt = "";
 	
 	String dlVideoPath = "";
+	
+	String groupUid = "";
 }

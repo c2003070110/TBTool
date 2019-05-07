@@ -62,6 +62,7 @@ $(function() {
 		var productList = "";
 		for(var i=0; i<itemBoxes.length; i++){
 			var prodUid = $(itemBoxes[i]).find("#prodUid").val();
+			if(prodUid == "" || prodUid == undefined) prodUid = "";
 			var productId = $(itemBoxes[i]).find("#productId").val();
 			if(productId == "" || productId == undefined) continue;
 			var colorName = $(itemBoxes[i]).find("#colorName").val();
@@ -144,6 +145,10 @@ $(function() {
                           }
                       );
         jqxhr.done(function( msg ) {
+			if(msg.indexOf("ERROR") != -1){
+				alert(msg);
+				return ;
+			}
 			var href = window.location.href;
 			if(href.indexOf("uid") == -1){
 				var url = href +"?uid="+msg;

@@ -19,14 +19,14 @@ class MyVideoTr
 		$tbl->insert($obj);
 		return $uid;
 	}
-	public function updateByVideoUper($uid, $title, $uper, $ytSearchRsltr, $urlTrue){
+	public function updateByVideoUper($uid, $title, $uper, $ytSearchRsltr, $videoUrl){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
 			->update(['title', $title],
 					 ['uper', $uper],
 					 ['ytSearchRslt', $ytSearchRslt],
-					 ['urlTrue', $urlTrue],
+					 ['videoUrl', $videoUrl],
 					 ['dtparsed', date("YmdGis")]);
 		$this->updateByStatus($uid, "parsed");
 	}
@@ -68,15 +68,32 @@ class MyVideoTr
 				->update(['status', $toStatus]);
 		}
 	}
+	public function updateByGroupUid($uid, $groupUid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		
+		if(empty($uid) || empty($groupUid)){
+			return;
+		}
+		$tbl->select(['uid', '==', $uid])
+			->update(['groupUid', $groupUid]);
+	}
 	
 	
+	public function listVideoStatusByUrl($url){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		
+		$dataArr = $tbl->select(['url', '==', $url])->fetch();
+		return $dataArr;
+	}
 	public function listByNewOne(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "added" ){
+			if($data["status"] === "added" && empty($data["groupUid"]) ){
 				return $data;
 			}
 		}
@@ -88,7 +105,7 @@ class MyVideoTr
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if(empty($data["ytSearchRslt"]) ){
+			if(empty($data["ytSearchRslt"]) && empty($data["groupUid"])){
 				return $data;
 			}
 		}
@@ -106,7 +123,7 @@ class MyVideoTr
 		}
 		return NULL;
 	}
-	public function getByTouploadOne($url){
+	public function getByTouploadOne(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
@@ -118,14 +135,21 @@ class MyVideoTr
 		}
 		return NULL;
 	}
+	public function getByTomergeOne(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		
+		$dataArr = $tbl->select(['status', '==', "tomg"])->fetch();
+		
+		return $dataArr[0];
+	}
 	public function listByTodownload(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "parsed"){
-			//if($data["status"] === "added" || $data["status"] === "parsed" || $data["status"] === "todl" ){
+			if($data["status"] === "parsed" && empty($data["groupUid"])){
 				$rslt[] = $data;
 			}
 		}
@@ -138,7 +162,7 @@ class MyVideoTr
 		$rslt = array();
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
-			if($data["status"] === "dled"){
+			if($data["status"] === "dled" && empty($data["groupUid"])){
 				$rslt[] = $data;
 			}
 		}
@@ -160,6 +184,78 @@ class MyVideoTr
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$dataArr = $tbl->select("*")->fetch();
+		return $dataArr;
+	}
+	public function listFromGroupByAll(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$dataArr = $tbl->select("*")->fetch();
+		$rslt = array();
+		foreach ($dataArr as $data) {
+			if(!empty($data["groupUid"])){
+				$rslt[] = $data;
+			}
+		}
+	    $sort = array();
+	    foreach ((array) $dataArr as $key => $value) {
+			$sort[$key] = $value['groupUid'];
+	    }
+	    array_multisort($sort, SORT_ASC, $rslt);
+		return $rslt;
+	}
+	public function listByGroupUid($groupUid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		
+		$dataArr = $tbl->select(['groupUid', '==', $groupUid])->fetch();
+	    $sort = array();
+	    foreach ((array) $dataArr as $key => $value) {
+			$sort[$key] = $value['dtAdd'];
+	    }
+	    array_multisort($sort, SORT_ASC, $dataArr);
+		return $dataArr;
+	}
+	public function listGroupByTodownload(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$rslt = array();
+		$dataArr = $tbl->select("*")->fetch();
+		foreach ($dataArr as $data) {
+			if($data["status"] === "parsed" && !empty($data["groupUid"])){
+				$rslt[] = $data;
+			}
+		}
+		return $rslt;
+	}
+	public function listGroupByToupload(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$rslt = array();
+		$dataArr = $tbl->select("*")->fetch();
+		foreach ($dataArr as $data) {
+			if($data["status"] === "dled" && !empty($data["groupUid"])){
+				$rslt[] = $data;
+			}
+		}
+		return $rslt;
+	}
+	public function listByRedo(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		
+		$dataArr = $tbl->select([*)->fetch();
+		$rslt = array();
+		foreach ($dataArr as $data) {
+			if($data["status"] === "parsefailure" || $data["status"] === "dlfailure"
+    			|| $data["status"] === "mgfailure" || $data["status"] === "ulfailure"){
+				$rslt[] = $data;
+			}
+		}
+	    $sort = array();
+	    foreach ((array) $dataArr as $key => $value) {
+			$sort[$key] = $value['dtAdd'];
+	    }
+	    array_multisort($sort, SORT_ASC, $dataArr);
 		return $dataArr;
 	}
 }
