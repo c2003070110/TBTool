@@ -29,6 +29,7 @@ public class MontbellOrderDemon {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		MontbellAutoOrder order = new MontbellAutoOrder(driver);
 		MontbellStockChecker stock = new MontbellStockChecker();
+		MontbellPinyinMain pinyin = new MontbellPinyinMain();
 		int interval = 0;// second
 		while (true) {
 			try {
@@ -41,6 +42,8 @@ public class MontbellOrderDemon {
 					//continue;
 				}
 				stock.processForWebService();
+				
+				pinyin.processForWebService();
 				t2 = System.currentTimeMillis();
 				dif = t2 - t1;
 				if (dif < interval * 1000) {
@@ -54,13 +57,36 @@ public class MontbellOrderDemon {
 		}
 	}
 
-	public void execute(WebDriver driver) throws Exception {
+	public void execute(WebDriver driver) {
 		MontbellAutoOrder order = new MontbellAutoOrder(driver);
 		MontbellStockChecker stock = new MontbellStockChecker();
-		
-		order.processForWebService();
-		
-		stock.processForWebService();
+		MontbellPinyinMain pinyin = new MontbellPinyinMain();
+
+		try {
+			order.processForWebService();
+		} catch (IOException e) {
+			e.printStackTrace();
+			NieUtil.log(logFile, "[ERROR][Montbell][Ordering]" + e.getMessage());
+			NieUtil.log(logFile, e);
+		}
+
+		try {
+			stock.processForWebService();
+		} catch (Exception e) {
+			e.printStackTrace();
+			NieUtil.log(logFile,
+					"[ERROR][Montbell][StockCheck]" + e.getMessage());
+			NieUtil.log(logFile, e);
+		}
+
+		try {
+			pinyin.processForWebService();
+		} catch (Exception e) {
+			e.printStackTrace();
+			NieUtil.log(logFile, "[ERROR][Montbell][PINYIN]" + e.getMessage());
+			NieUtil.log(logFile, e);
+		}
+
 	}
 
 	public void init() {

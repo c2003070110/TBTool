@@ -24,7 +24,7 @@ $(function(){
 	var validateLen = function(vStr,vlen){
 		var l = vStr.length;
 		if(l > vlen){
-			return "too long!max len = " + vlen;
+			return "too long!" + l + " OF " + vlen;
 		}
 		return "";
 	};
@@ -45,11 +45,11 @@ $(function(){
     $(document).on("click", "#btnConvert", function() {
 		var srcTxt = $("#maijiadianzhiPY").val();
 		var adrArr = srcTxt.split("\n");
-		if(adrArr.length < 10){
-			alert("[ERROR]10 Lines!");
+		if(adrArr.length != 7){
+			alert("[ERROR]9 Lines!");
 			return ;
 		}
-		var idx = 2;
+		var idx = 0;
 		var nmArr = adrArr[idx++].split(/(?=[A-Z])/);
 		if(nmArr.length>2){
 			$("#firstName").val(nmArr[0]);
@@ -294,7 +294,7 @@ $(function(){
       </div>
       <div class="row mb-4 form-group">
         <div class="col-12">
-            <textarea class="form-control" cols="40" rows="6" id="maijiadianzhiPY"  ></textarea >
+            <textarea class="form-control" cols="40" rows="6" id="maijiadianzhiPY"  ><?php echo $orderObj['maijiadianzhiPY'] ?></textarea >
         </div>
       </div>
       <div class="row mb-4 form-group">

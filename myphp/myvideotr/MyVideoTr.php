@@ -117,6 +117,7 @@ class MyVideoTr
 		
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
+			//var_dump($data);
 			if($data["status"] === "todl" ){
 				return $data;
 			}
@@ -243,7 +244,7 @@ class MyVideoTr
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
-		$dataArr = $tbl->select([*)->fetch();
+		$dataArr = $tbl->select("*")->fetch();
 		$rslt = array();
 		foreach ($dataArr as $data) {
 			if($data["status"] === "parsefailure" || $data["status"] === "dlfailure"

@@ -152,6 +152,21 @@ if($actionStr == "saveTBOrder"){
 	$my = new MyMontb();
 	$my->updateProductInfoByStock($_GET['uid'],$_GET['priceOffTax'],$_GET['stock']);
 	return;
+} else if($actionStr == "getMaijiadianzhiHanziOne"){
+	$my = new MyMontb();
+	$data = $my->getMaijiadianzhiHanziOne();
+	echo $data;
+	return;
+} else if($actionStr == "updateMaijiadianzhiPY"){
+	$uid = $_GET['uid'];
+	$maijiadianzhiPY = $_GET['maijiadianzhiPY'];
+	if($uid === null || $maijiadianzhiPY === null){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
+	$my = new MyMontb();
+	$my->updateMaijiadianzhiPY($uid, $maijiadianzhiPY);
+	return;
 	
 	
 } else {	

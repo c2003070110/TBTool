@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 import org.seleniumhq.jetty9.util.StringUtil;
 
+import com.beust.jcommander.internal.Maps;
 import com.github.stuxuhai.jpinyin.PinyinException;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
@@ -108,5 +110,39 @@ public class MontbellPinyinMain {
 			nsb.append(nsr).append("\n");
 		}
 		return nsb.toString();
+	}
+	
+	public void processForWebService() throws UnsupportedOperationException,
+			IOException, PinyinException {
+		String hanzhiStr = readFromWebService();
+		if (StringUtil.isBlank(hanzhiStr)) {
+			return;
+		}
+		String[] sp = hanzhiStr.split("%1");
+		if (sp.length != 2) {
+			return;
+		}
+		String uid = sp[0];
+		String pyNew = pinyin(sp[1]);
+		updateToWebService(uid, pyNew);
+	}
+
+	private void updateToWebService(String uid, String pyNew)
+			throws UnsupportedOperationException, IOException {
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "updateMaijiadianzhiPY");
+		param.put("uid", uid);
+		param.put("maijiadianzhiPY", pyNew);
+		NieUtil.httpGet(NieConfig.getConfig("montbell.order.service.url"),
+				param);
+
+	}
+
+	private String readFromWebService() throws UnsupportedOperationException,
+			IOException {
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "getMaijiadianzhiHanziOne");
+		return NieUtil.httpGet(
+				NieConfig.getConfig("montbell.order.service.url"), param);
 	}
 }

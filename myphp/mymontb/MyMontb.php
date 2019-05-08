@@ -185,13 +185,13 @@ class MyMontb
 		
 		return $tbl->select("*")->fetch();
 	}
+	/*
 	public function listTBOrderInfoByMBUid($mbUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
 		
 		return $tbl->select(['mbUid', '==', $mbUid,'and'])->fetch()[0];
 	}
-	/*
 	public function listTBOrderInfoByPinyou(){
 		$rsltArr = array();
 		$dataArr = $this->listAllTBOrder();
@@ -523,6 +523,33 @@ class MyMontb
 		}
 		return $rsltArr;
 	}
+	public function getMaijiadianzhiHanziOne(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$dataArr = $tbl->select(['status', '==', "unorder"])->fetch();
+		$mbOrderObj = NULL;
+		foreach ($dataArr as $data) {
+			if(empty($data["maijiadianzhiPY"]) && empty($data["statePY"])){
+				$mbOrderObj = &$data;
+				break;
+			}
+		}
+		if(empty($mbOrderObj)) return NULL;
+		
+		$dataProdArr = $this->listProductInfoByMBUid($mbOrderObj["uid"]);
+		if(empty($dataProdArr)) return NULL;
+		
+		$dataTBArr = $this->listTBOrderInfoByUid($dataProdArr[0]["tbUid"]);
+		if(empty($dataTBArr)) return NULL;
+		
+		return $mbOrderObj["uid"] . "%1" .$dataTBArr["maijiadianzhiHanzi"];
+	}
+	public function updateMaijiadianzhiPY($uid, $maijiadianzhiPY){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_MB_ORDER_INFO"));
+		$dataArr = $tbl->select(['uid', '==', $uid])
+		               ->update(['maijiadianzhiPY', $maijiadianzhiPY]);
+	}
 
 	// *********** Util ************
 	public function makePinyou($productUidList, $pinyouType){
@@ -555,6 +582,7 @@ class MyMontb
 		}
 	}
 	
+	//@deprecated
 	public function convertHanziToPY($hanzhi){
 		$fileIn = '/home/nie2019/TBTool/temp/pinyin_in';
 		$fileOut = '/home/nie2019/TBTool/temp/pinyin_out';

@@ -414,10 +414,9 @@ public class AmznAutoRegistGiftCardDeamon {
 		startStamp = System.currentTimeMillis();
 
 		driver.get("https://www.amazon.co.jp");
-		// TODO
-		List<WebElement> wes = driver.findElements(By.cssSelector("XX[id=\"XXX\"]"));
+		List<WebElement> wes = driver.findElements(By.cssSelector("span[id=\"glow-ingress-line2\"]"));
 		for(WebElement we :wes){
-			if("XXXXX".equals(we.getText())){
+			if("123-0845‌".equals(we.getText())){
 				return;
 			}
 		}
@@ -428,9 +427,11 @@ public class AmznAutoRegistGiftCardDeamon {
 		// driver.manage().window().setPosition(new Point(10, 10));
 		driver.get(rootUrl);
 		try {
-			WebElement el1 = driver.findElement(By
-					.cssSelector("input[id=\"ap_email\"]"));
-			el1.sendKeys(NieConfig.getConfig("amazon.user.name"));
+			try{
+				WebElement el1 = driver.findElement(By
+						.cssSelector("input[id=\"ap_email\"]"));
+				el1.sendKeys(NieConfig.getConfig("amazon.user.name"));
+			}catch(Exception e){}
 			WebElement el2 = driver.findElement(By
 					.cssSelector("input[id=\"ap_password\"]"));
 			el2.sendKeys(NieConfig.getConfig("amazon.user.password"));

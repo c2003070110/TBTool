@@ -8,7 +8,7 @@ class MBOrderObject
 	public $transferNoGuoji = "";
 	public $transferNoGuonei = "";
 	
-    //public $addressObj;
+    public $maijiadianzhiPY = '';
     public $firstName = '';
     public $lastName = '';
     public $tel = '';
