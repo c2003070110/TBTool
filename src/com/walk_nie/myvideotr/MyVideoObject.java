@@ -8,6 +8,9 @@ public class MyVideoObject {
 	String uper = "";
 	String title = "";
 	
+	String fl = "";// 次播放
+	String fr = "";//length
+	
 	String ytSearchRslt = "";
 	
 	String dlVideoPath = "";
