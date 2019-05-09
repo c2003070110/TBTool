@@ -12,15 +12,23 @@ class MyMontb
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_TB_ORDER_INFO"));
 		
+		$dingdanhao = $_GET['dingdanhao'];
+		if(empty($_GET['uid'])){
+			$dataArr = $tbl->select(['dingdanhao', '==', $dingdanhao])->fetch();
+			if(!empty($dataArr)){
+				return "[ERROR] has Registed!dingdanhao = " . $dingdanhao;
+			}
+		}
 		$orderObj = new TBOrderObject();
 		$tbOrderUid = empty($_GET['uid']) ? uniqid("tb", true) : $_GET['uid'];
 		$status = empty($_GET['status']) ? "st" : $_GET['status'];
 		$orderObj->uid = $tbOrderUid;
 		$orderObj->maijia = $_GET['maijia'];
-		$orderObj->dingdanhao = $_GET['dingdanhao'];
+		$orderObj->dingdanhao = $dingdanhao;
 		$orderObj->dingdanDt = $_GET['dingdanDt'];
 		$orderObj->maijiadianzhiHanzi = $_GET['maijiadianzhiHanzi'];
 		$orderObj->transferWay = $_GET['transferWay'];
+		$orderObj->buyerNote = empty($_GET['buyerNote']) ? "" : $_GET['buyerNote'];
 		//var_dump($orderObj);
 		$mbUid = "";
 		$tbOrdData = $tbl->select(['uid', '==', $orderObj->uid])->fetch()[0];

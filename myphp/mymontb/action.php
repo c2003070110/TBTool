@@ -12,6 +12,11 @@ if($actionStr === null){
 	return;
 }
 if($actionStr == "saveTBOrder"){
+	$dingdanhao = $_GET['dingdanhao'];
+	if(empty($dingdanhao)){
+		echo "[ERROR]Parameter is NULL";
+		return;
+	}
 	$my = new MyMontb();
 	$rslt = $my->saveTBOrder();
 	echo $rslt; // uid

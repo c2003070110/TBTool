@@ -28,6 +28,7 @@ class TBOrderObject
     public $maijia = '';
     public $dingdanhao = '';
     public $dingdanDt = '';
+    public $buyerNote = '';
     
     public $maijiadianzhiHanzi = '';
 	public $transferWay = ""; // mbzhiYou;wozhiYou,pinYou

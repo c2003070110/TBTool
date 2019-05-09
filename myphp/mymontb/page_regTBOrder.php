@@ -226,6 +226,12 @@ $(function() {
             <textarea class="form-control" cols="40" rows="2" id="maijiadianzhiHanzi" <?php if(!$editFlag){?> readOnly <?php } ?>><?php echo $orderObj['maijiadianzhiHanzi'] ?></textarea >
         </div>
       </div>
+      <div class="row mb-4 form-group">
+        <div class="col-12">
+          <label for="buyerNote">buyerNote</label>
+		  <input type="text" class="form-control" id="buyerNote" value="<?php echo $orderObj['buyerNote'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
+        </div>
+      </div>
       <div class="row mb-4 form-group_product">
         <div class="col-12">
           <label for="transferWay">快递方式</label>
@@ -250,7 +256,7 @@ $(function() {
 		</div>
       </div>
       <div class="row mb-4 form-group_product" id="productBox">
-        <div class="col-3">
+        <div class="col-4">
 		  <label for="productId">productId</label>
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
         </div>
@@ -276,7 +282,7 @@ $(function() {
 ?>
       <div class="row mb-1 form-group_product" id="productBox">
 	    <input type="hidden" id="prodUid" value="<?php echo $prodObj['uid'] ?>">
-        <div class="col-3">
+        <div class="col-4">
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
         <div class="col-3">

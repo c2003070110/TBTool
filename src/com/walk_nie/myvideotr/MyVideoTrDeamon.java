@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -277,20 +279,20 @@ public class MyVideoTrDeamon {
 	}
 
 	private void downloadVideo(WebDriver driver, MyVideoObject downloadObj) {
-		String videoDownloadUrl = getVideoDownloadUrl(driver,downloadObj);
-		if(StringUtil.isBlank(videoDownloadUrl)){
-			NieUtil.log(logFile,"[ERROR][Video][Download]url=" + downloadObj.videoUrl);
-			updateVideoStatus(downloadObj.uid , "dlfailure");
-			return;
-		}
-		File saveFile = getVideoSaveFile(downloadObj);
 		try {
-			downLoadVideoFromUrl(videoDownloadUrl,saveFile);
+			String videoDownloadUrl = getVideoDownloadUrl(driver, downloadObj);
+			if (StringUtil.isBlank(videoDownloadUrl)) {
+				NieUtil.log(logFile, "[ERROR][Video][Download]url=" + downloadObj.videoUrl);
+				updateVideoStatus(downloadObj.uid, "dlfailure");
+				return;
+			}
+			File saveFile = getVideoSaveFile(downloadObj);
+			downLoadVideoFromUrl(videoDownloadUrl, saveFile);
 			downloadObj.dlVideoPath = saveFile.getAbsolutePath();
-			updateVideoStatus(downloadObj.uid , "dled");
-		} catch (IOException e) {
+			updateVideoStatus(downloadObj.uid, "dled");
+		} catch (Exception e) {
 			e.printStackTrace();
-			updateVideoStatus(downloadObj.uid , "dlfailure");
+			updateVideoStatus(downloadObj.uid, "dlfailure");
 		}
 	}
 
@@ -335,16 +337,40 @@ public class MyVideoTrDeamon {
 		return bos.toByteArray();
 	}
 
-	private String getVideoDownloadUrl(WebDriver driver, MyVideoObject downloadObj) {
+	private String getVideoDownloadUrl(WebDriver driver, MyVideoObject downloadObj) throws DecoderException {
 		driver.get("https://www.parsevideo.com/");
 		WebElement we = driver.findElement(By
 				.cssSelector("input[id=\"url_input\"]"));
 		we.clear();
-		we.sendKeys(downloadObj.videoUrl);
+		URLCodec codec = new URLCodec("UTF-8");
+		String url = codec.decode(downloadObj.videoUrl);
+		we.sendKeys(url);
 		we = driver.findElement(By
 				.cssSelector("button[id=\"url_submit_button\"]"));
 		we.click();
 
+		// TODO 
+		WebDriverWait wait1 = new WebDriverWait(driver,10);
+		wait1 = new WebDriverWait(driver,60);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+
+					WebElement el1 = driver.findElement(By.cssSelector("div[id=\"plc_top\"]"));
+					List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
+					for(WebElement ele:eles){
+						String txt = ele.getText();
+						if(txt.indexOf("次郎花子") != -1){
+							return Boolean.TRUE;
+						}
+					}
+					return Boolean.FALSE;
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
 		we = driver.findElement(By.cssSelector("div[id=\"video\"]"));
 		try{
 			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video4\"]"));

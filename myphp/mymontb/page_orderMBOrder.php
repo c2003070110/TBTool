@@ -46,7 +46,7 @@ $(function(){
 		var srcTxt = $("#maijiadianzhiPY").val();
 		var adrArr = srcTxt.split("\n");
 		if(adrArr.length != 7){
-			alert("[ERROR]9 Lines!");
+			alert("[ERROR]7 Lines!");
 			return ;
 		}
 		var idx = 0;
@@ -270,19 +270,8 @@ $(function(){
             <label for="maijiadianzhiHanzi">买家地址</label>
             <textarea class="form-control" cols="40" rows="2" id="maijiadianzhiHanzi"><?php echo $tbObj['maijiadianzhiHanzi'] ?></textarea >
         </div>
-        </div>
-<?php 
-      if($editFlag && !$isMyAddress){
-?> 
-      <div class="row mb-4 form-group">
-        <div class="col-12">
-		  <button type="button" id="btnConvertHanziToPY" class="btn btn-secondary" <?php if(!$editFlag){?> readOnly <?php } ?>>TO PY</button>
-        </div>
       </div>
-<?php 
-      }
-?>
-      </div>
+    </div>
 <?php 
   }	  
 ?>
