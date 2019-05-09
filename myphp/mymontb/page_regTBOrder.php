@@ -208,13 +208,11 @@ $(function() {
 		  <label for="maijia">淘宝买家ID</label>
 		  <input type="text" class="form-control" id="maijia" value="<?php echo $orderObj['maijia'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
-	  <!--
       <div class="row mb-4 form-group">
         <div class="col-12">
 		  <label for="dingdanhao">淘宝订单号</label>
 		  <input type="text" class="form-control" id="dingdanhao" value="<?php echo $orderObj['dingdanhao'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>></div>
       </div>
-	  -->
       <div class="row mb-4 form-group">
         <div class="col-12">
 		  <label for="dingdanhao">下单时间</label>
@@ -256,7 +254,7 @@ $(function() {
 		</div>
       </div>
       <div class="row mb-4 form-group_product" id="productBox">
-        <div class="col-4">
+        <div class="col-5">
 		  <label for="productId">productId</label>
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>">
         </div>
@@ -282,7 +280,7 @@ $(function() {
 ?>
       <div class="row mb-1 form-group_product" id="productBox">
 	    <input type="hidden" id="prodUid" value="<?php echo $prodObj['uid'] ?>">
-        <div class="col-4">
+        <div class="col-5">
 		  <input type="text" class="form-control" id="productId" value="<?php echo $prodObj['productId'] ?>" <?php if(!$editFlag){?> readOnly <?php } ?>>
         </div>
         <div class="col-3">

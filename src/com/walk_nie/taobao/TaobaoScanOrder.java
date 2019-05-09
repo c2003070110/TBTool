@@ -18,8 +18,8 @@ import com.walk_nie.util.NieUtil;
 
 
 public class TaobaoScanOrder {
-	String soldItemListUrl = "https://XXXX/";
-
+	String soldItemListUrl = "https://trade.taobao.com/trade/itemlist/list_sold_items.htm";
+	String dtlUrl = "https://trade.taobao.com/trade/detail/trade_item_detail.htm?bizOrderId=";
 	public static void main(String[] args) throws IOException {
 		TaobaoScanOrder anor = new TaobaoScanOrder();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
@@ -27,84 +27,136 @@ public class TaobaoScanOrder {
 	}
 	
 	public List<OrderInfoObject> process(WebDriver driver) {
-		List<OrderInfoObject> orderDtlList = Lists.newArrayList();
 		logon(driver);
 		
 		if(!driver.getCurrentUrl().equals(soldItemListUrl)){
 			driver.get(soldItemListUrl);
 		}
 
-		// TODO 
-		List<WebElement> wes = null;
-		for(WebElement we :wes){
-			String orderStatus = "";
-			if(!"XXX".equals(orderStatus))continue;
+		return scanOrder(driver);
+	}
+	
+	private List<OrderInfoObject> scanOrder(WebDriver driver) {
 
+		List<OrderInfoObject> orderDtlList = Lists.newArrayList();
+		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"sold_container\"]"));
+		List<WebElement> wes = el1.findElements(By.cssSelector("div[class=\"trade-order-main\"]"));
+
+		wes = el1.findElements(By.className("trade-order-main"));
+		for(WebElement we :wes){
+			List<WebElement> wes1 = we.findElements(By.tagName("table"));
+			if(wes1.size() != 2) continue;
+			WebElement tb1 = wes1.get(0);
+			String orderNoDtString = tb1.findElements(By.tagName("tr")).get(0).findElements(By.tagName("td")).get(0).getText();
+			orderNoDtString = orderNoDtString.replaceAll(" ", "");
+			int idx = orderNoDtString.indexOf("创建时间:");
 			OrderInfoObject orderInfoObj = new OrderInfoObject();
-			orderInfoObj.orderObject.orderNo = "";
-			orderInfoObj.orderObject.buyerName = "";
+			orderInfoObj.orderObject.orderNo = orderNoDtString.substring("订单号:".length(),idx);
+			orderInfoObj.orderObject.orderCreatedTime = orderNoDtString.substring(idx+ "创建时间:".length());
 			
-			orderInfoObj.orderObject.orderCreatedTime = "";
+			WebElement tb2 = wes1.get(1);
+			List<WebElement> wes2 = tb2.findElements(By.tagName("tr"));
+			
+			WebElement firstTr = wes2.get(0);
+			String orderStatus = firstTr.findElements(By.tagName("td")).get(5).getText();
+			if(orderStatus.indexOf("买家已付款") == -1)continue;
+			orderInfoObj.orderObject.buyerName = firstTr.findElements(By.tagName("td")).get(4).getText();
 			
 			orderInfoObj.orderObject.acturalPayAmt = "";
 			
-			orderInfoObj.orderDetailUrl ="";
-			
-			List<WebElement> wes1 = null;
-			for (WebElement we1 : wes1) {
-				String orderStatusDtl = "";
+			for(WebElement we2 :wes2){
+				List<WebElement> westd = we2.findElements(By.tagName("td"));
+				String orderStatusDtl = westd.get(3).getText();
 				if(!"".equals(orderStatusDtl))continue;
+
 				OrderDetailObject dtl = new OrderDetailObject();
-				dtl.baobeiTitle = "";
-				dtl.sku = "";
+				List<WebElement> wesp = westd.get(0).findElements(By.tagName("p"));
+				if(wesp.size() > 0){
+					dtl.baobeiTitle = wesp.get(0).getText();
+				}
+				String sku1 = "",sku2 = "";
+				for(WebElement wep :wesp){
+					String str = wep.getText();
+					if(str.startsWith("颜色分类")){
+						sku1 = str;
+					}
+					if(str.startsWith("商家编码")){
+						sku2 = str;
+					}
+				}
+				dtl.sku = sku2 + " " + sku1;
 				orderInfoObj.orderDtlList.add(dtl);
 			}
+			orderInfoObj.orderDetailUrl =dtlUrl + orderInfoObj.orderObject.orderNo;
+			
 			orderDtlList.add(orderInfoObj);
 		}
-		for(OrderInfoObject orderInfoObj :orderDtlList){
-			driver.get(orderInfoObj.orderDetailUrl);
-			
-			orderInfoObj.orderObject.buyerNote = "";
-			//orderInfoObj.orderObject.recName = "";
-			orderInfoObj.orderObject.addressFull = "";
-			//orderInfoObj.orderObject.tel = "";
-			//orderInfoObj.orderObject.mobile = "";
-		}
+		
+		scanForOrderDetail(driver,orderDtlList);
 		return orderDtlList;
 	}
-	
+
+	private void scanForOrderDetail(WebDriver driver,
+			List<OrderInfoObject> orderDtlList) {
+
+		for (OrderInfoObject orderInfoObj : orderDtlList) {
+			driver.get(orderInfoObj.orderDetailUrl);
+
+			WebElement el1 = driver.findElement(By
+					.cssSelector("div[id=\"detail-panel\"]"));
+
+			List<WebElement> wesDiv = el1.findElements(By.tagName("div"));
+			for (WebElement wediv : wesDiv) {
+				String className = wediv.getAttribute("class");
+				if (className.startsWith("address-memo-mod__address-note")) {
+					String txt = wediv.getText();
+					txt = txt.replaceAll("买家留言：", "");
+					orderInfoObj.orderObject.buyerNote = txt;
+					break;
+				}
+			}
+
+			List<WebElement> wesa = el1.findElements(By.tagName("a"));
+			for (WebElement wea : wesa) {
+				String txt = wea.getText();
+				if (txt.indexOf("收货和物流信息") != -1) {
+					wea.click();
+					break;
+				}
+			}
+			wesDiv = el1.findElements(By.tagName("div"));
+			for (WebElement wediv : wesDiv) {
+				String className = wediv.getAttribute("class");
+				if (className.startsWith("logistics-panel-mod__line-info")) {
+					String txt = wediv.getText();
+					txt = txt.replaceAll("收货地址：", "");
+					txt = txt.replaceAll(" ", "");
+					orderInfoObj.orderObject.addressFull = txt;
+					break;
+				}
+			}
+		}
+	}
+
 	private void logon(WebDriver driver) {
-		// TODO 
 		driver.get(soldItemListUrl);
-		try {
-			driver.findElement(By.cssSelector("div[id=\"XXX\"]"));
-		} catch (Exception e) {
-			// already login
+		String title = driver.getTitle();
+		if("已卖出的宝贝".equals(title)){
 			return;
 		}
-		
 
-		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"pl_unlogin_home_login\"]"));
-		WebElement el2 = el1.findElement(By.cssSelector("a[node-type=\"normal_tab\"]"));
-		el2.click();
+		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"J_StaticForm\"]"));
 		
-		el2 = el1.findElement(By.cssSelector("input[id=\"loginname\"]"));
+		WebElement el2 = el1.findElement(By.cssSelector("input[id=\"TPL_username_1\"]"));
 		el2.clear();
 		el2.sendKeys(NieConfig.getConfig("taobao.user.name"));
 		
-		el2 = el1.findElement(By.cssSelector("input[name=\"password\"]"));
+		el2 = el1.findElement(By.cssSelector("input[id=\"TPL_password_1\"]"));
 		el2.clear();
 		el2.sendKeys(NieConfig.getConfig("taobao.user.password"));
 		
-		List<WebElement> wes = el1.findElements(By.tagName("span"));
-		for(WebElement we :wes){
-			if("登录".equals(we.getText())){
-				we.click();
-				break;
-			}
-		}
-
-		NieUtil.mySleepBySecond(2);
+		el2 = el1.findElement(By.cssSelector("button[id=\"J_SubmitStatic\"]"));
+		el2.click();
 		
 		WebDriverWait wait1 = new WebDriverWait(driver,10);
 		wait1 = new WebDriverWait(driver,60);
@@ -112,14 +164,9 @@ public class TaobaoScanOrder {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-
-					WebElement el1 = driver.findElement(By.cssSelector("div[id=\"plc_top\"]"));
-					List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
-					for(WebElement ele:eles){
-						String txt = ele.getText();
-						if(txt.indexOf("次郎花子") != -1){
-							return Boolean.TRUE;
-						}
+					String title = driver.getTitle();
+					if("已卖出的宝贝".equals(title)){
+						return Boolean.TRUE;
 					}
 					return Boolean.FALSE;
 				} catch (Exception e) {
@@ -128,13 +175,9 @@ public class TaobaoScanOrder {
 			}
 		});
 		
-		el1 = driver.findElement(By.cssSelector("div[id=\"plc_top\"]"));
-		List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
-		for(WebElement ele:eles){
-			String txt = ele.getText();
-			if(txt.indexOf("次郎花子") != -1){
-				return;
-			}
+		title = driver.getTitle();
+		if("已卖出的宝贝".equals(title)){
+			return ;
 		}
 		
 		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
