@@ -18,4 +18,6 @@ define("URL_ACTION_MYWEBMONEY", "http://133.130.114.129/myphp/mywebmoney/action.
 
 define("URL_ACTION_MYVIDEOTR", "http://133.130.114.129/myphp/myvideotr/action.php"); 
 
+define("URL_ACTION_MYTAOBAO", "http://133.130.114.129/myphp/mytaobao/action.php"); 
+
 ?>

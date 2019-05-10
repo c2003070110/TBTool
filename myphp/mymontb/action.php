@@ -12,14 +12,25 @@ if($actionStr === null){
 	return;
 }
 if($actionStr == "saveTBOrder"){
+	$uid = $_GET['uid'];
+	$maijia = $_GET['maijia'];
 	$dingdanhao = $_GET['dingdanhao'];
+	$dingdanDt = $_GET['dingdanDt'];
+	$maijiadianzhiHanzi = $_GET['maijiadianzhiHanzi'];
+	$buyerNote = $_GET['buyerNote'];
+	$transferWay = $_GET['transferWay'];
+	$productList = $_GET['productList'];
 	if(empty($dingdanhao)){
 		echo "[ERROR]Parameter is NULL";
 		return;
 	}
 	$my = new MyMontb();
-	$rslt = $my->saveTBOrder();
+	$rslt = $my->saveTBOrder($uid, $maijia, $dingdanhao, $dingdanDt, $maijiadianzhiHanzi, $buyerNote, $transferWay, $productList);
 	echo $rslt; // uid
+	return;
+} else if($actionStr == "loadTaobaoOrder"){
+	$my = new MyMontb();
+	$rslt = $my->loadTaobaoOrder();
 	return;
 } else if($actionStr == "deleteTBOrder"){
 	if(empty($_GET["uid"])){

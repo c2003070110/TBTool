@@ -1,15 +1,20 @@
 package com.walk_nie.taobao;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Maps;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderInfoObject;
 import com.walk_nie.taobao.util.WebDriverUtil;
@@ -18,6 +23,8 @@ import com.walk_nie.util.NieUtil;
 
 
 public class TaobaoScanOrder {
+	private File logFile = null;
+	
 	String soldItemListUrl = "https://trade.taobao.com/trade/itemlist/list_sold_items.htm";
 	String dtlUrl = "https://trade.taobao.com/trade/detail/trade_item_detail.htm?bizOrderId=";
 	public static void main(String[] args) throws IOException {
@@ -26,7 +33,70 @@ public class TaobaoScanOrder {
 		anor.process(driver);
 	}
 	
-	public List<OrderInfoObject> process(WebDriver driver) {
+	public void execute() throws IOException {
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		init();
+		int interval = Integer.parseInt(NieConfig.getConfig("taobao.deamon.interval"));// second
+		while (true) {
+			try {
+				long t1 = System.currentTimeMillis();
+				process(driver);
+				long t2 = System.currentTimeMillis();
+				long dif = t2 - t1;
+				if (dif < interval * 1000) {
+					NieUtil.log(logFile, "[SLEEP]zzzZZZzzz...");
+					NieUtil.mySleepBySecond((new Long(interval - dif / 1000)).intValue());
+				}
+			} catch (Exception ex) {
+				NieUtil.log(logFile, ex);
+			}
+		}
+	}
+	public void processForWebService(WebDriver driver) throws UnsupportedOperationException, IOException {
+		List<OrderInfoObject> list = process(driver);
+		addTBOrderByWebService(list);
+	}
+
+	private void addTBOrderByWebService(List<OrderInfoObject> orders)
+			throws UnsupportedOperationException, IOException {
+
+		for (OrderInfoObject order : orders) {
+
+			Map<String, String> param = Maps.newHashMap();
+			param.put("action", "addTaobaoOrder");
+			param.put("orderNo", order.orderObject.orderNo);
+			param.put("orderCreatedTime", order.orderObject.orderCreatedTime);
+			param.put("buyerName", order.orderObject.buyerName);
+			param.put("buyerNote", order.orderObject.buyerNote);
+			param.put("addressFull", order.orderObject.addressFull);
+			NieUtil.log(logFile, "[INFO][Service:addTaobaoOrder][Param]"
+					+ "[orderNo]" + order.orderObject.orderNo + "[buyerName]" + order.orderObject.buyerName);
+
+			String rslt = NieUtil.httpGet(
+					NieConfig.getConfig("taobao.service.url"), param);
+
+			NieUtil.log(logFile, "[INFO][Service:addTaobaoOrder][RESULT]"
+					+ rslt);
+			if(rslt.indexOf("ERROR") != -1 || rslt.indexOf("Fatal") != -1) continue;
+			for (OrderDetailObject dtl : order.orderDtlList) {
+				param = Maps.newHashMap();
+				param.put("action", "addTaobaoOrderDetail");
+				param.put("orderNo", order.orderObject.orderNo);
+				param.put("baobeiTitle", dtl.baobeiTitle);
+				param.put("sku", dtl.sku);
+				
+				NieUtil.log(logFile, "[INFO][Service:addTaobaoOrderDetail][Param]"
+						+ "[orderNo]" + order.orderObject.orderNo + "[buyerName]" + order.orderObject.buyerName);
+
+				 rslt = NieUtil.httpGet(
+						NieConfig.getConfig("taobao.service.url"), param);
+
+				NieUtil.log(logFile, "[INFO][Service:addTaobaoOrderDetail][RESULT]"
+						+ rslt);
+			}
+		}
+	}
+	public List<OrderInfoObject> process(WebDriver driver) throws UnsupportedOperationException, IOException {
 		logon(driver);
 		
 		if(!driver.getCurrentUrl().equals(soldItemListUrl)){
@@ -36,7 +106,7 @@ public class TaobaoScanOrder {
 		return scanOrder(driver);
 	}
 	
-	private List<OrderInfoObject> scanOrder(WebDriver driver) {
+	private List<OrderInfoObject> scanOrder(WebDriver driver) throws UnsupportedOperationException, IOException {
 
 		List<OrderInfoObject> orderDtlList = Lists.newArrayList();
 		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"sold_container\"]"));
@@ -52,6 +122,9 @@ public class TaobaoScanOrder {
 			int idx = orderNoDtString.indexOf("创建时间:");
 			OrderInfoObject orderInfoObj = new OrderInfoObject();
 			orderInfoObj.orderObject.orderNo = orderNoDtString.substring("订单号:".length(),idx);
+			
+			if(hasRegisted(orderInfoObj.orderObject.orderNo)) continue;
+			
 			orderInfoObj.orderObject.orderCreatedTime = orderNoDtString.substring(idx+ "创建时间:".length());
 			
 			WebElement tb2 = wes1.get(1);
@@ -94,6 +167,19 @@ public class TaobaoScanOrder {
 		
 		scanForOrderDetail(driver,orderDtlList);
 		return orderDtlList;
+	}
+	private boolean hasRegisted(String orderNo)
+			throws UnsupportedOperationException, IOException {
+
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "isRegistedOrderNo");
+		param.put("orderNo", orderNo);
+		String rslt = NieUtil.httpGet(NieConfig.getConfig("taobao.service.url"), param);
+		if (!StringUtil.isBlank(rslt)) {
+			NieUtil.log(logFile, "[INFO][Service:isRegistedOrderNo][RESULT]" + rslt);
+			return new Boolean(rslt).booleanValue();
+		}
+		return false;
 	}
 
 	private void scanForOrderDetail(WebDriver driver,
@@ -182,5 +268,14 @@ public class TaobaoScanOrder {
 		
 		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
 	}
+
+	public void init() throws IOException {
+
+		logFile = new File(NieConfig.getConfig("myvideotr.log.file"));
+
+		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
+	}
+	
 
 }

@@ -44,16 +44,20 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "fin");
     });
-	/*
-    $(document).on("click", "#btnMBoff", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "mboff");
+    $(document).on("click", "#btnLoadTaobaoOrder", function() {
+	    var param = {};
+		param.action = "loadTaobaoOrder";
+        
+        var jqxhr = $.ajax(actionUrl,
+                         { type : "GET",
+                           data : param,
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+			location.reload();
+        });
     });
-    $(document).on("click", "#btnCancel", function() {
-		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "cancel");
-    });
-	*/
 });
 </script>
 </head>
@@ -79,6 +83,12 @@ $(function() {
     <li class="list-group-item <?php echo $cssBgmbfh ?>"><a href="/myphp/mymontb/page_TBOrderlist.php?status=mbfh">MBFH</a></li>
     <li class="list-group-item <?php echo $cssBgAll ?>"><a href="/myphp/mymontb/page_TBOrderlist.php">ALL</a></li>
   </ul>
+  <hr class="mb-4">
+  <div class="row mb-4 form-group">
+	<div class="col-12">
+	  <button type="button" id="btnLoadTaobaoOrder" class="btn btn-secondary">load from taobao order!</button>
+	</div>
+  </div>
   <hr class="mb-4">
 <?php
   $sort = array();

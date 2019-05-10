@@ -2,6 +2,7 @@ package com.walk_nie.taobao.object;
 
 
 public class OrderObject {
+	public String uid = "";
 	//订单编号
 	public String orderNo="";
 	//买家会员名

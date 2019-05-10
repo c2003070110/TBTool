@@ -23,10 +23,17 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.io.Files;
 import com.walk_nie.taobao.object.BaobeiPublishObject;
 import com.walk_nie.taobao.object.TaobaoSaledObject;
+import com.walk_nie.util.NieConfig;
+import com.walk_nie.util.NieUtil;
 
 public class TaobaoUtil {
     public static String FILE_NAME_SEPERATOR =";;;";
@@ -1171,5 +1178,45 @@ public class TaobaoUtil {
 			}
 		}
 		return skuProps;
+	}
+	
+	public static void login(WebDriver driver){
+		String loginTitle = "XXX";
+		String title = driver.getTitle();
+		if(!loginTitle.equals(title)){
+			driver.get("");
+		}
+
+		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"J_StaticForm\"]"));
+		
+		WebElement el2 = el1.findElement(By.cssSelector("input[id=\"TPL_username_1\"]"));
+		el2.clear();
+		el2.sendKeys(NieConfig.getConfig("taobao.user.name"));
+		
+		el2 = el1.findElement(By.cssSelector("input[id=\"TPL_password_1\"]"));
+		el2.clear();
+		el2.sendKeys(NieConfig.getConfig("taobao.user.password"));
+		
+		el2 = el1.findElement(By.cssSelector("button[id=\"J_SubmitStatic\"]"));
+		el2.click();
+		
+		WebDriverWait wait1 = new WebDriverWait(driver,10);
+		wait1 = new WebDriverWait(driver,60);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					String title = driver.getTitle();
+					if(!loginTitle.equals(title)){
+						return Boolean.TRUE;
+					}
+					return Boolean.FALSE;
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+		
+		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
 	}
 }

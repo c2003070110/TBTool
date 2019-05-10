@@ -106,6 +106,7 @@ if($actionStr == "addByUrl"){
 } else if($actionStr == "insertVideo"){
 	$url = $_GET["url"];
 	$videoUrl = $_GET["videoUrl"];
+	$toType = $_GET["toType"];
 	$title = $_GET["title"];
 	$uper = $_GET["uper"];
 	$groupUid = $_GET["groupUid"];
@@ -115,7 +116,7 @@ if($actionStr == "addByUrl"){
 		return ;
 	}
 	$my = new MyVideoTr();
-	$uid = $my->addVideoByUrl($url);
+	$uid = $my->addVideoByUrl($url, $toType);
 	$my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
 	if(!empty($groupUid)){
 		$my->updateByGroupUid($uid, $groupUid);

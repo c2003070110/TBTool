@@ -8,12 +8,14 @@ public class MyVideoObject {
 	String uper = "";
 	String title = "";
 	
+	String toType = ""; // toWeibo;toYoutube
+	
 	String fl = "";// 次播放
 	String fr = "";//length
 	
 	String ytSearchRslt = "";
 	
-	String dlVideoPath = "";
+	//String dlVideoPath = "";
 	
 	String groupUid = "";
 }

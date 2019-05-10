@@ -9,6 +9,8 @@ class MyVideoObject
     
     public $uper = '';
     public $title = '';
+    
+    public $toType = ''; // toWeibo;toYoutube
 	
 	public $ytSearchRslt = "";
     

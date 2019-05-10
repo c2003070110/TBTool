@@ -33,4 +33,8 @@ define("TBL_MYWEBMONEY_DAICHONG", "mywebmoney.daichong.info");
 
 define("TBL_MYVIDEOTR_VIDEO_INFO", "myvideotr.video.info"); 
 
+define("TBL_MYTAOBAO_FAHUO_INFO", "mytaobao.fahuo.info"); 
+define("TBL_MYTAOBAO_ORDER_INFO", "mytaobao.Order.info")
+define("TBL_MYTAOBAO_ORDER_DETAIL_INFO", "mytaobao.Order.detail.info")
+
 ?>
