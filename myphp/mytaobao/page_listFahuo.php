@@ -6,7 +6,7 @@ require __DIR__ .'/MyTaobao.php';
 ?>
 <html lang="ja">
 <head>
-<title>bilibili list</title>
+<title>fahuo list</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -21,7 +21,7 @@ $(function() {
 			 { type : "GET",
 			   data : {"action":"updateFahuoStatus", 
 					   "uid" : thisBox.find("#uid").val(),
-					   "status" : status
+					   "toStatus" : status
 			   },
 			   dataType : "html" 
 			  }
@@ -36,6 +36,10 @@ $(function() {
     $(document).on("click", "#btnDel", function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "del");
+    });
+    $(document).on("click", "#btnFahuo", function() {
+		var thisBox = getMyBox(this);
+        updateStatus(thisBox, "added");
     });
 });
 </script>
@@ -66,23 +70,21 @@ $(function() {
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addFahuo.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["orderNo"] ?>
 	  </a>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["trackTraceNo"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["status"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+	  <button type="button" id="btnFahuo" class="btn btn-secondary actionBtn">RE-FH</button>
 	</div>
-<?php
-    }
-?>
   </div>
 <?php
   }

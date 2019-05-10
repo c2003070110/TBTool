@@ -60,7 +60,9 @@ $(function() {
   if(!empty($uid)){
 	$my = new MyTaobao();
 	$obj = $my->listTaobaoOrderByUid($uid);
-	$objDtl = $my->listTaobaoOrderDetailByOrderNo($obj['orderNo']);
+	//var_dump($obj['orderNo']);
+	$objDtlArr = $my->listTaobaoOrderDetailByOrderNo($obj['orderNo']);
+	//var_dump($objDtlArr);
   }
 ?>
   <div class="box itembox">
@@ -96,7 +98,7 @@ $(function() {
 	  </div>
     </div>
 <?php
-  foreach ($objDtl as $dtl) {
+  foreach ($objDtlArr as $dtl) {
 ?>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">

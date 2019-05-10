@@ -2,13 +2,14 @@ package com.walk_nie.taobao;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.json.Json;
-import org.openqa.selenium.support.ui.Select;
 import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.google.common.collect.Maps;
@@ -19,7 +20,7 @@ import com.walk_nie.util.NieUtil;
 
 
 public class TaobaoFahuo {
-	String dtlUrl = "https://trade.taobao.com/trade/detail/trade_item_detail.htm?bizOrderId=";
+	String dtlUrl = "https://wuliu.taobao.com/user/consign.htm?trade_id=";
 
 	private File logFile = null;
 	public static void main(String[] args) throws IOException {
@@ -94,43 +95,91 @@ public class TaobaoFahuo {
 
 	private void fahuo(WebDriver driver, TaobaoFahuoObject obj) {
 		driver.get(dtlUrl + obj.orderNo);
-		logon(driver);
-		WebElement weTraceNo = null;// TODO
-		WebElement weProvideName = null;// TODO
-		WebElement weFahuo = null;// TODO
-		String trackTraceNo = obj.trackTraceNo;
-		if(StringUtil.isBlank(trackTraceNo)){
-			// 
-			Select dropdown = new Select(weProvideName);
-			dropdown.selectByValue("XXXX");
-			weFahuo.click();
-			updateStatus(obj,"fahuo");
+		
+		TaobaoUtil.login(driver);
+		
+		List<WebElement> eles0 = driver.findElements(By.cssSelector("div[class=\"ks-contentbox\"]"));
+		for (WebElement we : eles0) {
+			String txt = we.getText().trim();
+			if(txt.indexOf("新功能！拆单发货") != -1){
+				List<WebElement> eles1 = we.findElements(By.tagName("a"));	
+				for (WebElement we1 : eles1) {
+					txt = we1.getText().trim();
+					if(txt.indexOf("关闭") != -1){
+						we1.click();
+						break;
+					}
+				}
+				break;
+			}
+		}
+ 
+		WebElement weRoot = driver.findElement(By.cssSelector("form[id=\"orderForm\"]"));
+		WebElement weRoot1 = weRoot.findElement(By.cssSelector("div[id=\"step3\"]"));
+		
+		List<WebElement> eles = weRoot1.findElements(By.cssSelector("ul[class=\"tab-selector\"]"));
+		if (eles.isEmpty()) {
 			return;
 		}
-		weTraceNo.sendKeys(trackTraceNo);
-		Select dropdown = new Select(weProvideName);
-		dropdown.selectByValue(mapTransferProvide(obj.trackTraceNo,obj.tranferProviderName));
-		weFahuo.click();
+		WebElement tabRoot = eles.get(0);
+		String trackTraceNo = obj.trackTraceNo;
+		if(StringUtil.isBlank(trackTraceNo)){
+			//无需物流
+			tabRoot.findElement(By.cssSelector("li[id=\"dummyTab\"]")).click();
+			eles = weRoot1.findElement(
+					By.cssSelector("div[id=\"logis:dummy\"]")).findElements(
+					By.tagName("button"));
+			for (WebElement we : eles) {
+				if ("确认".equals(we.getText().trim())) {
+					we.click();
+					break;
+				}
+			}
+		}else{
+			// 自己联系物流
+			tabRoot.findElement(By.cssSelector("li[id=\"offlineTab\"]")).click();
+			WebElement we1 = weRoot1.findElement(By.cssSelector("div[id=\"logis:offline\"]"));
+			eles = we1.findElements(By.tagName("input"));
+			for (WebElement we : eles) {
+				if (we.getAttribute("id").startsWith("ks-combobox")) {
+					we.clear();
+					we.sendKeys(trackTraceNo);
+					NieUtil.mySleepBySecond(3);
+					/*
+					String key = "";
+					if(trackTraceNo.toLowerCase().endsWith("jp")){
+						key = "日本邮政";
+					}else{
+						key = "中通快递";
+					}
+					*/
+					List<WebElement> eles2 = driver.findElements(By.cssSelector("div[class=\"ks-contentbox\"]"));
+					for (WebElement we2 : eles2) {
+						List<WebElement> eles3 = we2.findElements(By.tagName("div"));	
+						for (WebElement we3 : eles3) {
+							String id = we3.getAttribute("id");
+							if(id.toLowerCase().startsWith("ks-menuitem".toLowerCase())){
+								we3.click();
+								break;
+							}
+						}
+					}
+					
+					break;
+				}
+			}
+			eles = we1.findElements(By.tagName("button"));
+			for (WebElement we : eles) {
+				if ("发货".equals(we.getText().trim())) {
+					we.click();
+					break;
+				}
+			}
+		}
+		
 		updateStatus(obj,"fahuo");
 	}
 
-	private String mapTransferProvide(String trackTraceNo, String tranferProviderName) {
-
-		String provideName = "";
-		if (!StringUtil.isBlank(trackTraceNo) && StringUtil.isBlank(tranferProviderName)) {
-			if (trackTraceNo.toLowerCase().startsWith("EJ") || trackTraceNo.toLowerCase().startsWith("EM")
-					|| trackTraceNo.toLowerCase().startsWith("CD")) {
-				provideName = "EMS";
-			} else {
-				provideName = "ZHONGTONG"; 
-			}
-		}
-		if (StringUtil.isBlank(provideName)) {
-			provideName = "ZHONGTONG"; 
-		}
-		// TODO
-		return provideName;
-	}
 	private void updateStatus(TaobaoFahuoObject obj, String status) {
 
 		String action = "updateFahuoStatus";
@@ -151,22 +200,6 @@ public class TaobaoFahuo {
 		}
 	}
 	
-	private void logon(WebDriver driver) {
-		// TODO
-		String titleName = "";
-		String title = driver.getTitle();
-		if(titleName.equals(title)){
-			return;
-		}
-		TaobaoUtil.login(driver);
-		
-		title = driver.getTitle();
-		if(titleName.equals(title)){
-			return ;
-		}
-		
-		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
-	}
 
 	public void init() throws IOException {
 

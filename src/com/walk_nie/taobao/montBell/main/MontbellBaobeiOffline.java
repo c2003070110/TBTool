@@ -19,16 +19,18 @@ public class MontbellBaobeiOffline {
 
 	public static void main(String[] args)  {
 		MontbellBaobeiOffline main = new MontbellBaobeiOffline();
-		main.process();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		main.process(driver);
 	}
 	
-	public void process(){
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-		tbLogon(driver);
+	public void process(WebDriver driver){
 		
-		// selling
 		String sellingUrl = "https://item.publish.taobao.com/taobao/manager/render.htm?tab=on_sale&pagination.current=";
-		WebElement weRoot = driver.findElement(By.cssSelector("div[id=\"XXX\"]"));// TODO
+		driver.get(sellingUrl);
+		
+		TaobaoUtil.login(driver);
+		
+		WebElement weRoot = driver.findElement(By.cssSelector("div[id=\"root\"]"));
 		
 		int page = 10;
 		List<WebElement> eles = weRoot.findElements(By.className("next-pagination"));
@@ -43,23 +45,28 @@ public class MontbellBaobeiOffline {
 			}
 		}
 		
-		for (int i = 0; i < page; i++) {
+		for (int i = 1; i <= page; i++) {
 			driver.get(sellingUrl + i);
-			WebElement weRootLoop = driver.findElement(By.cssSelector("div[id=\"XXX\"]"));// TODO
+			WebElement weRootLoop = driver.findElement(By.cssSelector("div[id=\"root\"]"));
 			List<WebElement> eles1 = weRootLoop.findElements(By.className("next-table-body"));
 			if (eles1.isEmpty()) continue;
 			List<WebElement> wes = eles1.get(0).findElements(By.tagName("tr"));
-			
+			boolean hasOffOne = false;
 			for (WebElement we : wes) {
 				String className = we.getAttribute("class");
 				if(className.indexOf("next-table-row") == -1) continue;
+
+				List<WebElement> westd = we.findElements(By.tagName("td"));
+				if (westd.isEmpty()) continue;
+				if (westd.size() != 8) continue;
+				WebElement wetd2 = westd.get(1);
 				
-				List<WebElement> wes1 = we.findElements(By.tagName("span"));
-				if (wes1.isEmpty()) continue;
-				String desc = wes1.get(0).getText();
+				//List<WebElement> wes1 = wetd2.findElements(By.tagName("span"));
+				//if (wes1.isEmpty()) continue;
+				String desc = wetd2.getText();
 				if(desc.indexOf("MTBL") == -1) continue;
 				
-				List<WebElement> wes2 = we.findElements(By.tagName("a"));
+				List<WebElement> wes2 = wetd2.findElements(By.tagName("a"));
 				if (wes2.isEmpty()) continue;
 				String title = wes2.get(0).getText();
 				Pattern p = Pattern.compile("\\d+");
@@ -97,20 +104,25 @@ public class MontbellBaobeiOffline {
 				// set to delete target
 				WebElement we1 = we.findElement(By.cssSelector("input[type=\"checkbox\"]"));
 				we1.click();
+				hasOffOne = true;
 			}
+			if(!hasOffOne) continue;
 			// DO delete!
-			eles = weRoot.findElements(By.className("list-page-action-toolbar"));
+			eles = weRootLoop.findElements(By.className("list-page-action-toolbar"));
 			if (!eles.isEmpty()) {
 				WebElement we = eles.get(0);
 				eles1 = we.findElements(By.cssSelector("button[name=\"batchDownShelfItemBtn\"]"));
 				if (!eles1.isEmpty()) {
-					// FIXME!
-					//eles1.get(0).click();
+					eles1.get(0).click();
+					eles1 = driver.findElements(By.cssSelector("div[class=\"next-feedback-title\"]"));
+					if(!eles1.isEmpty()){
+						eles1 = driver.findElements(By.cssSelector("div[id=\"dialog-footer-2\"]"));
+						if(!eles1.isEmpty()){
+							eles1.get(0).findElement(By.tagName("button")).click();
+						}
+					}
 				}
 			}
-			
-			WebElement we = driver.findElement(By.cssSelector("XX[id=\"XXX\"]"));
-			we.click();
 		}
 	}
 
@@ -127,8 +139,5 @@ public class MontbellBaobeiOffline {
 		}
 	}
 
-	private void tbLogon(WebDriver driver) {
-		TaobaoUtil.login(driver);
-	}
  
 }

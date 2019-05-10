@@ -34,6 +34,7 @@ if($actionStr == "saveTBOrder"){
 	return;
 } else if($actionStr == "deleteTBOrder"){
 	if(empty($_GET["uid"])){
+		echo "[ERROR]Parameter is NULL";
 		return ;
 	} 
 	$my = new MyMontb();

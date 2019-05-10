@@ -2,6 +2,7 @@
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
+
 require __DIR__ .'/MyTaobao.php';
 ?>
 <html lang="ja">
@@ -21,7 +22,7 @@ $(function() {
 			 { type : "GET",
 			   data : {"action":"updateOrderStatus", 
 					   "uid" : thisBox.find("#uid").val(),
-					   "status" : status
+					   "toStatus" : status
 			   },
 			   dataType : "html" 
 			  }
@@ -47,7 +48,7 @@ $(function() {
   //var_dump($dataArr);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
-	  $sort[$key] = $value['dtAdd'];
+	  $sort[$key] = $value['orderCreatedTime'];
   }
   array_multisort($sort, SORT_DESC, $dataArr);
 ?>
@@ -62,30 +63,27 @@ $(function() {
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
   </div>
 <?php
-  foreach ($dataArr as $data) {
+  foreach ($dataArr as $data) {	  
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary ">
 	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["orderNo"] ?>
 	  </a>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["buyerName"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["status"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 	</div>
-<?php
-    }
-?>
   </div>
 <?php
-  }
+    }
 ?>
 </div>
 </body>

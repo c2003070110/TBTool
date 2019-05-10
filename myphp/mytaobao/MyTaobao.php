@@ -1,7 +1,7 @@
 <?php
-require __DIR__ . '/../mycommon.php';
-require __DIR__ . '/../mydefine.php';
-require __DIR__ . '/ObjectClass.php';
+require_once __DIR__ . '/../mycommon.php';
+require_once __DIR__ . '/../mydefine.php';
+require_once __DIR__ . '/ObjectClass.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
@@ -91,6 +91,7 @@ class MyTaobao
 		$tbl = $cdb->table(constant("TBL_MYTAOBAO_ORDER_INFO"));
 		$obj = new TaobaoOrderObject();
 		$uid = uniqid("tb", true);
+		$obj->uid = $uid;
 		$obj->orderNo = $orderNo;
 		$obj->orderCreatedTime = $orderCreatedTime;
 		$obj->buyerName = $buyerName;
@@ -106,6 +107,7 @@ class MyTaobao
 		$tbl = $cdb->table(constant("TBL_MYTAOBAO_ORDER_DETAIL_INFO"));
 		$obj = new TaobaoOrderObject();
 		$uid = uniqid("tbd", true);
+		$obj->uid = $uid;
 		$obj->orderNo = $orderNo;
 		$obj->baobeiTitle = $baobeiTitle;
 		$obj->sku = $sku;
@@ -176,7 +178,7 @@ class MyTaobao
 		
 		$dataArr = $tbl->select(['orderNo', '==', $orderNo])->fetch();
 		
-		return $dataArr[0];
+		return $dataArr;
 	}
 }
 ?>

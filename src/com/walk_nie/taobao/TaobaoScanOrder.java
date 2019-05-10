@@ -9,14 +9,13 @@ import java.util.logging.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
 import com.walk_nie.taobao.object.OrderDetailObject;
 import com.walk_nie.taobao.object.OrderInfoObject;
+import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -30,7 +29,8 @@ public class TaobaoScanOrder {
 	public static void main(String[] args) throws IOException {
 		TaobaoScanOrder anor = new TaobaoScanOrder();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-		anor.process(driver);
+		anor.init();
+		anor.processForWebService(driver);
 	}
 	
 	public void execute() throws IOException {
@@ -83,7 +83,7 @@ public class TaobaoScanOrder {
 				param.put("action", "addTaobaoOrderDetail");
 				param.put("orderNo", order.orderObject.orderNo);
 				param.put("baobeiTitle", dtl.baobeiTitle);
-				param.put("sku", dtl.sku);
+				param.put("sku", dtl.sku.trim());
 				
 				NieUtil.log(logFile, "[INFO][Service:addTaobaoOrderDetail][Param]"
 						+ "[orderNo]" + order.orderObject.orderNo + "[buyerName]" + order.orderObject.buyerName);
@@ -97,11 +97,11 @@ public class TaobaoScanOrder {
 		}
 	}
 	public List<OrderInfoObject> process(WebDriver driver) throws UnsupportedOperationException, IOException {
-		logon(driver);
-		
 		if(!driver.getCurrentUrl().equals(soldItemListUrl)){
 			driver.get(soldItemListUrl);
 		}
+		TaobaoUtil.login(driver);
+		//logon(driver);
 
 		return scanOrder(driver);
 	}
@@ -118,14 +118,14 @@ public class TaobaoScanOrder {
 			if(wes1.size() != 2) continue;
 			WebElement tb1 = wes1.get(0);
 			String orderNoDtString = tb1.findElements(By.tagName("tr")).get(0).findElements(By.tagName("td")).get(0).getText();
-			orderNoDtString = orderNoDtString.replaceAll(" ", "");
+			//orderNoDtString = orderNoDtString.replaceAll(" ", "");
 			int idx = orderNoDtString.indexOf("创建时间:");
 			OrderInfoObject orderInfoObj = new OrderInfoObject();
-			orderInfoObj.orderObject.orderNo = orderNoDtString.substring("订单号:".length(),idx);
+			orderInfoObj.orderObject.orderNo = orderNoDtString.substring("订单号:".length(),idx).replaceAll(" ", "");
 			
 			if(hasRegisted(orderInfoObj.orderObject.orderNo)) continue;
 			
-			orderInfoObj.orderObject.orderCreatedTime = orderNoDtString.substring(idx+ "创建时间:".length());
+			orderInfoObj.orderObject.orderCreatedTime = orderNoDtString.substring(idx+ "创建时间:".length()).trim();
 			
 			WebElement tb2 = wes1.get(1);
 			List<WebElement> wes2 = tb2.findElements(By.tagName("tr"));
@@ -224,54 +224,9 @@ public class TaobaoScanOrder {
 		}
 	}
 
-	private void logon(WebDriver driver) {
-		driver.get(soldItemListUrl);
-		String title = driver.getTitle();
-		if("已卖出的宝贝".equals(title)){
-			return;
-		}
-
-		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"J_StaticForm\"]"));
-		
-		WebElement el2 = el1.findElement(By.cssSelector("input[id=\"TPL_username_1\"]"));
-		el2.clear();
-		el2.sendKeys(NieConfig.getConfig("taobao.user.name"));
-		
-		el2 = el1.findElement(By.cssSelector("input[id=\"TPL_password_1\"]"));
-		el2.clear();
-		el2.sendKeys(NieConfig.getConfig("taobao.user.password"));
-		
-		el2 = el1.findElement(By.cssSelector("button[id=\"J_SubmitStatic\"]"));
-		el2.click();
-		
-		WebDriverWait wait1 = new WebDriverWait(driver,10);
-		wait1 = new WebDriverWait(driver,60);
-		wait1.until(new ExpectedCondition<Boolean>(){
-			@Override
-			public Boolean apply(WebDriver driver) {
-				try {
-					String title = driver.getTitle();
-					if("已卖出的宝贝".equals(title)){
-						return Boolean.TRUE;
-					}
-					return Boolean.FALSE;
-				} catch (Exception e) {
-				}
-				return Boolean.FALSE;
-			}
-		});
-		
-		title = driver.getTitle();
-		if("已卖出的宝贝".equals(title)){
-			return ;
-		}
-		
-		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
-	}
-
 	public void init() throws IOException {
 
-		logFile = new File(NieConfig.getConfig("myvideotr.log.file"));
+		logFile = new File(NieConfig.getConfig("taobao.log.file"));
 
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);

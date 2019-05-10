@@ -1,8 +1,8 @@
 <?php
-require __DIR__ . '/../mycommon.php';
-require __DIR__ . '/../mydefine.php';
-require __DIR__ . '/ObjectClass.php';
-require __DIR__ . '/../mytaobao/MyTaobao.php';
+require_once __DIR__ . '/../mycommon.php';
+require_once __DIR__ . '/../mydefine.php';
+require_once __DIR__ . '/ObjectClass.php';
+require_once __DIR__ . '/../mytaobao/MyTaobao.php';
 
 use cybrox\crunchdb\CrunchDB as CrunchDB;
 
@@ -146,7 +146,7 @@ class MyMontb
 			foreach ($tbDtlDataArr as $dtlData) {
 				if(empty($dtlData["sku"])) continue;
 				$prodlines = explode(" ", $dtlData["sku"]);
-				$pos = strpos($prodlines[0], "MTBL")
+				$pos = strpos($prodlines[0], "MTBL");
 				if ($pos === false) continue;
 				
 				$prodlines1 = explode("-", $prodlines[0]);
@@ -168,15 +168,14 @@ class MyMontb
 					$sizeName = str_replace(":", "", $sizeName);
 					$sizeName = str_replace(" ", "", $sizeName);
 				}
-				$productList .= "," . $productId . "," . $colorName . "," . $sizeName . ";"
+				$productList .= "," . $productId . "," . $colorName . "," . $sizeName . ";";
 				$isMontbellOrder = true;
 			}
 			if(!$isMontbellOrder) continue;
 			
 			$this->saveTBOrder("", $data["buyerName"], $data["orderNo"], 
 			                   $data["orderCreatedTime"], $data["addressFull"], $data["buyerNote"], 
-							   "pinYou", $productList)
-			
+							   "pinYou", $productList);
 		}
 	}
 	
@@ -480,6 +479,11 @@ class MyMontb
 		}
 	}
 	*/
+	public function deleteProductInfoByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));
+		$tbl->select(['uid', '==', $uid])->delete();
+	}
 	public function deleteProductInfoByTBUid($tbUid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYMONTB_PRODUCT_INFO"));

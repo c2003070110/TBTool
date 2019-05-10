@@ -24,7 +24,7 @@ require __DIR__ .'/MyMontb.php';
 var actionUrl = "<?php echo constant("URL_ACTION_MYMONTB") ?>";
 $(function() {
 	var getMyBox = function(thisElement){
-		return $(thisElement).parent().parent();
+		return $(thisElement).parent().parent().parent();
 	}
 	var updateStatus = function(thisBox, status){
         var jqxhr = $.ajax(actionUrl,
@@ -40,9 +40,28 @@ $(function() {
             location.reload();
         });
 	};
-    $(document).on("click", "#btnfin", function() {
+    $(document).on("click", "#btnDelete", function() {
+	    var param = {};
+		param.action = "deleteTBOrder";
 		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "fin");
+		param.uid = thisBox.find("#uid").val();
+        
+        var jqxhr = $.ajax(actionUrl,
+                         { type : "GET",
+                           data : param,
+                           dataType : "html" 
+                          }
+                      );
+        jqxhr.done(function( msg ) {
+			if(msg != ""){
+				if(msg.indexOf("ERROR") == -1){
+					// success
+					$("#orderUid").val("");
+				}
+				alert(msg);
+			}
+			location.reload();
+        });
     });
     $(document).on("click", "#btnLoadTaobaoOrder", function() {
 	    var param = {};
@@ -86,7 +105,7 @@ $(function() {
   <hr class="mb-4">
   <div class="row mb-4 form-group">
 	<div class="col-12">
-	  <button type="button" id="btnLoadTaobaoOrder" class="btn btn-secondary">load from taobao order!</button>
+	  <button type="button" id="btnLoadTaobaoOrder" class="btn btn-success">load from taobao order!</button>
 	</div>
   </div>
   <hr class="mb-4">
@@ -182,6 +201,11 @@ $(function() {
 <?php
 	}
 ?>
+    <div class="row mb-4 form-group">
+        <div class="col-5">
+		  <button type="button" id="btnDelete" class="btn btn-secondary">删除</button>
+        </div>
+    </div>
   </div>
 <?php
   }

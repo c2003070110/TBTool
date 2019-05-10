@@ -15,7 +15,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.http.HttpResponse;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -1181,10 +1180,11 @@ public class TaobaoUtil {
 	}
 	
 	public static void login(WebDriver driver){
-		String loginTitle = "XXX";
+		String loginTitle = "淘宝网 - 淘！我喜欢";
 		String title = driver.getTitle();
 		if(!loginTitle.equals(title)){
-			driver.get("");
+			//driver.get("https://login.taobao.com/member/login.jhtml");
+			return;
 		}
 
 		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"J_StaticForm\"]"));
@@ -1200,12 +1200,12 @@ public class TaobaoUtil {
 		el2 = el1.findElement(By.cssSelector("button[id=\"J_SubmitStatic\"]"));
 		el2.click();
 		
-		WebDriverWait wait1 = new WebDriverWait(driver,10);
-		wait1 = new WebDriverWait(driver,60);
+		WebDriverWait wait1 = new WebDriverWait(driver,60);
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
+					String loginTitle = "淘宝网 - 淘！我喜欢";
 					String title = driver.getTitle();
 					if(!loginTitle.equals(title)){
 						return Boolean.TRUE;
@@ -1216,6 +1216,10 @@ public class TaobaoUtil {
 				return Boolean.FALSE;
 			}
 		});
+		 title = driver.getTitle();
+		if(!loginTitle.equals(title)){
+			return;
+		}
 		
 		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
 	}
