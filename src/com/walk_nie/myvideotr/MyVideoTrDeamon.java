@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
 
@@ -41,18 +45,18 @@ public class MyVideoTrDeamon {
 	public static void main(String[] args) throws IOException {
 
 		MyVideoTrDeamon main = new MyVideoTrDeamon();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		//WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		main.init();
-		main.processByWebService(driver);
+		//main.processByWebService(driver);
 		//main.processByScanWeibo(driver);
 		
 		//AmznGiftCardObject noticeObj = main.getLastestNotice();
 		//main.finishAmazonNoticeForAddCode(noticeObj.uid, main.mailAddress);
+		main.execute();
 	}
 	
 	public void execute() throws IOException {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-		init(driver);
 		int interval = Integer.parseInt(NieConfig.getConfig("myvideotr.interval"));// second
 		while (true) {
 			try {
@@ -65,6 +69,7 @@ public class MyVideoTrDeamon {
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000)).intValue());
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				NieUtil.log(logFile, ex);
 			}
 		}
@@ -74,81 +79,18 @@ public class MyVideoTrDeamon {
 			MessagingException {
 
 		processByWebService(driver);
-		
 		processByScanWeibo(driver);
 	}
 	
 	private void processByScanWeibo(WebDriver driver) {
-		logonWeibo(driver);
-		
-		driver.get("https://www.weibo.com/like/outbox?leftnav=1");
 	
-		List<MyVideoObject> videoObjs = Lists.newArrayList();
-		List<WebElement> wes = driver.findElements(By.cssSelector("div[action-type=\"feed_list_item\"]"));
-		for(WebElement we :wes){
-			List<WebElement> wes1 = we.findElements(By.tagName("video"));
-			if(wes1.isEmpty())continue;
-			
-			wes1 = we.findElements(By.cssSelector("li[action-type=\"feed_list_third_rend\"]"));
-			if(wes1.isEmpty())continue;
-			//String videoVal = wes1.get(0).getAttribute("video-sources");
-			String dataVal = wes1.get(0).getAttribute("action-data");
-			String[] sp = dataVal.split("&");
-			String videoUrl = "";
-			for(String s:sp){
-				if(s.startsWith("short_url=")){
-					videoUrl = s.substring("short_url=".length());
-					break;
-				}
-			}
-			if(StringUtil.isBlank(videoUrl))continue;
-
-			MyVideoObject videoObj = new MyVideoObject();
-			videoObj.url = videoUrl;
-			
-			videoObj.toType = "toYoutube";
-			
-			videoObj.videoUrl = videoObj.url;
-			wes1 = we.findElements(By.cssSelector("div[node-type=\"feed_list_content\"]"));
-			if(!wes1.isEmpty()){
-				videoObj.title = wes1.get(0).getText();
-			}
-			
-			try {
-				Map<String, String> param = Maps.newHashMap();
-				param.put("action", "listVideoStatusByUrl");
-				param.put("url", videoObj.url);
-				NieUtil.log(logFile, "[INFO][Service:listVideoStatusByUrl][Param]" + "[url]" + videoObj.url);
-
-				String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
-
-				if (!StringUtil.isBlank(rslt)) {
-					NieUtil.log(logFile, "[INFO][Service:listVideoStatusByUrl][RESULT]" + rslt);
-					continue;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				NieUtil.log(logFile, "[ERROR][Service:listVideoStatusByUrl]" + e.getMessage());
-				NieUtil.log(logFile, e);
-				continue;
-			}
-			
-			wes1 = we.findElements(By.cssSelector("div[class=\"W_fl\"]"));
-			if(!wes1.isEmpty()){
-				videoObj.fl = wes1.get(0).getText();
-			}
-			wes1 = we.findElements(By.cssSelector("div[class=\"W_fr\"]"));
-			if(!wes1.isEmpty()){
-				videoObj.fr = wes1.get(0).getText();
-			}
-			videoObjs.add(videoObj);
-		}
+		List<MyVideoObject> videoObjs = weibo.processByScanWeibo(driver);
 		for(MyVideoObject videoObj:videoObjs){
-			searchYT(driver, videoObj);
+			//searchYT(driver, videoObj);
 			insertVideo(videoObj);
 		}
 	}
-
+	
 	private void processByWebService(WebDriver driver) {
 		MyVideoObject noticeObj = getLastestVideo();
 		if (noticeObj != null) {
@@ -176,10 +118,8 @@ public class MyVideoTrDeamon {
 		File savedFile = getVideoSaveFile(uploadObj);
 		try {
 			if ("toWeibo".equals(uploadObj.toType)) {
-				logonWeibo(driver);
 				weibo.publish(driver, uploadObj, savedFile);
 			} else if ("toYoutube".equals(uploadObj.toType)) {
-				logonYoutube(driver);
 				youtube.publish(driver, uploadObj, savedFile);
 			}
 
@@ -200,7 +140,9 @@ public class MyVideoTrDeamon {
 		try {
 			String videoDownloadUrl = getVideoDownloadUrl(driver, downloadObj);
 			if (StringUtil.isBlank(videoDownloadUrl)) {
-				NieUtil.log(logFile, "[ERROR][Video][Download]url=" + downloadObj.videoUrl);
+				URLCodec codec = new URLCodec("UTF-8");
+				String url = codec.decode(downloadObj.videoUrl);
+				NieUtil.log(logFile, "[ERROR][Video][Download]url=" + url);
 				updateVideoStatus(downloadObj.uid, "dlfailure");
 				return;
 			}
@@ -260,12 +202,13 @@ public class MyVideoTrDeamon {
 		WebElement we = driver.findElement(By
 				.cssSelector("input[id=\"url_input\"]"));
 		we.clear();
-		URLCodec codec = new URLCodec("UTF-8");
-		String url = codec.decode(downloadObj.videoUrl);
+		String url = NieUtil.decode(downloadObj.videoUrl);
 		we.sendKeys(url);
 		we = driver.findElement(By
 				.cssSelector("button[id=\"url_submit_button\"]"));
 		we.click();
+		
+		NieUtil.mySleepBySecond(5);
 
 		WebDriverWait wait1 = new WebDriverWait(driver,60);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -292,41 +235,40 @@ public class MyVideoTrDeamon {
 			// parse error!!
 			return null;
 		}
-		
+		List<String> videoUrlList = Lists.newArrayList();
 		we = driver.findElement(By.cssSelector("div[id=\"video\"]"));
-		try{
-			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video5\"]"));
-			return we1.getAttribute("value");
-		}catch(Exception e){
+		
+		List<WebElement> eles = we.findElements(By.cssSelector("li[class=\"list-group-item\"]"));
+		for(WebElement we1 : eles){
+			List<WebElement> eles2 = we1.findElements(By.tagName("input"));
+			if(eles2.isEmpty())continue;
+			String vurl = eles2.get(0).getAttribute("value");
+			if(vurl.toLowerCase().indexOf(".mp4") == -1) continue;
+			videoUrlList.add(vurl);
 		}
-		try{
-			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video4\"]"));
-			return we1.getAttribute("value");
-		}catch(Exception e){
-		}
-		try{
-			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video3\"]"));
-			return we1.getAttribute("value");
-		}catch(Exception e){
-		}
-		try{
-			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video2\"]"));
-			return we1.getAttribute("value");
-		}catch(Exception e){
-		}
-		try{
-			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video1\"]"));
-			return we1.getAttribute("value");
-		}catch(Exception e){
-		}
-		try{
-			WebElement we1 = we.findElement(By.cssSelector("input[id=\"video0\"]"));
-			return we1.getAttribute("value");
-		}catch(Exception e){
-		}
-		return null;
-	}
+		Collections.sort(videoUrlList, new Comparator<String>() {
+			@Override
+			public int compare(String arg0, String arg1) {
 
+				Pattern p = Pattern.compile("\\d+{3,4}x{1}\\d+{3,4}");
+				Matcher m = p.matcher(arg0); 
+				String str0 = null;
+				while (m.find()) {
+					str0 = m.group();
+				}
+				m = p.matcher(arg1); 
+				String str1 = null;
+				while (m.find()) {
+					str1 = m.group();
+				}
+				
+				return str1.compareTo(str0);
+			}
+		});
+		
+		return videoUrlList.get(0);
+	}
+	
 	private MyVideoObject getToDownloadVideo() {
 		MyVideoObject toDLObj = getVideoObjectByExecuteServiceCommand("getByTodownloadOne");
 		return toDLObj;
@@ -339,7 +281,7 @@ public class MyVideoTrDeamon {
 			param.put("action", action);
 			
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
-			NieUtil.log(logFile, "[INFO][Service:" + action + "][RESULT]" + rslt);
+			//NieUtil.log(logFile, "[INFO][Service:" + action + "][RESULT]" + rslt);
 			if (StringUtil.isBlank(rslt)) {
 				return null;
 			}
@@ -349,6 +291,8 @@ public class MyVideoTrDeamon {
 			objMap = j.toType(rslt, Map.class);
 			obj.uid = (String) objMap.get("uid");
 			obj.url = (String) objMap.get("url");
+			obj.title = (String) objMap.get("title");
+			obj.uper = (String) objMap.get("uper");
 			obj.videoUrl = (String) objMap.get("videoUrl");
 			obj.toType = (String) objMap.get("toType");
 			if (StringUtil.isBlank(obj.url)) {
@@ -405,60 +349,65 @@ public class MyVideoTrDeamon {
 	}
 
 	private void searchYT(WebDriver driver, MyVideoObject videoObj) {
-		driver.get("https://www.youtube.com/");
 
-		WebElement we = driver.findElement(By
-				.cssSelector("input[id=\"search\"]"));
-		we.clear();
-		we.sendKeys(videoObj.title);
-		we = driver.findElement(By
-				.cssSelector("button[id=\"search-icon-legacy\"]"));
-		we.click();
+		if (StringUtil.isNotBlank(videoObj.title)) {
+			driver.get("https://www.youtube.com/");
+			WebElement we = driver.findElement(By
+					.cssSelector("input[id=\"search\"]"));
+			we.clear();
+			we.sendKeys(videoObj.title);
+			we = driver.findElement(By
+					.cssSelector("button[id=\"search-icon-legacy\"]"));
+			we.click();
 
-		try {
-			we = driver.findElement(By.cssSelector("div[id=\"contents\""));
-			List<WebElement> wes = driver.findElements(By
-					.tagName("ytd-channel-renderer"));
-			if (!wes.isEmpty()) {
-				we = wes.get(0).findElement(
-						By.cssSelector("h3[id=\"channel-title\""));
-				videoObj.ytSearchRslt += we.getText();
+			try {
+				we = driver.findElement(By.cssSelector("div[id=\"contents\""));
+				List<WebElement> wes = driver.findElements(By
+						.tagName("ytd-channel-renderer"));
+				if (!wes.isEmpty()) {
+					we = wes.get(0).findElement(
+							By.cssSelector("h3[id=\"channel-title\""));
+					videoObj.ytSearchRslt += we.getText();
+				}
+				wes = driver.findElements(By.tagName("ytd-video-renderer"));
+				if (!wes.isEmpty()) {
+					we = wes.get(0).findElement(
+							By.cssSelector("div[id=\"title-wrapper\""));
+					videoObj.ytSearchRslt += we.getText();
+				}
+			} catch (Exception e) {
+
 			}
-			wes = driver.findElements(By.tagName("ytd-video-renderer"));
-			if (!wes.isEmpty()) {
-				we = wes.get(0).findElement(
-						By.cssSelector("div[id=\"title-wrapper\""));
-				videoObj.ytSearchRslt += we.getText();
-			}
-		} catch (Exception e) {
-
 		}
 
-		driver.get("https://www.youtube.com/");
-		we = driver.findElement(By.cssSelector("input[id=\"search\"]"));
-		we.clear();
-		we.sendKeys(videoObj.uper);
-		we = driver.findElement(By
-				.cssSelector("button[id=\"search-icon-legacy\""));
-		we.click();
-		try {
-			we = driver.findElement(By.cssSelector("div[id=\"contents\""));
+		if (StringUtil.isNotBlank(videoObj.title)) {
+			driver.get("https://www.youtube.com/");
+			WebElement we = driver.findElement(By
+					.cssSelector("input[id=\"search\"]"));
+			we.clear();
+			we.sendKeys(videoObj.uper);
+			we = driver.findElement(By
+					.cssSelector("button[id=\"search-icon-legacy\""));
+			we.click();
+			try {
+				we = driver.findElement(By.cssSelector("div[id=\"contents\""));
 
-			List<WebElement> wes = driver.findElements(By
-					.tagName("ytd-channel-renderer"));
-			if (!wes.isEmpty()) {
-				we = wes.get(0).findElement(
-						By.cssSelector("h3[id=\"channel-title\""));
-				videoObj.ytSearchRslt += we.getText();
-			}
-			wes = driver.findElements(By.tagName("ytd-video-renderer"));
-			if (!wes.isEmpty()) {
-				we = wes.get(0).findElement(
-						By.cssSelector("div[id=\"title-wrapper\""));
-				videoObj.ytSearchRslt += we.getText();
-			}
-		} catch (Exception e) {
+				List<WebElement> wes = driver.findElements(By
+						.tagName("ytd-channel-renderer"));
+				if (!wes.isEmpty()) {
+					we = wes.get(0).findElement(
+							By.cssSelector("h3[id=\"channel-title\""));
+					videoObj.ytSearchRslt += we.getText();
+				}
+				wes = driver.findElements(By.tagName("ytd-video-renderer"));
+				if (!wes.isEmpty()) {
+					we = wes.get(0).findElement(
+							By.cssSelector("div[id=\"title-wrapper\""));
+					videoObj.ytSearchRslt += we.getText();
+				}
+			} catch (Exception e) {
 
+			}
 		}
 	}
 
@@ -525,45 +474,8 @@ public class MyVideoTrDeamon {
 		videoObj.videoUrl = videoObj.url;
 	}
 
-	protected boolean isWeiboTag(WebDriver driver) {
-	
-		return false;
-	}
-
-	protected void parseForWeiboTag(WebDriver driver, MyVideoObject videoObj) {
-	
-		/*
-		driver.get(videoObj.url);
-		
-		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"pl_topic_header\"]"));
-		String title = el1.findElement(By.tagName("h1")).getText();
-		title = title.replaceAll("#", "");
-		videoObj.title = title;
-		List<WebElement> eles = el1.findElements(By.tagName("a"));
-		for (WebElement ele : eles) {
-			String txt = ele.getText();
-			if (txt.indexOf("视频") != -1) {
-				ele.click();
-				break;
-			}
-		}
-		el1 = driver.findElement(By.cssSelector("div[id=\"pl_feedlist_index\"]"));
-		List<WebElement> wes = el1.findElements(By.cssSelector("div[class=\"card-wrap\"]"));
-		
-		for(WebElement we :wes){
-			String url = "";
-			MyVideoObject newObj = new MyVideoObject();
-			newObj.url = videoObj.url;
-			newObj.videoUrl = url;
-			newObj.title = videoObj.title;
-			newObj.groupUid = videoObj.uid;
-			insertVideo(newObj);
-		}
-		*/
-	}
-
 	private void insertVideo(MyVideoObject obj) {
-
+		
 		try {
 			Map<String, String> param = Maps.newHashMap();
 			param.put("action", "insertVideo");
@@ -574,7 +486,7 @@ public class MyVideoTrDeamon {
 			param.put("uper", obj.uper);
 			param.put("groupUid", obj.groupUid);
 			param.put("ytSearchRslt", obj.ytSearchRslt);
-			NieUtil.log(logFile, "[INFO][Service:insertVideo][Param]" + "[url]" + obj.url + "[title]" + obj.title + "[uper]" + obj.uper);
+			//NieUtil.log(logFile, "[INFO][Service:insertVideo][Param]" + "[url]" + obj.url + "[title]" + obj.title + "[uper]" + obj.uper);
 
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
 
@@ -597,132 +509,4 @@ public class MyVideoTrDeamon {
 		
 	}
 
-	public void init(WebDriver driver) throws IOException {
-		init();
-		
-		//logonYoutube(driver);
-		
-		//logonWeibo(driver);
-	}
-	private void logonWeibo(WebDriver driver) {
-
-		//driver.get(rootUrl);
-		try {
-			WebElement el1 = driver.findElement(By
-					.cssSelector("div[id=\"plc_top\"]"));
-			List<WebElement> eles = el1.findElements(By
-					.cssSelector("em[class=\"S_txt1\"]"));
-			for (WebElement ele : eles) {
-				String txt = ele.getText();
-				if (txt.indexOf("次郎花子") != -1) {
-					return;
-				}
-			}
-		} catch (Exception ex) {
-		}
-
-		String rootUrl = "https://www.weibo.com/";
-		driver.get(rootUrl);
-		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"pl_unlogin_home_login\"]"));
-		WebElement el2 = el1.findElement(By.cssSelector("a[node-type=\"normal_tab\"]"));
-		el2.click();
-		
-		el2 = el1.findElement(By.cssSelector("input[id=\"loginname\"]"));
-		el2.clear();
-		el2.sendKeys(NieConfig.getConfig("myvideotr.weibo.user.name"));
-		
-		el2 = el1.findElement(By.cssSelector("input[name=\"password\"]"));
-		el2.clear();
-		el2.sendKeys(NieConfig.getConfig("myvideotr.weibo.user.password"));
-		
-		List<WebElement> wes = el1.findElements(By.tagName("span"));
-		for(WebElement we :wes){
-			if("登录".equals(we.getText())){
-				we.click();
-				break;
-			}
-		}
-
-		NieUtil.mySleepBySecond(2);
-		
-		WebDriverWait wait1 = new WebDriverWait(driver,60);
-		wait1.until(new ExpectedCondition<Boolean>(){
-			@Override
-			public Boolean apply(WebDriver driver) {
-				try {
-
-					WebElement el1 = driver.findElement(By.cssSelector("div[id=\"plc_top\"]"));
-					List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
-					for(WebElement ele:eles){
-						String txt = ele.getText();
-						if(txt.indexOf("次郎花子") != -1){
-							return Boolean.TRUE;
-						}
-					}
-					return Boolean.FALSE;
-				} catch (Exception e) {
-				}
-				return Boolean.FALSE;
-			}
-		});
-		
-		el1 = driver.findElement(By.cssSelector("div[id=\"plc_top\"]"));
-		List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
-		for(WebElement ele:eles){
-			String txt = ele.getText();
-			if(txt.indexOf("次郎花子") != -1){
-				return;
-			}
-		}
-		
-		NieUtil.readLineFromSystemIn("Weibo login is finished? ANY KEY For already");
-	}
-
-	private void logonYoutube(WebDriver driver) {
-
-		String rootUrl = "https://www.youtube.com/";
-
-		driver.get(rootUrl);
-		List<WebElement> wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"text\"]"));
-		for(WebElement we :wes){
-			if("ログイン".equals(we.getText())){
-				return;
-			}
-		}
-		
-		WebElement el1 = driver.findElement(By.cssSelector("input[id=\"identifierId\"]"));
-		el1.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.name"));
-		
-		wes = driver.findElements(By.tagName("span"));
-		for(WebElement we :wes){
-			if("次へ".equals(we.getText())){
-				we.click();
-				break;
-			}
-		}
-		NieUtil.mySleepBySecond(2);
-		
-		WebElement el2 = driver.findElement(By.cssSelector("input[name=\"password\"]"));
-		el2.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.password"));
-		
-		wes = driver.findElements(By.tagName("span"));
-		for(WebElement we :wes){
-			if("次へ".equals(we.getText())){
-				we.click();
-				break;
-			}
-		}
-
-		NieUtil.mySleepBySecond(2);
-		
-		List<WebElement> eles = driver.findElements(By.cssSelector("button[id=\"avatar-btn\"]"));
-		for(WebElement ele:eles){
-			String txt = ele.getAttribute("aria-label");
-			if(txt.indexOf("アカウントのプロフィール写真。クリックすると、他のアカウントのリストが表示されます") != -1){
-				return;
-			}
-		}
-		
-		NieUtil.readLineFromSystemIn("YOUTUBE login is finished? ANY KEY For already");
-	}
 }

@@ -6,7 +6,7 @@ require __DIR__ .'/MyVideoTr.php';
 ?>
 <html lang="ja">
 <head>
-<title>bilibili list</title>
+<title>video list</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -97,8 +97,8 @@ $(function() {
 <?php
     }else if($status == "toUL"){
 ?>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">uid</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">title</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">ytSearchRslt</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
 <?php
@@ -126,22 +126,32 @@ $(function() {
 	  <?php echo $data["uper"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["ytSearchRslt"] ?>
+	  <?php echo $data["status"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+<?php
+	if($data["status"] == "parsed") {
+?>
 	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
+<?php
+	}else if($data["status"] == "dled") {
+?>
+	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
+<?php
+	}
+?>
 	</div>
 <?php
     }else if($status == "toUL"){
 ?>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data["title"] ?>
+	    <?php echo $data["uid"] ?>
 	  </a>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["uper"] ?>
+	  <?php echo $data["title"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
 	  <?php echo $data["ytSearchRslt"] ?>

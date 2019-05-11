@@ -10,6 +10,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.json.Json;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.google.common.collect.Maps;
@@ -24,10 +26,11 @@ public class TaobaoFahuo {
 
 	private File logFile = null;
 	public static void main(String[] args) throws IOException {
-		TaobaoFahuo anor = new TaobaoFahuo();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-		anor.init();
-		anor.process(driver);
+		TaobaoFahuo main = new TaobaoFahuo();
+		//WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		//main.init();
+		//main.process(driver);
+		main.execute();
 	}
 	public void execute() throws IOException {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
@@ -125,61 +128,85 @@ public class TaobaoFahuo {
 		String trackTraceNo = obj.trackTraceNo;
 		if(StringUtil.isBlank(trackTraceNo)){
 			//无需物流
-			tabRoot.findElement(By.cssSelector("li[id=\"dummyTab\"]")).click();
-			eles = weRoot1.findElement(
-					By.cssSelector("div[id=\"logis:dummy\"]")).findElements(
-					By.tagName("button"));
-			for (WebElement we : eles) {
-				if ("确认".equals(we.getText().trim())) {
-					we.click();
-					break;
-				}
-			}
+			fahuoNoTraceNo(driver,weRoot1, tabRoot);
 		}else{
 			// 自己联系物流
-			tabRoot.findElement(By.cssSelector("li[id=\"offlineTab\"]")).click();
-			WebElement we1 = weRoot1.findElement(By.cssSelector("div[id=\"logis:offline\"]"));
-			eles = we1.findElements(By.tagName("input"));
-			for (WebElement we : eles) {
-				if (we.getAttribute("id").startsWith("ks-combobox")) {
-					we.clear();
-					we.sendKeys(trackTraceNo);
-					NieUtil.mySleepBySecond(3);
-					/*
-					String key = "";
-					if(trackTraceNo.toLowerCase().endsWith("jp")){
-						key = "日本邮政";
-					}else{
-						key = "中通快递";
-					}
-					*/
-					List<WebElement> eles2 = driver.findElements(By.cssSelector("div[class=\"ks-contentbox\"]"));
-					for (WebElement we2 : eles2) {
-						List<WebElement> eles3 = we2.findElements(By.tagName("div"));	
-						for (WebElement we3 : eles3) {
-							String id = we3.getAttribute("id");
-							if(id.toLowerCase().startsWith("ks-menuitem".toLowerCase())){
-								we3.click();
-								break;
-							}
-						}
-					}
-					
-					break;
-				}
-			}
-			eles = we1.findElements(By.tagName("button"));
-			for (WebElement we : eles) {
-				if ("发货".equals(we.getText().trim())) {
-					we.click();
-					break;
-				}
-			}
+			fahuoWithTraceNo(driver,weRoot1, tabRoot, trackTraceNo);
 		}
 		
 		updateStatus(obj,"fahuo");
 	}
 
+	private void fahuoWithTraceNo(WebDriver driver, WebElement weRoot1,
+			WebElement tabRoot, String trackTraceNo) {
+		tabRoot.findElement(By.cssSelector("li[id=\"offlineTab\"]")).click();
+		WebElement we1 = weRoot1.findElement(By.cssSelector("div[id=\"logis:offline\"]"));
+		List<WebElement> eles = we1.findElements(By.tagName("input"));
+		for (WebElement we : eles) {
+			if (we.getAttribute("id").startsWith("ks-combobox")) {
+				we.clear();
+				we.sendKeys(trackTraceNo);
+				NieUtil.mySleepBySecond(1);
+				WebDriverWait wait1 = new WebDriverWait(driver,30);
+				wait1.until(new ExpectedCondition<Boolean>(){
+					@Override
+					public Boolean apply(WebDriver driver) {
+						try {
+							List<WebElement> eles2 = driver.findElements(By.cssSelector("div[class=\"ks-contentbox\"]"));
+							for (WebElement we2 : eles2) {
+								List<WebElement> eles3 = we2.findElements(By.tagName("div"));	
+								for (WebElement we3 : eles3) {
+									String id = we3.getAttribute("id");
+									if(id.toLowerCase().startsWith("ks-menuitem".toLowerCase())){
+										we3.click();
+										NieUtil.mySleepBySecond(1);
+										try{
+											we3.click();
+										}catch(Exception e){}
+										return Boolean.TRUE;
+									}
+								}
+							}
+						} catch (Exception e) {
+						}
+						return Boolean.FALSE;
+					}
+				});
+
+				break;
+			}
+		}
+		eles = we1.findElements(By.tagName("button"));
+		for (WebElement we : eles) {
+			if ("发货".equals(we.getText().trim())) {
+				we.click();
+				try{
+					NieUtil.mySleepBySecond(2);
+					we.click();
+					NieUtil.mySleepBySecond(2);
+					we.click();
+				}catch(Exception e){}
+				break;
+			}
+		}
+	}
+	private void fahuoNoTraceNo(WebDriver driver,WebElement weRoot1, WebElement tabRoot) {
+
+		tabRoot.findElement(By.cssSelector("li[id=\"dummyTab\"]")).click();
+		List<WebElement> eles = weRoot1.findElement(
+				By.cssSelector("div[id=\"logis:dummy\"]")).findElements(
+				By.tagName("button"));
+		for (WebElement we : eles) {
+			if ("确认".equals(we.getText().trim())) {
+				we.click();
+				NieUtil.mySleepBySecond(2);
+				try{
+					we.click();
+				}catch(Exception e){}
+				break;
+			}
+		}
+	}
 	private void updateStatus(TaobaoFahuoObject obj, String status) {
 
 		String action = "updateFahuoStatus";

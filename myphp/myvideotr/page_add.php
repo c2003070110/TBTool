@@ -6,7 +6,7 @@
 ?>
 <html lang="ja">
 <head>
-<title>add bilibili</title>
+<title>add video</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -43,6 +43,28 @@ $(function() {
 			}
         });
     });
+    $(document).on("click", "#btnUpdate", function() {
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"updateByTitle", 
+					   "uid" : $("#uid").val(), 
+					   "title" : $("#title").val()
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+            alert(msg);
+			if(msg.indexOf("ERROR") == -1){
+				if(href.indexOf("uid") == -1){
+					var url = href +"?uid="+msg;
+					window.location.href = url;
+				}else{
+					location.reload();
+				}
+			}
+        });
+    });
 });
 </script>
 </head>
@@ -50,14 +72,12 @@ $(function() {
 <div id="container" class="container">
 <?php
   include __DIR__ .'/subpage_toplink.php';
-?>
-  
-<?php
   $uid = $_GET['uid'];
   if(!empty($uid)){
 	$my = new MyVideoTr();
 	$obj = $my->listByUid($uid);
   }
+  //var_dump($obj);
 ?>
   <div class="box itembox">
     <input type="hidden" id="uid" value="<?php echo $uid ?>">
@@ -88,8 +108,14 @@ $(function() {
 	    <pre><?php echo $obj['ytSearchRslt'] ?></pre>
 	  </div>
     </div>
+    <div class="row mb-4 form-group">
+      <div class="col-4"></div>
+      <div class="col-8 ">
+        <button class="btn btn-secondary actionBtn" id="btnUpdate" type="button">U P D A T E！！</button>
+      </div>
+    </div>
 <?php 
-  }
+  }else{
 ?>
     <div class="row mb-4 form-group">
       <div class="col-4"></div>
@@ -97,6 +123,9 @@ $(function() {
         <button class="btn btn-secondary actionBtn" id="btnAdd" type="button">S A V E ！！</button>
       </div>
     </div>
+<?php 
+  }
+?>
   </div>
 </div>
 </body>

@@ -1,15 +1,8 @@
 package com.walk_nie.taobao;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-
-import com.beust.jcommander.internal.Lists;
-import com.walk_nie.taobao.object.BaobeiPublishObject;
-import com.walk_nie.taobao.util.TaobaoUtil;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Main {
@@ -19,33 +12,25 @@ public class Main {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        // TODO 自動生成されたメソッド・スタブ
-        //String allLine = FileUtils.readFileToString(new File("C:/tmp/txt.txt"));
-        //TaobaoUtil.readBaobeiIn(allLine);
-        List<String> list = FileUtils.readLines(new File("./res/all.csv"),"UTF-8");
-        List<String> newList = new ArrayList<String>();
-        for (String str : list) {
-            if(str.startsWith("\"")){
-                newList.add(str);
-            }else{
-                if(newList.isEmpty())continue;
-                int pos = newList.size()-1;
-                String newStr = newList.get(pos) + str;
-                newList.set(pos, newStr);
-            }
-        }
-        List<BaobeiPublishObject> bbList = Lists.newArrayList();
-        for (String str : newList) {
-            BaobeiPublishObject bb = TaobaoUtil.readBaobeiIn(str);
-            if(bb != null){
-                bbList.add(bb);
-            }
-        }
-        for (BaobeiPublishObject bb : bbList) {
-            String fmt = "title=%s;price=%s;productId=%s";
-            System.out.println(String.format(fmt, bb.title,bb.price,bb.outer_id));
-            
-        }
+        String url = "http://f.us.sinaimg.cn/0024Hahelx07tFAfOgFO01041200g4iV0E010.mp4?label=mp4_ld&template=480x360.28.0&Expires=1557549959&ssig=90W1ajRCpD&KID=unistore,video";
+
+		Pattern p = Pattern.compile("\\d+{3,4}x{1}\\d+{3,4}");
+		Matcher m = p.matcher(url); 
+		String str0 = null;
+		while (m.find()) {
+			str0 = m.group();
+		}
+		System.out.println(url);
+		System.out.println(str0);
+		url = "https://video.twimg.com/ext_tw_video/1126834031234928642/pu/vid/1280x720/Y_Bw-I_xB_Td57NG.mp4?tag=10";
+		 p = Pattern.compile("\\d+{3,4}x{1}\\d+{3,4}");
+		 m = p.matcher(url); 
+		 str0 = null;
+		while (m.find()) {
+			str0 = m.group();
+		}
+		System.out.println(url);
+		System.out.println(str0);
     }
 
 }

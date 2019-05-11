@@ -13,6 +13,7 @@ import org.seleniumhq.jetty9.util.StringUtil;
 import com.walk_nie.taobao.montBell.MontBellUtil;
 import com.walk_nie.taobao.util.TaobaoUtil;
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieUtil;
 
 // xiaJia
 public class MontbellBaobeiOffline {
@@ -46,6 +47,7 @@ public class MontbellBaobeiOffline {
 		}
 		
 		for (int i = 1; i <= page; i++) {
+			NieUtil.mySleepBySecond(60);
 			driver.get(sellingUrl + i);
 			WebElement weRootLoop = driver.findElement(By.cssSelector("div[id=\"root\"]"));
 			List<WebElement> eles1 = weRootLoop.findElements(By.className("next-table-body"));

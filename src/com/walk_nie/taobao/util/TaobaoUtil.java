@@ -23,6 +23,7 @@ import org.eclipse.jetty.util.StringUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -1200,27 +1201,30 @@ public class TaobaoUtil {
 		el2 = el1.findElement(By.cssSelector("button[id=\"J_SubmitStatic\"]"));
 		el2.click();
 		
-		WebDriverWait wait1 = new WebDriverWait(driver,60);
-		wait1.until(new ExpectedCondition<Boolean>(){
-			@Override
-			public Boolean apply(WebDriver driver) {
-				try {
-					String loginTitle = "淘宝网 - 淘！我喜欢";
-					String title = driver.getTitle();
-					if(!loginTitle.equals(title)){
-						return Boolean.TRUE;
+		try{
+			WebDriverWait wait1 = new WebDriverWait(driver,30);
+			wait1.until(new ExpectedCondition<Boolean>(){
+				@Override
+				public Boolean apply(WebDriver driver) {
+					try {
+						String loginTitle = "淘宝网 - 淘！我喜欢";
+						String title = driver.getTitle();
+						if(!loginTitle.equals(title)){
+							return Boolean.TRUE;
+						}
+						return Boolean.FALSE;
+					} catch (Exception e) {
 					}
 					return Boolean.FALSE;
-				} catch (Exception e) {
 				}
-				return Boolean.FALSE;
-			}
-		});
-		 title = driver.getTitle();
-		if(!loginTitle.equals(title)){
+			});
+		}catch(TimeoutException e){
+			NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
+		}
+		title = driver.getTitle();
+		if (!loginTitle.equals(title)) {
 			return;
 		}
 		
-		NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
 	}
 }

@@ -11,6 +11,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.walk_nie.taobao.util.WebDriverUtil;
+import com.walk_nie.util.NieConfig;
+import com.walk_nie.util.NieUtil;
 
 public class YoutubePublisher {
 	/**
@@ -26,8 +28,9 @@ public class YoutubePublisher {
 		main.publish(driver, uploadObj, uploadFile);
 	}
 	
-
 	public void publish(WebDriver driver, MyVideoObject uploadObj, File uploadFile) {
+		logonYoutube(driver);
+		
 		List<WebElement> wes = driver.findElements(By.cssSelector("button[id=\"button\"]"));
 		for (WebElement we : wes) {
 			if ("動画または投稿を作成".equals(we.getAttribute("aria-label"))) {
@@ -35,6 +38,7 @@ public class YoutubePublisher {
 				break;
 			}
 		}
+		NieUtil.mySleepBySecond(1);
 		wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"label\"]"));
 		for (WebElement we : wes) {
 			if ("動画をアップロード".equals(we.getText())) {
@@ -42,23 +46,30 @@ public class YoutubePublisher {
 				break;
 			}
 		}
-		WebElement we = driver.findElement(By.cssSelector("button[id=\"upload-privacy-selector\"]"));
-		we.click();
+		WebDriverWait wait1 = new WebDriverWait(driver,30);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					WebElement we = driver.findElement(By.cssSelector("button[id=\"upload-privacy-selector\"]"));
+					we.click();
+					return Boolean.TRUE;
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+	
+		NieUtil.mySleepBySecond(2);
 
-		// wes = driver.findElements(By.tagName("span"));
-		// for (WebElement we1 : wes) {
-		// if ("非公開".equals(we1.getText())) {
-		// we1.click();
-		// break;
-		// }
-		// }
 		wes = driver.findElements(By.cssSelector("input[type=\"file\"]"));
 
 		wes.get(0).sendKeys(uploadFile.getAbsolutePath());
+		NieUtil.mySleepBySecond(1);
 		// savedFile.delete();
 
 		WebElement weRoot = driver.findElement(By.cssSelector("form[name=\"mdeform\"]"));
-		we = weRoot.findElement(By.cssSelector("input[name=\"title\"]"));
+		WebElement we = weRoot.findElement(By.cssSelector("input[name=\"title\"]"));
 		we.clear();
 		we.sendKeys(uploadObj.title);
 		// set description for bilibili
@@ -66,27 +77,37 @@ public class YoutubePublisher {
 		// weRoot.findElement(By.cssSelector("input[name=\"description\"]"));
 		// we.clear();
 		// we.sendKeys("");
-
-		WebDriverWait wait1 = new WebDriverWait(driver, 60);
+		wait1 = new WebDriverWait(driver,300);
 		wait1.until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					WebElement weRoot = driver.findElement(By.cssSelector("div[id=\"active-uploads-contain\"]"));
-					List<WebElement> eles = weRoot.findElements(By.tagName("button"));
+					List<WebElement> eles = driver.findElements(By.cssSelector("div[class=\"progress-bar-processing\"]"));
 					for (WebElement ele : eles) {
-						String title = ele.getAttribute("title");
-						if (title.indexOf("この動画を今すぐ公開します") != -1) {
-							ele.click();
-							return Boolean.TRUE;
+						String text = ele.getText();
+						if (text.indexOf("処理が完了しました") != -1) {
+							return Boolean.TRUE; 
 						}
 					}
-					return Boolean.FALSE;
 				} catch (Exception e) {
 				}
 				return Boolean.FALSE;
 			}
 		});
+		weRoot = driver.findElement(By.cssSelector("div[class=\"metadata-save-button\"]"));
+		List<WebElement>  eles1 = weRoot.findElements(By.tagName("button"));
+		for (WebElement ele1 : eles1) {
+			String title = ele1.getAttribute("title");
+			System.out.println(title);
+			ele1.click();
+			try {
+				ele1.click();
+			} catch (Exception e) {
+			}
+			break;
+		}
+		NieUtil.mySleepBySecond(3);
+		uploadFile.delete();
 	}
 
 	public void searchYT(WebDriver driver, MyVideoObject videoObj) {
@@ -145,6 +166,57 @@ public class YoutubePublisher {
 		} catch (Exception e) {
 
 		}
+	}
+	private void logonYoutube(WebDriver driver) {
+
+		String rootUrl = "https://www.youtube.com/";
+
+		driver.get(rootUrl);
+		List<WebElement> wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"text\"]"));
+		boolean islogon = true;
+		for (WebElement we : wes) {
+			if ("ログイン".equals(we.getText())) {
+				we.click();
+				islogon = false;
+				break;
+			}
+		}
+		if(islogon)return;
+		
+		WebElement el1 = driver.findElement(By.cssSelector("input[id=\"identifierId\"]"));
+		NieUtil.mySleepBySecond(1);
+		el1.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.name"));
+		wes = driver.findElements(By.tagName("span"));
+		for(WebElement we :wes){
+			if("次へ".equals(we.getText())){
+				we.click();
+				break;
+			}
+		}
+		
+		WebElement el2 = driver.findElement(By.cssSelector("input[name=\"password\"]"));
+		NieUtil.mySleepBySecond(1);
+		el2.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.password"));
+		
+		wes = driver.findElements(By.tagName("span"));
+		for(WebElement we :wes){
+			if("次へ".equals(we.getText())){
+				we.click();
+				break;
+			}
+		}
+
+		NieUtil.mySleepBySecond(2);
+		
+		List<WebElement> eles = driver.findElements(By.cssSelector("button[id=\"avatar-btn\"]"));
+		for(WebElement ele:eles){
+			String txt = ele.getAttribute("aria-label");
+			if(txt.indexOf("アカウントのプロフィール写真。クリックすると、他のアカウントのリストが表示されます") != -1){
+				return;
+			}
+		}
+		
+		NieUtil.readLineFromSystemIn("YOUTUBE login is finished? ANY KEY For already");
 	}
  
 }

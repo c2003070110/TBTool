@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -144,5 +146,11 @@ public class NieUtil {
 			e.printStackTrace();
 		}
 	}
+
+	public static String decode(String url) throws DecoderException {
+		URLCodec codec = new URLCodec("UTF-8");
+		return codec.decode(url);
+	}
+
 
 }

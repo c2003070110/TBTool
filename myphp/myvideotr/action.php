@@ -19,6 +19,16 @@ if($actionStr == "addByUrl"){
 	$my = new MyVideoTr();
 	$rslt = $my->addVideoByUrl($url);
 	echo $rslt;
+}else if($actionStr == "updateByTitle"){
+	$uid = $_GET["uid"];
+	$title = $_GET["title"];
+	if(empty($uid)){
+		echo "[Fatal]Parameter is NULL";
+		return ;
+	}
+	$my = new MyVideoTr();
+	$rslt = $my->updateByTitle($uid, $title);
+	echo $rslt;
 
 } else if($actionStr == "updateStatus"){
 	$uid = $_GET["uid"];
@@ -116,6 +126,11 @@ if($actionStr == "addByUrl"){
 		return ;
 	}
 	$my = new MyVideoTr();
+	$data = $my->listVideoStatusByUrl($url);
+	if(!empty($data)) { 
+		echo "[Fatal]Already inserted!"; 
+		return;
+	}
 	$uid = $my->addVideoByUrl($url, $toType);
 	$my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
 	if(!empty($groupUid)){

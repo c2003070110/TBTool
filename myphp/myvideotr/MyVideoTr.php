@@ -21,6 +21,12 @@ class MyVideoTr
 		$tbl->insert($obj);
 		return $uid;
 	}
+	public function updateByTitle($uid, $title){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$tbl->select(['uid', '==', $uid])
+			->update(['title', $title]);
+	}
 	public function updateByVideoUper($uid, $title, $uper, $ytSearchRsltr, $videoUrl){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
@@ -82,6 +88,13 @@ class MyVideoTr
 	}
 	
 	
+	public function listByUid($uid){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		
+		$dataArr = $tbl->select(['uid', '==', $uid])->fetch();
+		return $dataArr[0];
+	}
 	public function listVideoStatusByUrl($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
@@ -258,8 +271,8 @@ class MyVideoTr
 	    foreach ((array) $dataArr as $key => $value) {
 			$sort[$key] = $value['dtAdd'];
 	    }
-	    array_multisort($sort, SORT_ASC, $dataArr);
-		return $dataArr;
+	    array_multisort($sort, SORT_ASC, $rslt);
+		return $rslt;
 	}
 }
 ?>
