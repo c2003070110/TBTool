@@ -147,9 +147,13 @@ public class NieUtil {
 		}
 	}
 
-	public static String decode(String url) throws DecoderException {
+	public static String decode(String url) {
 		URLCodec codec = new URLCodec("UTF-8");
-		return codec.decode(url);
+		try {
+			return codec.decode(url);
+		} catch (DecoderException e) {
+		}
+		return "";
 	}
 
 

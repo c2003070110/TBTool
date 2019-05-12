@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 
 import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.net.URLCodec;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -36,8 +35,8 @@ import com.walk_nie.util.NieUtil;
 public class MyVideoTrDeamon {
 
 	private File logFile = null;
-	YoutubePublisher youtube = new YoutubePublisher();
-	WeiboPublisher weibo = new WeiboPublisher();
+	YoutubeTr youtube = new YoutubeTr();
+	WeiboTr weibo = new WeiboTr();
 	/**
 	 * @param args
 	 * @throws IOException
@@ -68,6 +67,12 @@ public class MyVideoTrDeamon {
 					NieUtil.log(logFile, "[SLEEP]zzzZZZzzz...");
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000)).intValue());
 				}
+			}catch(org.openqa.selenium.UnhandledAlertException e1){
+				driver.switchTo().alert().accept();
+			}catch(org.openqa.selenium.WebDriverException e){
+				driver.close();
+				NieUtil.mySleepBySecond(3);
+				driver = WebDriverUtil.getFirefoxWebDriver();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				NieUtil.log(logFile, ex);
@@ -83,10 +88,10 @@ public class MyVideoTrDeamon {
 	}
 	
 	private void processByScanWeibo(WebDriver driver) {
-	
-		List<MyVideoObject> videoObjs = weibo.processByScanWeibo(driver);
-		for(MyVideoObject videoObj:videoObjs){
-			//searchYT(driver, videoObj);
+
+		List<MyVideoObject> videoObjs = weibo.scan(driver);
+		for (MyVideoObject videoObj : videoObjs) {
+			// searchYT(driver, videoObj);
 			insertVideo(videoObj);
 		}
 	}
@@ -140,9 +145,9 @@ public class MyVideoTrDeamon {
 		try {
 			String videoDownloadUrl = getVideoDownloadUrl(driver, downloadObj);
 			if (StringUtil.isBlank(videoDownloadUrl)) {
-				URLCodec codec = new URLCodec("UTF-8");
-				String url = codec.decode(downloadObj.videoUrl);
-				NieUtil.log(logFile, "[ERROR][Video][Download]url=" + url);
+				//URLCodec codec = new URLCodec("UTF-8");
+				//String url = codec.decode(downloadObj.videoUrl);
+				NieUtil.log(logFile, "[ERROR][Video][Download]title=" + downloadObj.title);
 				updateVideoStatus(downloadObj.uid, "dlfailure");
 				return;
 			}
@@ -219,7 +224,7 @@ public class MyVideoTrDeamon {
 					if(!StringUtil.isBlank(el1.getText())){
 						return Boolean.TRUE;
 					}
-					 el1 = driver.findElement(By.cssSelector("div[id=\"video\"]"));
+					el1 = driver.findElement(By.cssSelector("div[id=\"video\"]"));
 					List<WebElement> eles = el1.findElements(By.cssSelector("li[class=\"list-group-item\"]"));
 					if(!eles.isEmpty()){
 						return Boolean.TRUE;
@@ -232,6 +237,7 @@ public class MyVideoTrDeamon {
 		});
 		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"message\"]"));
 		if(!StringUtil.isBlank(el1.getText())){
+			NieUtil.log(logFile, "[ERROR][Video][Download]" + el1.getText());
 			// parse error!!
 			return null;
 		}

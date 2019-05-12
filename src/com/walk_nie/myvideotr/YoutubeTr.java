@@ -14,14 +14,14 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
-public class YoutubePublisher {
+public class YoutubeTr {
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 
-		YoutubePublisher main = new YoutubePublisher();
+		YoutubeTr main = new YoutubeTr();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		MyVideoObject uploadObj = new MyVideoObject();
 		File uploadFile = new File("");

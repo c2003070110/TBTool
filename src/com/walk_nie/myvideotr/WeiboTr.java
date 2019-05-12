@@ -1,5 +1,8 @@
 package com.walk_nie.myvideotr;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -16,39 +19,72 @@ import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
-public class WeiboPublisher {
+public class WeiboTr {
 	public static void main(String[] args) throws IOException {
-		WeiboPublisher weibo = new WeiboPublisher();
+		WeiboTr weibo = new WeiboTr();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
-		weibo.processByScanWeibo(driver);
+		weibo.scan(driver);
 	}
 	public void publish(WebDriver driver, MyVideoObject uploadObj,File uploadFile) {
 		logonWeibo(driver);
 	}
 
-	public List<MyVideoObject> processByScanWeibo(WebDriver driver) {
+	public List<MyVideoObject> scan(WebDriver driver) {
 		String visitUrl = "https://www.weibo.com/like/outbox?leftnav=1";
 		driver.get(visitUrl);
 		logonWeibo(driver);
-		//driver.get(visitUrl);
+
+		List<MyVideoObject> videoObjs = Lists.newArrayList();
+		parseWeibo(driver, videoObjs);
 
 //		((JavascriptExecutor) driver)
 //				.executeScript("window.scrollTo(0, document.body.scrollHeight)");
 //		NieUtil.mySleepBySecond(4);
-		
-		List<MyVideoObject> videoObjs = Lists.newArrayList();
+
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(KeyEvent.VK_PAGE_DOWN);
+			robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
+			parseWeibo(driver, videoObjs);
+		} catch (AWTException e) {
+		}
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(KeyEvent.VK_PAGE_DOWN);
+			robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
+			parseWeibo(driver, videoObjs);
+		} catch (AWTException e) {
+		}
+		try {
+			Robot robot = new Robot();
+			robot.keyPress(KeyEvent.VK_PAGE_DOWN);
+			robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
+			parseWeibo(driver, videoObjs);
+		} catch (AWTException e) {
+		}
+			
+
+		return videoObjs;
+	}
+
+	private void parseWeibo(WebDriver driver, List<MyVideoObject> videoObjs) {
 		List<WebElement> wes = driver.findElements(By.cssSelector("div[action-type=\"feed_list_item\"]"));
 		for(WebElement we :wes){
 			List<WebElement> wes1 = we.findElements(By.tagName("video"));
 			if(wes1.isEmpty())continue;
+			String mid = we.getAttribute("mid");
+			MyVideoObject videoObj = new MyVideoObject();
+			wes1 = we.findElements(By.cssSelector("div[node-type=\"feed_list_content\"]"));
+			if(!wes1.isEmpty()){
+				videoObj.title = wes1.get(0).getText();
+			}
 
 			String videoUrl = findVideoUrl(we);
 			if(StringUtil.isBlank(videoUrl))continue;
 
-			MyVideoObject videoObj = new MyVideoObject();
-			videoObj.url = videoUrl;
+			videoObj.url = StringUtil.isBlank(mid)?videoUrl:mid;
 			videoObj.toType = "toYoutube";
-			videoObj.videoUrl = videoObj.url;
+			videoObj.videoUrl = videoUrl;
 		
 			wes1 = we.findElements(By.cssSelector("div[class=\"WB_info\"]"));
 			if(!wes1.isEmpty()){
@@ -61,10 +97,6 @@ public class WeiboPublisher {
 				}
 			}
 
-			wes1 = we.findElements(By.cssSelector("div[node-type=\"feed_list_content\"]"));
-			if(!wes1.isEmpty()){
-				videoObj.title = wes1.get(0).getText();
-			}
 			wes1 = we.findElements(By.cssSelector("div[class=\"W_fl\"]"));
 			if(!wes1.isEmpty()){
 				videoObj.fl = wes1.get(0).getText();
@@ -74,11 +106,10 @@ public class WeiboPublisher {
 				videoObj.fr = wes1.get(0).getText();
 			}
 			videoObjs.add(videoObj);
-			NieUtil.mySleepBySecond(2);
+			//NieUtil.mySleepBySecond(1);
 		}
-		return videoObjs;
 	}
-
+	
 	private String findVideoUrl(WebElement we) {
 
 		String videoUrl = "";
@@ -96,7 +127,7 @@ public class WeiboPublisher {
 //				}
 				for(String s:sp){
 					if(s.startsWith("short_url=")){
-						videoUrl = s.substring("short_url=".length());
+						videoUrl = NieUtil.decode(s.substring("short_url=".length()));
 						return videoUrl;
 					}
 				}
@@ -116,7 +147,7 @@ public class WeiboPublisher {
 //				}
 				for(String s:sp){
 					if(s.startsWith("short_url=")){
-						videoUrl = s.substring("short_url=".length());
+						videoUrl = NieUtil.decode(s.substring("short_url=".length()));
 						return videoUrl;
 					}
 				}
@@ -126,22 +157,42 @@ public class WeiboPublisher {
 	}
 	public void logonWeibo(WebDriver driver) {
 
-		try {
-			WebElement el1 = driver.findElement(By
-					.cssSelector("div[id=\"plc_top\"]"));
-			List<WebElement> eles = el1.findElements(By
-					.cssSelector("em[class=\"S_txt1\"]"));
-			for (WebElement ele : eles) {
-				String txt = ele.getText();
-				if (txt.indexOf("次郎花子") != -1) {
-					return;
+		WebDriverWait wait1 = new WebDriverWait(driver,60);
+		wait1.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					driver.findElement(By
+							.cssSelector("ul[class=\"gn_nav_list\"]"));
+					return Boolean.TRUE;
+				} catch (Exception ex) {
 				}
+				return Boolean.FALSE;
 			}
-		} catch (Exception ex) {
+		});
+		WebElement el1 = driver.findElement(By
+				.cssSelector("ul[class=\"gn_nav_list\"]"));
+		List<WebElement> eles = el1.findElements(By
+				.cssSelector("em[class=\"S_txt1\"]"));
+		for (WebElement ele : eles) {
+			String txt = ele.getText();
+			if (txt.indexOf("次郎花子") != -1) {
+				return;
+			}
 		}
 
-		try {
-		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"pl_unlogin_home_login\"]"));
+		wait1.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					driver.findElement(By.cssSelector("div[id=\"pl_unlogin_home_login\"]"));
+					return Boolean.TRUE;
+				} catch (Exception ex) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+		el1 = driver.findElement(By.cssSelector("div[id=\"pl_unlogin_home_login\"]"));
 		WebElement el2 = el1.findElement(By.cssSelector("a[node-type=\"normal_tab\"]"));
 		el2.click();
 		
@@ -160,13 +211,10 @@ public class WeiboPublisher {
 				break;
 			}
 		}
-		} catch (Exception ex) {
-			return;
-		}
 
 		NieUtil.mySleepBySecond(2);
 		
-		WebDriverWait wait1 = new WebDriverWait(driver,60);
+		wait1 = new WebDriverWait(driver,60);
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
@@ -187,16 +235,7 @@ public class WeiboPublisher {
 			}
 		});
 		
-		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"plc_top\"]"));
-		List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
-		for(WebElement ele:eles){
-			String txt = ele.getText();
-			if(txt.indexOf("次郎花子") != -1){
-				return;
-			}
-		}
-		
-		NieUtil.readLineFromSystemIn("Weibo login is finished? ANY KEY For already");
+		//NieUtil.readLineFromSystemIn("Weibo login is finished? ANY KEY For already");
 	}
 
 	/*
