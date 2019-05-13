@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,8 +26,106 @@ public class WeiboTr {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		weibo.scan(driver);
 	}
-	public void publish(WebDriver driver, MyVideoObject uploadObj,File uploadFile) {
+	public void publish(WebDriver driver, MyVideoObject uploadObj) {
+		String visitUrl = "https://www.weibo.com/like/outbox?leftnav=1";
+		driver.get(visitUrl);
 		logonWeibo(driver);
+
+		List<File> multimediaContext = getToPublishFile(uploadObj);
+		for(File f:multimediaContext){
+			if(isVideoFile(f)){
+				uploadVideo(driver, uploadObj, f);
+			}else if(isVideoFile(f)){
+				uploadPhoto(driver, uploadObj, f);
+			}
+		}
+
+		WebElement elMain = driver.findElement(By.id("plc_main"));
+		
+		List<WebElement> elA = elMain.findElements(By.tagName("a"));
+		for (WebElement el : elA) {
+			if (el.getText().equals("完成")) {
+				el.click();
+				break;
+			}
+		}
+
+		for (WebElement el : elA) {
+			String attr = el.getAttribute("title");
+			if (attr != null && attr.equals("发布微博按钮")) {
+				el.click();
+				break;
+			}
+		}
+		
+	}
+	private void uploadPhoto(WebDriver driver, MyVideoObject uploadObj, File f) {
+		// TODO
+	}
+	private void uploadVideo(WebDriver driver, MyVideoObject uploadObj, File f) {
+
+		List<WebElement> elInputs = driver.findElements(By.tagName("input"));
+		for (WebElement el : elInputs) {
+			if (el.getAttribute("id").startsWith("publisher_upvideo")) {
+				el.sendKeys(f.getAbsolutePath());
+				break;
+			}
+		}
+		WebElement elMain = driver.findElement(By.id("plc_main"));
+
+		WebDriverWait wait1 = new WebDriverWait(driver,120);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					List<WebElement> elspans = elMain.findElements(By.tagName("dl"));
+					for (WebElement el : elspans) {
+						String attr = el.getAttribute("node-type");
+						if (attr != null && attr.equals("uploading")) {
+							String attr1 = el.getAttribute("style");
+							if (attr1 != null && attr1.indexOf("block") == -1)
+							break;
+						}
+					}
+					return Boolean.TRUE;
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+		
+		NieUtil.mySleepBySecond(3);
+	}
+	private List<File> getToPublishFile(MyVideoObject uploadObj) {
+		File uploadFoldFolder = MyVideoTrUtil.getVideoSaveFolder(uploadObj);
+		File[] files = uploadFoldFolder.listFiles(new FilenameFilter(){
+			@Override
+			public boolean accept(File dir, String name) {
+				File f = new File(dir,name);
+				if(isVideoFile(f))return true;
+				if(isPhotoFile(f))return true;
+				return false;
+			}});
+		List<File> multimediaContext = Lists.newArrayList();
+		for(File file:files){
+			multimediaContext.add(file);
+		}
+		return multimediaContext;
+	}
+	private boolean isVideoFile(File f) {
+		String exd = MyVideoTrUtil.getFileExtention(f);
+		if(exd.equalsIgnoreCase("mp4"))return true;
+		if(exd.equalsIgnoreCase("flv"))return true;
+		// FIXME more type...
+		return false;
+	}
+	private boolean isPhotoFile(File f) {
+		String exd = MyVideoTrUtil.getFileExtention(f);
+		if(exd.equalsIgnoreCase("png"))return true;
+		if(exd.equalsIgnoreCase("jpg"))return true;
+		if(exd.equalsIgnoreCase("jpeg"))return true;
+		// FIXME more type...
+		return false;
 	}
 
 	public List<MyVideoObject> scan(WebDriver driver) {
@@ -84,6 +183,7 @@ public class WeiboTr {
 
 			videoObj.url = StringUtil.isBlank(mid)?videoUrl:mid;
 			videoObj.toType = "toYoutube";
+			videoObj.fromType = "fromWeibo";
 			videoObj.videoUrl = videoUrl;
 		
 			wes1 = we.findElements(By.cssSelector("div[class=\"WB_info\"]"));
@@ -238,185 +338,21 @@ public class WeiboTr {
 		//NieUtil.readLineFromSystemIn("Weibo login is finished? ANY KEY For already");
 	}
 
-	/*
-	public void publish(File srcFolder) {
-		//
-		List<PublishObject> objList = parsePublishInfoFromFolder(srcFolder);
-		weiboLogon();
-		for (PublishObject obj : objList) {
-			System.out.println("[Publish File]" + obj.file.getAbsolutePath());
-			try {
-				publishToWeibo(obj);
-			} catch (Exception e) {
-			}
-			NieUtil.mySleepBySecond(60);
-		}
-	}
-	private List<PublishObject> parsePublishInfoFromFolder(File srcFolder) {
-		
-		List<PublishObject> objList = Lists.newArrayList();
-		File[] files = srcFolder.listFiles(new FilenameFilter(){
+	public boolean downloadVideo(WebDriver driver, MyVideoObject downloadObj) throws IOException  {
 
-			@Override
-			public boolean accept(File dir, String name) {
-				if(name.endsWith(".txt"))return true;
-				if(name.endsWith(".mp4"))return true;
-				if(name.endsWith(".flv"))return true;
-				if(name.endsWith(".png"))return true;
-				if(name.endsWith(".jpg"))return true;
-				if(name.endsWith(".jpeg"))return true;
-				// FIXME more type...
-				return false;
-			}});
-		for(File file:files){
-			String ext = getFileExtention(file);
-			if(!ext.endsWith("txt")){
-				continue;
-			}
-			PublishObject obj = new PublishObject();
-			obj.file = file;
-			String name = getFileWithoutExtention(file);
-			List<String> lines = Lists.newArrayList();;
-			try {
-				lines = FileUtils.readLines(file, "UTF-8");
-			} catch (IOException e) {
-			}
-			StringBuffer sb = new StringBuffer();
-			for(String line :lines){
-				sb.append(line).append("\n");
-			}
-			obj.txtContent = sb.toString();
-			for(File file1:files){
-				String name1 = getFileWithoutExtention(file1);
-				String ext1 = getFileExtention(file1);
-				if(name1.startsWith(name) && !ext1.endsWith("txt")){
-					obj.multimediaContext.add(file1);
-				}
-			}
-			
-			objList.add(obj);
+		String videoDownloadUrl = MyVideoTrUtil.getVideoDownloadUrl(driver, downloadObj);
+		if (StringUtil.isBlank(videoDownloadUrl)) {
+			return false;
 		}
-		return objList;
+		File saveFile = getVideoSaveFile(downloadObj);
+		MyVideoTrUtil.downLoadVideoFromUrl(videoDownloadUrl, saveFile);
+		return true;
 	}
-	protected void publishToWeibo(PublishObject obj) throws Exception {
-		
-		// upload picture or video
-		for(File f:obj.multimediaContext){
-			if(isVideoFile(f)){
-				List<WebElement> elInputs = driver.findElements(By.tagName("input"));
-				for (WebElement el : elInputs) {
-					if (el.getAttribute("id").startsWith("publisher_upvideo")) {
-						el.sendKeys(f.getAbsolutePath());
-						break;
-					}
-				}
-
-				WebElement elMain = driver.findElement(By.id("plc_main"));
-				while (true) {
-						boolean uploaded = false;
-						try {
-							List<WebElement> elspans = elMain.findElements(By
-									.tagName("dl"));
-							for (WebElement el : elspans) {
-								String attr = el.getAttribute("node-type");
-								if (attr != null && attr.equals("uploading")) {
-									String attr1 = el.getAttribute("style");
-									if (attr1 != null && attr1.indexOf("block") == -1)
-										uploaded = true;
-									break;
-								}
-							}
-						} catch (Exception ex) {
-
-						}
-						if (uploaded) {
-							break;
-						}
-						NieUtil.mySleepBySecond(3);
-				}
-			}
-		}
-		WebElement elMain = driver.findElement(By.id("plc_main"));
-		// fill txt
-		//String despTxt = "#日本# #抖音#";
-		String despTxt = NieConfig.getConfig("weibo.douyin.keywords");
-		if(StringUtils.isNotEmpty(obj.txtContent)){
-			// FIXME 
-			//despTxt += obj.txtContent;
-		}
-		List<WebElement> elInputs1 = elMain.findElements(By.tagName("input"));
-		for (WebElement el : elInputs1) {
-			String attr = el.getAttribute("action-type");
-			if (attr != null && attr.equals("inputTitle")) {
-				el.sendKeys(despTxt);
-				break;
-			}
-		}
-		List<WebElement> elA = elMain.findElements(By.tagName("a"));
-		for (WebElement el : elA) {
-			if (el.getText().equals("完成")) {
-				el.click();
-				break;
-			}
-		}
-
-		for (WebElement el : elA) {
-			String attr = el.getAttribute("title");
-			if (attr != null && attr.equals("发布微博按钮")) {
-				el.click();
-				break;
-			}
-		}
-	}
-
-	private boolean hadLogon() {
-		try{
-			List<WebElement> es = driver.findElements(By.className("gn_name"));
-			if(es == null || es.isEmpty()){
-				return false;
-			}
-			// 
-			for(WebElement e:es){
-				if(!e.getTagName().toLowerCase().equals("a")){
-					continue;
-				}
-				List<WebElement> es1 = e.findElements(By.className("S_txt1"));
-				for(WebElement e1:es1){
-					// FIXME
-					if(e1.getText().toLowerCase().equals(NieConfig.getConfig("weibo.user.name"))){
-						return true;
-					}
-				}
-			}
-			return true;
-		}catch(Exception e){
-		}
-		return false;
-	}
-	private boolean isVideoFile(File f) {
-		String exd = getFileExtention(f);
-		if ("mp4".equalsIgnoreCase(exd) || "flv".equalsIgnoreCase(exd)) {
-			return true;
-		}
-		return false;
-	}
-
-	private String getFileExtention(File f) {
-		String fileName = f.getName();
-		int dotPox = fileName.lastIndexOf(".");
-		return fileName.substring(dotPox + 1, fileName.length());
-	}
-
-	private String getFileWithoutExtention(File f) {
-		String fileName = f.getName();
-		int dotPox = fileName.lastIndexOf(".");
-		return fileName.substring(0, dotPox);
-	}
-	*/
-	class PublishObject{
-		String txtContent ="";
-		List<File> multimediaContext = Lists.newArrayList();
-		File file ;
+	
+	private File getVideoSaveFile(MyVideoObject downloadObj) {
+		File outFolder = MyVideoTrUtil.getVideoSaveFolder(downloadObj);
+		File saveFile = new File(outFolder, downloadObj.uid + ".mp4");
+		return saveFile;
 	}
 
 }

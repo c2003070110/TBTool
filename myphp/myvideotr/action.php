@@ -117,6 +117,8 @@ if($actionStr == "addByUrl"){
 	$url = $_GET["url"];
 	$videoUrl = $_GET["videoUrl"];
 	$toType = $_GET["toType"];
+	$fromType = $_GET["fromType"];
+	$trid = $_GET["trid"];
 	$title = $_GET["title"];
 	$uper = $_GET["uper"];
 	$groupUid = $_GET["groupUid"];
@@ -131,7 +133,7 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Already inserted!"; 
 		return;
 	}
-	$uid = $my->addVideoByUrl($url, $toType);
+	$uid = $my->addVideoByUrl($url, $toType, $fromType, $trid);
 	$my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
 	if(!empty($groupUid)){
 		$my->updateByGroupUid($uid, $groupUid);

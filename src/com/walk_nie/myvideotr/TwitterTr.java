@@ -1,5 +1,6 @@
 package com.walk_nie.myvideotr;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.io.Files;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
@@ -28,16 +30,11 @@ public class TwitterTr {
 
 	public List<MyVideoObject> scan(WebDriver driver) {
 		
-		List<TwitterObject> twList = parseFavolog(driver);
-		
-		List<MyVideoObject> videoObjs = parseTwitter(driver,twList);
-		
-		removeFromFavolog(driver, twList);
+		List<MyVideoObject> videoObjs = parseFavolog(driver);
 		
 		return videoObjs;
 	}
-
-	private void removeFromFavolog(WebDriver driver, List<TwitterObject> twList) {
+	public void removeFromFavolog(WebDriver driver, MyVideoObject tw) {
 		driver.get(favlog_url);
 		logonFavolog(driver);
 
@@ -46,59 +43,23 @@ public class TwitterTr {
 		for (WebElement ele : eles) {
 			List<WebElement> eles1 = ele.findElements(By.className("tl-tweet"));
 			for (WebElement ele1 : eles1) {
-
 				List<WebElement> eles2 = ele1.findElements(By.tagName("a"));
 				if(eles2.isEmpty())continue;
 				for (WebElement ele2 : eles2) {
 					String txt = ele2.getText();
 					String onclick = ele2.getAttribute("onclick");
-					if(txt.indexOf("削除") != -1){
-						boolean found = false;
-						for (TwitterObject tw : twList) {
-							if(onclick.indexOf(tw.twid) != -1){
-								found = true;
-								break;
-							}
-						}
-						if(found){
-							ele2.click();
-							break;
-						}
+					if(txt.indexOf("削除") == -1)continue;
+					if(onclick.indexOf(tw.trid) != -1){
+						ele2.click();
+						break;
 					}
+
 				}
 			}
 		}
-		
 	}
 
-	private List<MyVideoObject> parseTwitter(WebDriver driver,
-			List<TwitterObject> twList) {
-		List<MyVideoObject> trList = Lists.newArrayList();
-		for (TwitterObject tw : twList) {
-			driver.get(tw.twurl);
-			NieUtil.mySleepBySecond(2);
-			
-			String url = driver.getCurrentUrl();
-			if(url.indexOf("video") != -1){
-				
-			}else if(url.indexOf("photo") != -1){
-				WebElement rootWe = driver.findElement(By.cssSelector("div[id=\"permalink-overlay\"]"));
-				List<WebElement> eles = rootWe.findElements(By.cssSelector("div[class=\"halfWidthPhoto\"]"));
-				for (WebElement ele : eles) {
-					List<WebElement> eles1 = ele.findElements(By.className("AdaptiveMedia-photoContainer"));
-					for (WebElement ele1 : eles1) {
-						String dataUrl = ele1.getAttribute("data-image-url");
-						if(!StringUtil.isBlank(dataUrl)){
-							// TODO
-						}
-					}
-				}
-			}
-		}
-		return trList;
-	}
-
-	private List<TwitterObject> parseFavolog(WebDriver driver) {
+	private List<MyVideoObject> parseFavolog(WebDriver driver) {
 		driver.get(favlog_url);
 		logonFavolog(driver);
 		
@@ -109,15 +70,17 @@ public class TwitterTr {
 		rootWe = driver.findElement(By.cssSelector("div[id=\"main\"]"));
 		List<WebElement> eles = rootWe.findElements(By.cssSelector("div[class=\"tl-tweets\"]"));
 		
-		List<TwitterObject> twList = Lists.newArrayList();
+		List<MyVideoObject> twList = Lists.newArrayList();
 		for (WebElement ele : eles) {
 			List<WebElement> eles1 = ele.findElements(By.className("tl-tweet"));
 			for (WebElement ele1 : eles1) {
 				String id = ele1.getAttribute("id");// tw1127569675770974208
+				String href = "";
+				String uper = "";// TODO
+				String title = "";// TODO
 				if(id.startsWith("tw")){
 					id = id.substring("tw".length());
 				}
-				String href = "";
 				List<WebElement> eles2 = ele1.findElements(By.className("tl-text"));
 				if(eles2.isEmpty())continue;
 				eles2 = ele1.findElements(By.tagName("a"));
@@ -130,9 +93,13 @@ public class TwitterTr {
 					}
 				}
 				if(!StringUtil.isBlank(href)){
-					TwitterObject obj = new TwitterObject();
-					obj.twid = id;
-					obj.twurl = href;
+					MyVideoObject obj = new MyVideoObject();
+					obj.trid = id;
+					obj.url = href;
+					obj.uper = uper;
+					obj.title = title;
+					obj.toType = "toWeibo";
+					obj.fromType = "fromTwitter";
 					twList.add(obj);
 				}
 			}
@@ -172,9 +139,46 @@ public class TwitterTr {
 		
 		NieUtil.mySleepBySecond(2);
 	}
-	
-	class TwitterObject{
-		String twurl ="";
-		String twid = "";
+
+	public boolean downloadVideo(WebDriver driver, MyVideoObject downloadObj) throws IOException {
+		driver.get(downloadObj.url);
+		NieUtil.mySleepBySecond(2);
+
+		File outFolder = MyVideoTrUtil.getVideoSaveFolder(downloadObj);
+		
+		String url = driver.getCurrentUrl();
+		if(url.indexOf("video") != -1){
+			downloadObj.videoUrl = downloadObj.url;
+			String videoDownloadUrl = MyVideoTrUtil.getVideoDownloadUrl(driver, downloadObj);
+			if (StringUtil.isBlank(videoDownloadUrl)) {
+				return false;
+			}
+			File saveFile = new File(outFolder, downloadObj.uid + ".mp4");
+			MyVideoTrUtil.downLoadVideoFromUrl(videoDownloadUrl, saveFile);
+			removeFromFavolog(driver, downloadObj);
+			return true;
+		}else if(url.indexOf("photo") != -1){
+			WebElement rootWe = driver.findElement(By.cssSelector("div[id=\"permalink-overlay\"]"));
+			List<String> picUrlList = Lists.newArrayList();
+			List<WebElement> eles = rootWe.findElements(By.cssSelector("div[class=\"halfWidthPhoto\"]"));
+			for (WebElement ele : eles) {
+				List<WebElement> eles1 = ele.findElements(By.className("AdaptiveMedia-photoContainer"));
+				for (WebElement ele1 : eles1) {
+					String dataUrl = ele1.getAttribute("data-image-url");
+					if(StringUtil.isBlank(dataUrl)){
+						continue;
+					}
+				}
+			}
+			for (int i = 0; i < picUrlList.size(); i++) {
+				String urlpic = picUrlList.get(i);
+				try {
+					Files.copy(new File(urlpic), new File(outFolder, i + ".jpg"));
+				} catch (IOException e) {
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 }

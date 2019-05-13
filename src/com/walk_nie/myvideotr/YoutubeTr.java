@@ -1,6 +1,7 @@
 package com.walk_nie.myvideotr;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,13 +25,26 @@ public class YoutubeTr {
 		YoutubeTr main = new YoutubeTr();
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		MyVideoObject uploadObj = new MyVideoObject();
-		File uploadFile = new File("");
-		main.publish(driver, uploadObj, uploadFile);
+		main.publish(driver, uploadObj);
 	}
 	
-	public void publish(WebDriver driver, MyVideoObject uploadObj, File uploadFile) {
+	public void publish(WebDriver driver, MyVideoObject uploadObj) {
 		logonYoutube(driver);
-		
+		File uploadFold = MyVideoTrUtil.getVideoSaveFolder(uploadObj);
+		// all of folder to upload
+		File[] files = uploadFold.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if (name.endsWith(".mp4"))return true;
+				return false;
+			}
+		});
+		for (File uploadFile : files) {
+			publishFile(driver, uploadObj, uploadFile);
+		}
+	}
+
+	private void publishFile(WebDriver driver, MyVideoObject uploadObj, File uploadFile) {
 		List<WebElement> wes = driver.findElements(By.cssSelector("button[id=\"button\"]"));
 		for (WebElement we : wes) {
 			if ("動画または投稿を作成".equals(we.getAttribute("aria-label"))) {

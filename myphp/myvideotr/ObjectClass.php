@@ -2,6 +2,7 @@
 class MyVideoObject
 {
     public $uid = '';
+    public $trid = '';
     public $groupUid = '';// for ##
     
     public $url = '';
@@ -11,6 +12,7 @@ class MyVideoObject
     public $title = '';
     
     public $toType = ''; // toWeibo;toYoutube
+	String $fromType = ""; // fromWeibo;fromTwitter
 	
 	public $ytSearchRslt = "";
     

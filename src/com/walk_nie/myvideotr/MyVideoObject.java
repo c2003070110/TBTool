@@ -9,13 +9,14 @@ public class MyVideoObject {
 	String title = "";
 	
 	String toType = ""; // toWeibo;toYoutube
+	String fromType = ""; // fromWeibo;fromTwitter
 	
 	String fl = "";// 次播放
 	String fr = "";//length
 	
 	String ytSearchRslt = "";
 	
-	//String dlVideoPath = "";
-	
 	String groupUid = "";
+	
+	String trid = "";
 }

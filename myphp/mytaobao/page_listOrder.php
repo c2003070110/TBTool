@@ -38,6 +38,20 @@ $(function() {
 		var thisBox = getMyBox(this);
         updateStatus(thisBox, "del");
     });
+    $(document).on("click", "#btnFahuo", function() {
+		var thisBox = getMyBox(this);
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"addTaobaoFahuo", 
+					   "orderNo" : thisBox.find("#orderNo").val()
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+            location.reload();
+        });
+    });
 });
 </script>
 </head>
@@ -63,17 +77,21 @@ $(function() {
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
   </div>
 <?php
-  foreach ($dataArr as $data) {	  
+  foreach ($dataArr as $data) {
+		$orderDtl = $my->listTaobaoOrderDetailByOrderNo($data['uid']);
+		$baobeiTitle = $orderDtl[0]["baobeiTitle"];
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
+    <input type="hidden" id="orderNo" value="<?php echo $data['orderNo'] ?>">
     <div class="col-3 text-break themed-grid-col border border-primary ">
 	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addOrder.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data["orderNo"] ?>
+	    <?php echo $data["buyerName"] ?>
 	  </a>
+	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addFahuo.php?orderNo=<?php echo $data['orderNo'] ?>">FH</a>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php echo $data["buyerName"] ?>
+	  <?php echo $baobeiTitle ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["status"] ?>

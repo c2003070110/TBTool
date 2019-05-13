@@ -39,6 +39,7 @@ class MyTaobao
 		if($toStatus == "del"){
 			$tbl->select(['uid', '==', $uid])
 				->delete();
+			return;
 		}else{
 			$tbl->select(['uid', '==', $uid])
 				->update(['status', $toStatus]);

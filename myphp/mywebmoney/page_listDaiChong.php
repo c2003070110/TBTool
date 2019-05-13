@@ -49,7 +49,7 @@ $(function() {
     });
     $(document).on("click", "#btnFinish", function() {
 		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "finish");
+        updateStatus(thisBox, "fin");
     });
     $(document).on("click", "#btnRepay", function() {
 		var thisBox = getMyBox(this);
@@ -76,6 +76,8 @@ $(function() {
   foreach ((array) $dataArr as $key => $value) {
 	  if(empty($status)){
 		  $sort[$key] = $value['dtAdd'];
+	  }else if($status === "checkwait"){
+		  $sort[$key] = $value['dtAdd'];
 	  }else if($status === "checked"){
 		  $sort[$key] = $value['dtAdd'];
 	  }else if($status === "topay"){
@@ -88,8 +90,10 @@ $(function() {
   }
   array_multisort($sort, SORT_DESC, $dataArr);
   
-  if($status == 'checked'){
-	  $cssBgchecked= "bg-warning text-white";
+  if($status == 'checkwait'){
+	  $cssBgcheckwait= "bg-warning text-white";
+  }else if($status == 'checked'){
+	  $cssBgtopay = "bg-warning text-white";
   }else if($status == 'topay'){
 	  $cssBgtopay = "bg-warning text-white";
   }else if($status == 'paid'){
@@ -105,6 +109,7 @@ $(function() {
   include __DIR__ .'/subpage_toplink.php';
 ?>
   <ul class="list-group list-group-horizontal">
+    <li class="list-group-item <?php echo $cssBgcheckwait ?>"><a href="/myphp/mywebmoney/page_listDaiChong.php?status=checkwait">checkwait</a></li>
     <li class="list-group-item <?php echo $cssBgchecked ?>"><a href="/myphp/mywebmoney/page_listDaiChong.php?status=checked">checked</a></li>
     <li class="list-group-item <?php echo $cssBgtopay ?>"><a href="/myphp/mywebmoney/page_listDaiChong.php?status=topay">topay</a></li>
     <li class="list-group-item <?php echo $cssBgpaid ?>"><a href="/myphp/mywebmoney/page_listDaiChong.php?status=paid">paid</a></li>
@@ -114,7 +119,7 @@ $(function() {
   <hr class="mb-2">   
   <div class="row">
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">JPY</div>
-    <div class="col-6 text-break themed-grid-col border border-primary bg-info text-white">INFO</div>
+    <div class="col-6 text-break themed-grid-col border border-primary bg-info text-white">Result</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
   </div>
 <?php

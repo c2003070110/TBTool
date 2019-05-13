@@ -7,15 +7,19 @@ use cybrox\crunchdb\CrunchDB as CrunchDB;
 
 class MyVideoTr
 {
-	public function addVideoByUrl($url, $toType){
+	public function addVideoByUrl($url, $toType, $fromType, $trid){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$obj = new MyVideoObject();
-		$uid = uniqid("bili", true);
+		$uid = uniqid("tr", true);
 		$obj->uid = $uid;
 		$obj->url = $url;
 		if(empty($toType)) $toType = "toYoutube";
+		if(empty($fromType)) $fromType = "";
+		if(empty($trid)) $trid = $uid;
 		$obj->toType = $toType;
+		$obj->fromType = $fromType;
+		$obj->trid = $trid;
 		$obj->status = "added";
 		$obj->dtAdd = date("YmdGis");
 		$tbl->insert($obj);
