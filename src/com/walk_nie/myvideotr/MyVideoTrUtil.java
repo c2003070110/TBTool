@@ -138,6 +138,9 @@ public class MyVideoTrUtil {
 	public static File getVideoSaveFolder(MyVideoObject obj) {
 		String outFolder = NieConfig.getConfig("myvideotr.video.folder") ;
 		File saveFile = new File(outFolder,obj.uid);
+		if(!saveFile.exists()){
+			saveFile.mkdirs();
+		}
 		return saveFile;
 	}
 

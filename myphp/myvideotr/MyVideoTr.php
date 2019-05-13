@@ -272,10 +272,10 @@ class MyVideoTr
 			}
 		}
 	    $sort = array();
-	    foreach ((array) $dataArr as $key => $value) {
+	    foreach ((array) $rslt as $key => $value) {
 			$sort[$key] = $value['dtAdd'];
 	    }
-	    array_multisort($sort, SORT_ASC, $rslt);
+	    array_multisort($sort, SORT_DESC, $rslt);
 		return $rslt;
 	}
 }

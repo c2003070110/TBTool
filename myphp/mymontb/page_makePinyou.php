@@ -128,12 +128,12 @@ $(function() {
 ?>
 <?php
   foreach ($dataArr as $data) {
-	  /*
+	  
 	  if(empty($data['maijia'])){
 		  $my->deleteProductInfoByUid($data['uid']);
 		  continue;
 	  }
-	  */
+	  
 	  $editFlag = false;
 ?>
   <div class="box productbox border border-primary mb-4 pl-2">

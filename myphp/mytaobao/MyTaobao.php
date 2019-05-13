@@ -124,6 +124,7 @@ class MyTaobao
 		if(empty($uid) || empty($toStatus)){
 			return;
 		}
+		$orderData = $tbl->select(['uid', '==', $uid])->fetch()[0];
 		if($toStatus == "del"){
 			$tbl->select(['uid', '==', $uid])
 				->delete();
@@ -133,10 +134,10 @@ class MyTaobao
 		}
 		$tbl = $cdb->table(constant("TBL_MYTAOBAO_ORDER_DETAIL_INFO"));
 		if($toStatus == "del"){
-			$tbl->select(['uid', '==', $uid])
+			$tbl->select(['orderNo', '==', $orderData["orderNo"]])
 				->delete();
 		}else{
-			$tbl->select(['uid', '==', $uid])
+			$tbl->select(['orderNo', '==', $orderData["orderNo"]])
 				->update(['status', $toStatus]);
 		}
 	}
@@ -172,6 +173,14 @@ class MyTaobao
 		$dataArr = $tbl->select(['orderNo', '==', $orderNo])->fetch();
 		
 		return $dataArr[0];
+	}
+	public function listTaobaoOrderDetailByAll(){
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYTAOBAO_ORDER_DETAIL_INFO"));
+		
+		$dataArr = $tbl->select("*")->fetch();
+		
+		return $dataArr;
 	}
 	public function listTaobaoOrderDetailByOrderNo($orderNo){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));

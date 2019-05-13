@@ -58,6 +58,7 @@ public class MontbellPinyinMain {
 	protected String pinyin(String line) throws IOException, PinyinException {
 		System.out.println("[processing]" + line);
 		line = line.replaceAll(" ", ",");
+		line = line.replaceAll("，", ",");
 		String pyStr = PinyinHelper.convertToPinyinString(line, ":", PinyinFormat.WITHOUT_TONE);
 		String[] spl = pyStr.toLowerCase().split(":");
 		StringBuffer sb = new StringBuffer();
@@ -69,7 +70,8 @@ public class MontbellPinyinMain {
 
 		StringBuffer nsb = new StringBuffer();
 		String[] nsrs = sb.toString().split(",");
-		for (String nsr : nsrs) {
+		for (int i=0;i<nsrs.length;i++) {
+			String nsr = nsrs[i];
 			if (StringUtil.isBlank(nsr))
 				continue;
 			String idxKey = "Sheng";
@@ -107,7 +109,12 @@ public class MontbellPinyinMain {
 				if (StringUtil.isBlank(nsr))
 					continue;
 			}
-			nsb.append(nsr).append("\n");
+			if(i == nsrs.length-1){
+				nsb.append(nsr);
+			}else{
+				nsb.append(nsr).append("\n");
+			}
+			
 		}
 		return nsb.toString();
 	}

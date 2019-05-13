@@ -78,7 +78,7 @@ $(function() {
   </div>
 <?php
   foreach ($dataArr as $data) {
-		$orderDtl = $my->listTaobaoOrderDetailByOrderNo($data['uid']);
+		$orderDtl = $my->listTaobaoOrderDetailByOrderNo($data['orderNo']);
 		$baobeiTitle = $orderDtl[0]["baobeiTitle"];
 ?>
   <div class="row">

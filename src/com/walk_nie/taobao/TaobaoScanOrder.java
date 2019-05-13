@@ -28,9 +28,11 @@ public class TaobaoScanOrder {
 	String dtlUrl = "https://trade.taobao.com/trade/detail/trade_item_detail.htm?bizOrderId=";
 	public static void main(String[] args) throws IOException {
 		TaobaoScanOrder anor = new TaobaoScanOrder();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		//WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		//anor.processForWebService(driver);
+		
 		anor.init();
-		anor.processForWebService(driver);
+		anor.execute();
 	}
 	
 	public void execute() throws IOException {
@@ -40,7 +42,7 @@ public class TaobaoScanOrder {
 		while (true) {
 			try {
 				long t1 = System.currentTimeMillis();
-				process(driver);
+				processForWebService(driver);
 				long t2 = System.currentTimeMillis();
 				long dif = t2 - t1;
 				if (dif < interval * 1000) {
@@ -83,7 +85,7 @@ public class TaobaoScanOrder {
 				param.put("action", "addTaobaoOrderDetail");
 				param.put("orderNo", order.orderObject.orderNo);
 				param.put("baobeiTitle", dtl.baobeiTitle);
-				param.put("sku", dtl.sku.trim());
+				param.put("sku", dtl.sku);
 				
 				NieUtil.log(logFile, "[INFO][Service:addTaobaoOrderDetail][Param]"
 						+ "[orderNo]" + order.orderObject.orderNo + "[buyerName]" + order.orderObject.buyerName);
@@ -97,11 +99,9 @@ public class TaobaoScanOrder {
 		}
 	}
 	public List<OrderInfoObject> process(WebDriver driver) throws UnsupportedOperationException, IOException {
-		if(!driver.getCurrentUrl().equals(soldItemListUrl)){
-			driver.get(soldItemListUrl);
-		}
+	
+		driver.get(soldItemListUrl);
 		TaobaoUtil.login(driver);
-		//logon(driver);
 
 		return scanOrder(driver);
 	}
@@ -151,7 +151,12 @@ public class TaobaoScanOrder {
 				for(WebElement wep :wesp){
 					String str = wep.getText();
 					if(str.startsWith("颜色分类")){
-						sku1 = str;
+						int pos = str.indexOf("尺码");
+						if(pos != -1){
+							sku1 = str.substring(0,pos) + " " + str.substring(pos);
+						}else{
+							sku1 = str;
+						}
 					}
 					if(str.startsWith("商家编码")){
 						sku2 = str;

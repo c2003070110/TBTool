@@ -32,13 +32,11 @@ public class MyVideoTrDeamon {
 	public static void main(String[] args) throws IOException {
 
 		MyVideoTrDeamon main = new MyVideoTrDeamon();
-		//WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
+		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		main.init();
 		//main.processByWebService(driver);
 		//main.processByScanWeibo(driver);
 		
-		//AmznGiftCardObject noticeObj = main.getLastestNotice();
-		//main.finishAmazonNoticeForAddCode(noticeObj.uid, main.mailAddress);
 		main.execute();
 	}
 	
@@ -72,8 +70,8 @@ public class MyVideoTrDeamon {
 			MessagingException {
 
 		processByWebService(driver);
-		processByScanWeibo(driver);
-		processByScanTwitter(driver);
+		//processByScanWeibo(driver);
+		//processByScanTwitter(driver);
 	}
 	
 	private void processByScanTwitter(WebDriver driver) {
@@ -83,6 +81,7 @@ public class MyVideoTrDeamon {
 			// searchYT(driver, videoObj);
 			insertVideo(videoObj);
 		}
+		tw.removeFromFav(driver, videoObjs);
 	}
 	
 	private void processByScanWeibo(WebDriver driver) {
@@ -91,6 +90,7 @@ public class MyVideoTrDeamon {
 		for (MyVideoObject videoObj : videoObjs) {
 			// searchYT(driver, videoObj);
 			insertVideo(videoObj);
+			weibo.removeFromFav(driver, videoObj);
 		}
 	}
 	
@@ -122,9 +122,6 @@ public class MyVideoTrDeamon {
 		try {
 			if ("toWeibo".equals(uploadObj.toType)) {
 				weibo.publish(driver, uploadObj);
-				if ("fromTwitter".equals(uploadObj.fromType)) {
-					tw.removeFromFavolog(driver, uploadObj);
-				}
 			} else if ("toYoutube".equals(uploadObj.toType)) {
 				youtube.publish(driver, uploadObj);
 			}

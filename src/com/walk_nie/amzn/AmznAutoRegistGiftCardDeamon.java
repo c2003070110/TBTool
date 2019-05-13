@@ -27,6 +27,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.json.Json;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
@@ -38,12 +40,7 @@ import com.walk_nie.util.NieUtil;
 public class AmznAutoRegistGiftCardDeamon {
 
 	private File logFile = null;
-//	private String amt = null;
-//	private int qtty = 0;
 	private String mailAddress = null;
-	private boolean isLogon = false;
-	
-	private long startStamp = 0;
 	/**
 	 * @param args
 	 * @throws IOException
@@ -93,12 +90,6 @@ public class AmznAutoRegistGiftCardDeamon {
 		}
 	}
 	public void execute(WebDriver driver) throws IOException, MessagingException {
-		//
-		logon(driver);
-		if (!isLogon) {
-			NieUtil.log(logFile, "[ERROR]amazon login is failure!!!");
-			return;
-		}
 		
 		AmznGiftCardObject noticeObj = getLastestNotice();
 		if (noticeObj != null) {
@@ -306,6 +297,7 @@ public class AmznAutoRegistGiftCardDeamon {
 		NieUtil.log(logFile, "[INFO][orderCode]ordering[AMT]" + giftObj.amt+"[QTTY]"+giftObj.qtty);
 		String orderUrl = "https://www.amazon.co.jp/Amazon%E3%82%AE%E3%83%95%E3%83%88%E5%88%B8-1_JP_Email-Amazon%E3%82%AE%E3%83%95%E3%83%88%E5%88%B8-E%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%BF%E3%82%A4%E3%83%97-Amazon%E3%83%99%E3%83%BC%E3%82%B7%E3%83%83%E3%82%AF/dp/B004N3APGO/ref=lp_3131877051_1_1?s=gift-cards&ie=UTF8&qid=1556203876&sr=1-1";
 		driver.get(orderUrl);
+		logon(driver);
 		try {
 			// fill
 			WebElement el10 = driver.findElement(By
@@ -354,6 +346,7 @@ public class AmznAutoRegistGiftCardDeamon {
 				el5.click();
 			} catch (Exception e) {
 			}
+			logon(driver);
 			WebElement el6 = driver.findElement(By
 					.cssSelector("span[id=\"placeYourOrder\"]"));
 			el6.click();
@@ -403,63 +396,75 @@ public class AmznAutoRegistGiftCardDeamon {
 
 	public void init(WebDriver driver) throws IOException {
 		init();
-		//logon(driver);
 	}
 
 	private void logon(WebDriver driver) {
-		long nowStamp = System.currentTimeMillis();
-		if (isLogon && (nowStamp - startStamp < 1000 * 60 * 10)) {
+
+//		String loginUrl = "https://www.amazon.co.jp/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.co.jp%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_newcust&prevRID=2E61HR8PF7YBXKCHYVWB&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=jpflex&openid.mode=checkid_setup&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&pageId=jpflex&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&ubid=356-6494969-6939236";
+//		driver.get(loginUrl);
+//		List<WebElement> wes = driver.findElements(By
+//				.cssSelector("span[id=\"glow-ingress-line2\"]"));
+//		for (WebElement we : wes) {
+//			if ("123-0845‌".equals(we.getText())) {
+//				return ;
+//			}
+//		}
+		boolean userI = false;
+		try {
+			driver.findElement(By.cssSelector("input[id=\"ap_email\"]"));
+			userI = true;
+		} catch (Exception e) {
+		}
+		boolean pwssI = false;
+		try {
+			driver.findElement(By.cssSelector("input[id=\"ap_password\"]"));
+			pwssI = true;
+		} catch (Exception e) {
+		}
+		if (!userI && !pwssI) {
 			return;
 		}
-		startStamp = System.currentTimeMillis();
-
-		driver.get("https://www.amazon.co.jp");
-		List<WebElement> wes = driver.findElements(By.cssSelector("span[id=\"glow-ingress-line2\"]"));
-		for(WebElement we :wes){
-			if("123-0845‌".equals(we.getText())){
-				return;
-			}
-		}
 		
-		String rootUrl = "https://www.amazon.co.jp/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.co.jp%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_newcust&prevRID=2E61HR8PF7YBXKCHYVWB&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=jpflex&openid.mode=checkid_setup&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&pageId=jpflex&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&ubid=356-6494969-6939236";
-
-		// driver.manage().window().setSize(new Dimension(960, 960));
-		// driver.manage().window().setPosition(new Point(10, 10));
-		driver.get(rootUrl);
-		try {
-			try{
-				WebElement el1 = driver.findElement(By
-						.cssSelector("input[id=\"ap_email\"]"));
-				el1.sendKeys(NieConfig.getConfig("amazon.user.name"));
-			}catch(Exception e){}
+		if (userI && pwssI) {
+			WebElement el1 = driver.findElement(By
+					.cssSelector("input[id=\"ap_email\"]"));
+			el1.sendKeys(NieConfig.getConfig("amazon.user.name"));
 			WebElement el2 = driver.findElement(By
 					.cssSelector("input[id=\"ap_password\"]"));
 			el2.sendKeys(NieConfig.getConfig("amazon.user.password"));
-
 			WebElement el3 = driver.findElement(By
 					.cssSelector("input[id=\"signInSubmit\"]"));
 			el3.click();
-
 			NieUtil.mySleepBySecond(2);
-
-			List<WebElement> eles = driver.findElements(By
-					.cssSelector("span[id=\"glow-ingress-line2\"]"));
-			for (WebElement ele : eles) {
-				String txt = ele.getText().replaceAll(" ", "");
-				if (txt.indexOf("123-0845‌") != -1) {
-					isLogon = true;
-					return;
-				}
-			}
-
-			NieUtil.readLineFromSystemIn("Amazon login is finished? ANY KEY For already");
-			isLogon = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			NieUtil.log(logFile, "[ERROR][orderCode]" + e.getMessage());
-			NieUtil.log(logFile, e);
-			isLogon = false;
 		}
+		if (pwssI) {
+			WebElement el2 = driver.findElement(By
+					.cssSelector("input[id=\"ap_password\"]"));
+			el2.sendKeys(NieConfig.getConfig("amazon.user.password"));
+			WebElement el3 = driver.findElement(By
+					.cssSelector("input[id=\"signInSubmit\"]"));
+			el3.click();
+			NieUtil.mySleepBySecond(2);
+		}
+		
+		WebDriverWait wait1 = new WebDriverWait(driver, 60);
+		wait1.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					List<WebElement> wes = driver.findElements(By
+							.cssSelector("span[id=\"glow-ingress-line2\"]"));
+					for (WebElement we : wes) {
+						if ("123-0845‌".equals(we.getText())) {
+							return Boolean.TRUE;
+						}
+					}
+				} catch (Exception ex) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+
 	}
  
 }

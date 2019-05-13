@@ -12,7 +12,7 @@ class MyVideoObject
     public $title = '';
     
     public $toType = ''; // toWeibo;toYoutube
-	String $fromType = ""; // fromWeibo;fromTwitter
+	public $fromType = ""; // fromWeibo;fromTwitter
 	
 	public $ytSearchRslt = "";
     

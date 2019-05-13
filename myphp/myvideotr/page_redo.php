@@ -60,6 +60,7 @@ $(function() {
 <?php
   $my = new MyVideoTr();
   $dataArr = $my->listByRedo();
+  
 ?>
 <div id="container" class="container">
 <?php
@@ -76,16 +77,16 @@ $(function() {
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
 	  <?php echo $data["title"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
 	  <?php echo $data["status"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
 	  <?php echo $data["ytSearchRslt"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php
     if($data["status"] == "parsefailure"){
