@@ -1,4 +1,4 @@
-package com.walk_nie.dmm;
+package com.walk_nie.ya;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,7 +66,7 @@ public class GetYahooIdMain {
 //		element.findElement(By.cssSelector("button#saveBtn")).click();
 	}
 
-	private void record(GetYahooIdMain.RegObjInfo regInfo) {
+	private void record(RegObjInfo regInfo) {
 		File out = new File("./out", "yahooId.txt");
 		while (true)
 			try {
@@ -300,33 +300,6 @@ public class GetYahooIdMain {
 		dispNames.add("芽依");
 		dispNames.add("心春");
 		dispNames.add("柚希");
-	}
-
-	public class RegObjInfo {
-		public String id;
-		public String pswd;
-		public String dispName;
-		public String mailAddress;
-		public String secQuestion;
-		public String secAnswer;
-		public String sex;
-		public String birthYear;
-		public String birthMonth;
-		public String birthDay;
-		public String postCode;
-
-		public String name1;
-		public String name2;
-		public String name1Kana;
-		public String name2Kana;
-		
-		public String telNo;
-		
-		
-		public String toString() {
-			return id + "@yahoo.co.jp\t" + pswd +  "\t" + "\t" + secQuestion + "\t" + secAnswer
-					+ "\t" + birthYear + "\t" + birthMonth + "\t" + birthDay + "\t" + dispName;
-		}
 	}
 
 }

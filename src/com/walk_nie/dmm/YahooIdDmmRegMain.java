@@ -10,9 +10,10 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 
 import com.beust.jcommander.internal.Lists;
-import com.walk_nie.dmm.GetYahooIdMain.RegObjInfo;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieUtil;
+import com.walk_nie.ya.GetYahooIdMain;
+import com.walk_nie.ya.RegObjInfo;
 
 public class YahooIdDmmRegMain {
 
@@ -33,7 +34,7 @@ public class YahooIdDmmRegMain {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		int i = 0;
 		while (true) {
-			GetYahooIdMain.RegObjInfo regInfo = yahoo.createRegInfo(i);
+			com.walk_nie.ya.RegObjInfo regInfo = yahoo.createRegInfo(i);
 			i++;
 			try {
 				if (!execute1(driver, yahoo, dmmReg, regInfo)) {
@@ -63,7 +64,7 @@ public class YahooIdDmmRegMain {
 		return true;
 	}
 
-	private void record(GetYahooIdMain.RegObjInfo regInfo) {
+	private void record(RegObjInfo regInfo) {
 		// String ftn = new
 		// SimpleDateFormat("yyMMddHH:mm:ss.SSS").format(Calendar.getInstance().getTime());
 		// File out = new File("./out", "yahooId-dmm" + ftn + ".txt");

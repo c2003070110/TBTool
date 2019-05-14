@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
+import com.walk_nie.ya.YaUtil;
 
 public class YaAucDemon {
 	private String myaucinfoUrl = "https://auctions.yahoo.co.jp/jp/show/myaucinfo";
@@ -846,12 +847,18 @@ public class YaAucDemon {
 				driver.get(String.format(republishUrlFmt, id));
 				List<WebElement> weList = driver.findElements(By
 						.tagName("a"));
+				boolean found = false;
 				for (WebElement we : weList) {
 					if ("再出品".equals(we.getText())) {
 						we.click();
+						found = true;
 						break;
 					}
 				}
+				if(!found){
+					NieUtil.log(logFile, "[ERROR][republish]再出品ボタンがない!");
+				}
+				found = false;
 				NieUtil.mySleepBySecond(1);
 
 				weList = driver.findElements(By.tagName("input"));
@@ -861,6 +868,10 @@ public class YaAucDemon {
 						break;
 					}
 				}
+				if(!found){
+					NieUtil.log(logFile, "[ERROR][republish]確認ボタンがない!");
+				}
+				found = false;
 				NieUtil.mySleepBySecond(1);
 
 				weList = driver.findElements(By.tagName("input"));
@@ -870,9 +881,14 @@ public class YaAucDemon {
 						break;
 					}
 				}
-				driver.get(str.href);
-
+				if(!found){
+					NieUtil.log(logFile, "[ERROR][republish]出品するボタンがない!");
+				}else{
+					driver.get(str.href);
+				}
+				NieUtil.mySleepBySecond(1);
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -901,8 +917,10 @@ public class YaAucDemon {
 		}
 	}
 
-	private WebDriver logon(WebDriver driver) {
+	private void logon(WebDriver driver) {
 
+		YaUtil.login(driver, NieConfig.getConfig("yahoo.user.name"), NieConfig.getConfig("yahoo.user.password"));
+		/*
 		String rootUrl = "https://auctions.yahoo.co.jp/user/jp/show/mystatus";
 
 		//WebDriver driver = WebDriverUtil.getHtmlUnitDriver();
@@ -935,6 +953,7 @@ public class YaAucDemon {
 		NieUtil.readLineFromSystemIn("Yahoo! login is finished? ANY KEY For already");
 
 		return driver;
+		*/
 	}
 
 }

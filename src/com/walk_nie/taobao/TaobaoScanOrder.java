@@ -152,8 +152,11 @@ public class TaobaoScanOrder {
 					String str = wep.getText();
 					if(str.startsWith("颜色分类")){
 						int pos = str.indexOf("尺码");
+						if(pos == -1){
+							pos = str.indexOf("鞋码");
+						}
 						if(pos != -1){
-							sku1 = str.substring(0,pos) + " " + str.substring(pos);
+							sku1 = str.substring(0,pos) + ";" + str.substring(pos);
 						}else{
 							sku1 = str;
 						}

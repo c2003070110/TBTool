@@ -84,19 +84,25 @@ $(function() {
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
     <input type="hidden" id="orderNo" value="<?php echo $data['orderNo'] ?>">
-    <div class="col-3 text-break themed-grid-col border border-primary ">
+    <div class="col-3 text-break themed-grid-col border border-secondary ">
 	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["buyerName"] ?>
 	  </a>
-	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addFahuo.php?orderNo=<?php echo $data['orderNo'] ?>">FH</a>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
 	  <?php echo $baobeiTitle ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
 	  <?php echo $data["status"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary">
+    <div class="col-3 text-break themed-grid-col border border-secondary">
+<?php
+	if($data["status"] == "added"){
+?>
+	  <button type="button" id="btnFahuo" class="btn btn-primary actionBtn">FH</button>
+<?php
+	}
+?>
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 	</div>
   </div>
