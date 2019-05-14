@@ -56,8 +56,13 @@ public class YaAucDemon {
 
 		// FOR TEST
 		//main.getUnusedCode("AMZNJPY15", "XXX", "XX", 2);
-		
-		main.execute(driver);
+		List<YaNoticeObject> lastestNoticeList = Lists.newArrayList();
+		YaNoticeObject yaObj = new YaNoticeObject();
+		yaObj.title ="終了（落札者あり）:[即時発送][土日祝も]PSNカード $40ドル 北米版 米国 PlayStationStore PS4 PS3 PSVita[PSNUSD40]";
+		yaObj.href = "https://page.auctions.yahoo.co.jp/jp/auction/x619502523";
+		lastestNoticeList.add(yaObj);
+		main.republish(driver, lastestNoticeList );
+		//main.execute(driver);
 	}
 
 	public void execute() throws IOException {
@@ -845,26 +850,24 @@ public class YaAucDemon {
 				idx = t.lastIndexOf("/");
 				String id = t.substring(idx + 1, t.length());
 				driver.get(String.format(republishUrlFmt, id));
-				List<WebElement> weList = driver.findElements(By
-						.tagName("a"));
+//				List<WebElement> weList = driver.findElements(By.tagName("a"));
+//				boolean found = false;
+//				for (WebElement we : weList) {
+//					if ("再出品".equals(we.getText())) {
+//						we.click();
+//						found = true;
+//						break;
+//					}
+//				}
+//				if(!found){
+//					NieUtil.log(logFile, "[ERROR][republish]再出品ボタンがない!");
+//				}
 				boolean found = false;
+				List<WebElement> weList = driver.findElements(By.cssSelector("input[type=\"button\"]"));
 				for (WebElement we : weList) {
-					if ("再出品".equals(we.getText())) {
+					if ("確認する".equals(we.getAttribute("value"))) {
 						we.click();
 						found = true;
-						break;
-					}
-				}
-				if(!found){
-					NieUtil.log(logFile, "[ERROR][republish]再出品ボタンがない!");
-				}
-				found = false;
-				NieUtil.mySleepBySecond(1);
-
-				weList = driver.findElements(By.tagName("input"));
-				for (WebElement we : weList) {
-					if ("確認画面へ".equals(we.getAttribute("value"))) {
-						we.click();
 						break;
 					}
 				}
@@ -878,6 +881,7 @@ public class YaAucDemon {
 				for (WebElement we : weList) {
 					if ("ガイドラインと上記規約に同意して出品する".equals(we.getAttribute("value"))) {
 						we.click();
+						found = true;
 						break;
 					}
 				}

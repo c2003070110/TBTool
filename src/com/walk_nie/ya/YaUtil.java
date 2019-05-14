@@ -30,12 +30,11 @@ public class YaUtil {
 
 		NieUtil.mySleepBySecond(2);
 		
-		List<WebElement> eles = driver.findElements(By.cssSelector("div[class=\"yjmthloginarea\"]"));
+		List<WebElement> eles = driver.findElements(By.cssSelector("div[id=\"personalbox\"]"));
 		for(WebElement ele:eles){
-			String txt = ele.getText();
-			if(txt.indexOf("ログアウト") != -1){
-				return ;
-			}
+			List<WebElement> eles1 = ele.findElements(By.cssSelector("h3[class=\"Personalbox__title\"]"));
+			if(eles1.isEmpty())continue;
+			if(eles1.get(0).getText().indexOf(userName) != -1)return;
 		}
 		
 		NieUtil.readLineFromSystemIn("Yahoo! login is finished? ANY KEY For already");

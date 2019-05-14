@@ -32,8 +32,8 @@ public class MyVideoTrDeamon {
 	public static void main(String[] args) throws IOException {
 
 		MyVideoTrDeamon main = new MyVideoTrDeamon();
-		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		main.init();
+		//WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		//main.processByWebService(driver);
 		//main.processByScanWeibo(driver);
 		
@@ -70,8 +70,8 @@ public class MyVideoTrDeamon {
 			MessagingException {
 
 		processByWebService(driver);
-		//processByScanWeibo(driver);
-		//processByScanTwitter(driver);
+		processByScanWeibo(driver);
+		processByScanTwitter(driver);
 	}
 	
 	private void processByScanTwitter(WebDriver driver) {

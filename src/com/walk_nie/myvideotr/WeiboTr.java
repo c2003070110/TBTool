@@ -24,7 +24,7 @@ public class WeiboTr {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		weibo.scan(driver);
 	}
-	public void publish(WebDriver driver, MyVideoObject uploadObj) {
+	public void publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
 		driver.get(myfavURL);
 		logonWeibo(driver);
 
@@ -39,7 +39,10 @@ public class WeiboTr {
 			List<WebElement> eles1 = ele.findElements(By.tagName("a"));
 			boolean breakFlag = false;
 			for (WebElement ele1 : eles1) {
-				String att = ele1.getAttribute("node-type");
+				String att = "";
+				try{
+					att = ele1.getAttribute("node-type");
+				}catch(Exception e){}
 				if("publish".equals(att)){
 					ele1.click();
 					breakFlag = true;
@@ -48,46 +51,31 @@ public class WeiboTr {
 			}
 			if(breakFlag)break;
 		}
+		NieUtil.mySleepBySecond(2);
 		
 		if(isVideoFile(multimediaContext.get(0))){
 			uploadVideo(driver, uploadObj, multimediaContext.get(0));
 		}else{
 			uploadPhoto(driver, uploadObj, multimediaContext);
 		}
-
-		WebElement elMain = driver.findElement(By.id("plc_main"));
-		
-		List<WebElement> elA = elMain.findElements(By.tagName("a"));
-		for (WebElement el : elA) {
-			if (el.getText().equals("完成")) {
-				el.click();
-				break;
-			}
-		}
-
-		for (WebElement el : elA) {
-			String attr = el.getAttribute("title");
-			if (attr != null && attr.equals("发布微博按钮")) {
-				el.click();
-				break;
-			}
-		}
 		
 	}
-	private void uploadPhoto(WebDriver driver, MyVideoObject uploadObj,  List<File> files) {
+	private void uploadPhoto(WebDriver driver, MyVideoObject uploadObj,  List<File> files) throws IOException {
 
 		WebElement rootEl = findRootLayer(driver);
+		if(rootEl == null) {
+			NieUtil.mySleepBySecond(3);
+			rootEl = findRootLayer(driver);
+		}
 		if(rootEl == null) return;
-		List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
-		for (WebElement el : elInputs) {
-			if (el.getAttribute("id").startsWith("swf_upbtn_")) {
-				List<String> fstr = Lists.newArrayList();
-				for(File file:files){
-					fstr.add(file.getAbsolutePath());
+		for (int i = 0; i < files.size(); i++) {
+			List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
+			for (WebElement el : elInputs) {
+				if (el.getAttribute("id").startsWith("swf_upbtn_")) {
+					el.sendKeys(files.get(i).getCanonicalPath());
+					NieUtil.mySleepBySecond(2);
+					break;
 				}
-				String[] fArr = new String[fstr.size()];
-				el.sendKeys(fstr.toArray(fArr));
-				break;
 			}
 		}
 		
@@ -96,46 +84,70 @@ public class WeiboTr {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					WebElement rootEl = findRootLayer(driver);
+					WebElement rootEl = findRootLayerPop(driver);
 					if(rootEl == null) return Boolean.FALSE;
-					List<WebElement> elspans = rootEl.findElements(By.cssSelector("div[class=\"dd_succ\"]"));
-					for (WebElement el : elspans) {
-						String txt = el.getText();
-						if(!StringUtil.isBlank(txt) && txt.startsWith("视频上传成功")){
-							return Boolean.TRUE;
+					List<WebElement> elspans = rootEl.findElements(By.className("layer_pic_list"));
+					if(elspans == null) return Boolean.FALSE;
+					List<WebElement> eles = elspans.get(0).findElements(By.tagName("li"));
+					for (WebElement el : eles) {
+						String txt = el.getAttribute("class").toLowerCase();
+						if(!StringUtil.isBlank(txt) && txt.indexOf("loading") != -1){
+							return Boolean.FALSE;
 						}
 					}
+					return Boolean.TRUE;
 				} catch (Exception e) {
 				}
 				return Boolean.FALSE;
 			}
 		});
 
+		rootEl = findRootLayerPop(driver);
+		if(rootEl == null) return;
+		List<WebElement> eles = rootEl.findElements(By.cssSelector("a"));
+		for (WebElement el : eles) {
+			String txt = el.getText();
+			String nodeType = el.getAttribute("node-type");
+			if(txt.indexOf("X") != -1 && nodeType.equals("close")){
+				el.click();break;
+			}
+		}
 
 		rootEl = findRootLayer(driver);
-		if(rootEl == null) return;
-		List<WebElement> eles = rootEl.findElements(By.tagName("textarea"));
+		eles = rootEl.findElements(By.tagName("textarea"));
 		if(eles.isEmpty()) return;
 		eles.get(0).sendKeys(uploadObj.uper);
-		
-		rootEl = findRootLayer(driver);
-		if(rootEl == null) return;
-		eles = driver.findElements(By.cssSelector("a[node-type=\"submit\"]"));
-		if(eles.isEmpty()) return;
-		eles.get(0).click();;
-		
-		NieUtil.mySleepBySecond(2);
+
+		eles = rootEl.findElements(By.cssSelector("a[node-type=\"submit\"]"));
+		for (WebElement el : eles) {
+			String txt = el.getText();
+			if(txt.indexOf("发布") != -1){
+				el.click();break;
+			}
+		}
+		NieUtil.mySleepBySecond(3);
 		
 	}
-	private void uploadVideo(WebDriver driver, MyVideoObject uploadObj, File f) {
+	private void uploadVideo(WebDriver driver, MyVideoObject uploadObj, File f) throws IOException {
 
 		WebElement rootEl = findRootLayer(driver);
+		if(rootEl == null) {
+			NieUtil.mySleepBySecond(3);
+			rootEl = findRootLayer(driver);
+		}
 		if(rootEl == null) return;
 		List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
 		for (WebElement el : elInputs) {
 			if (el.getAttribute("id").startsWith("publisher_upvideo")) {
-				el.sendKeys(f.getAbsolutePath());
+				el.sendKeys(f.getCanonicalPath());
 				break;
+			}
+		}
+		List<WebElement> eles = rootEl.findElements(By.tagName("a"));
+		for (WebElement el : eles) {
+			String txt = el.getText();
+			if(txt.indexOf("知道了") != -1){
+				el.click();break;
 			}
 		}
 
@@ -144,7 +156,7 @@ public class WeiboTr {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					WebElement rootEl = findRootLayer(driver);
+					WebElement rootEl = findRootLayerPop(driver);
 					if(rootEl == null) return Boolean.FALSE;
 					List<WebElement> elspans = rootEl.findElements(By.cssSelector("div[class=\"dd_succ\"]"));
 					for (WebElement el : elspans) {
@@ -158,20 +170,31 @@ public class WeiboTr {
 				return Boolean.FALSE;
 			}
 		});
-		rootEl = findRootLayer(driver);
+		rootEl = findRootLayerPop(driver);
 		if(rootEl == null) return;
-		List<WebElement> eles = rootEl.findElements(By.cssSelector("input[action-type=\"inputTitle\"]"));
+		eles = rootEl.findElements(By.cssSelector("input[action-type=\"inputTitle\"]"));
 		if(eles.isEmpty()) return;
 		eles.get(0).clear();
 		eles.get(0).sendKeys(uploadObj.uper);
+		
+		eles = rootEl.findElements(By.tagName("a"));
+		for (WebElement el : eles) {
+			String txt = el.getText();
+			String nodeType = el.getAttribute("node-type");
+			if(txt.indexOf("完成") != -1 && nodeType.equals("completeBtn")){
+				el.click();break;
+			}
+		}
 
 		rootEl = findRootLayer(driver);
-		if(rootEl == null) return;
-		eles = driver.findElements(By.cssSelector("a[node-type=\"submit\"]"));
-		if(eles.isEmpty()) return;
-		eles.get(0).click();;
-		
-		NieUtil.mySleepBySecond(2);
+		eles = rootEl.findElements(By.cssSelector("a[node-type=\"submit\"]"));
+		for (WebElement el : eles) {
+			String txt = el.getText();
+			if(txt.indexOf("发布") != -1){
+				el.click();break;
+			}
+		}
+		NieUtil.mySleepBySecond(3);
 	}
 	
 	private WebElement findRootLayer(WebDriver driver){
@@ -181,6 +204,20 @@ public class WeiboTr {
 		for (WebElement ele : eles) {
 			String id = ele.getAttribute("id");
 			if(!StringUtil.isBlank(id) && id.startsWith("layer_")){
+				return ele;
+			}
+		}
+		return null;
+	}
+	
+	private WebElement findRootLayerPop(WebDriver driver){
+
+		List<WebElement> eles = driver.findElements(By.className("W_layer"));
+		if(eles.isEmpty()) return null;
+		for (WebElement ele : eles) {
+			String id = ele.getAttribute("id");
+			String clzz = ele.getAttribute("class");
+			if(!StringUtil.isBlank(id) && id.startsWith("layer_") && clzz.indexOf("W_layer_pop") != -1){
 				return ele;
 			}
 		}

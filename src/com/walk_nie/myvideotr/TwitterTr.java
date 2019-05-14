@@ -203,7 +203,7 @@ public class TwitterTr {
 				String urlpic = picUrlList.get(i);
 				try(InputStream in = new URL(urlpic).openStream()){
 					File toFile = new File(outFolder, i + ".jpg");
-				    Files.copy(in, Paths.get(toFile.getAbsolutePath()));
+				    Files.copy(in, Paths.get(toFile.getCanonicalPath()));
 					//Files.copy(new File(urlpic), new File(outFolder, i + ".jpg"));
 				} catch (IOException e) {
 					e.printStackTrace();
