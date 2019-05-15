@@ -62,6 +62,13 @@ $(function() {
   }else if($status == "uploaded"){
 	  $dataArr = $my->listByUploaded();
   };
+  foreach ($dataArr as $data) {
+	  if(strpos($data["url"], "twitter") === false)continue;
+	  //$url = $data["url"] . "/1";
+	  //$videoUrl   = $data["videoUrl"] . "/1";
+	  //var_dump($data["url"]);
+	  //$my->updateByTemo($data["uid"], $url ,$videoUrl);
+  }
   //var_dump($dataArr);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
@@ -106,7 +113,7 @@ $(function() {
 ?>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">title</div>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">YTURL</div>
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">action</div>
 <?php
     }
 ?>
@@ -122,7 +129,7 @@ $(function() {
     if(empty($status) || $status == "toDL"){
 ?>
     <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $counter ?>
-	  <?php  if(!empty($data["title"]) {echo $data["title"]}else{echo $data["url"]} ?>
+	  <?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["uper"] ?>
@@ -133,15 +140,15 @@ $(function() {
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php
-	if($data["status"] == "parsed") {
+		if($data["status"] == "parsed") {
 ?>
 	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
 <?php
-	}else if($data["status"] == "dled") {
+		}else if($data["status"] == "dled") {
 ?>
 	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
 <?php
-	}
+		}
 ?>
 	</div>
 <?php
@@ -153,7 +160,7 @@ $(function() {
 	  </a>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php  if(!empty($data["title"]) {echo $data["title"]}else{echo $data["url"]} ?>
+	  <?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["ytSearchRslt"] ?>
@@ -172,7 +179,7 @@ $(function() {
 	  <?php echo $data["uper"] ?>
 	</div>
     <div class="col-4 text-break themed-grid-col border border-primary">
-	  <?php echo $data["ytVideoUrl"] ?>
+	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 	</div>
 <?php
     }

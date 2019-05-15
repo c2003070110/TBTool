@@ -89,7 +89,7 @@ public class YoutubeTr {
 		// weRoot.findElement(By.cssSelector("input[name=\"description\"]"));
 		// we.clear();
 		// we.sendKeys("");
-		wait1 = new WebDriverWait(driver,300);
+		wait1 = new WebDriverWait(driver,600);
 		wait1.until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
@@ -118,7 +118,24 @@ public class YoutubeTr {
 			}
 			break;
 		}
-		NieUtil.mySleepBySecond(3);
+
+		wait1 = new WebDriverWait(driver,600);
+		wait1.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					List<WebElement> eles = driver.findElements(By.cssSelector("input[name=\"share_url\"]"));
+					for (WebElement ele : eles) {
+						String text = ele.getAttribute("title");
+						if (text.indexOf("リンクを共有") != -1) {
+							return Boolean.TRUE; 
+						}
+					}
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
 	}
 
 	public void searchYT(WebDriver driver, MyVideoObject videoObj) {

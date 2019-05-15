@@ -24,16 +24,9 @@ public class WeiboTr {
 		WebDriver driver = WebDriverUtil.getFirefoxWebDriver();
 		weibo.scan(driver);
 	}
-	public void publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
-		driver.get(myfavURL);
-		logonWeibo(driver);
+	
+	private void openUploadDialog(WebDriver driver){
 
-		List<File> multimediaContext = getToPublishFile(uploadObj);
-		if(multimediaContext.isEmpty()){
-			return;
-		}
-
-		// open
 		List<WebElement> elesGNList = driver.findElements(By.cssSelector("div[class=\"gn_set_list\"]"));
 		for (WebElement ele : elesGNList) {
 			List<WebElement> eles1 = ele.findElements(By.tagName("a"));
@@ -51,7 +44,30 @@ public class WeiboTr {
 			}
 			if(breakFlag)break;
 		}
-		NieUtil.mySleepBySecond(2);
+	}
+	public void publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
+		driver.get(myfavURL);
+		logonWeibo(driver);
+
+		List<File> multimediaContext = getToPublishFile(uploadObj);
+		if(multimediaContext.isEmpty()){
+			return;
+		}
+
+		// open
+		WebDriverWait wait1 = new WebDriverWait(driver,120);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					openUploadDialog(driver);
+					WebElement rootEl = findRootLayer(driver);
+					if(rootEl == null) {return Boolean.FALSE;}else {return Boolean.TRUE;}
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
 		
 		if(isVideoFile(multimediaContext.get(0))){
 			uploadVideo(driver, uploadObj, multimediaContext.get(0));
@@ -72,11 +88,11 @@ public class WeiboTr {
 			for (WebElement el : elInputs) {
 				if (el.getAttribute("id").startsWith("swf_upbtn_")) {
 					el.sendKeys(files.get(i).getCanonicalPath());
-					NieUtil.mySleepBySecond(3);
 					break;
 				}
 			}
 		}
+		NieUtil.mySleepBySecond(3);
 		
 		WebDriverWait wait1 = new WebDriverWait(driver,120);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -101,19 +117,23 @@ public class WeiboTr {
 			}
 		});
 
-		rootEl = findRootLayerPop(driver);
-		List<WebElement> eles = rootEl.findElements(By.cssSelector("a"));
-		for (WebElement el : eles) {
-			String txt = el.getText();
-			String nodeType = el.getAttribute("node-type");
-			if(txt.indexOf("X") != -1 && nodeType.equals("close")){
-				el.click();break;
-			}
-		}
+//		rootEl = findRootLayerPop(driver);
+//		List<WebElement> eles = rootEl.findElements(By.cssSelector("a"));
+//		for (WebElement el : eles) {
+//			String txt = el.getText();
+//			String nodeType = el.getAttribute("node-type");
+//			if(txt.indexOf("X") != -1 && nodeType.equals("close")){
+//				el.click();break;
+//			}
+//		}
 
 		rootEl = findRootLayer(driver);
-		eles = rootEl.findElements(By.tagName("textarea"));
-		eles.get(0).sendKeys(uploadObj.uper);
+		List<WebElement> eles = rootEl.findElements(By.tagName("textarea"));
+		String uper = uploadObj.uper;
+		if(uper.length() <8){
+			uper += "----" + uper;
+		}
+		eles.get(0).sendKeys(uper);
 
 		eles = rootEl.findElements(By.cssSelector("a[node-type=\"submit\"]"));
 		for (WebElement el : eles) {
@@ -140,25 +160,30 @@ public class WeiboTr {
 				break;
 			}
 		}
-		List<WebElement> eles = rootEl.findElements(By.tagName("a"));
+		NieUtil.mySleepBySecond(3);
+		
+		rootEl = findRootLayerPop(driver);
+		List<WebElement> eles = driver.findElements(By.tagName("a"));
 		for (WebElement el : eles) {
+			String cz = el.getAttribute("class");
 			String txt = el.getText();
-			if(txt.indexOf("知道了") != -1){
+			if("W_btn_a".equals(cz) && txt.indexOf("知道了") != -1){
 				el.click();break;
 			}
 		}
 
-		WebDriverWait wait1 = new WebDriverWait(driver,120);
+		WebDriverWait wait1 = new WebDriverWait(driver, 600);
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
 					WebElement rootEl = findRootLayerPop(driver);
 					if(rootEl == null) return Boolean.FALSE;
-					List<WebElement> elspans = rootEl.findElements(By.cssSelector("div[class=\"dd_succ\"]"));
+					List<WebElement> elspans = rootEl.findElements(By.tagName("dl"));
 					for (WebElement el : elspans) {
-						String txt = el.getText();
-						if(!StringUtil.isBlank(txt) && txt.startsWith("视频上传成功")){
+						String nodeType = el.getAttribute("node-type");
+						String style = el.getAttribute("style");
+						if(nodeType.equals("uploading") && style.indexOf("none;") != -1){
 							return Boolean.TRUE;
 						}
 					}
@@ -170,7 +195,11 @@ public class WeiboTr {
 		rootEl = findRootLayerPop(driver);
 		eles = rootEl.findElements(By.cssSelector("input[action-type=\"inputTitle\"]"));
 		eles.get(0).clear();
-		eles.get(0).sendKeys(uploadObj.uper);
+		String uper = uploadObj.uper;
+		if(uper.length() <8){
+			uper += "----" + uper;
+		}
+		eles.get(0).sendKeys(uper);
 		NieUtil.mySleepBySecond(1);
 		
 		eles = rootEl.findElements(By.tagName("a"));
@@ -181,17 +210,19 @@ public class WeiboTr {
 				el.click();break;
 			}
 		}
-		NieUtil.mySleepBySecond(1);
+		NieUtil.mySleepBySecond(2);
 
-		rootEl = findRootLayer(driver);
-		eles = rootEl.findElements(By.cssSelector("a[node-type=\"submit\"]"));
+		eles = driver.findElements(By.cssSelector("a[node-type=\"submit\"]"));
 		for (WebElement el : eles) {
 			String txt = el.getText();
-			if(txt.indexOf("发布") != -1){
+			if(StringUtil.isBlank(txt))continue;
+			String href = el.getAttribute("href");
+			if(StringUtil.isBlank(href))continue;
+			if(txt.indexOf("发布") != -1 && href.indexOf("javascript:void(0)") != -1){
 				el.click();break;
 			}
 		}
-		NieUtil.mySleepBySecond(3);
+		NieUtil.mySleepBySecond(10);
 	}
 	
 	private WebElement findRootLayer(WebDriver driver){
@@ -380,7 +411,7 @@ public class WeiboTr {
 	}
 	public void logonWeibo(WebDriver driver) {
 
-		WebDriverWait wait1 = new WebDriverWait(driver,300);
+		WebDriverWait wait1 = new WebDriverWait(driver,60);
 		wait1.until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
@@ -393,6 +424,7 @@ public class WeiboTr {
 				return Boolean.FALSE;
 			}
 		});
+		System.out.println("[INFO][logonWeibo]start");
 		WebElement el1 = driver.findElement(By
 				.cssSelector("ul[class=\"gn_nav_list\"]"));
 		List<WebElement> eles = el1.findElements(By
@@ -437,14 +469,11 @@ public class WeiboTr {
 
 		NieUtil.mySleepBySecond(2);
 		
-		wait1 = new WebDriverWait(driver, 300);
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					// TODO weibo yanZhen?
-					List<WebElement> els = driver.findElements(By.cssSelector(""));
-					if(!els.isEmpty()){
+					if(isNeedLoginVertify(driver)){
 						return Boolean.TRUE;
 					}
 
@@ -462,12 +491,20 @@ public class WeiboTr {
 				return Boolean.FALSE;
 			}
 		});
+		System.out.println("[INFO][logonWeibo]End");
 
-		// TODO yanZhen
-		List<WebElement> els = driver.findElements(By.cssSelector(""));
-		if(!els.isEmpty()){
+		if(isNeedLoginVertify(driver)){
 			NieUtil.readLineFromSystemIn("weibo need to login manually!!!login manually and press ANY KEY to continue");
 		}
+	}
+	
+	private boolean isNeedLoginVertify(WebDriver driver){
+		List<WebElement> els = driver.findElements(By.cssSelector("input[name=\"verifycode\"]"));
+		if(!els.isEmpty()){
+			return Boolean.TRUE;
+		}
+		return false;
+		
 	}
 
 	public boolean downloadVideo(WebDriver driver, MyVideoObject downloadObj) throws IOException  {

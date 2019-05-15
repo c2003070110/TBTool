@@ -56,8 +56,10 @@ public class MyVideoTrDeamon {
 					NieUtil.mySleepBySecond((new Long(interval - dif / 1000)).intValue());
 				}
 			}catch(org.openqa.selenium.UnhandledAlertException e1){
+				e1.printStackTrace();
 				driver.switchTo().alert().accept();
 			}catch(org.openqa.selenium.WebDriverException e){
+				e.printStackTrace();
 				driver.close();
 				NieUtil.mySleepBySecond(3);
 				driver = WebDriverUtil.getFirefoxWebDriver();
@@ -83,7 +85,7 @@ public class MyVideoTrDeamon {
 			// searchYT(driver, videoObj);
 			insertVideo(videoObj);
 		}
-		tw.removeFromFav(driver, videoObjs);
+		tw.removeFromTwitter(driver, videoObjs);
 	}
 	
 	private void processByScanWeibo(WebDriver driver) {

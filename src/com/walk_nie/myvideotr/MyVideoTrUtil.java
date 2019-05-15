@@ -169,6 +169,7 @@ public class MyVideoTrUtil {
 		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"message\"]"));
 		if(!StringUtil.isBlank(el1.getText())){
 			System.out.println("[ERROR][Video][Download]" + el1.getText());
+			System.out.println("[ERROR][Video][Download]" + url);
 			// parse error!!
 			return null;
 		}

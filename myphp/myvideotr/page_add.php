@@ -70,7 +70,6 @@ $(function() {
 				}
 			}
         });
-        });
 	};
     $(document).on("click", "#btnToDownload", function() {
         updateStatus(thisBox, "todl");
