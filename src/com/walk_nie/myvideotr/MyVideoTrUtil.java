@@ -74,7 +74,7 @@ public class MyVideoTrUtil {
 		
 		NieUtil.mySleepBySecond(5);
 
-		WebDriverWait wait1 = new WebDriverWait(driver,60);
+		WebDriverWait wait1 = new WebDriverWait(driver, 300);
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
@@ -135,7 +135,7 @@ public class MyVideoTrUtil {
 	}
 
 
-	public static File getVideoSaveFolder(MyVideoObject obj) {
+	public static File getSaveFolder(MyVideoObject obj) {
 		String outFolder = NieConfig.getConfig("myvideotr.video.folder") ;
 		File saveFile = new File(outFolder,obj.uid);
 		if(!saveFile.exists()){

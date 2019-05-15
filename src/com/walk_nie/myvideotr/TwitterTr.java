@@ -171,7 +171,7 @@ public class TwitterTr {
 		driver.get(downloadObj.url);
 		NieUtil.mySleepBySecond(2);
 
-		File outFolder = MyVideoTrUtil.getVideoSaveFolder(downloadObj);
+		File outFolder = MyVideoTrUtil.getSaveFolder(downloadObj);
 		
 		String url = driver.getCurrentUrl();
 		if(url.indexOf("video") != -1){
@@ -204,7 +204,6 @@ public class TwitterTr {
 				try(InputStream in = new URL(urlpic).openStream()){
 					File toFile = new File(outFolder, i + ".jpg");
 				    Files.copy(in, Paths.get(toFile.getCanonicalPath()));
-					//Files.copy(new File(urlpic), new File(outFolder, i + ".jpg"));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

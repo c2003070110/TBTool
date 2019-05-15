@@ -115,11 +115,10 @@ class MyWebMoney
 	public function listDaiChongByStatus($status){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYWEBMONEY_DAICHONG"));
-		if(empty($uid) || empty($status)){
+		if(empty($status)){
 			return;
 		}
-		return $tbl->select(['status', '==', $status])
-			->fetch();
+		return $tbl->select(['status', '==', $status])->fetch();
 	}
 	public function listDaiChongByAll(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));

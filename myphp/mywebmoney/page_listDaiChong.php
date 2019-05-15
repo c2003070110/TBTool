@@ -93,7 +93,7 @@ $(function() {
   if($status == 'checkwait'){
 	  $cssBgcheckwait= "bg-warning text-white";
   }else if($status == 'checked'){
-	  $cssBgtopay = "bg-warning text-white";
+	  $cssBgchecked = "bg-warning text-white";
   }else if($status == 'topay'){
 	  $cssBgtopay = "bg-warning text-white";
   }else if($status == 'paid'){
@@ -123,11 +123,13 @@ $(function() {
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">Action</div>
   </div>
 <?php
+  $counter = 0;
   foreach ($dataArr as $data) {
+	  $counter++;
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data["uid"] ?>">
-    <div class="col-3 themed-grid-col border border-secondary">
+    <div class="col-3 themed-grid-col border border-secondary"><?php echo $counter ?>
 	  <a href="/myphp/mywebmoney/page_addDaiChong.php?uid=<?php echo $data["uid"] ?>">
 	    <?php echo $data["amtJPY"] ?>
 	  </a>

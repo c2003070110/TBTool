@@ -112,14 +112,16 @@ $(function() {
 ?>
   </div>
 <?php
+  $counter = 0;
   foreach ($dataArr as $data) {
+	  $counter++;
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
 <?php
     if(empty($status) || $status == "toDL"){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $counter ?>
 	  <?php echo $data["title"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
@@ -145,7 +147,7 @@ $(function() {
 <?php
     }else if($status == "toUL"){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $counter ?>
 	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["uid"] ?>
 	  </a>
@@ -163,7 +165,7 @@ $(function() {
 <?php
     }else if($status == "uploaded"){
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $counter ?>
 	  <?php echo $data["title"] ?>
 	</div>
     <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">

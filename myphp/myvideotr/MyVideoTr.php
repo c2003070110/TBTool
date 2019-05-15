@@ -7,39 +7,42 @@ use cybrox\crunchdb\CrunchDB as CrunchDB;
 
 class MyVideoTr
 {
-	public function addVideoByUrl($url, $toType, $fromType, $trid){
+	public function addVideoByUrl($url){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$obj = new MyVideoObject();
 		$uid = uniqid("tr", true);
 		$obj->uid = $uid;
 		$obj->url = $url;
-		if(empty($toType)) $toType = "toYoutube";
-		if(empty($fromType)) $fromType = "";
-		if(empty($trid)) $trid = $uid;
-		$obj->toType = $toType;
-		$obj->fromType = $fromType;
-		$obj->trid = $trid;
 		$obj->status = "added";
 		$obj->dtAdd = date("YmdGis");
 		$tbl->insert($obj);
 		return $uid;
 	}
-	public function updateByTitle($uid, $title){
+	public function updateByTitle($uid, $title, $uper){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$tbl->select(['uid', '==', $uid])
-			->update(['title', $title]);
+			->update(['title', $title],
+			         ['uper', $uper]);
 	}
-	public function updateByVideoUper($uid, $title, $uper, $ytSearchRsltr, $videoUrl){
+	public function updateByVideoUper($uid, $trid, $title, $uper, $ytSearchRslt, $videoUrl, $toType, $fromType){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
+		$data = $tbl->select(['uid', '==', $uid])->fetch()[0];
+		if(empty($trid)) $trid = $data["trid"];
+		if(empty($trid)) $trid = $uid;
+		if(empty($toType)) $toType = $data["toType"];
+		if(empty($fromType)) $fromType = $data["fromType"];
 		$tbl->select(['uid', '==', $uid])
 			->update(['title', $title],
 					 ['uper', $uper],
 					 ['ytSearchRslt', $ytSearchRslt],
 					 ['videoUrl', $videoUrl],
-					 ['dtparsed', date("YmdGis")]);
+					 ['dtparsed', date("YmdGis")],
+			         ['toType', $toType],
+			         ['fromType', $fromType],
+			         ['trid', $trid]);
 		$this->updateByStatus($uid, "parsed");
 	}
 	public function updateByYTInfo($uid, $ytSearchRslt){

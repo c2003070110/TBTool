@@ -19,15 +19,20 @@ if($actionStr == "addByUrl"){
 	$my = new MyVideoTr();
 	$rslt = $my->addVideoByUrl($url);
 	echo $rslt;
-}else if($actionStr == "updateByTitle"){
+}else if($actionStr == "updateStatusWithTitle"){
 	$uid = $_GET["uid"];
 	$title = $_GET["title"];
+	$uper = $_GET["uper"];
+	$status = $_GET["status"];
 	if(empty($uid)){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
 	$my = new MyVideoTr();
-	$rslt = $my->updateByTitle($uid, $title);
+	$rslt = $my->updateByTitle($uid, $title, $uper);
+	if(!empty($uid)){
+		$my->updateByStatus($uid, $status);
+	}
 	echo $rslt;
 
 } else if($actionStr == "updateStatus"){
@@ -52,16 +57,19 @@ if($actionStr == "addByUrl"){
 	}
 } else if($actionStr == "updateByVideoUper"){
 	$uid = $_GET["uid"];
+	$trid = $_GET["trid"];
 	$title = $_GET["title"];
 	$uper = $_GET["uper"];
 	$ytSearchRslt = $_GET["ytSearchRslt"];
 	$videoUrl = $_GET["videoUrl"];
+	$toType = $_GET["toType"];
+	$fromType = $_GET["fromType"];
 	if(empty($uid)){
 		echo "[Fatal]Parameter is NULL";
 		return ;
 	}
 	$my = new MyVideoTr();
-	$rslt = $my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
+	$rslt = $my->updateByVideoUper($uid, $trid, $title, $uper, $ytSearchRslt, $videoUrl, $toType, $fromType);
 	echo $rslt;
 } else if($actionStr == "getByTodownloadOne"){
 	$my = new MyVideoTr();
@@ -115,14 +123,14 @@ if($actionStr == "addByUrl"){
 	}
 } else if($actionStr == "insertVideo"){
 	$url = $_GET["url"];
-	$videoUrl = $_GET["videoUrl"];
-	$toType = $_GET["toType"];
-	$fromType = $_GET["fromType"];
 	$trid = $_GET["trid"];
 	$title = $_GET["title"];
 	$uper = $_GET["uper"];
-	$groupUid = $_GET["groupUid"];
 	$ytSearchRslt = $_GET["ytSearchRslt"];
+	$videoUrl = $_GET["videoUrl"];
+	$toType = $_GET["toType"];
+	$fromType = $_GET["fromType"];
+	$groupUid = $_GET["groupUid"];
 	if(empty($url) || empty($videoUrl)){
 		echo "[Fatal]Parameter is NULL";
 		return ;
@@ -133,8 +141,8 @@ if($actionStr == "addByUrl"){
 		echo "[Fatal]Already inserted!"; 
 		return;
 	}
-	$uid = $my->addVideoByUrl($url, $toType, $fromType, $trid);
-	$my->updateByVideoUper($uid, $title, $uper, $ytSearchRslt, $videoUrl);
+	$uid = $my->addVideoByUrl($url);
+	$my->updateByVideoUper($uid, $trid, $title, $uper, $ytSearchRslt, $videoUrl, $toType, $fromType);
 	if(!empty($groupUid)){
 		$my->updateByGroupUid($uid, $groupUid);
 	}

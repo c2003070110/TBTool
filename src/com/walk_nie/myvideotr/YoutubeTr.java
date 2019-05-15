@@ -30,7 +30,7 @@ public class YoutubeTr {
 	
 	public void publish(WebDriver driver, MyVideoObject uploadObj) {
 		logonYoutube(driver);
-		File uploadFold = MyVideoTrUtil.getVideoSaveFolder(uploadObj);
+		File uploadFold = MyVideoTrUtil.getSaveFolder(uploadObj);
 		// all of folder to upload
 		File[] files = uploadFold.listFiles(new FilenameFilter() {
 			@Override
@@ -77,10 +77,8 @@ public class YoutubeTr {
 		NieUtil.mySleepBySecond(2);
 
 		wes = driver.findElements(By.cssSelector("input[type=\"file\"]"));
-
 		wes.get(0).sendKeys(uploadFile.getAbsolutePath());
 		NieUtil.mySleepBySecond(1);
-		// savedFile.delete();
 
 		WebElement weRoot = driver.findElement(By.cssSelector("form[name=\"mdeform\"]"));
 		WebElement we = weRoot.findElement(By.cssSelector("input[name=\"title\"]"));
@@ -121,7 +119,6 @@ public class YoutubeTr {
 			break;
 		}
 		NieUtil.mySleepBySecond(3);
-		uploadFile.delete();
 	}
 
 	public void searchYT(WebDriver driver, MyVideoObject videoObj) {
@@ -230,7 +227,7 @@ public class YoutubeTr {
 			}
 		}
 		
-		NieUtil.readLineFromSystemIn("YOUTUBE login is finished? ANY KEY For already");
+		NieUtil.readLineFromSystemIn("youtube need to login manually!!!login manually and press ANY KEY to continue");
 	}
  
 }

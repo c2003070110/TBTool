@@ -101,6 +101,12 @@ public class YahooIdCreator {
 		element.findElement(By.id("pw_q")).sendKeys(regInfo.secQuestion);
 		element.findElement(By.id("pw_a")).sendKeys(regInfo.secAnswer);
 		element.findElement(By.id("deliver")).sendKeys("0");
+
+		// TODO yanZhen
+		List<WebElement> els = driver.findElements(By.cssSelector(""));
+		if(!els.isEmpty()){
+			NieUtil.readLineFromSystemIn("YAHOO need to regist manually!!!regist manually and press ANY KEY to continue");
+		}
 		
 		if(testRand(driver)){
 		//if(mywait("yahoo rand is finished ready for continue? ENTER;N for exit")){

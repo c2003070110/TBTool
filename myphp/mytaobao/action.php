@@ -89,6 +89,15 @@ if($actionStr == "addTaobaoFahuo"){
 	$my = new MyTaobao();
 	$rslt = $my->addTaobaoOrderDetail($orderNo, $baobeiTitle, $sku);
 	echo $rslt;
+} else if($actionStr == "addLoadOrderCommand"){
+	$my = new MyTaobao();
+	$rslt = $my->addLoadOrderCommand();
+} else if($actionStr == "getLoadOrderCommand"){
+	$my = new MyTaobao();
+	$rslt = $my->getLoadOrderCommand();
+} else if($actionStr == "removeLoadOrderCommand"){
+	$my = new MyTaobao();
+	$rslt = $my->removeLoadOrderCommand();
 	
 	
 } else{

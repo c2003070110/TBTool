@@ -55,8 +55,32 @@ public class TaobaoScanOrder {
 		}
 	}
 	public void processForWebService(WebDriver driver) throws UnsupportedOperationException, IOException {
-		List<OrderInfoObject> list = process(driver);
-		addTBOrderByWebService(list);
+		if(hasReloadOrderCommand()){
+			List<OrderInfoObject> list = process(driver);
+			addTBOrderByWebService(list);
+			removeReloadOrderCommand();
+		}
+	}
+
+	private boolean hasReloadOrderCommand() throws UnsupportedOperationException, IOException {
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "getLoadOrderCommand");
+		String rslt = NieUtil.httpGet(NieConfig.getConfig("taobao.service.url"), param);
+		if(StringUtil.isBlank(rslt)){
+			return false;
+		}else {
+			NieUtil.log(logFile, "[INFO][Service:getLoadOrderCommand][RESULT]" + rslt);
+			return true;
+		}
+	}
+
+	private void removeReloadOrderCommand() throws UnsupportedOperationException, IOException {
+		Map<String, String> param = Maps.newHashMap();
+		param.put("action", "removeLoadOrderCommand");
+		String rslt = NieUtil.httpGet(NieConfig.getConfig("taobao.service.url"), param);
+		if(!StringUtil.isBlank(rslt)){
+			NieUtil.log(logFile, "[INFO][Service:getLoadOrderCommand][RESULT]" + rslt);
+		}
 	}
 
 	private void addTBOrderByWebService(List<OrderInfoObject> orders)

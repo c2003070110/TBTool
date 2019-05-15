@@ -52,6 +52,18 @@ $(function() {
             location.reload();
         });
     });
+    $(document).on("click", "#btnLoadOrder", function() {
+        var jqxhr = $.ajax(actionUrl,
+			 { type : "GET",
+			   data : {"action":"addLoadOrderCommand"
+			   },
+			   dataType : "html" 
+			  }
+		  );
+        jqxhr.done(function( msg ) {
+            //location.reload();
+        });
+    });
 });
 </script>
 </head>
@@ -69,7 +81,11 @@ $(function() {
 <div id="container" class="container">
 <?php
   include __DIR__ .'/subpage_toplink.php';
-?>
+?>  
+  <ul class="list-group list-group-horizontal">
+   <li class="list-group-item"><button type="button" id="btnLoadOrder" class="btn btn-primary actionBtn">LOAD ORDER</button></li>
+  </ul>
+  <hr class="mb-4">
   <div class="row">
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">orderNo</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">buyerName</div>
@@ -77,14 +93,16 @@ $(function() {
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
   </div>
 <?php
+  $counter = 0;
   foreach ($dataArr as $data) {
 		$orderDtl = $my->listTaobaoOrderDetailByOrderNo($data['orderNo']);
 		$baobeiTitle = $orderDtl[0]["baobeiTitle"];
+	  $counter++;
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
     <input type="hidden" id="orderNo" value="<?php echo $data['orderNo'] ?>">
-    <div class="col-3 text-break themed-grid-col border border-secondary ">
+    <div class="col-3 text-break themed-grid-col border border-secondary "><?php echo $counter ?>
 	  <a class="form-control btn btn-success" href="/myphp/mytaobao/page_addOrder.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["buyerName"] ?>
 	  </a>

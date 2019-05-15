@@ -44,15 +44,21 @@ $(function() {
         });
     });
     $(document).on("click", "#btnUpdate", function() {
+        var status = $("#status").val()
+		updateWithStatus(status);
+    });
+	var updateWithStatus = function(status){
         var jqxhr = $.ajax(actionUrl,
 			 { type : "GET",
-			   data : {"action":"updateByTitle", 
+			   data : {"action":"updateStatusWithTitle", 
 					   "uid" : $("#uid").val(), 
-					   "title" : $("#title").val()
+					   "title" : $("#title").val(), 
+					   "uper" : $("#uper").val(),
+					   "status":status
 			   },
 			   dataType : "html" 
 			  }
-		  );
+		);
         jqxhr.done(function( msg ) {
             alert(msg);
 			if(msg.indexOf("ERROR") == -1){
@@ -64,6 +70,13 @@ $(function() {
 				}
 			}
         });
+        });
+	};
+    $(document).on("click", "#btnToDownload", function() {
+        updateStatus(thisBox, "todl");
+    });
+    $(document).on("click", "#btnToUpload", function() {
+		updateWithStatus("toul");
     });
 });
 </script>
@@ -90,6 +103,7 @@ $(function() {
 <?php 
   if(!empty($uid)){
 ?>
+    <input type="hidden" id="status" value="<?php echo $obj['status'] ?>">
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
 	    <label for="title">title</label>
@@ -109,9 +123,29 @@ $(function() {
 	  </div>
     </div>
     <div class="row mb-4 form-group">
-      <div class="col-4"></div>
       <div class="col-8 ">
         <button class="btn btn-secondary actionBtn" id="btnUpdate" type="button">U P D A T E！！</button>
+      </div>
+      <div class="col-4">
+<?php
+    if($obj["status"] == "parsed"){
+?>
+	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
+<?php
+    }else if($obj["status"] == "dled"){
+?>
+	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
+<?php
+    }else if($obj["status"] == "dlfailure"){
+?>
+	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
+<?php
+    }else if($obj["status"] == "ulfailure"){
+?>
+	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
+<?php
+    }
+?>
       </div>
     </div>
 <?php 

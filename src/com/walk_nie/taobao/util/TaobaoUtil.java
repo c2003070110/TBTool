@@ -1212,6 +1212,11 @@ public class TaobaoUtil {
 						if(!loginTitle.equals(title)){
 							return Boolean.TRUE;
 						}
+						// TODO yanZhen?
+						List<WebElement> els = driver.findElements(By.cssSelector(""));
+						if(!els.isEmpty()){
+							return Boolean.TRUE;
+						}
 						return Boolean.FALSE;
 					} catch (Exception e) {
 					}
@@ -1220,6 +1225,11 @@ public class TaobaoUtil {
 			});
 		}catch(TimeoutException e){
 			NieUtil.readLineFromSystemIn("taobao login is finished? ANY KEY For already");
+		}
+		// TODO yanZhen
+		List<WebElement> els = driver.findElements(By.cssSelector(""));
+		if(!els.isEmpty()){
+			NieUtil.readLineFromSystemIn("taobao need to login manually!!!login manually and press ANY KEY to continue");
 		}
 		title = driver.getTitle();
 		if (!loginTitle.equals(title)) {

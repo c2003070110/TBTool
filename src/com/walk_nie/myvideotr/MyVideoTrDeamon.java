@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -113,19 +114,19 @@ public class MyVideoTrDeamon {
 		}
 		MyVideoObject uploadloadObj = getToUploadVideo();
 		if (uploadloadObj != null) {
-			uploadVideo(driver, uploadloadObj);
+			publish(driver, uploadloadObj);
 		}
 	}
 
-	private void uploadVideo(WebDriver driver, MyVideoObject uploadObj) {
-		//File savedFile = getVideoSaveFile(uploadObj);
+	private void publish(WebDriver driver, MyVideoObject uploadObj) {
 		try {
 			if ("toWeibo".equals(uploadObj.toType)) {
 				weibo.publish(driver, uploadObj);
 			} else if ("toYoutube".equals(uploadObj.toType)) {
 				youtube.publish(driver, uploadObj);
 			}
-
+			File uploadFoldFolder = MyVideoTrUtil.getSaveFolder(uploadObj);
+			FileUtils.deleteDirectory(uploadFoldFolder);
 			updateVideoStatus(uploadObj.uid, "uled");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -315,6 +316,8 @@ public class MyVideoTrDeamon {
 			param.put("title", videoObj.title);
 			param.put("ytSearchRslt", videoObj.ytSearchRslt);
 			param.put("videoUrl", videoObj.videoUrl);
+			param.put("fromType", videoObj.fromType);
+			param.put("toType", videoObj.toType);
 			NieUtil.log(logFile, "[INFO][Service:updateByVideoUper][Param]" + "[uid]" + videoObj.uid + "[uper]" + videoObj.uper + "[title]" + videoObj.title);
 
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
@@ -329,7 +332,8 @@ public class MyVideoTrDeamon {
 	}
 
 	private void parseFor365yg(WebDriver driver, MyVideoObject videoObj) {
-		
+		videoObj.fromType = "toutiao";
+		videoObj.toType = "toYoutube";
 		List<WebElement> wes = driver.findElements(By.cssSelector("h2[class=\"title\"]"));
 		if(!wes.isEmpty()){
 			videoObj.title = wes.get(0).getText();
@@ -342,6 +346,8 @@ public class MyVideoTrDeamon {
 
 	private void parseForBilibili(WebDriver driver, MyVideoObject videoObj) {
 
+		videoObj.fromType = "toutiao";
+		videoObj.toType = "toYoutube";
 		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"viewbox_report\"]"));
 		List<WebElement> wes = el1.findElements(By.cssSelector("h1[class=\"video-title\"]"));
 		if(!wes.isEmpty()){
