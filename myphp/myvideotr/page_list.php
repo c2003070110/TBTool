@@ -121,16 +121,16 @@ $(function() {
 <?php
     if(empty($status) || $status == "toDL"){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $counter ?>
-	  <?php echo $data["title"] ?>
+    <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $counter ?>
+	  <?php  if(!empty($data["title"]) {echo $data["title"]}else{echo $data["url"]} ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["uper"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["status"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php
 	if($data["status"] == "parsed") {
@@ -147,31 +147,31 @@ $(function() {
 <?php
     }else if($status == "toUL"){
 ?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $counter ?>
+    <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $counter ?>
 	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
 	    <?php echo $data["uid"] ?>
 	  </a>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
-	  <?php echo $data["title"] ?>
+    <div class="col-3 text-break themed-grid-col border border-primary">
+	  <?php  if(!empty($data["title"]) {echo $data["title"]}else{echo $data["url"]} ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["ytSearchRslt"] ?>
 	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
 	</div>
 <?php
     }else if($status == "uploaded"){
 ?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white"><?php echo $counter ?>
+    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $counter ?>
 	  <?php echo $data["title"] ?>
 	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-4 text-break themed-grid-col border border-primary">
 	  <?php echo $data["uper"] ?>
 	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">
+    <div class="col-4 text-break themed-grid-col border border-primary">
 	  <?php echo $data["ytVideoUrl"] ?>
 	</div>
 <?php

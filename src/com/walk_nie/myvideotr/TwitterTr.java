@@ -176,7 +176,7 @@ public class TwitterTr {
 		String url = driver.getCurrentUrl();
 		if(url.indexOf("video") != -1){
 			downloadObj.videoUrl = url;
-			String videoDownloadUrl = MyVideoTrUtil.getVideoDownloadUrl(driver, downloadObj);
+			String videoDownloadUrl = MyVideoTrUtil.getVideoDownloadUrlByParsevideo(driver, downloadObj);
 			if (StringUtil.isBlank(videoDownloadUrl)) {
 				return false;
 			}
@@ -212,4 +212,7 @@ public class TwitterTr {
 		}
 		return false;
 	}
+	public void publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
+		// TODO
+	}	
 }

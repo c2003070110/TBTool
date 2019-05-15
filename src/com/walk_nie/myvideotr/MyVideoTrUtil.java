@@ -61,7 +61,79 @@ public class MyVideoTrUtil {
 		return bos.toByteArray();
 	}
 
-	public static String getVideoDownloadUrl(WebDriver driver, MyVideoObject downloadObj) {
+	public static String getVideoDownloadUrlByVblogDownload(WebDriver driver, MyVideoObject downloadObj) {
+		driver.get("https://www.vlogdownloader.com/");
+		// TODO
+		WebElement rootWE = driver.findElement(By.cssSelector("form[id=\"vlog\"]"));
+		WebElement we = rootWE.findElement(By.cssSelector("input[name=\"url\"]"));
+		we.clear();
+		we.sendKeys(downloadObj.videoUrl);
+		we = rootWE.findElement(By.cssSelector("button[type=\"submit\"]"));
+		we.click();
+		
+		NieUtil.mySleepBySecond(5);
+
+		WebDriverWait wait1 = new WebDriverWait(driver, 300);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					WebElement el1 = driver.findElement(By.cssSelector("div[id=\"message\"]"));
+					if(!StringUtil.isBlank(el1.getText())){
+						return Boolean.TRUE;
+					}
+					el1 = driver.findElement(By.cssSelector("div[id=\"video\"]"));
+					List<WebElement> eles = el1.findElements(By.cssSelector("li[class=\"list-group-item\"]"));
+					if(!eles.isEmpty()){
+						return Boolean.TRUE;
+					}
+					return Boolean.FALSE;
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+		WebElement el1 = driver.findElement(By.cssSelector("div[id=\"message\"]"));
+		if(!StringUtil.isBlank(el1.getText())){
+			System.out.println("[ERROR][Video][Download]" + el1.getText());
+			// parse error!!
+			return null;
+		}
+		List<String> videoUrlList = Lists.newArrayList();
+		we = driver.findElement(By.cssSelector("div[id=\"video\"]"));
+		
+		List<WebElement> eles = we.findElements(By.cssSelector("li[class=\"list-group-item\"]"));
+		for(WebElement we1 : eles){
+			List<WebElement> eles2 = we1.findElements(By.tagName("input"));
+			if(eles2.isEmpty())continue;
+			String vurl = eles2.get(0).getAttribute("value");
+			if(vurl.toLowerCase().indexOf(".mp4") == -1) continue;
+			videoUrlList.add(vurl);
+		}
+		Collections.sort(videoUrlList, new Comparator<String>() {
+			@Override
+			public int compare(String arg0, String arg1) {
+
+				Pattern p = Pattern.compile("\\d+{3,4}x{1}\\d+{3,4}");
+				Matcher m = p.matcher(arg0); 
+				String str0 = null;
+				while (m.find()) {
+					str0 = m.group();
+				}
+				m = p.matcher(arg1); 
+				String str1 = null;
+				while (m.find()) {
+					str1 = m.group();
+				}
+				
+				return str1.compareTo(str0);
+			}
+		});
+		
+		return videoUrlList.get(0);
+	}
+
+	public static String getVideoDownloadUrlByParsevideo(WebDriver driver, MyVideoObject downloadObj) {
 		driver.get("https://www.parsevideo.com/");
 		WebElement we = driver.findElement(By
 				.cssSelector("input[id=\"url_input\"]"));

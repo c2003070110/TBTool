@@ -472,7 +472,7 @@ public class WeiboTr {
 
 	public boolean downloadVideo(WebDriver driver, MyVideoObject downloadObj) throws IOException  {
 
-		String videoDownloadUrl = MyVideoTrUtil.getVideoDownloadUrl(driver, downloadObj);
+		String videoDownloadUrl = MyVideoTrUtil.getVideoDownloadUrlByParsevideo(driver, downloadObj);
 		if (StringUtil.isBlank(videoDownloadUrl)) {
 			return false;
 		}

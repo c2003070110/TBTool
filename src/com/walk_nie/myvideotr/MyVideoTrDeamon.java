@@ -26,6 +26,7 @@ public class MyVideoTrDeamon {
 	YoutubeTr youtube = new YoutubeTr();
 	WeiboTr weibo = new WeiboTr();
 	TwitterTr tw = new TwitterTr();
+	TiktokTr tk = new TiktokTr();
 	/**
 	 * @param args
 	 * @throws IOException
@@ -124,13 +125,16 @@ public class MyVideoTrDeamon {
 				weibo.publish(driver, uploadObj);
 			} else if ("toYoutube".equals(uploadObj.toType)) {
 				youtube.publish(driver, uploadObj);
+			} else if ("toTwitter".equals(uploadObj.toType)) {
+				tw.publish(driver, uploadObj);
 			}
 			File uploadFoldFolder = MyVideoTrUtil.getSaveFolder(uploadObj);
 			FileUtils.deleteDirectory(uploadFoldFolder);
 			updateVideoStatus(uploadObj.uid, "uled");
-		} catch (Exception e) {
-			e.printStackTrace();
-			NieUtil.log(logFile, e);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			NieUtil.log(logFile, "[ERROR][publish]" + ex.getMessage());
+			NieUtil.log(logFile, ex);
 			updateVideoStatus(uploadObj.uid, "ulfailure");
 		}
 	}
@@ -143,22 +147,28 @@ public class MyVideoTrDeamon {
 	private void downloadVideo(WebDriver driver, MyVideoObject downloadObj) {
 		try {
 			String fromType = downloadObj.fromType;
-			if(StringUtil.isBlank(fromType)){
-				fromType = "";// FIXME parse from the url!
-			}
+			
 			boolean rsltFlag = false;
-			if("fromWeibo".equals(fromType)){
-				rsltFlag = weibo.downloadVideo(driver,downloadObj);
-			}else if("fromTwitter".equals(fromType)){
-				rsltFlag = tw.downloadVideo(driver,downloadObj);
+			if ("fromWeibo".equals(fromType)) {
+				rsltFlag = weibo.downloadVideo(driver, downloadObj);
+			} else if ("fromTwitter".equals(fromType)) {
+				rsltFlag = tw.downloadVideo(driver, downloadObj);
+			} else if ("fromTiktokJP".equals(fromType) || "fromTiktokCN".equals(fromType)) {
+				rsltFlag = tk.downloadVideo(driver, downloadObj);
+			}else{
+				NieUtil.log(logFile, "[ERROR][fromType is WRONG]" +fromType);
+				updateVideoStatus(downloadObj.uid, "dlfailure");
+				return;
 			}
 			if (rsltFlag) {
 				updateVideoStatus(downloadObj.uid, "dled");
 			} else {
 				updateVideoStatus(downloadObj.uid, "dlfailure");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			NieUtil.log(logFile, "[ERROR][downloadVideo]" + ex.getMessage());
+			NieUtil.log(logFile, ex);
 			updateVideoStatus(downloadObj.uid, "dlfailure");
 		}
 	}
@@ -237,11 +247,16 @@ public class MyVideoTrDeamon {
 		if(urlTrue.indexOf("365yg.com") != -1){
 			//阳光宽频网·toutiao
 			parseFor365yg(driver, videoObj);
+			searchYT(driver, videoObj);
+			updateVideoUper(videoObj);
 		}else if(urlTrue.indexOf("bilibili.com") != -1){
 			parseForBilibili(driver, videoObj);
+			searchYT(driver, videoObj);
+			updateVideoUper(videoObj);
+		}else if(urlTrue.indexOf("tiktok.com") != -1){
+			parseForTiktok(driver, videoObj);
+			updateVideoUper(videoObj);
 		}
-		searchYT(driver, videoObj);
-		updateVideoUper(videoObj);
 	}
 
 	private void searchYT(WebDriver driver, MyVideoObject videoObj) {
@@ -344,6 +359,24 @@ public class MyVideoTrDeamon {
 		}
 	}
 
+	private void parseForTiktok(WebDriver driver, MyVideoObject videoObj) {
+		// TODO
+		videoObj.videoUrl = videoObj.url;
+		boolean isTiktokJP = false;
+		boolean isTiktokCN = false;
+		if(isTiktokJP){
+			videoObj.fromType = "fromTiktokJP";
+			videoObj.toType = "toWeibo";
+			videoObj.uper = "";
+			videoObj.uper = "";
+		}else if(isTiktokCN){
+			videoObj.fromType = "fromTiktokCN";
+			videoObj.toType = "toTwitter";
+			videoObj.uper = "";
+			videoObj.uper = "";
+		}
+	}
+
 	private void parseForBilibili(WebDriver driver, MyVideoObject videoObj) {
 
 		videoObj.fromType = "toutiao";
@@ -409,7 +442,6 @@ public class MyVideoTrDeamon {
 
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
-		
 	}
 
 }

@@ -11,7 +11,13 @@ class MyVideoTr
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$obj = new MyVideoObject();
-		$uid = uniqid("tr", true);
+		$prefix = "tr";
+		if(strpos($url, "sina") !== false){$prefix = "wb";}
+		if(strpos($url, "twi") !== false){$prefix = "tw";}
+		if(strpos($url, "bili") !== false){$prefix = "bi";}
+		if(strpos($url, "tiktok") !== false){$prefix = "tkJP";}
+		if(strpos($url, "tiktok") !== false){$prefix = "tkCN";}
+		$uid = uniqid($prefix, true);
 		$obj->uid = $uid;
 		$obj->url = $url;
 		$obj->status = "added";
