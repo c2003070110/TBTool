@@ -46,23 +46,28 @@ public class WeiboTr {
 		}
 	}
 	public void publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
-		driver.get(myfavURL);
-		logonWeibo(driver);
 
 		List<File> multimediaContext = getToPublishFile(uploadObj);
 		if(multimediaContext.isEmpty()){
 			return;
 		}
-
+		driver.get(myfavURL);
+		logonWeibo(driver);
+		
 		// open
-		WebDriverWait wait1 = new WebDriverWait(driver,120);
+		WebDriverWait wait1 = new WebDriverWait(driver, 120);
 		wait1.until(new ExpectedCondition<Boolean>(){
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
 					openUploadDialog(driver);
 					WebElement rootEl = findRootLayer(driver);
-					if(rootEl == null) {return Boolean.FALSE;}else {return Boolean.TRUE;}
+					if (rootEl == null) {
+						return Boolean.FALSE;
+					} else {
+						MyVideoTrUtil.stopBrowser(driver);
+						return Boolean.TRUE;
+					}
 				} catch (Exception e) {
 				}
 				return Boolean.FALSE;
@@ -359,6 +364,8 @@ public class WeiboTr {
 			if(!wes1.isEmpty()){
 				videoObj.fr = wes1.get(0).getText();
 			}
+			MyVideoTrUtil.insertVideo(videoObj);
+			removeFromFav(we, videoObj);
 			videoObjs.add(videoObj);
 			//NieUtil.mySleepBySecond(1);
 		}
@@ -425,10 +432,8 @@ public class WeiboTr {
 			}
 		});
 		System.out.println("[INFO][logonWeibo]start");
-		WebElement el1 = driver.findElement(By
-				.cssSelector("ul[class=\"gn_nav_list\"]"));
-		List<WebElement> eles = el1.findElements(By
-				.cssSelector("em[class=\"S_txt1\"]"));
+		WebElement el1 = driver.findElement(By.cssSelector("ul[class=\"gn_nav_list\"]"));
+		List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
 		for (WebElement ele : eles) {
 			String txt = ele.getText();
 			if (txt.indexOf("次郎花子") != -1) {
@@ -441,6 +446,7 @@ public class WeiboTr {
 			public Boolean apply(WebDriver driver) {
 				try {
 					driver.findElement(By.cssSelector("div[id=\"pl_unlogin_home_login\"]"));
+					MyVideoTrUtil.stopBrowser(driver);
 					return Boolean.TRUE;
 				} catch (Exception ex) {
 				}
@@ -482,6 +488,7 @@ public class WeiboTr {
 					for(WebElement ele:eles){
 						String txt = ele.getText();
 						if(txt.indexOf("次郎花子") != -1){
+							MyVideoTrUtil.stopBrowser(driver);
 							return Boolean.TRUE;
 						}
 					}
@@ -530,23 +537,23 @@ public class WeiboTr {
 
 		List<WebElement> wes = driver.findElements(By.cssSelector("div[action-type=\"feed_list_item\"]"));
 		for(WebElement we :wes){
-			List<WebElement> wes1 = we.findElements(By.cssSelector("div[class=\"WB_feed_handle\"]"));
-			if(wes1.isEmpty())continue;
-			List<WebElement> wes2 = wes1.get(0).findElements(By.tagName("a"));
-			if(wes2.isEmpty())continue;
-			boolean breakFlag = false;
-			for(WebElement we2:wes2){
-				String title = we2.getAttribute("title");
-				String actionData = we2.getAttribute("action-data");
-				if(title.equals("取消赞") && actionData.indexOf(videoObj.trid) != -1){
-					we2.click();
-					breakFlag = true;
-					NieUtil.mySleepBySecond(2);
-					break;
-				}
-			}
-			if(breakFlag)break;
+			removeFromFav(we, videoObj);
 		}
-		
+	}
+	public void removeFromFav(WebElement we, MyVideoObject videoObj) {
+
+		List<WebElement> wes1 = we.findElements(By.cssSelector("div[class=\"WB_feed_handle\"]"));
+		if(wes1.isEmpty())return;
+		List<WebElement> wes2 = wes1.get(0).findElements(By.tagName("a"));
+		if(wes2.isEmpty())return;
+		for(WebElement we2:wes2){
+			String title = we2.getAttribute("title");
+			String actionData = we2.getAttribute("action-data");
+			if(title.equals("取消赞") && actionData.indexOf(videoObj.trid) != -1){
+				we2.click();
+				NieUtil.mySleepBySecond(2);
+				break;
+			}
+		}
 	}
 }

@@ -49,30 +49,36 @@ public class TwitterTr {
 				.cssSelector("div[id=\"timeline\"]"));
 		List<WebElement> eles = rootWe.findElements(By.tagName("li"));
 		for (WebElement ele : eles) {
-			String id = ele.getAttribute("data-item-id");// tw1127569675770974208
-			List<WebElement> eles1 = ele.findElements(By.tagName("button"));
-			boolean breakF = false;
-			for (WebElement ele1 : eles1) {
-				String claZZ = ele1.getAttribute("class");
-				if (claZZ.indexOf("ProfileTweet-action--unfavorite") == -1)
-					continue;
-				for (MyVideoObject tw : videoObjs) {
-					if (id.equals(tw.trid)) {
-						ele1.click();
-						NieUtil.mySleepBySecond(1);
-						try {
-							driver.switchTo().alert().accept();
-							NieUtil.mySleepBySecond(1);
-						} catch (Exception e) {
-						}
-						breakF = true;
-						break;
-					}
-				}
-				if (breakF)
-					break;
-			}
+			removeFromTwitter(ele,videoObjs);
 		}
+	}
+	public void removeFromTwitter(WebElement we,
+			List<MyVideoObject> videoObjs) {
+
+		String id = we.getAttribute("data-item-id");// tw1127569675770974208
+		List<WebElement> eles1 = we.findElements(By.tagName("button"));
+		boolean breakF = false;
+		for (WebElement ele1 : eles1) {
+			String claZZ = ele1.getAttribute("class");
+			if (claZZ.indexOf("ProfileTweet-action--unfavorite") == -1)
+				continue;
+			for (MyVideoObject tw : videoObjs) {
+				if (id.equals(tw.trid)) {
+					ele1.click();
+					NieUtil.mySleepBySecond(1);
+					breakF = true;
+					break;
+				}
+			}
+			if (breakF)
+				break;
+		}
+	}
+	public void removeFromTwitter(WebElement we,
+			MyVideoObject videoObj) {
+		List<MyVideoObject> videoObjs = Lists.newArrayList();
+		videoObjs.add(videoObj);
+		removeFromTwitter(we,videoObjs);
 	}
 
 	public void removeFromFav(WebDriver driver, List<MyVideoObject> videoObjs) {
@@ -184,6 +190,8 @@ public class TwitterTr {
 				obj.title = title;
 				obj.toType = "toWeibo";
 				obj.fromType = "fromTwitter";
+				MyVideoTrUtil.insertVideo(obj);
+				removeFromTwitter(ele, obj);
 				twList.add(obj);
 			}
 		}

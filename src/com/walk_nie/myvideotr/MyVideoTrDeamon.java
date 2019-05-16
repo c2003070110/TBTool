@@ -79,23 +79,23 @@ public class MyVideoTrDeamon {
 	}
 	
 	private void processByScanTwitter(WebDriver driver) {
-
-		List<MyVideoObject> videoObjs = tw.scan(driver);
-		for (MyVideoObject videoObj : videoObjs) {
+		tw.scan(driver);
+		//List<MyVideoObject> videoObjs = tw.scan(driver);
+		//for (MyVideoObject videoObj : videoObjs) {
 			// searchYT(driver, videoObj);
-			insertVideo(videoObj);
-		}
-		tw.removeFromTwitter(driver, videoObjs);
+			//insertVideo(videoObj);
+		//}
+		//tw.removeFromTwitter(driver, videoObjs);
 	}
 	
 	private void processByScanWeibo(WebDriver driver) {
-
-		List<MyVideoObject> videoObjs = weibo.scan(driver);
-		for (MyVideoObject videoObj : videoObjs) {
+		weibo.scan(driver);
+		//List<MyVideoObject> videoObjs = weibo.scan(driver);
+		//for (MyVideoObject videoObj : videoObjs) {
 			// searchYT(driver, videoObj);
-			insertVideo(videoObj);
-			weibo.removeFromFav(driver, videoObj);
-		}
+			//insertVideo(videoObj);
+			//weibo.removeFromFav(driver, videoObj);
+		//}
 	}
 	
 	private void processByWebService(WebDriver driver) {
@@ -408,34 +408,6 @@ public class MyVideoTrDeamon {
 			videoObj.uper = wes.get(0).getText();
 		}
 		videoObj.videoUrl = videoObj.url;
-	}
-
-	private void insertVideo(MyVideoObject obj) {
-		
-		try {
-			Map<String, String> param = Maps.newHashMap();
-			param.put("action", "insertVideo");
-			param.put("url", obj.url);
-			param.put("videoUrl", obj.videoUrl);
-			param.put("toType", obj.toType);
-			param.put("fromType", obj.fromType);
-			param.put("trid", obj.trid);
-			param.put("title", obj.title);
-			param.put("uper", obj.uper);
-			param.put("groupUid", obj.groupUid);
-			param.put("ytSearchRslt", obj.ytSearchRslt);
-			//NieUtil.log(logFile, "[INFO][Service:insertVideo][Param]" + "[url]" + obj.url + "[title]" + obj.title + "[uper]" + obj.uper);
-
-			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
-
-			if (!StringUtil.isBlank(rslt)) {
-				NieUtil.log(logFile, "[INFO][Service:insertVideo][RESULT]" + rslt);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			NieUtil.log(logFile, "[ERROR][Service:insertVideo]" + e.getMessage());
-			NieUtil.log(logFile, e);
-		}
 	}
 
 	public void init() throws IOException {

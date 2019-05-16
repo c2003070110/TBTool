@@ -10,10 +10,12 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -21,6 +23,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.seleniumhq.jetty9.util.StringUtil;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Maps;
 import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
@@ -138,6 +141,7 @@ public class MyVideoTrUtil {
 		WebElement we = driver.findElement(By
 				.cssSelector("input[id=\"url_input\"]"));
 		we.clear();
+		MyVideoTrUtil.stopBrowser(driver);
 		String url = NieUtil.decode(downloadObj.videoUrl);
 		we.sendKeys(url);
 		we = driver.findElement(By
@@ -221,5 +225,36 @@ public class MyVideoTrUtil {
 		String fileName = f.getName();
 		int dotPox = fileName.lastIndexOf(".");
 		return fileName.substring(dotPox + 1, fileName.length());
+	}
+
+	public static void insertVideo(MyVideoObject obj) {
+		
+		try {
+			Map<String, String> param = Maps.newHashMap();
+			param.put("action", "insertVideo");
+			param.put("url", obj.url);
+			param.put("videoUrl", obj.videoUrl);
+			param.put("toType", obj.toType);
+			param.put("fromType", obj.fromType);
+			param.put("trid", obj.trid);
+			param.put("title", obj.title);
+			param.put("uper", obj.uper);
+			param.put("groupUid", obj.groupUid);
+			param.put("ytSearchRslt", obj.ytSearchRslt);
+			//NieUtil.log(logFile, "[INFO][Service:insertVideo][Param]" + "[url]" + obj.url + "[title]" + obj.title + "[uper]" + obj.uper);
+
+			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
+
+			if (!StringUtil.isBlank(rslt)) {
+				System.out.println("[INFO][Service:insertVideo][RESULT]" + rslt);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[ERROR][Service:insertVideo]" + e.getMessage());
+		}
+	}
+	public static void stopBrowser(WebDriver driver){
+		JavascriptExecutor js = (JavascriptExecutor)driver;
+		js.executeScript("return window.stop");
 	}
 }
