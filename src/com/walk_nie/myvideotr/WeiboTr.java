@@ -45,11 +45,12 @@ public class WeiboTr {
 			if(breakFlag)break;
 		}
 	}
-	public void publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
+	public boolean publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
 
 		List<File> multimediaContext = getToPublishFile(uploadObj);
 		if(multimediaContext.isEmpty()){
-			return;
+			System.out.println("[INFO][publish]NONE File to publish");
+			return true;
 		}
 		driver.get(myfavURL);
 		logonWeibo(driver);
@@ -65,7 +66,7 @@ public class WeiboTr {
 					if (rootEl == null) {
 						return Boolean.FALSE;
 					} else {
-						MyVideoTrUtil.stopBrowser(driver);
+						//MyVideoTrUtil.stopBrowser(driver);
 						return Boolean.TRUE;
 					}
 				} catch (Exception e) {
@@ -75,29 +76,34 @@ public class WeiboTr {
 		});
 		
 		if(isVideoFile(multimediaContext.get(0))){
-			uploadVideo(driver, uploadObj, multimediaContext.get(0));
+			return uploadVideo(driver, uploadObj, multimediaContext.get(0));
 		}else{
-			uploadPhoto(driver, uploadObj, multimediaContext);
+			return uploadPhoto(driver, uploadObj, multimediaContext);
 		}
 		
 	}
-	private void uploadPhoto(WebDriver driver, MyVideoObject uploadObj,  List<File> files) throws IOException {
+	private boolean uploadPhoto(WebDriver driver, MyVideoObject uploadObj,  List<File> files) throws IOException {
 
 		WebElement rootEl = findRootLayer(driver);
 		if(rootEl == null) {
 			NieUtil.mySleepBySecond(3);
 			rootEl = findRootLayer(driver);
 		}
+		boolean found = false;
 		for (int i = 0; i < files.size(); i++) {
 			List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
 			for (WebElement el : elInputs) {
 				if (el.getAttribute("id").startsWith("swf_upbtn_")) {
 					el.sendKeys(files.get(i).getCanonicalPath());
+					found = true;
+					NieUtil.mySleepBySecond(3);
 					break;
 				}
 			}
 		}
-		NieUtil.mySleepBySecond(3);
+		if(!found){
+			return false;
+		}
 		
 		WebDriverWait wait1 = new WebDriverWait(driver,120);
 		wait1.until(new ExpectedCondition<Boolean>(){
@@ -148,22 +154,28 @@ public class WeiboTr {
 			}
 		}
 		NieUtil.mySleepBySecond(3);
+		return true;
 		
 	}
-	private void uploadVideo(WebDriver driver, MyVideoObject uploadObj, File f) throws IOException {
+	private boolean uploadVideo(WebDriver driver, MyVideoObject uploadObj, File f) throws IOException {
 
 		WebElement rootEl = findRootLayer(driver);
 		if(rootEl == null) {
 			NieUtil.mySleepBySecond(3);
 			rootEl = findRootLayer(driver);
 		}
+		boolean found = false;
 		List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
 		for (WebElement el : elInputs) {
 			if (el.getAttribute("id").startsWith("publisher_upvideo")) {
 				el.sendKeys(f.getCanonicalPath());
+				found = true;
 				NieUtil.mySleepBySecond(3);
 				break;
 			}
+		}
+		if(!found){
+			return false;
 		}
 		NieUtil.mySleepBySecond(3);
 		
@@ -228,6 +240,7 @@ public class WeiboTr {
 			}
 		}
 		NieUtil.mySleepBySecond(10);
+		return true;
 	}
 	
 	private WebElement findRootLayer(WebDriver driver){
@@ -431,7 +444,6 @@ public class WeiboTr {
 				return Boolean.FALSE;
 			}
 		});
-		System.out.println("[INFO][logonWeibo]start");
 		WebElement el1 = driver.findElement(By.cssSelector("ul[class=\"gn_nav_list\"]"));
 		List<WebElement> eles = el1.findElements(By.cssSelector("em[class=\"S_txt1\"]"));
 		for (WebElement ele : eles) {
@@ -441,6 +453,7 @@ public class WeiboTr {
 			}
 		}
 
+		System.out.println("[INFO][logonWeibo]start");
 		wait1.until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {

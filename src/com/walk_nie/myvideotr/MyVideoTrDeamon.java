@@ -123,16 +123,21 @@ public class MyVideoTrDeamon {
 
 	private void publish(WebDriver driver, MyVideoObject uploadObj) {
 		try {
+			boolean successfulFlag = false;
 			if ("toWeibo".equals(uploadObj.toType)) {
-				weibo.publish(driver, uploadObj);
+				successfulFlag = weibo.publish(driver, uploadObj);
 			} else if ("toYoutube".equals(uploadObj.toType)) {
-				youtube.publish(driver, uploadObj);
+				successfulFlag = youtube.publish(driver, uploadObj);
 			} else if ("toTwitter".equals(uploadObj.toType)) {
-				tw.publish(driver, uploadObj);
+				successfulFlag = tw.publish(driver, uploadObj);
 			}
-			File uploadFoldFolder = MyVideoTrUtil.getSaveFolder(uploadObj);
-			FileUtils.deleteDirectory(uploadFoldFolder);
-			updateVideoStatus(uploadObj.uid, "uled");
+			if (successfulFlag) {
+				File uploadFoldFolder = MyVideoTrUtil.getSaveFolder(uploadObj);
+				FileUtils.deleteDirectory(uploadFoldFolder);
+				updateVideoStatus(uploadObj.uid, "uled");
+			} else {
+				updateVideoStatus(uploadObj.uid, "ulfailure");
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			NieUtil.log(logFile, "[ERROR][publish]" + ex.getMessage());
@@ -188,6 +193,7 @@ public class MyVideoTrDeamon {
 			
 			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
 			//NieUtil.log(logFile, "[INFO][Service:" + action + "][RESULT]" + rslt);
+			System.out.println("[INFO][Service:" + action + "][RESULT]" + rslt);
 			if (StringUtil.isBlank(rslt)) {
 				return null;
 			}

@@ -28,7 +28,7 @@ public class YoutubeTr {
 		main.publish(driver, uploadObj);
 	}
 	
-	public void publish(WebDriver driver, MyVideoObject uploadObj) {
+	public boolean publish(WebDriver driver, MyVideoObject uploadObj) {
 		logonYoutube(driver);
 		File uploadFold = MyVideoTrUtil.getSaveFolder(uploadObj);
 		// all of folder to upload
@@ -42,6 +42,7 @@ public class YoutubeTr {
 		for (File uploadFile : files) {
 			publishFile(driver, uploadObj, uploadFile);
 		}
+		return true;
 	}
 
 	private void publishFile(WebDriver driver, MyVideoObject uploadObj, File uploadFile) {

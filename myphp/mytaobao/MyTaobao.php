@@ -195,11 +195,11 @@ class MyTaobao
 	public function addLoadOrderCommand(){
 		$fileIn = '/home/nie2019/TBTool/temp/loadOrderCommand';
 		$wRslt = unlink(realpath($fileIn));
-		$wRslt = file_put_contents($fileIn, "load")
+		$wRslt = file_put_contents($fileIn, "load");
 	}
 	public function getLoadOrderCommand(){
 		$fileIn = '/home/nie2019/TBTool/temp/loadOrderCommand';
-		$wRslt = file_put_contents($fileIn, "load")
+		$wRslt = file_put_contents($fileIn, "load");
 	}
 	public function removeLoadOrderCommand(){
 		$fileIn = '/home/nie2019/TBTool/temp/loadOrderCommand';

@@ -163,7 +163,7 @@ $(function() {
 	  <?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php echo $data["ytSearchRslt"] ?>
+	  <?php echo $data["uper"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
@@ -180,6 +180,7 @@ $(function() {
 	</div>
     <div class="col-4 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
+	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
 	</div>
 <?php
     }

@@ -56,23 +56,50 @@ public class TwitterTr {
 			List<MyVideoObject> videoObjs) {
 
 		String id = we.getAttribute("data-item-id");// tw1127569675770974208
-		List<WebElement> eles1 = we.findElements(By.tagName("button"));
-		boolean breakF = false;
-		for (WebElement ele1 : eles1) {
-			String claZZ = ele1.getAttribute("class");
-			if (claZZ.indexOf("ProfileTweet-action--unfavorite") == -1)
-				continue;
-			for (MyVideoObject tw : videoObjs) {
-				if (id.equals(tw.trid)) {
-					ele1.click();
-					NieUtil.mySleepBySecond(1);
-					breakF = true;
-					break;
+
+		for (MyVideoObject tw : videoObjs) {
+			if (id.equals(tw.trid)) {
+				List<WebElement> list = findFavoriteAndUnfavoriteButton(we);
+				if(list.get(0) != null){
+					try{
+					list.get(0).click();
+					NieUtil.mySleepBySecond(2);
+					}catch(Exception e) {}
+				}
+				if(list.get(1) != null){
+					try{
+					list.get(1).click();
+					}catch(Exception e) {}
 				}
 			}
-			if (breakF)
-				break;
 		}
+	}
+
+	private List<WebElement> findFavoriteAndUnfavoriteButton(WebElement we) {
+
+		List<WebElement> eles1 = we.findElements(By
+				.className("ProfileTweet-action--favorite"));
+		WebElement fa = null;
+		WebElement unf = null;
+		for (WebElement ele1 : eles1) {
+			List<WebElement> eles2 = we.findElements(By.tagName("button"));
+			for (WebElement ele2 : eles2) {
+				String claZZ = ele2.getAttribute("class");
+				String describedby = ele2.getAttribute("aria-describedby");
+				if (!StringUtil.isBlank(claZZ) && claZZ.indexOf("ProfileTweet-action--unfavorite") != -1) {
+					//System.out.println("[unf]" + claZZ);
+					unf = ele1;
+				}
+				if (!StringUtil.isBlank(describedby) && describedby.indexOf("profile-tweet-action-favorite-count") != -1) {
+					//System.out.println("[fav]" + describedby);
+					fa = ele1;
+				}
+			}
+		}
+		List<WebElement> r = Lists.newArrayList();
+		r.add(fa);
+		r.add(unf);
+		return r;
 	}
 	public void removeFromTwitter(WebElement we,
 			MyVideoObject videoObj) {
@@ -180,6 +207,13 @@ public class TwitterTr {
 					uper = ele1.getText();
 					break;
 				}
+			}
+			List<WebElement> list = findFavoriteAndUnfavoriteButton(ele);
+			try{
+				// click favorite button -> exception -> except   
+				list.get(0).click();
+			}catch(Exception ex){
+				continue;
 			}
 			if (!StringUtil.isBlank(permalink)) {
 				MyVideoObject obj = new MyVideoObject();
@@ -405,8 +439,8 @@ public class TwitterTr {
 		return false;
 	}
 
-	public void publish(WebDriver driver, MyVideoObject uploadObj)
+	public boolean publish(WebDriver driver, MyVideoObject uploadObj)
 			throws IOException {
-		// TODO
+		return true;
 	}
 }
