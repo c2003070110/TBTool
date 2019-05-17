@@ -98,7 +98,9 @@ public class TwitterTr {
 		}
 		List<WebElement> r = Lists.newArrayList();
 		r.add(fa);
+		System.out.println("[fav]" + fa.getAttribute("class"));
 		r.add(unf);
+		System.out.println("[unf]" + unf.getAttribute("class"));
 		return r;
 	}
 	public void removeFromTwitter(WebElement we,
@@ -159,16 +161,16 @@ public class TwitterTr {
 		WebElement rootWe = driver.findElement(By
 				.cssSelector("div[id=\"timeline\"]"));
 		List<WebElement> eles = rootWe.findElements(By.tagName("li"));
-		for (WebElement ele : eles) {
-			String itemType = ele.getAttribute("data-item-type");
+		for (WebElement eleLi : eles) {
+			String itemType = eleLi.getAttribute("data-item-type");
 			if (StringUtil.isBlank(itemType))
 				continue;
 			if (!itemType.equals("tweet"))
 				continue;
-			List<WebElement> eles1 = ele.findElements(By.tagName("div"));
+			List<WebElement> eles1 = eleLi.findElements(By.tagName("div"));
 			String permalink = "";
 			boolean isVideo = false;
-			String id = ele.getAttribute("data-item-id");// tw1127569675770974208
+			String id = eleLi.getAttribute("data-item-id");// tw1127569675770974208
 			String uper = "";
 			String title = "";
 			for (WebElement ele1 : eles1) {
@@ -185,7 +187,7 @@ public class TwitterTr {
 					isVideo = true;
 				}
 			}
-			eles1 = ele.findElements(By.tagName("p"));
+			eles1 = eleLi.findElements(By.tagName("p"));
 			for (WebElement ele1 : eles1) {
 				String clazz = ele1.getAttribute("class");
 				if (clazz.indexOf("TweetTextSize ") != -1) {
@@ -200,7 +202,7 @@ public class TwitterTr {
 				permalink = permalink + "/photo/1";
 				title =  "[P]" + title;
 			}
-			eles1 = ele.findElements(By.tagName("strong"));
+			eles1 = eleLi.findElements(By.tagName("strong"));
 			for (WebElement ele1 : eles1) {
 				String clazz = ele1.getAttribute("class");
 				if (clazz.indexOf("fullname ") != -1) {
@@ -208,7 +210,7 @@ public class TwitterTr {
 					break;
 				}
 			}
-			List<WebElement> list = findFavoriteAndUnfavoriteButton(ele);
+			List<WebElement> list = findFavoriteAndUnfavoriteButton(eleLi);
 			try{
 				// click favorite button -> exception -> except   
 				list.get(0).click();
@@ -225,7 +227,7 @@ public class TwitterTr {
 				obj.toType = "toWeibo";
 				obj.fromType = "fromTwitter";
 				MyVideoTrUtil.insertVideo(obj);
-				removeFromTwitter(ele, obj);
+				removeFromTwitter(eleLi, obj);
 				twList.add(obj);
 			}
 		}

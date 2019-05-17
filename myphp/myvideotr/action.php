@@ -79,6 +79,14 @@ if($actionStr == "addByUrl"){
 	}else{
 		echo json_encode($rslt);
 	}
+} else if($actionStr == "listByTodownload"){
+	$my = new MyVideoTr();
+	$rslt = $my->listByTodownload();//MyVideoObject
+	if(empty($rslt)){
+		echo "";
+	}else{
+		echo json_encode($rslt);
+	}
 } else if($actionStr == "getByTouploadOne"){
 	$my = new MyVideoTr();
 	$rslt = $my->getByTouploadOne();//MyVideoObject

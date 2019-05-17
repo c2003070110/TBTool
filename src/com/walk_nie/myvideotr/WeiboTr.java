@@ -45,6 +45,19 @@ public class WeiboTr {
 			if(breakFlag)break;
 		}
 	}
+	private void closeUploadDialog(WebDriver driver) {
+		List<WebElement> elesGNList = driver.findElements(By.cssSelector("div[class=\"gn_set_list\"]"));
+		for (WebElement ele : elesGNList) {
+			List<WebElement> eles1 = ele.findElements(By.tagName("a"));
+			for (WebElement ele1 : eles1) {
+				String txt = ele1.getText();
+				String nodeType = ele1.getAttribute("node-type");
+				if(!StringUtil.isBlank(txt) &&txt.indexOf("X") != -1 && !StringUtil.isBlank(nodeType) &&nodeType.equals("close")){
+					ele1.click();
+				}
+			}
+		}
+	}
 	public boolean publish(WebDriver driver, MyVideoObject uploadObj) throws IOException {
 
 		List<File> multimediaContext = getToPublishFile(uploadObj);
@@ -62,6 +75,7 @@ public class WeiboTr {
 			public Boolean apply(WebDriver driver) {
 				try {
 					openUploadDialog(driver);
+					NieUtil.mySleepBySecond(2);
 					WebElement rootEl = findRootLayer(driver);
 					if (rootEl == null) {
 						return Boolean.FALSE;
@@ -74,14 +88,20 @@ public class WeiboTr {
 				return Boolean.FALSE;
 			}
 		});
-		
+		boolean rsltFlag = false;
 		if(isVideoFile(multimediaContext.get(0))){
-			return uploadVideo(driver, uploadObj, multimediaContext.get(0));
+			rsltFlag = uploadVideo(driver, uploadObj, multimediaContext.get(0));
 		}else{
-			return uploadPhoto(driver, uploadObj, multimediaContext);
+			rsltFlag = uploadPhoto(driver, uploadObj, multimediaContext);
 		}
+		try {
+			closeUploadDialog(driver);
+		} catch (Exception e) {
+		}
+		return rsltFlag;
 		
 	}
+
 	private boolean uploadPhoto(WebDriver driver, MyVideoObject uploadObj,  List<File> files) throws IOException {
 
 		WebElement rootEl = findRootLayer(driver);
@@ -89,20 +109,15 @@ public class WeiboTr {
 			NieUtil.mySleepBySecond(3);
 			rootEl = findRootLayer(driver);
 		}
-		boolean found = false;
-		for (int i = 0; i < files.size(); i++) {
-			List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
-			for (WebElement el : elInputs) {
-				if (el.getAttribute("id").startsWith("swf_upbtn_")) {
-					el.sendKeys(files.get(i).getCanonicalPath());
-					found = true;
-					NieUtil.mySleepBySecond(3);
-					break;
-				}
-			}
-		}
-		if(!found){
+		
+		WebElement weFile = findFileInputWebElement(driver);
+		if(weFile == null) {
+			System.out.println("[ERROR][uploadPhoto]It can NOT find file input");
 			return false;
+		}
+		for (int i = 0; i < files.size(); i++) {
+			weFile.sendKeys(files.get(i).getCanonicalPath());
+			NieUtil.mySleepBySecond(3);
 		}
 		
 		WebDriverWait wait1 = new WebDriverWait(driver,120);
@@ -141,7 +156,7 @@ public class WeiboTr {
 		rootEl = findRootLayer(driver);
 		List<WebElement> eles = rootEl.findElements(By.tagName("textarea"));
 		String uper = uploadObj.uper;
-		if(uper.length() <8){
+		if(uper.length() < 6){
 			uper += "----" + uper;
 		}
 		eles.get(0).sendKeys(uper);
@@ -155,8 +170,41 @@ public class WeiboTr {
 		}
 		NieUtil.mySleepBySecond(3);
 		return true;
-		
 	}
+	
+	private WebElement findFileInputWebElement(WebDriver driver) {
+		WebDriverWait wait1 = new WebDriverWait(driver,120);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					WebElement rootEl = findRootLayer(driver);
+					List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
+					for (WebElement el : elInputs) {
+						if (el.getAttribute("id").startsWith("swf_upbtn_")) {
+							return Boolean.TRUE;
+						}
+					}
+					closeUploadDialog(driver);
+					NieUtil.mySleepBySecond(3);
+					openUploadDialog(driver);
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+		
+		WebElement rootEl = findRootLayer(driver);
+		List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
+		WebElement weFileInput = null;
+		for (WebElement el : elInputs) {
+			if (el.getAttribute("id").startsWith("swf_upbtn_")) {
+				weFileInput = el;
+			}
+		}
+		return weFileInput;
+	}
+
 	private boolean uploadVideo(WebDriver driver, MyVideoObject uploadObj, File f) throws IOException {
 
 		WebElement rootEl = findRootLayer(driver);
@@ -164,19 +212,13 @@ public class WeiboTr {
 			NieUtil.mySleepBySecond(3);
 			rootEl = findRootLayer(driver);
 		}
-		boolean found = false;
-		List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
-		for (WebElement el : elInputs) {
-			if (el.getAttribute("id").startsWith("publisher_upvideo")) {
-				el.sendKeys(f.getCanonicalPath());
-				found = true;
-				NieUtil.mySleepBySecond(3);
-				break;
-			}
-		}
-		if(!found){
+
+		WebElement weFile = findVideoInputWebElement(driver);
+		if(weFile == null) {
+			System.out.println("[ERROR][uploadVideo]It can NOT find file input");
 			return false;
 		}
+		weFile.sendKeys(f.getCanonicalPath());
 		NieUtil.mySleepBySecond(3);
 		
 		rootEl = findRootLayerPop(driver);
@@ -213,7 +255,7 @@ public class WeiboTr {
 		eles = rootEl.findElements(By.cssSelector("input[action-type=\"inputTitle\"]"));
 		eles.get(0).clear();
 		String uper = uploadObj.uper;
-		if(uper.length() <8){
+		if(uper.length() < 6){
 			uper += "----" + uper;
 		}
 		eles.get(0).sendKeys(uper);
@@ -242,6 +284,40 @@ public class WeiboTr {
 		NieUtil.mySleepBySecond(10);
 		return true;
 	}
+	
+	private WebElement findVideoInputWebElement(WebDriver driver) {
+		WebDriverWait wait1 = new WebDriverWait(driver,120);
+		wait1.until(new ExpectedCondition<Boolean>(){
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					WebElement rootEl = findRootLayer(driver);
+					List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
+					for (WebElement el : elInputs) {
+						if (el.getAttribute("id").startsWith("publisher_upvideo")) {
+							return Boolean.TRUE;
+						}
+					}
+					closeUploadDialog(driver);
+					NieUtil.mySleepBySecond(3);
+					openUploadDialog(driver);
+				} catch (Exception e) {
+				}
+				return Boolean.FALSE;
+			}
+		});
+		
+		WebElement rootEl = findRootLayer(driver);
+		List<WebElement> elInputs = rootEl.findElements(By.tagName("input"));
+		WebElement weFileInput = null;
+		for (WebElement el : elInputs) {
+			if (el.getAttribute("id").startsWith("swf_upbtn_")) {
+				weFileInput = el;
+			}
+		}
+		return weFileInput;
+	}
+
 	
 	private WebElement findRootLayer(WebDriver driver){
 

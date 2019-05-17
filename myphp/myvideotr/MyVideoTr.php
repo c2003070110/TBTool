@@ -139,10 +139,17 @@ class MyVideoTr
 		}
 		return NULL;
 	}
-	public function getByTodownloadOne(){
+	public function listByStatus($status){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
-		
+		$this->ge
+		return $tbl->select(['status', '==', $status])->fetch();
+	}
+	public function getByTodownload(){
+		return $this->listByStatus("todl")[0];
+		/*
+		$cdb = new CrunchDB(constant("CRDB_PATH"));
+		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$dataArr = $tbl->select("*")->fetch();
 		foreach ($dataArr as $data) {
 			//var_dump($data);
@@ -151,8 +158,11 @@ class MyVideoTr
 			}
 		}
 		return NULL;
+		*/
 	}
 	public function getByTouploadOne(){
+		return $this->listByStatus("toul")[0];
+		/*
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
@@ -163,51 +173,27 @@ class MyVideoTr
 			}
 		}
 		return NULL;
+		*/
 	}
 	public function getByTomergeOne(){
+		return $this->listByStatus("tomg")[0];
+		/*
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		
 		$dataArr = $tbl->select(['status', '==', "tomg"])->fetch();
 		
 		return $dataArr[0];
+		*/
 	}
 	public function listByTodownload(){
-		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
-		$rslt = array();
-		$dataArr = $tbl->select("*")->fetch();
-		foreach ($dataArr as $data) {
-			if($data["status"] === "parsed" && empty($data["groupUid"])){
-				$rslt[] = $data;
-			}
-		}
-		//var_dump($rslt);
-		return $rslt;
+		return $this->listByStatus("todl");
 	}
 	public function listByToupload(){
-		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
-		$rslt = array();
-		$dataArr = $tbl->select("*")->fetch();
-		foreach ($dataArr as $data) {
-			if($data["status"] === "dled" && empty($data["groupUid"])){
-				$rslt[] = $data;
-			}
-		}
-		return $rslt;
+		return $this->listByStatus("dled");
 	}
 	public function listByUploaded(){
-		$cdb = new CrunchDB(constant("CRDB_PATH"));
-		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
-		$rslt = array();
-		$dataArr = $tbl->select("*")->fetch();
-		foreach ($dataArr as $data) {
-			if($data["status"] === "uled"){
-				$rslt[] = $data;
-			}
-		}
-		return $rslt;
+		return $this->listByStatus("uled");
 	}
 	public function listByAll(){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));

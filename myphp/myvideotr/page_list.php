@@ -54,21 +54,18 @@ $(function() {
   $status = $_GET['status'];
   if(empty($status)){
 	  $dataArr = $my->listByAll();
-  //
-  }else if ($status == "toDL"){
-	  $dataArr = $my->listByTodownload();
-  }else if($status == "toUL"){
-	  $dataArr = $my->listByToupload();
-  }else if($status == "uploaded"){
-	  $dataArr = $my->listByUploaded();
-  };
+  }else{
+	  $dataArr = $my->listByStatus($status);
+  }
+  /*
   foreach ($dataArr as $data) {
 	  if(strpos($data["url"], "twitter") === false)continue;
-	  //$url = $data["url"] . "/1";
-	  //$videoUrl   = $data["videoUrl"] . "/1";
-	  //var_dump($data["url"]);
-	  //$my->updateByTemo($data["uid"], $url ,$videoUrl);
+	  $url = $data["url"] . "/1";
+	  $videoUrl   = $data["videoUrl"] . "/1";
+	  var_dump($data["url"]);
+	  $my->updateByTemo($data["uid"], $url ,$videoUrl);
   }
+  */
   //var_dump($dataArr);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
@@ -85,38 +82,12 @@ $(function() {
 <div id="container" class="container">
 <?php
   include __DIR__ .'/subpage_toplink.php';
-?>
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toDL">to DL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=toUL">to UL</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php?status=uploaded">UPLOADED</a></li>
-    <li class="list-group-item <?php echo $cssBgUnused ?>"><a href="/myphp/myvideotr/page_list.php">ALL</a></li>
-  </ul> 
-  <hr class="mb-2">   
+?>  
   <div class="row">
-<?php
-    if(empty($status) || $status == "toDL"){
-?>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">title</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">ytSearchRslt</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
-<?php
-    }else if($status == "toUL"){
-?>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">uid</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">title</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">ytSearchRslt</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
-<?php
-    }else if($status == "uploaded"){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">title</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
-    <div class="col-4 text-break themed-grid-col border border-primary bg-info text-white">action</div>
-<?php
-    }
-?>
   </div>
 <?php
   $counter = 0;
@@ -125,66 +96,51 @@ $(function() {
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-<?php
-    if(empty($status) || $status == "toDL"){
-?>
     <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $counter ?>
-	  <?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
+	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
+		<?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
+	  </a>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $data["uper"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php echo $data["status"] ?>
+	  <?php  if(!empty($data["ytSearchRslt"])) {echo $data["ytSearchRslt"];}else{echo $data["status"];} ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php
 		if($data["status"] == "parsed") {
 ?>
-	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">to DL</button>
+	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">toDL</button>
+<?php
+		}else if($data["status"] == "todl") {
+?>
 <?php
 		}else if($data["status"] == "dled") {
 ?>
-	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
+	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">toUL</button>
+<?php
+		}else if($data["status"] == "toul") {
+?>
+<?php
+		}else if($data["status"] == "uled") {
+?>
+<?php
+		}else if($data["status"] == "parsefailure") {
+?>
+<?php
+		}else if($data["status"] == "dlfailure") {
+?>
+	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">toDL</button>
+<?php
+		}else if($data["status"] == "ulfailure") {
+?>
+	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">toUL</button>
 <?php
 		}
 ?>
 	</div>
-<?php
-    }else if($status == "toUL"){
-?>
-    <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $counter ?>
-	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
-	    <?php echo $data["uid"] ?>
-	  </a>
-	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
-	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php echo $data["uper"] ?>
-	</div>
-    <div class="col-3 text-break themed-grid-col border border-primary">
-	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
-	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
-	</div>
-<?php
-    }else if($status == "uploaded"){
-?>
-    <div class="col-4 text-break themed-grid-col border border-primary"><?php echo $counter ?>
-	  <?php echo $data["title"] ?>
-	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary">
-	  <?php echo $data["uper"] ?>
-	</div>
-    <div class="col-4 text-break themed-grid-col border border-primary">
-	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
-	  <button type="button" id="btnToUpload" class="btn btn-secondary actionBtn">to UL</button>
-	</div>
-<?php
-    }
-?>
   </div>
 <?php
   }

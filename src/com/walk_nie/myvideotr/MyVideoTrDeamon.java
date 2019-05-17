@@ -2,6 +2,8 @@ package com.walk_nie.myvideotr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.json.Json;
 import org.seleniumhq.jetty9.util.StringUtil;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
 import com.walk_nie.taobao.util.WebDriverUtil;
 import com.walk_nie.util.NieConfig;
@@ -111,9 +114,9 @@ public class MyVideoTrDeamon {
 				updateVideoStatus(noticeObj.uid, "parsefailure");
 			}
 		}
-		MyVideoObject downloadObj = getToDownloadVideo();
-		if (downloadObj != null) {
-			downloadVideo(driver, downloadObj);
+		List<MyVideoObject> downloadObjList = getToDownloadVideo();
+		if (downloadObjList != null && !downloadObjList.isEmpty()) {
+			downloadVideo(driver, downloadObjList);
 		}
 		MyVideoObject uploadloadObj = getToUploadVideo();
 		if (uploadloadObj != null) {
@@ -132,8 +135,10 @@ public class MyVideoTrDeamon {
 				successfulFlag = tw.publish(driver, uploadObj);
 			}
 			if (successfulFlag) {
-				File uploadFoldFolder = MyVideoTrUtil.getSaveFolder(uploadObj);
-				FileUtils.deleteDirectory(uploadFoldFolder);
+				if(!uploadObj.fromType.startsWith("fromTiktok")){
+					File uploadFoldFolder = MyVideoTrUtil.getSaveFolder(uploadObj);
+					FileUtils.deleteDirectory(uploadFoldFolder);
+				}
 				updateVideoStatus(uploadObj.uid, "uled");
 			} else {
 				updateVideoStatus(uploadObj.uid, "ulfailure");
@@ -151,40 +156,97 @@ public class MyVideoTrDeamon {
 		return toULObj;
 	}
 
-	private void downloadVideo(WebDriver driver, MyVideoObject downloadObj) {
-		try {
-			String fromType = downloadObj.fromType;
-			
-			boolean rsltFlag = false;
-			if ("fromWeibo".equals(fromType)) {
-				rsltFlag = weibo.downloadVideo(driver, downloadObj);
-			} else if ("fromTwitter".equals(fromType)) {
-				rsltFlag = tw.downloadVideo(driver, downloadObj);
-			} else if ("fromTiktokJP".equals(fromType) || "fromTiktokCN".equals(fromType)) {
-				rsltFlag = tk.downloadVideo(driver, downloadObj);
-			}else{
-				NieUtil.log(logFile, "[ERROR][fromType is WRONG]" +fromType);
+	private void downloadVideo(WebDriver driver, List<MyVideoObject> downloadObjList) {
+
+		for(MyVideoObject downloadObj:downloadObjList){
+			try {
+				String fromType = downloadObj.fromType;
+				
+				boolean rsltFlag = false;
+				if ("fromWeibo".equals(fromType)) {
+					rsltFlag = weibo.downloadVideo(driver, downloadObj);
+				} else if ("fromTwitter".equals(fromType)) {
+					rsltFlag = tw.downloadVideo(driver, downloadObj);
+				} else if ("fromTiktokJP".equals(fromType) || "fromTiktokCN".equals(fromType)) {
+					rsltFlag = tk.downloadVideo(driver, downloadObj);
+				}else{
+					NieUtil.log(logFile, "[ERROR][fromType is WRONG]" +fromType);
+					updateVideoStatus(downloadObj.uid, "dlfailure");
+					continue;
+				}
+				if (rsltFlag) {
+					updateVideoStatus(downloadObj.uid, "dled");
+				} else {
+					updateVideoStatus(downloadObj.uid, "dlfailure");
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				NieUtil.log(logFile, "[ERROR][downloadVideo]" + ex.getMessage());
+				NieUtil.log(logFile, ex);
 				updateVideoStatus(downloadObj.uid, "dlfailure");
-				return;
 			}
-			if (rsltFlag) {
-				updateVideoStatus(downloadObj.uid, "dled");
-			} else {
-				updateVideoStatus(downloadObj.uid, "dlfailure");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			NieUtil.log(logFile, "[ERROR][downloadVideo]" + ex.getMessage());
-			NieUtil.log(logFile, ex);
-			updateVideoStatus(downloadObj.uid, "dlfailure");
 		}
 	}
 
-	private MyVideoObject getToDownloadVideo() {
-		MyVideoObject toDLObj = getVideoObjectByExecuteServiceCommand("getByTodownloadOne");
-		return toDLObj;
+	private List<MyVideoObject> getToDownloadVideo() {
+		List<MyVideoObject> downloadObjList = getVideoObjectListByExecuteServiceCommand("listByTodownload");
+		Collections.sort(downloadObjList, new Comparator<MyVideoObject>() {
+			@Override
+			public int compare(MyVideoObject arg0, MyVideoObject arg1) {
+
+				return arg0.fromType.compareTo(arg0.fromType);
+			}
+		});
+		return downloadObjList;
 	}
 	
+	private List<MyVideoObject> getVideoObjectListByExecuteServiceCommand(String action){
+
+		List<MyVideoObject> objList  = Lists.newArrayList();
+		try {
+			Map<String, String> param = Maps.newHashMap();
+			param.put("action", action);
+			
+			String rslt = NieUtil.httpGet(NieConfig.getConfig("myvideotr.service.url"), param);
+			//NieUtil.log(logFile, "[INFO][Service:" + action + "][RESULT]" + rslt);
+			System.out.println("[INFO][Service:" + action + "][RESULT]" + rslt);
+			if (StringUtil.isBlank(rslt)) {
+				return null;
+			}
+			Json j = new Json();
+			List<Map<String, Object>> objMapList = null;
+			objMapList = j.toType(rslt, List.class);
+			for(Map<String, Object> objMap:objMapList){
+				MyVideoObject obj  = toMyVideoObject(objMap);
+				objList.add(obj);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			NieUtil.log(logFile, "[ERROR][Service:" + action + "]" + e.getMessage());
+			NieUtil.log(logFile, e);
+		}
+		return objList;
+	}
+	
+	private MyVideoObject toMyVideoObject(Map<String, Object> objMap) {
+		MyVideoObject obj  = new MyVideoObject();
+		obj.uid = (String) objMap.get("uid");
+		obj.url = (String) objMap.get("url");
+		if (StringUtil.isBlank(obj.url)) {
+			NieUtil.log(logFile, "[ERROR][executeServiceCommand]URL is NULL!!");
+			return null;
+		}
+		obj.title = (String) objMap.get("title");
+		obj.uper = (String) objMap.get("uper");
+		obj.videoUrl = (String) objMap.get("videoUrl");
+		obj.toType = (String) objMap.get("toType");
+		obj.fromType = (String) objMap.get("fromType");
+		obj.trid = (String) objMap.get("trid");
+		obj.groupUid =  (String) objMap.get("groupUid");
+		return obj;
+	}
+
 	private MyVideoObject getVideoObjectByExecuteServiceCommand(String action){
 
 		try {
@@ -197,24 +259,10 @@ public class MyVideoTrDeamon {
 			if (StringUtil.isBlank(rslt)) {
 				return null;
 			}
-			MyVideoObject obj  = new  MyVideoObject();
 			Json j = new Json();
 			Map<String, Object> objMap = null;
 			objMap = j.toType(rslt, Map.class);
-			obj.uid = (String) objMap.get("uid");
-			obj.url = (String) objMap.get("url");
-			obj.title = (String) objMap.get("title");
-			obj.uper = (String) objMap.get("uper");
-			obj.videoUrl = (String) objMap.get("videoUrl");
-			obj.toType = (String) objMap.get("toType");
-			obj.fromType = (String) objMap.get("fromType");
-			obj.trid = (String) objMap.get("trid");
-			if (StringUtil.isBlank(obj.url)) {
-				NieUtil.log(logFile, "[ERROR][executeServiceCommand]URL is NULL!!");
-				return null;
-			}
-			obj.groupUid =  (String) objMap.get("groupUid");
-			return obj;
+			return toMyVideoObject(objMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			NieUtil.log(logFile, "[ERROR][Service:" + action + "]" + e.getMessage());
