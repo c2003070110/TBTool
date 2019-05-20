@@ -60,7 +60,7 @@ $(function() {
 			  }
 		);
         jqxhr.done(function( msg ) {
-            alert(msg);
+            if(msg == "") return;
 			if(msg.indexOf("ERROR") == -1){
 				if(href.indexOf("uid") == -1){
 					var url = href +"?uid="+msg;
@@ -72,7 +72,7 @@ $(function() {
         });
 	};
     $(document).on("click", "#btnToDownload", function() {
-        updateStatus(thisBox, "todl");
+        updateWithStatus(thisBox, "todl");
     });
     $(document).on("click", "#btnToUpload", function() {
 		updateWithStatus("toul");
@@ -96,23 +96,44 @@ $(function() {
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
 	    <label for="url">链接 URL</label>
-	    <input type="text" class="form-control" id="url" value="<?php echo $obj['url'] ?>" <?php if(!empty($uid)) echo "readOnly" ?> >
+		<textarea class="form-control" cols="40" rows="3" id="url" <?php if(!empty($uid)) echo "readOnly" ?>><?php echo $obj['url'] ?></textarea >
 	  </div>
     </div>
 <?php 
   if(!empty($uid)){
 ?>
     <input type="hidden" id="status" value="<?php echo $obj['status'] ?>">
+<?php 
+	if($obj['toType'] == "toYoutube"){
+?>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
-	    <label for="title">title</label>
-	    <input type="text" class="form-control" id="title" value="<?php echo $obj['title'] ?>" >
+	    <label for="title">title(YT使用)</label>
+		<textarea class="form-control" cols="40" rows="5" id="title"><?php echo $obj['title'] ?></textarea >
+	  </div>
+    </div>
+<?php 
+	}else if($obj['toType'] == "toWeibo"){
+?>
+    <div class="row mb-4 form-group">
+      <div class="col-10 themed-grid-col">
+	    <label for="title">uper(Weibo使用)</label>
+		<textarea class="form-control" cols="40" rows="2" id="uper"><?php echo $obj['uper'] ?></textarea >
+	  </div>
+    </div>
+<?php 
+	}
+?>
+    <div class="row mb-4 form-group">
+      <div class="col-10 themed-grid-col">
+	    <label for="uid">uid</label>
+	    <pre><?php echo $obj['uid'] ?></pre>
 	  </div>
     </div>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
-	    <label for="title">uper</label>
-	    <input type="text" class="form-control" id="uper" value="<?php echo $obj['uper'] ?>" >
+	    <label for="uid">uid</label>
+	    <pre><?php echo $obj['fromType'] ?>||<?php echo $obj['toType'] ?></pre>
 	  </div>
     </div>
     <div class="row mb-4 form-group">

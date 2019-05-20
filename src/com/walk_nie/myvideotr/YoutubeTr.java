@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.jetty.util.StringUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -48,7 +49,10 @@ public class YoutubeTr {
 	private void publishFile(WebDriver driver, MyVideoObject uploadObj, File uploadFile) {
 		List<WebElement> wes = driver.findElements(By.cssSelector("button[id=\"button\"]"));
 		for (WebElement we : wes) {
-			if ("動画または投稿を作成".equals(we.getAttribute("aria-label"))) {
+			String txt = we.getAttribute("aria-label");
+			if(StringUtil.isBlank(txt)) continue;
+			if ("動画または投稿を作成".equals(txt)
+					|| txt.equalsIgnoreCase("Create a video or post")) {
 				we.click();
 				break;
 			}
@@ -56,7 +60,9 @@ public class YoutubeTr {
 		NieUtil.mySleepBySecond(1);
 		wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"label\"]"));
 		for (WebElement we : wes) {
-			if ("動画をアップロード".equals(we.getText())) {
+			String txt = we.getText();
+			if ("動画をアップロード".equals(txt)
+					|| txt.equalsIgnoreCase("Upload video")) {
 				we.click();
 				break;
 			}
@@ -98,7 +104,8 @@ public class YoutubeTr {
 					List<WebElement> eles = driver.findElements(By.cssSelector("div[class=\"progress-bar-processing\"]"));
 					for (WebElement ele : eles) {
 						String text = ele.getText();
-						if (text.indexOf("処理が完了しました") != -1) {
+						if (text.indexOf("処理が完了しました") != -1
+								|| text.toLowerCase().indexOf("Processing Done".toLowerCase()) != -1) {
 							return Boolean.TRUE; 
 						}
 					}
@@ -128,7 +135,8 @@ public class YoutubeTr {
 					List<WebElement> eles = driver.findElements(By.cssSelector("input[name=\"share_url\"]"));
 					for (WebElement ele : eles) {
 						String text = ele.getAttribute("title");
-						if (text.indexOf("リンクを共有") != -1) {
+						if (text.indexOf("リンクを共有") != -1
+								|| text.toLowerCase().indexOf("Share link".toLowerCase()) != -1) {
 							return Boolean.TRUE; 
 						}
 					}
@@ -204,7 +212,7 @@ public class YoutubeTr {
 		List<WebElement> wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"text\"]"));
 		boolean islogon = true;
 		for (WebElement we : wes) {
-			if ("ログイン".equals(we.getText())) {
+			if ("ログイン".equalsIgnoreCase(we.getText())||"Sign in".equalsIgnoreCase(we.getText())) {
 				we.click();
 				islogon = false;
 				break;
@@ -217,7 +225,7 @@ public class YoutubeTr {
 		el1.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.name"));
 		wes = driver.findElements(By.tagName("span"));
 		for(WebElement we :wes){
-			if("次へ".equals(we.getText())){
+			if("次へ".equalsIgnoreCase(we.getText()) || "Next".equalsIgnoreCase(we.getText())){
 				we.click();
 				break;
 			}
@@ -229,7 +237,7 @@ public class YoutubeTr {
 		
 		wes = driver.findElements(By.tagName("span"));
 		for(WebElement we :wes){
-			if("次へ".equals(we.getText())){
+			if("次へ".equalsIgnoreCase(we.getText()) || "Next".equalsIgnoreCase(we.getText())){
 				we.click();
 				break;
 			}
@@ -240,7 +248,8 @@ public class YoutubeTr {
 		List<WebElement> eles = driver.findElements(By.cssSelector("button[id=\"avatar-btn\"]"));
 		for(WebElement ele:eles){
 			String txt = ele.getAttribute("aria-label");
-			if(txt.indexOf("アカウントのプロフィール写真。クリックすると、他のアカウントのリストが表示されます") != -1){
+			if(txt.indexOf("アカウントのプロフィール写真。クリックすると、他のアカウントのリストが表示されます") != -1
+					|| txt.toLowerCase().indexOf("Account profile photo that opens list of".toLowerCase()) != -1){
 				return;
 			}
 		}

@@ -1,7 +1,9 @@
 <?php
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+/*
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+*/
 require __DIR__ .'/MyVideoTr.php';
 ?>
 <html lang="ja">
@@ -35,7 +37,7 @@ $(function() {
 	}
     $(document).on("click", "#btnDel", function() {
 		var thisBox = getMyBox(this);
-        updateStatus(thisBox, "del");
+        updateStatus(thisBox, "ignore");
     });
     $(document).on("click", "#btnToUpload", function() {
 		var thisBox = getMyBox(this);
@@ -69,14 +71,15 @@ $(function() {
   //var_dump($dataArr);
   $sort = array();
   foreach ((array) $dataArr as $key => $value) {
-	  if(empty($status) || $status == "toDL"){
+	  if(empty($status) || $status == "parsed" || $status == "todl" || $status == "dlfailure"){
 		  $sort[$key] = $value['dtAdd'];
-	  }else if($status === "toUL"){
+	  }else if($status === "toul" || $status == "ulfailure" || $status == "dled"){
 		  $sort[$key] = $value['dtdled'];
-	  }else if($status === "uploaded"){
+	  }else if($status === "uled"){
 		  $sort[$key] = $value['dtuled'];
 	  }
   }
+  //var_dump($sort);
   array_multisort($sort, SORT_DESC, $dataArr);
 ?>
 <div id="container" class="container">
@@ -86,7 +89,7 @@ $(function() {
   <div class="row">
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">title</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">uper</div>
-    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">ytSearchRslt</div>
+    <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">ytSRslt</div>
     <div class="col-3 text-break themed-grid-col border border-primary bg-info text-white">action</div>
   </div>
 <?php
@@ -96,20 +99,34 @@ $(function() {
 ?>
   <div class="row">
     <input type="hidden" id="uid" value="<?php echo $data['uid'] ?>">
-    <div class="col-3 text-break themed-grid-col border border-primary"><?php echo $counter ?>
+    <div class="col-3 text-break themed-grid-col border border-primary">
+<?php
+		if($data["status"] == "uled") {
+?>
+       <?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
+<?php
+		}else {
+?>
 	  <a class="form-control btn btn-success" href="/myphp/myvideotr/page_add.php?uid=<?php echo $data['uid'] ?>">
 		<?php  if(!empty($data["title"])) {echo $data["title"];}else{echo $data["url"];} ?>
 	  </a>
+<?php
+		}
+?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
-	  <?php echo $data["uper"] ?>
+	  <?php echo $counter ?><?php echo $data["uper"] ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php  if(!empty($data["ytSearchRslt"])) {echo $data["ytSearchRslt"];}else{echo $data["status"];} ?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
+<?php
+		if($data["status"] !== "ignore") {
+?>
 	  <button type="button" id="btnDel" class="btn btn-secondary actionBtn">DEL</button>
 <?php
+		}
 		if($data["status"] == "parsed") {
 ?>
 	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">toDL</button>
@@ -123,6 +140,7 @@ $(function() {
 <?php
 		}else if($data["status"] == "toul") {
 ?>
+	  <button type="button" id="btnToDownload" class="btn btn-secondary actionBtn">STOP</button>
 <?php
 		}else if($data["status"] == "uled") {
 ?>

@@ -190,6 +190,7 @@ public class MyVideoTrDeamon {
 
 	private List<MyVideoObject> getToDownloadVideo() {
 		List<MyVideoObject> downloadObjList = getVideoObjectListByExecuteServiceCommand("listByTodownload");
+		if(downloadObjList == null || downloadObjList.isEmpty()) return downloadObjList;
 		Collections.sort(downloadObjList, new Comparator<MyVideoObject>() {
 			@Override
 			public int compare(MyVideoObject arg0, MyVideoObject arg1) {

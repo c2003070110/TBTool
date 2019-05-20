@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__ . '/../mycommon.php';
 require __DIR__ . '/../mydefine.php';
 require __DIR__ . '/ObjectClass.php';
@@ -12,6 +13,7 @@ class MyVideoTr
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
 		$obj = new MyVideoObject();
 		$prefix = "tr";
+		// #在抖音，记录美好生活#偶遇抖音小姐姐，表情一绝#抖音小姐姐@抖音小助手 http://v.douyin.com/MdUNMu/ //复制此链接，打开【抖音短视频】，直接观看视频！
 		if(strpos($url, "sina") !== false){$prefix = "wb";}
 		if(strpos($url, "twi") !== false){$prefix = "tw";}
 		if(strpos($url, "bili") !== false){$prefix = "bi";}
@@ -85,8 +87,22 @@ class MyVideoTr
 			$tbl->select(['uid', '==', $uid])
 				->delete();
 		}else{
-			$tbl->select(['uid', '==', $uid])
-				->update(['status', $toStatus]);
+			$nowS = date("YmdGis");
+			$dtKey = "";
+			if($toStatus == "parsed"){
+				$dtKey = "dtparsed";
+			}else if($toStatus == "dled"){
+				$dtKey = "dtdled";
+			}else if($toStatus == "uled"){
+				$dtKey = "dtuled";
+			}
+			if(empty($dtKey)){
+				$tbl->select(['uid', '==', $uid])
+					->update(['status', $toStatus]);
+			}else{
+				$tbl->select(['uid', '==', $uid])
+					->update(['status', $toStatus], [$dtKey, $nowS]);
+			}
 		}
 	}
 	public function updateByGroupUid($uid, $groupUid){
@@ -142,7 +158,6 @@ class MyVideoTr
 	public function listByStatus($status){
 		$cdb = new CrunchDB(constant("CRDB_PATH"));
 		$tbl = $cdb->table(constant("TBL_MYVIDEOTR_VIDEO_INFO"));
-		$this->ge
 		return $tbl->select(['status', '==', $status])->fetch();
 	}
 	public function getByTodownload(){

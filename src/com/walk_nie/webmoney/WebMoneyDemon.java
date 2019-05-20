@@ -263,6 +263,7 @@ public class WebMoneyDemon {
 				wea.get(0).click();
 			}
 		}
+		NieUtil.mySleepBySecond(2);
 		boolean payResult = false;
 		String payResultStr = "";
 		if (checkedObj.payway.equals("prepaidNo")) {
@@ -270,12 +271,16 @@ public class WebMoneyDemon {
 			WebElement wepin = weRoot.findElement(By.id("input_pin_area"));
 			wepin.findElement(By.id("pno1")).sendKeys(
 					NieConfig.getConfig("webmoney.pay.pin.no.1"));
+			NieUtil.mySleepBySecond(2);
 			wepin.findElement(By.id("pno2")).sendKeys(
 					NieConfig.getConfig("webmoney.pay.pin.no.2"));
+			NieUtil.mySleepBySecond(2);
 			wepin.findElement(By.id("pno3")).sendKeys(
 					NieConfig.getConfig("webmoney.pay.pin.no.3"));
+			NieUtil.mySleepBySecond(2);
 			wepin.findElement(By.id("pno4")).sendKeys(
 					NieConfig.getConfig("webmoney.pay.pin.no.4"));
+			NieUtil.mySleepBySecond(2);
 			
 			wepin.findElement(By.id("btn_settle_pin")).click();
 			NieUtil.mySleepBySecond(5);
