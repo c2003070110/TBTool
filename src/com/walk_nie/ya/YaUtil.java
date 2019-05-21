@@ -1,35 +1,42 @@
 package com.walk_nie.ya;
 
+import java.io.File;
 import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.walk_nie.util.NieConfig;
 import com.walk_nie.util.NieUtil;
 
 public class YaUtil {
 
-	private static String loginUrl = "https://login.yahoo.co.jp/config/login?.src=ym";
-	private static String logoutUrl = "https://login.yahoo.co.jp/config/login?logout=1&.intl=jp";
+	//private static String loginUrl = "https://login.yahoo.co.jp/config/login?.src=ym";
+	public static String logoutUrl = "https://login.yahoo.co.jp/config/login?logout=1&.intl=jp";
 
 	public static void login(WebDriver driver, String userName,String password) {
-		driver.get(logoutUrl);
-		driver.get(loginUrl);
-
-		if (!driver.findElements(By.id("idBox")).isEmpty()) {
+		//driver.get(logoutUrl);
+		//driver.get(loginUrl);
+		boolean loginf = false;
+		try {
 			WebElement el1 = driver.findElements(By.id("idBox")).get(0);
 			el1.findElement(By.id("username")).sendKeys(userName);
 			driver.findElement(By.id("btnNext")).click();
+			NieUtil.mySleepBySecond(2);
+			loginf = true;
+		} catch (Exception e) {
 		}
+		try {
+			driver.findElement(By.id("passwd")).sendKeys(password);
+			driver.findElement(By.id("btnSubmit")).click();
+			NieUtil.mySleepBySecond(2);
+			loginf = true;
+		} catch (Exception e) {
+		}
+		if(!loginf)return ;
 
-		NieUtil.mySleepBySecond(2);
-
-		driver.findElement(By.id("passwd")).sendKeys(password);
-		driver.findElement(By.id("btnSubmit")).click();
-
-		NieUtil.mySleepBySecond(2);
-		
+		// TODO
 		List<WebElement> eles = driver.findElements(By.cssSelector("div[id=\"personalbox\"]"));
 		for(WebElement ele:eles){
 			List<WebElement> eles1 = ele.findElements(By.cssSelector("h3[class=\"Personalbox__title\"]"));
@@ -38,5 +45,9 @@ public class YaUtil {
 		}
 		
 		NieUtil.readLineFromSystemIn("Yahoo! login is finished? ANY KEY For already");
+	}
+	
+	public static File getIdListFile(){
+		return new File(NieConfig.getConfig("yahoo.id.list.file"),"idlist.txt");
 	}
 }
