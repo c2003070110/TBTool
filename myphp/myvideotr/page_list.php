@@ -116,6 +116,11 @@ $(function() {
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php echo $counter ?><?php echo $data["uper"] ?>
+<?php
+		if($data["status"] == "parsed" || $data["status"] == "dtdled") {
+			echo substr($data["dtAdd"], 0, 8);
+		}
+?>
 	</div>
     <div class="col-3 text-break themed-grid-col border border-primary">
 	  <?php  if(!empty($data["ytSearchRslt"])) {echo $data["ytSearchRslt"];}else{echo $data["status"];} ?>

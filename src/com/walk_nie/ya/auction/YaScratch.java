@@ -35,12 +35,14 @@ public class YaScratch {
 		String url = "https://auctions.yahoo.co.jp/topic/promo/scratch/?cpid=pr_scratch&menu=auc&tar=top&cr=toppage&crnum=top";
 		List<RegObjInfo> list = readin();
 		for(RegObjInfo info:list){
+			System.out.println("[scratch][start]id=" + info.id);
 			driver.get(YaUtil.logoutUrl);
 			NieUtil.mySleepBySecond(5);
 			driver.get(url);
 			YaUtil.login(driver, info.id, info.pswd);
 			scratch(driver,info);
 			NieUtil.mySleepBySecond(5);
+			System.out.println("[scratch][end]id=" + info.id);
 		}
 	}
 

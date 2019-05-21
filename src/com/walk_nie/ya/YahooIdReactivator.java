@@ -35,6 +35,7 @@ public class YahooIdReactivator {
 	private void activate(WebDriver driver, RegObjInfo info) {
 		// email
 		driver.get(YaUtil.logoutUrl);
+		System.out.println("[reactivator][start]id=" + info.id);
 		NieUtil.mySleepBySecond(5);
 		String url = "https://account.edit.yahoo.co.jp/registration?.src=ym&.done=https%3A%2F%2Fmail.yahoo.co.jp&src=ym&done=https%3A%2F%2Fmail.yahoo.co.jp&fl=100&no_req_email=true";
 		driver.get(url);
@@ -46,6 +47,7 @@ public class YahooIdReactivator {
 			for(WebElement we:eles){
 				String val = we.getAttribute("value");
 				if(val.indexOf("利用再開") != -1){
+					System.out.println("[reactivator][activate]id=" + info.id);
 					we.click();
 					break;
 				}
@@ -53,6 +55,7 @@ public class YahooIdReactivator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("[reactivator][finish]id=" + info.id);
 		
 	}
 
