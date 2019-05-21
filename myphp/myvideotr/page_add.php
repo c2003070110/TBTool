@@ -132,7 +132,7 @@ $(function() {
     </div>
     <div class="row mb-4 form-group">
       <div class="col-10 themed-grid-col">
-	    <label for="uid">uid</label>
+	    <label for="uid">fromType||toType</label>
 	    <pre><?php echo $obj['fromType'] ?>||<?php echo $obj['toType'] ?></pre>
 	  </div>
     </div>

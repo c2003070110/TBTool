@@ -1,7 +1,6 @@
 package com.walk_nie.ya;
 
 import java.io.File;
-import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +11,7 @@ import com.walk_nie.util.NieUtil;
 
 public class YaUtil {
 
-	//private static String loginUrl = "https://login.yahoo.co.jp/config/login?.src=ym";
+	public static String loginUrl = "https://login.yahoo.co.jp/config/login?.src=ym";
 	public static String logoutUrl = "https://login.yahoo.co.jp/config/login?logout=1&.intl=jp";
 
 	public static void login(WebDriver driver, String userName,String password) {
@@ -36,18 +35,19 @@ public class YaUtil {
 		}
 		if(!loginf)return ;
 
-		// TODO
-		List<WebElement> eles = driver.findElements(By.cssSelector("div[id=\"personalbox\"]"));
-		for(WebElement ele:eles){
-			List<WebElement> eles1 = ele.findElements(By.cssSelector("h3[class=\"Personalbox__title\"]"));
-			if(eles1.isEmpty())continue;
-			if(eles1.get(0).getText().indexOf(userName) != -1)return;
-		}
+		String title = "ログイン";
+		if(!driver.getTitle().startsWith(title)) return;
+//		List<WebElement> eles = driver.findElements(By.cssSelector("div[id=\"personalbox\"]"));
+//		for(WebElement ele:eles){
+//			List<WebElement> eles1 = ele.findElements(By.cssSelector("h3[class=\"Personalbox__title\"]"));
+//			if(eles1.isEmpty())continue;
+//			if(eles1.get(0).getText().indexOf(userName) != -1)return;
+//		}
 		
 		NieUtil.readLineFromSystemIn("Yahoo! login is finished? ANY KEY For already");
 	}
 	
 	public static File getIdListFile(){
-		return new File(NieConfig.getConfig("yahoo.id.list.file"),"idlist.txt");
+		return new File(NieConfig.getConfig("yahoo.work.folder"),"idlist.txt");
 	}
 }

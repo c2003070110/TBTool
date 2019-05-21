@@ -405,6 +405,7 @@ public class YaAucDemon {
 		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		Logger.getLogger("org.openqa.selenium").setLevel(java.util.logging.Level.OFF);
 		
+		driver.get(myaucinfoUrl);
 		logon(driver);
 	}
 

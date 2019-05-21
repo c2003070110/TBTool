@@ -57,6 +57,7 @@ public class YoutubeTr {
 				break;
 			}
 		}
+		//logonYoutube(driver);
 		NieUtil.mySleepBySecond(1);
 		wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"label\"]"));
 		for (WebElement we : wes) {
@@ -209,10 +210,14 @@ public class YoutubeTr {
 		String rootUrl = "https://www.youtube.com/";
 
 		driver.get(rootUrl);
-		List<WebElement> wes = driver.findElements(By.cssSelector("yt-formatted-string[id=\"text\"]"));
+		NieUtil.mySleepBySecond(5);
+		List<WebElement> wes = driver.findElements(By.tagName("yt-formatted-string"));
 		boolean islogon = true;
 		for (WebElement we : wes) {
-			if ("ログイン".equalsIgnoreCase(we.getText())||"Sign in".equalsIgnoreCase(we.getText())) {
+			String txt = we.getText();
+			if(StringUtil.isBlank(txt)) continue;
+			System.out.println("[logonYoutube]" + txt);
+			if ("ログイン".equalsIgnoreCase(txt)||"Sign in".equalsIgnoreCase(txt)) {
 				we.click();
 				islogon = false;
 				break;
@@ -220,30 +225,43 @@ public class YoutubeTr {
 		}
 		if(islogon)return;
 		
-		WebElement el1 = driver.findElement(By.cssSelector("input[id=\"identifierId\"]"));
-		NieUtil.mySleepBySecond(1);
-		el1.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.name"));
-		wes = driver.findElements(By.tagName("span"));
-		for(WebElement we :wes){
-			if("次へ".equalsIgnoreCase(we.getText()) || "Next".equalsIgnoreCase(we.getText())){
-				we.click();
-				break;
+		try {
+			WebElement el1 = driver.findElement(By
+					.cssSelector("input[id=\"identifierId\"]"));
+			NieUtil.mySleepBySecond(1);
+			el1.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.name"));
+			List<WebElement> wes1 = driver.findElements(By.tagName("span"));
+			for (WebElement we1 : wes1) {
+				String txt = we1.getText();
+				if(StringUtil.isBlank(txt)) continue;
+				if ("次へ".equalsIgnoreCase(txt)
+						|| "Next".equalsIgnoreCase(txt)) {
+					we1.click();
+					break;
+				}
 			}
-		}
-		
-		WebElement el2 = driver.findElement(By.cssSelector("input[name=\"password\"]"));
-		NieUtil.mySleepBySecond(1);
-		el2.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.password"));
-		
-		wes = driver.findElements(By.tagName("span"));
-		for(WebElement we :wes){
-			if("次へ".equalsIgnoreCase(we.getText()) || "Next".equalsIgnoreCase(we.getText())){
-				we.click();
-				break;
-			}
+		} catch (Exception e) {
 		}
 
-		NieUtil.mySleepBySecond(2);
+		try {
+			WebElement el2 = driver.findElement(By
+					.cssSelector("input[name=\"password\"]"));
+			NieUtil.mySleepBySecond(1);
+			el2.sendKeys(NieConfig.getConfig("myvideotr.youtube.user.password"));
+
+			List<WebElement> wes1 = driver.findElements(By.tagName("span"));
+			for (WebElement we1 : wes1) {
+				String txt = we1.getText();
+				if(StringUtil.isBlank(txt)) continue;
+				if ("次へ".equalsIgnoreCase(txt)
+						|| "Next".equalsIgnoreCase(txt)) {
+					we1.click();
+					break;
+				}
+			}
+			NieUtil.mySleepBySecond(2);
+		} catch (Exception e) {
+		}
 		
 		List<WebElement> eles = driver.findElements(By.cssSelector("button[id=\"avatar-btn\"]"));
 		for(WebElement ele:eles){

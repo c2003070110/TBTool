@@ -37,10 +37,12 @@ public class YaScratch {
 		for(RegObjInfo info:list){
 			System.out.println("[scratch][start]id=" + info.id);
 			driver.get(YaUtil.logoutUrl);
-			NieUtil.mySleepBySecond(5);
-			driver.get(url);
+			//NieUtil.mySleepBySecond(5);
+			driver.get(YaUtil.loginUrl);
 			YaUtil.login(driver, info.id, info.pswd);
+			driver.get(url);
 			scratch(driver,info);
+			driver.get(YaUtil.logoutUrl);
 			NieUtil.mySleepBySecond(5);
 			System.out.println("[scratch][end]id=" + info.id);
 		}
@@ -57,7 +59,7 @@ public class YaScratch {
 				break;
 			}
 		}
-		List<WebElement> eles1 = driver.findElements(By.tagName("a"));
+		List<WebElement> eles1 = driver.findElements(By.tagName("div"));
 		for(WebElement we:eles1){
 			String val = we.getAttribute("class");
 			String txt = we.getText();

@@ -36,14 +36,15 @@ public class YahooIdReactivator {
 		// email
 		driver.get(YaUtil.logoutUrl);
 		System.out.println("[reactivator][start]id=" + info.id);
-		NieUtil.mySleepBySecond(5);
-		String url = "https://account.edit.yahoo.co.jp/registration?.src=ym&.done=https%3A%2F%2Fmail.yahoo.co.jp&src=ym&done=https%3A%2F%2Fmail.yahoo.co.jp&fl=100&no_req_email=true";
+		//NieUtil.mySleepBySecond(5);
+		String url = "https://login.yahoo.co.jp/config/login?.src=ym&.done=https%3A%2F%2Fmail.yahoo.co.jp%2F";
 		driver.get(url);
 		YaUtil.login(driver, info.id, info.pswd);
 
 		try {
-			driver.findElement(By.cssSelector("input[id=\"dontprotectaccount\"]")).click();
-			List<WebElement> eles = driver.findElements(By.cssSelector("input[id=\"dontprotectaccount\"]"));
+			reMailAdress(driver);
+			driver.findElement(By.cssSelector("label[for=\"dontprotectaccount\"]")).click();
+			List<WebElement> eles = driver.findElements(By.cssSelector("input[type=\"submit\"]"));
 			for(WebElement we:eles){
 				String val = we.getAttribute("value");
 				if(val.indexOf("利用再開") != -1){
@@ -55,8 +56,32 @@ public class YahooIdReactivator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		YaUtil.login(driver, info.id, info.pswd);
 		System.out.println("[reactivator][finish]id=" + info.id);
 		
+	}
+
+	private void reMailAdress(WebDriver driver) {
+		// TODO Auto-generated method stub
+		boolean isFlag = false;
+		List<WebElement> eles = driver.findElements(By.cssSelector("em[class=\"asterisk\"]"));
+		for(WebElement we:eles){
+			String val = we.getText();
+			if(val.indexOf("連絡用メールアドレス") != -1){
+				System.out.println("[reactivator][連絡用メールアドレス]");
+				isFlag = true;
+				break;
+			}
+		}
+		if(!isFlag) return;
+		eles = driver.findElements(By.tagName("a"));
+		for(WebElement we:eles){
+			String val = we.getText();
+			if(val.indexOf("あとで") != -1){
+				we.click();
+				break;
+			}
+		}
 	}
 
 	private List<RegObjInfo> readin() {

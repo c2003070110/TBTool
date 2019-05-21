@@ -61,11 +61,13 @@ public class MyVideoTrDeamon {
 			}catch(org.openqa.selenium.UnhandledAlertException e1){
 				e1.printStackTrace();
 				driver.switchTo().alert().accept();
+				NieUtil.log(logFile, e1);
 			}catch(org.openqa.selenium.WebDriverException e){
 				e.printStackTrace();
 				driver.close();
 				NieUtil.mySleepBySecond(3);
 				driver = WebDriverUtil.getFirefoxWebDriver();
+				NieUtil.log(logFile, e);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				NieUtil.log(logFile, ex);
@@ -82,6 +84,7 @@ public class MyVideoTrDeamon {
 	}
 	
 	private void processByScanTwitter(WebDriver driver) {
+		System.out.println("[processByScanTwitter][start]");
 		tw.scan(driver);
 		//List<MyVideoObject> videoObjs = tw.scan(driver);
 		//for (MyVideoObject videoObj : videoObjs) {
@@ -92,6 +95,7 @@ public class MyVideoTrDeamon {
 	}
 	
 	private void processByScanWeibo(WebDriver driver) {
+		System.out.println("[processByScanWeibo][start]");
 		weibo.scan(driver);
 		//List<MyVideoObject> videoObjs = weibo.scan(driver);
 		//for (MyVideoObject videoObj : videoObjs) {
